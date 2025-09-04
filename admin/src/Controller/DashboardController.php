@@ -90,13 +90,13 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Joueurs', 'fa fa-user', Player::class);
         yield MenuItem::linkToCrud('Poules', 'fa fa-group', Group::class);
 
-        yield MenuItem::section('Matches');
-        yield MenuItem::linkToCrud('Matches', 'fa fa-tennis', InterfacMatch::class);
+        yield MenuItem::section('Matchs');
+        yield MenuItem::linkToCrud('Matchs', 'fa fa-trophy', InterfacMatch::class);
 
         yield MenuItem::section('Plannings');
         yield MenuItem::linkToCrud('Plages horaires', 'fa fa-calendar', TimeSlot::class);
         yield MenuItem::linkToCrud('Jours', 'fa fa-calendar', Date::class);
-        yield MenuItem::linkToCrud('Heures', 'fa fa-time', Time::class);
+        yield MenuItem::linkToCrud('Heures', 'fa fa-clock', Time::class);
 
         yield MenuItem::section('Admin');
         yield MenuItem::linkToCrud('Users', 'fa fa-user', User::class);
