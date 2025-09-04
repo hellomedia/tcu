@@ -17,7 +17,7 @@
         "doctrine/doctrine-bundle": "^2.13",
         "doctrine/doctrine-migrations-bundle": "^3.3",
         "doctrine/orm": "^3.3",
-        "easycorp/easyadmin-bundle": "*",
+        "easycorp/easyadmin-bundle": "^4.24",
         "knplabs/knp-time-bundle": "^2.4",
         "liip/imagine-bundle": "^2.6",
         "pagerfanta/doctrine-orm-adapter": "^4.7",
@@ -53,6 +53,7 @@
         "symfony/ux-chartjs": "^2.30",
         "symfony/ux-icons": "^2.21",
         "symfony/ux-turbo": "^2.21",
+        "symfony/ux-twig-component": "2.23",
         "symfony/validator": "7.2.*",
         "symfony/yaml": "7.2.*",
         "symfonycasts/dynamic-forms": "^0.1.2",
@@ -62,9 +63,9 @@
         "twig/extra-bundle": "^3.3",
         "twig/intl-extra": "^3.3",
         "twig/string-extra": "^3.3",
-        "twig/twig": "^3.3",
         "whichbrowser/parser": "^2.1",
         "zenstruck/foundry": "^2.2"
+        "twig/twig": "3.20",
     },
     "minimum-stability": "stable",
     "require-dev": {
