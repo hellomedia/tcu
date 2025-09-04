@@ -1,0 +1,15 @@
+{# templates/bundles/TwigBundle/Exception/error500.html.twig #}
+{% extends 'layout/error.html.twig' %}
+
+{% block title %}
+    <h1>{{ 'server_error.title'|trans(domain='security') }}</h1>
+{% endblock %}
+
+{% block content %}
+{# This is not really a flash-message, just needs the look of it #}
+    <div id="flash-messages">
+        <div class="alert alert-info">
+            {{ 'server_error.message_without_contact'|trans({}, 'security')|raw }}
+        </div>
+    </div>
+{% endblock %}

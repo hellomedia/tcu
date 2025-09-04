@@ -1,0 +1,32 @@
+{% extends 'layout/default.html.twig' %}
+
+{% block extra_head_tags %}
+    <title>{{ 'password_reset.title'|trans(domain='security') }}</title>
+    <meta name="robots" content="noindex" />
+{% endblock %}
+
+{% block title %}
+    {{ 'password_reset.title'|trans(domain='security') }}
+{% endblock %}
+
+{# show error flash messages in case of 'no user found' or ResetPasswordExceptionInterface #}
+{% block flash_messages %}
+	{% if app.session.flashbag.peekAll() is not empty %}
+		{% embed '@security/flash_messages.html.twig' %}{% endembed %}
+	{% endif %}
+{% endblock %}
+
+{% block content %}
+
+    {{ form_start(form, {'attr': {'class': 'form form-horizontal'}}) }}
+
+        {{ form_row(form.email) }}
+
+        {% embed 'form/_form_actions.html.twig' %}
+            {% block submit_label 'password_reset.submit'|trans(domain='security') %}
+            {% block cancel '' %}
+        {% endembed %}
+
+    {{ form_end(form) }}
+
+{% endblock %}

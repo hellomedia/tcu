@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="{{ app.locale }}">
+    <head>
+        <meta charset="UTF-8">
+        {# <meta name="viewport" content="width=device-width, initial-scale=1.0"> #}
+        <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
+        {# <meta name="turbo-refresh-method" content="morph">  #}
+        <meta name="turbo-refresh-method" content="replace"> 
+        <meta name="view-transition" content="same-origin" />
+
+        {# Turbo link hover pre-fetching #}
+        {# https://turbo.hotwired.dev/handbook/drive#prefetching-links-on-hover
+        Using pre-fetching might imply a few things:
+            - use caching to avoid turbo generating 10 prefetch requests for the same page
+                if a link is hovered 10 times, and the cache headers do not allow caching,
+            - Morevover, when a user session is started, symfony prevents http caching by default
+            https://symfony.com/doc/current/http_cache.html#http-caching-and-user-sessions
+            If we wanted to prevent this default Symfony behaviour, we would add in the controller:
+            $response->headers->set(AbstractSessionListener::NO_AUTO_CACHE_CONTROL_HEADER, 'true');
+            - If we use HTTP private caching (browser cache), we have to be careful about the theme
+            which would be inconsistent with a previous cached page
+        Other consideration: link pre-fetching does not happen on mobile,
+            ==> So let's just keep things simple and not use it.
+            ==> Disable link hover prefetching globally with meta tag below #}
+        <meta name="turbo-prefetch" content="false">
+
+        {# Comment id: fGroZT #}
+        {# Used for detecting session changes (login if configured so, logout, role change, server clearing sessions) #}
+        {# and triggering a full page reload - instead of partial content update - to take the new session into account #}
+        {# NB: This does not make session data changes visible (theme, ...) if the session itself was not changed #}
+        {# To trigger a full page reload in those cases, we use data-turbo=false on links that change session data #}
+        <meta name="session-id" content="{{ app.session.getId() }}">
+
+        {# <link rel="icon" type="image/svg+xml" sizes="any" href="{{ asset('images/favicon.svg') }}"> #}
+        <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/favicon.png') }}">
+        <link rel="icon" type="image/png" sizes="196x196" href="{{ asset('images/favicon-android.png') }}">
+        <link rel="icon" type="image/png" sizes="180x180" href="{{ asset('images/favicon-iphone.png') }}">
+
+        <link rel="manifest" href="{{ asset('manifest.json') }}">
+
+        <title>{% block head_title %}{% endblock %}{{ app.current_route != 'homepage' ? ' | ' }}TCU</title>
+
+        {% block extra_head_tags '' %}
+
+        {% block stylesheets %}
+            <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/@fontsource-variable/inter@5.1.0/index.min.css">
+            <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/@fontsource/poppins@5.1.0/index.min.css">
+            <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/@fontsource/raleway/800.css">
+        {% endblock %}
+
+        {% block javascripts %}
+            {% block importmap %}{{ importmap('app') }}{% endblock %}
+        {% endblock %}
+    </head>
+
+    {% block body %}
+
+        {# apply theme class to body, not html, because turbo watches changes the body, not html element #}
+        <body class="flex flex-col with-bottom-menu {{ theme }} {% block body_extra_classes '' %}">
+
+            <div id="viewport"
+                class="{% block viewport_extra_classes '' %}"
+                {% block viewport_html_attributes '' %}
+            >
+                {% block menu %}
+                    {% include 'layout/menu/_menu.html.twig' %}
+                {% endblock %}
+
+                {% block main '' %}
+
+                {% block mobile_contextual_menu '' %}
+            </div>
+
+            {% block footer %}
+                <twig:footer />
+            {% endblock %}
+
+            <div id="flash-container" data-turbo-temporary>
+                {% include 'layout/_flashes.html.twig' %}
+            </div>
+
+        </body>
+    {% endblock %}
+</html>

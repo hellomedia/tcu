@@ -1,0 +1,42 @@
+<div
+	id="mobile-menu"
+	data-mobile-menu-target="menu"
+	data-action="touchstart->mobile-menu#handleGestureStart"
+>
+	<div id="mobile-menu-drag-indicator">
+	</div>
+
+	{% if is_granted('ROLE_USER') %}
+
+		<div class="pt-1 pb-2">
+
+			<a href="{{ path('dashboard') }}" class="mobile-menu-item {{ is_current_page('dashboard') ? 'active' }}" data-action="mobile-menu#toggle">
+				<twig:ux:icon name="account" class="mobile-menu-item-icon"/>
+				{{ 'Dashboard'|trans }}
+			</a>
+
+			<a href="/logout" class="mobile-menu-item" data-action="mobile-menu#toggle">
+				<twig:ux:icon name="logout" class="mobile-menu-item-icon"/>
+				{{ 'Logout'|trans }}
+			</a>
+
+		</div>
+
+		<hr>
+
+	{% endif %}
+
+	<div class="pt-1 pb-2">
+	
+		<a
+			href="{{ path('homepage') }}"
+			class="mobile-menu-item {{ is_current_page('homepage') ? 'active' }}"
+			data-action="mobile-menu#toggle"
+		>
+			<twig:ux:icon name="home" class="mobile-menu-item-icon"/>
+			Home
+		</a>
+
+	</div>
+
+</div>

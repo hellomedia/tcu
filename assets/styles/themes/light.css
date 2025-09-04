@@ -1,0 +1,92 @@
+@layer base {
+
+    .light {
+
+        --color-theme: #ba5520;
+        --color-theme-lighter: #db7534;
+        --color-theme-lighter2: #db7534;
+        --color-theme-lightest: #e98141;
+        --color-theme-darker: #9b471a;
+
+        /* TEXT COLOR */
+        --color-highlight-text: var(--color-gray-900);
+        --color-page-title: var(--color-gray-700);
+        --color-semi-highlight-text: var(--color-gray-700);
+        --color-primary-text: var(--color-gray-600);
+        --color-secondary-text: var(--color-gray-500);
+
+        /* BACKGROUND COLOR */
+        --color-primary-background: var(--color-white);
+        --color-grid-background: var(--color-gray-200);
+        --color-secondary-background: var(--color-white);
+        --color-tertiary-background: var(--color-gray-100);
+
+        /* CHAT */
+        --color-chat-list-background: var(--color-blue-1);
+        --color-chat-background: var(--color-beige);
+        --color-chat-background-me: var(--color-gray-200);
+        --color-chat-background-not-me: var(--color-gray-200);
+        
+        /* BUTTON */
+        --color-button-default: var(--color-gray-200);
+        --color-button-primary: var(--color-theme);
+        --color-button-primary-hover: var(--color-theme-lighter);
+        --color-button-focus-visible: var(--color-theme);
+        --color-button-warning: var(--color-amber-600);
+        --color-button-danger: var(--color-red-700);
+        --color-button-danger-hover: var(--color-red-600);
+        --color-button-success: var(--color-green-600);
+
+        /* TAGS */
+        --color-tag-background: var(--color-beige);
+
+        /* FORM */
+        --color-form-highlight: var(--color-button-primary);
+
+        /* RADIO / CHECKBOX */
+        --checkbox-bg-color: var(--color-gray-300);
+        --checkbox-hover-bg-color: var(--color-gray-400);
+        --checkbox-checked-bg-color: var(--color-theme);
+
+        /* TOP MENU */
+        --color-menu-background: var(--color-white);
+        --color-menu-background-mobile: var(--color-theme);
+        --color-logo-background: var(--color-theme);
+        --color-menu-text: var(--color-gray-500);
+        --color-menu-text-hover: var(--color-gray-700);
+        --color-menu-text-current: var(--color-gray-700);
+        --color-menu-border-hover: var(--color-theme);
+        --color-menu-border-current: var(--color-theme);
+        --color-menu-text-mobile: var(--color-white);
+
+        /* MOBILE MENU */
+        --color-mobile-menu-background: var(--color-white);
+        --color-mobile-menu-text: var(--color-primary-text);
+        --color-mobile-menu-active-border: var(--color-theme-lighter);
+        --color-mobile-menu-active-background: var(--color-theme-lightest);
+        --color-mobile-menu-active-text: var(--color-theme-darker);
+            
+        /* BOTTOM MENU */
+        --color-bottom-menu-background: var(--color-theme);
+        --color-bottom-menu-text: var(--color-white);
+
+        /* DRAWER */
+        --color-drawer-background: var(--color-white);
+        --color-drawer-text: var(--color-primary-text);
+
+        /* FOOTER */
+        --color-footer-background: var(--color-theme);
+        --color-footer-text: var(--color-gray-300);
+        --color-footer-section-title-text: var(--color-white);
+
+        /* OTHER */
+        --color-border: var(--color-gray-300);
+        --color-separator: var(--color-gray-200);
+
+    }
+}
+
+@layer components {
+
+
+}

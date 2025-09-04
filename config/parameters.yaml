@@ -1,0 +1,30 @@
+# Put parameters here that don't need to change on each machine where the app is deployed
+# https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
+
+# parameters can be arrays but only the top variable is the parameter
+# ie : you cannot pass an array item to services, you must pass the whole parameter
+# https://symfony.com/doc/current/service_container/parameters.html
+
+parameters:
+
+    # By default, generated URLs use the same HTTP scheme as the current request.
+    # In console commands, where there is no HTTP request, you can force https this way
+    # https://symfony.com/doc/8.0/routing.html#forcing-https-on-generated-urls
+    router.request_context.scheme: 'https'
+    asset.request_context.secure: true
+
+    # Performance: Dump service container into single file
+    # https://symfony.com/doc/current/performance.html#dump-the-service-container-into-a-single-file
+    .container.dumper.inline_factories: true
+
+    site_name: 'TCU'
+    email_domain: 'tcu.be'
+    host: '%env(HOST)%'
+    host_controlroom: '%env(HOST_CONTROLROOM)%'
+    host_webhook: '%env(default:host:HOST_WEBHOOK)%'
+
+    default_locale: 'fr'
+    locales: ['fr']
+
+    uploads_dir: 'uploads'
+    uploads_base_url: '/%uploads_dir%'

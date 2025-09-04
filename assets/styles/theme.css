@@ -1,0 +1,71 @@
+@theme {
+
+    --container-7xl: 80rem; /* default: 80rem */
+
+    --color-blue-1: #226b80;
+    --color-blue-2: #2d8da8;
+    --color-blue-3: #174958;
+
+    --color-green-1: #c5f0a4;
+    --color-green-2: #e1f7d0;
+    --color-green-3: #a9e978;
+
+    --color-beige: #F7F0E6;
+
+    --color-brown-theme: #5E3B2C;
+    --color-green-dark-theme: #537D0A;
+    --color-green-light-theme: #D3D930;
+    --color-gray-theme: #D3D930;
+
+    --color-annie-turquoise: #7fd2e7;
+    --color-annie-yellow-light: #ffe77f;
+    --color-annie-yellow-dark: #ffd13f;
+    --color-annie-blue-light: #80b6ea;
+    --color-annie-blue-dark: #006cd4;
+    --color-annie-brown-light: #ba9680;
+    --color-annie-brown-dark: #86573f;
+    --color-annie-pink-light: #ffc2e8;
+    --color-annie-pink-dark: #ff94d4;
+    --color-annie-purple-light: #e7c1ff;
+    --color-annie-purple-dark: #d193ff;
+    --color-annie-orange-light: #ffbe8c;
+    --color-annie-orange-dark: #ff8d4b;
+    --color-annie-grey-light: #9b9b9b;
+    --color-annie-grey-dark: #5d5d5d;
+    --color-annie-red-light: #d07f7f;
+    --color-annie-red-dark: #aa3f3f;
+
+    --color-published: var(--color-green-600);
+    --color-unpublished: var(--color-yellow-500);
+    --color-archived: var(--color-gray-400);
+
+    --color-better-help-beige-light: #FFFCF6;
+    --color-better-help-beige-light-2: #F7F0E6;
+    --color-better-help-gray-light: #F5F7F5;
+    --color-better-help-green-dark: #325343;
+    --color-better-help-green-pop: #6EC34B;
+    --color-better-green-mid: #397A4A;
+    --color-better-green-light: #9BD58B;
+    --color-better-help-blue-mid: #457777;
+    --color-better-help-blue-light: #94D1D0;
+    --color-better-help-orange-mid: #A25A00;
+    --color-better-help-orange-light: #F8E16C;
+
+    --color-gray-350: oklch(0.7895 0.016 259.8315);
+
+    --bezier-easing: cubic-bezier(0.2, 0.6, 0.4, 1);
+
+    /* breakpoint-sm = 40rem = 640px = breakpoint for most phones */
+    /* NB: var() here does not work */
+    --breakpoint-phone-end: theme(--breakpoint-sm);
+    /* breakpoint-md = 48rem = 768px = breakpoint for mobile */
+    --breakpoint-bottom-menu: theme(--breakpoint-md);
+    --breakpoint-mobile-end: theme(--breakpoint-md);
+    /* breakpoint-lg =  64rem = 1024px = breakpoint for tablets */
+    --breakpoint-contextual-menu: theme(--breakpoint-lg);
+
+    /* below 600px (phones) ==> regular cards (image on top, content below) */
+    /* above 600px (tablets) ==> horizontal cards (image on the left, content on the right) */
+    /* see listing-grid.css and listing-card-admin.css */
+    --breakpoint-horizontal-cards: 600px;
+}

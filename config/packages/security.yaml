@@ -1,0 +1,111 @@
+security:
+
+    # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
+    password_hashers:
+        # Use native password hasher, which auto-selects and migrates the best
+        # possible hashing algorithm (which currently is "bcrypt")
+        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
+
+    # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
+    providers:
+        # used to reload user from session & other features (e.g. switch_user)
+        app_user_provider:
+            id: App\Pack\Security\UserProvider
+
+    role_hierarchy:
+        ROLE_SEARCHER:      ROLE_USER
+        ROLE_POSTER:        ROLE_USER
+        ROLE_ADMIN:         ROLE_USER
+        ROLE_SUPER_ADMIN:   [ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
+
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+        
+        # more basic firewall for controlroom
+        # need to be first since first firewall wins
+        # (restricted on host thus does not affect main site)
+        # -- or we could change loading order in Kernel.php
+        controlroom:
+            lazy: true
+            host: '%env(HOST_CONTROLROOM)%'
+            pattern: ^/
+            provider: app_user_provider
+            form_login:
+                login_path: controlroom_login
+                check_path: controlroom_login_check
+                enable_csrf: true
+            logout:
+                path: /logout
+            login_throttling: true
+            remember_me:
+                secret: "%env(APP_SECRET)%"
+                lifetime: 5184000 # 60 days in seconds
+                path: /
+                domain: ~ # Defaults to the current domain from $_SERVER
+                user_provider: app_user_provider
+                always_remember_me: true
+                signature_properties: [password]
+                samesite: lax # 'strict' would make the remember_me useless. See commments in controlroom/config/packages/framework.yaml
+
+        main:
+            lazy: true
+            pattern: ^/
+            provider: app_user_provider
+            custom_authenticators:
+                - App\Pack\Security\LoginFormAuthenticator
+            user_checker: App\Pack\Security\UserChecker
+            logout:
+                path: /logout
+            switch_user: { parameter: _hk_masq }
+            login_throttling: true
+            access_denied_handler: App\Pack\Security\AccessDeniedHandler
+            remember_me:
+                secret: "%env(APP_SECRET)%"
+                lifetime: 5184000 # 60 days in seconds
+                path: /
+                domain: ~ # Defaults to the current domain from $_SERVER
+                user_provider: app_user_provider
+                always_remember_me: true
+                signature_properties: [password]
+                samesite: lax # 'lax' is OK for app. See commments in controlroom/config/packages/framework.yaml
+
+    # First matching rule grants or denies access
+    access_control:
+        # User Admin (need to match both /my/ and /en/my/)
+        - { path: '^/([a-z]{2}/)?my/', role: ROLE_USER }
+        # Control Room
+        # Unlike for core sites, public access needs to be given specifically to login 
+        # and login check, as the ROLE_ADMIN restriction applies to all controlroom urls
+        # (for core sites, default is PUBLIC_ACCESS as specified below)
+        - { host: '%env(HOST_CONTROLROOM)%', route: controlroom_login, role: PUBLIC_ACCESS }
+        - { host: '%env(HOST_CONTROLROOM)%', route: controlroom_login_check, role: PUBLIC_ACCESS }
+        - { host: '%env(HOST_CONTROLROOM)%', role: ROLE_ADMIN }
+        # Default
+        - { path: ^/.*, role: PUBLIC_ACCESS }
+
+when@test:
+    security:
+        password_hashers:
+            # By default, password hashers are resource intensive and take time. This is
+            # important to generate secure password hashes. In tests however, secure hashes
+            # are not important, waste resources and increase test times. The following
+            # reduces the work factor to the lowest possible values.
+            Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface:
+                algorithm: auto
+                cost: 4 # Lowest possible value for bcrypt
+                time_cost: 3 # Lowest possible value for argon
+                memory_cost: 10 # Lowest possible value for argon
+
+# default env when loading fixtures
+when@dev:
+    security:
+        password_hashers:
+            # By default, password hashers are resource intensive and take time. This is
+            # important to generate secure password hashes. In tests however, secure hashes
+            # are not important, waste resources and increase test times. The following
+            # reduces the work factor to the lowest possible values.
+            Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface:
+                algorithm: bcrypt
+                cost: 4 # Lowest possible value for bcrypt

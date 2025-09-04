@@ -1,0 +1,28 @@
+# see https://symfony.com/doc/current/reference/configuration/framework.html
+framework:
+    session:
+        name: controlroom # last value overrides previous ones
+        cookie_samesite: lax
+# !!! ATTN: for remember me cookie, it is set in security.yaml firewall config !!!
+# SAMESITE STRATEGY
+# =================
+# cookie samesite attribute (attribute added to every cookie):
+#   - 'strict' adds protection against CSRF attacks via GET.
+#      Easyadmin uses GET everywhere
+#      Should we use 'strict' for easyadmin, which is a sensitive environment ??
+#        This means request NOT originating from the site (ie: navigating to the site from chrome's adress bar suggestion, or an email link)
+#        will require log in, since the remember me cookie will NOT be sent in that case.
+#        NB: Effectively, this renders the remember_me cookie useless.
+#  !!! SECURITY:
+#  * - !!! No need for CSRF token if samesite cookie ='lax' and method=POST,
+#  *  since cookies are not shared with third party origin for POST requests when samesite="lax".
+#  *  https://simonwillison.net/2021/Aug/3/samesite/
+# !!! ===> So we are good with 'lax' if we use POST, no CSRF token necessary.
+#
+#   -'lax' is secure enough if sensitive operations are done via POST (with CSRF token).
+#        ==> we defintely can use it for the user facing app.
+#        Lax allows users to be logged in with remember me cookie when they click on email link,
+#        or navigate to the site from search or adress bar suggestion.
+#
+# https://chatgpt.com/share/67c7e673-9098-8012-957a-6d2503412c51
+    

@@ -1,0 +1,54 @@
+.grid-dashboard {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: 1fr;
+}
+.grid-charts-min-max {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+}
+.grid-reports {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+}
+.grid-charts {
+    display: grid;
+    gap: 20px;
+    grid-template-columns: repeat(12, 1fr);
+}
+.grid-charts .type-chart {
+    grid-column: span 12;
+}
+.grid-charts .type-comparison {
+    grid-column: span 12;
+}
+.grid-charts .type-pie {
+    grid-column: span 6;
+}
+.full-width {
+    grid-column: span 12 !important;
+}
+
+@media (min-width: 800px) {
+    .grid-dashboard {
+        grid-template-columns: 1fr 1fr;
+    }
+    .span2 {
+        grid-column: span 2;
+    }
+    .grid-charts .type-chart {
+        grid-column: span 6;
+    }
+
+    .grid-charts .type-comparison {
+        grid-column: span 6;
+    }
+
+    .grid-charts .type-pie {
+        grid-column: span 3;
+    }
+}
+
+

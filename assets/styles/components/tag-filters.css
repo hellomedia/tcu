@@ -1,0 +1,28 @@
+@layer components {
+    .tag-filters {
+        display: flex;
+        flex-wrap: wrap; /* allow tags to wrap on multiple lines */
+        gap: 10px;
+    }
+
+    .tag-filter {
+        font-size: var(--text-sm);
+        padding: 7px 10px;
+        border-radius: 18px;
+        white-space: nowrap;
+        background-color: var(--color-tag-background);
+        color: var(--color-primary-text);
+        &.selected {
+            background-color: var(--color-theme);
+            color: var(--color-gray-200);
+        }
+        @media (min-width: theme(--breakpoint-mobile-end)) {
+            background-color: var(--color-tag-background);
+            color: var(--color-primary-text);
+            &.selected {
+                background-color: var(--color-theme);
+                color: var(--color-gray-200);
+            }
+        }
+    }
+}

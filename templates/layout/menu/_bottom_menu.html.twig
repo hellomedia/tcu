@@ -1,0 +1,33 @@
+<div id="bottom-menu">
+	<div id="bottom-menu-inner">
+
+		<a href="{{ path('homepage') }}" class="bottom-menu-link">
+            <twig:ux:icon name="home" />
+			<span class="bottom-menu-label">Home</span>
+		</a>
+
+		{% if is_granted('ROLE_USER') %}
+			<a href="{{ path('dashboard') }}" class="bottom-menu-link">
+				<twig:ux:icon name="account" style="height: 28px"/>
+				<span class="bottom-menu-label">Account</span>
+			</a>
+		{% endif %}
+
+		{% if not is_granted('ROLE_USER') %}
+			<a href="{{ path('login') }}" class="bottom-menu-link">
+				<twig:ux:icon name="login" />
+				<span class="bottom-menu-label">Login</span>
+			</a>
+		{% endif %}
+
+		{% embed "layout/menu/_mobile_menu_button.html.twig" with {
+				mobile_menu_button_extra_classes: 'bottom-menu-link',
+			}
+		%}
+			{% block label %}
+				<span class="bottom-menu-label">Menu</span>
+			{% endblock %}
+		{% endembed %}
+
+	</div>
+</div>

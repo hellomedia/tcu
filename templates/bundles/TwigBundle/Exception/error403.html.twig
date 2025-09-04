@@ -1,0 +1,15 @@
+{# templates/bundles/TwigBundle/Exception/error403.html.twig #}
+{% extends 'layout/error.html.twig' %}
+
+{% block title %}
+    <h1>{{ (title ?? 'Error 403')|trans  }}</h1>
+{% endblock %}
+
+{% block content %}
+{# This is not really a flash-message, just needs the look of it #}
+    <div id="flash-messages">
+        <div class="alert alert-info">
+            {{ (message ?? 'Error 403: "Forbidden"')|trans|raw  }}
+        </div>
+    </div>
+{% endblock %}

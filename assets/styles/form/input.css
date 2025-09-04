@@ -1,0 +1,13 @@
+@layer base {
+
+    .dark input {
+        background-color: var(--color-gray-600);
+        border-color: var(--color-gray-600);
+        color: var(--color-gray-100);
+
+        &:focus {
+            border-color: var(--color-gray-400);
+        }
+    }
+
+}

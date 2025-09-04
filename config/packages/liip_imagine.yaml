@@ -1,0 +1,62 @@
+# Documentation on how to configure the bundle can be found at: https://symfony.com/doc/current/bundles/LiipImagineBundle/basic-usage.html
+liip_imagine:
+    twig:
+        mode: lazy
+    
+    resolvers:
+        default:
+            web_path:
+                web_root: "%kernel.project_dir%/public/"
+                cache_prefix: media/cache
+    loaders:
+        default:
+            filesystem:
+                data_root: "%env(PUBLIC_DIR_SYSTEM_PATH)%" # public path fed to liip filter
+    
+    driver: imagick
+
+    default_filter_set_settings:
+        format: avif
+    
+    filter_sets:
+        thumb_small:
+            quality: 75
+            filters:
+                thumbnail: { size: [200, 200], mode: outbound } # forces square aspect ratio
+        # thumb_card Size and cropping logic ***
+        # use 'outbound' to force the image aspect ratio, which makes the card grid layout easier to handle
+        # Note about grid layout:
+        #   object-fit:cover is useful to force aspect ratio dynamically, but forcing the aspect ratio inside the grid
+        #   (by setting aspect-ratio for a grid element) works against the grid flexibility to adapt to its content
+        #   If we force aspect-ratio to the image grid item, the rest of the card won't be able to adapt as well
+        #   and we can run into bugs where the other grid element overflows into the image if it has too much content
+        #   On the other hand, if we force aspect ratio on the image at thumb creation, then we can use object-fit to
+        #   make the image item adapt to the changing size of the grid and let it adapt to the content.
+        # use 'allow_upscale' and 'background' to force the image aspect ratio *even if original is smaller*
+        # (additional space is filled with background)
+        # 600x600 logic: phones are supposed to go up to 480px (logical/CSS pixels, not real pixels)
+        # devices up to 768px include large phones and small tablets
+        # we can probably keep cards < 600px,
+        # by making grid-template-rows min of 300px 
+        # -- so that a width of 599px would generate 1 card, and 601px would generate 2 cards.
+        # if we go down to grid-template-columns min of 250px (so card of max 500px),
+        # it makes for 250px cards which seems too small
+        # NB: we don't want to make the thumb too big either since we allow_upscale.
+        # If we used 800x800, it would upscale up all original images < 800px.
+        thumb_card:
+            quality: 75
+            filters:
+                #  'outbound' to force sqare image aspect ratio. easier for card layouts to have consistent sizes.
+                thumbnail: 
+                    size: [600, 600]
+                    mode: outbound
+                    allow_upscale: true
+                background:
+                    size: [600, 600]
+                    color: '#DDDDDD'  # gray for background fill color
+                    position: 'center'
+        thumb_gallery:
+            quality: 75
+            filters:
+                # 'inset' respects the aspect ratio of original image
+                thumbnail: { size: [1000, 600], mode: inset }

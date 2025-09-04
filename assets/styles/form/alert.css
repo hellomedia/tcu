@@ -1,0 +1,25 @@
+@layer components {
+    .alert {
+        padding: calc(var(--spacing) * 10);
+        margin-bottom: calc(var(--spacing) * 5);
+    }
+
+    .alert p:last-child {
+        margin-bottom: 0;
+    }
+
+    .alert-info {
+        color: var(--color-primary-text);
+        background-color: var(--color-blue-50);
+    }
+
+    .alert-success {
+        color: var(--color-green-700);
+        background-color: var(--color-green-50);
+    }
+
+    .alert-error {
+        color: var(--color-red-700);
+        background-color: var(--color-red-50);
+    }
+}

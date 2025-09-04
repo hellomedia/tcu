@@ -1,0 +1,123 @@
+{
+    "name": "hellomedia/tcu",
+    "description": "TCU Symfony Project",
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/",
+            "Controlroom\\": "controlroom/src/"
+        }
+    },
+    "require": {
+        "php": "^8.3",
+        "ext-ctype": "*",
+        "ext-iconv": "*",
+        "babdev/pagerfanta-bundle": "^4.5",
+        "beberlei/doctrineextensions": "^1.5",
+        "doctrine/dbal": "^4.0",
+        "doctrine/doctrine-bundle": "^2.13",
+        "doctrine/doctrine-migrations-bundle": "^3.3",
+        "doctrine/orm": "^3.3",
+        "easycorp/easyadmin-bundle": "*",
+        "knplabs/knp-time-bundle": "^2.4",
+        "liip/imagine-bundle": "^2.6",
+        "pagerfanta/doctrine-orm-adapter": "^4.7",
+        "pagerfanta/twig": "^4.7",
+        "sentry/sentry-symfony": "^5.1",
+        "symfony/asset": "7.2.*",
+        "symfony/asset-mapper": "7.2.*",
+        "symfony/console": "7.2.*",
+        "symfony/doctrine-messenger": "7.2.*",
+        "symfony/dotenv": "7.2.*",
+        "symfony/expression-language": "7.2.*",
+        "symfony/flex": "^2.2",
+        "symfony/form": "7.2.*",
+        "symfony/framework-bundle": "7.2.*",
+        "symfony/http-client": "7.2.*",
+        "symfony/intl": "7.2.*",
+        "symfony/lock": "7.2.*",
+        "symfony/mailer": "7.2.*",
+        "symfony/mercure-bundle": "^0.3.9",
+        "symfony/messenger": "7.2.*",
+        "symfony/monolog-bundle": "^3.7",
+        "symfony/postmark-mailer": "7.2.*",
+        "symfony/property-access": "7.2.*",
+        "symfony/property-info": "7.2.*",
+        "symfony/rate-limiter": "7.2.*",
+        "symfony/requirements-checker": "^2.0",
+        "symfony/runtime": "7.2.*",
+        "symfony/security-bundle": "7.2.*",
+        "symfony/serializer": "7.2.*",
+        "symfony/stimulus-bundle": "^2.21",
+        "symfony/translation": "7.2.*",
+        "symfony/twig-bundle": "7.2.*",
+        "symfony/ux-chartjs": "^2.30",
+        "symfony/ux-icons": "^2.21",
+        "symfony/ux-turbo": "^2.21",
+        "symfony/validator": "7.2.*",
+        "symfony/yaml": "7.2.*",
+        "symfonycasts/dynamic-forms": "^0.1.2",
+        "symfonycasts/reset-password-bundle": "^1.16",
+        "symfonycasts/tailwind-bundle": "^0.6.0",
+        "symfonycasts/verify-email-bundle": "^1.17",
+        "twig/extra-bundle": "^3.3",
+        "twig/intl-extra": "^3.3",
+        "twig/string-extra": "^3.3",
+        "twig/twig": "^3.3",
+        "whichbrowser/parser": "^2.1",
+        "zenstruck/foundry": "^2.2"
+    },
+    "minimum-stability": "stable",
+    "require-dev": {
+        "phpspec/phpspec": "^7.2",
+        "phpstan/phpdoc-parser": "^2.0",
+        "rector/rector": "^1.2",
+        "symfony/debug-bundle": "7.2.*",
+        "symfony/maker-bundle": "^1.61",
+        "symfony/stopwatch": "7.2.*",
+        "symfony/var-dumper": "7.2.*",
+        "symfony/web-profiler-bundle": "7.2.*"
+    },
+    "replace": {
+        "paragonie/random_compat": "2.*",
+        "symfony/polyfill-ctype": "*",
+        "symfony/polyfill-iconv": "*",
+        "symfony/polyfill-php71": "*",
+        "symfony/polyfill-php70": "*",
+        "symfony/polyfill-php56": "*"
+    },
+    "config": {
+        "preferred-install": {
+            "*": "dist"
+        },
+        "sort-packages": true,
+        "allow-plugins": {
+            "symfony/flex": true,
+            "symfony/runtime": true,
+            "php-http/discovery": true
+        }
+    },
+    "scripts": {
+        "auto-scripts": {
+            "cache:clear": "symfony-cmd",
+            "assets:install %PUBLIC_DIR%": "symfony-cmd",
+            "requirements-checker": "script",
+            "importmap:install": "symfony-cmd"
+        },
+        "post-install-cmd": [
+            "@auto-scripts"
+        ],
+        "post-update-cmd": [
+            "@auto-scripts"
+        ]
+    },
+    "conflict": {
+        "symfony/symfony": "*"
+    },
+    "extra": {
+        "symfony": {
+            "allow-contrib": true,
+            "require": "7.2.*",
+            "docker": true
+        }
+    }
+}

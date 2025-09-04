@@ -1,0 +1,31 @@
+<form
+    id="registration-form"
+    action="{{ path('registration', app.request.query.all )}}"
+    method="POST"
+    class="form"
+>
+    {{ form_row(form.email) }}
+
+    <div class="form-row">
+        <label for="password">{{ 'Password'|trans }}</label>
+        <div data-controller="password-visibility" class="password-visibility">
+            {{ form_widget(form.plainPassword) }}
+            <button type="button" data-action="password-visibility#toggle">
+                <span data-password-visibility-target="icon"><img src="{{ asset('images/eye-off.svg') }}"/></span>
+                <span data-password-visibility-target="icon" class="hidden"><img src="{{ asset('images/eye.svg') }}"/></span>
+            </button>
+        </div>
+    </div>
+    
+    {{ form_row(form.terms, {'row_attr': {'style': 'margin-bottom:20px;margin-top:25px'}}) }}
+
+    {{ form_rest(form) }}
+
+    <input type="hidden" id="time-check" name="time-check" value="{{ 'now'|date('U') }}" />
+
+    {% embed 'form/_form_actions.html.twig' %}
+        {% block cancel '' %}
+        {% block submit_label 'Register'|trans %}
+    {% endembed %}
+
+</form>

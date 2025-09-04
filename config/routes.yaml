@@ -1,0 +1,12 @@
+controllers:
+    # all controller files inside Controller/ and its subdirectories
+    resource: '../src/Controller/**/*Controller.php' # must be a glob string for exclude to work
+    type: attribute
+
+security_controllers:
+    resource: '../src/Pack/Security/Controller/'
+    type: attribute
+
+status_controllers:
+    resource: '../src/Pack/Status/Controller/'
+    type: attribute

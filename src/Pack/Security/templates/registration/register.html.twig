@@ -1,0 +1,19 @@
+{% extends 'layout/default.html.twig' %}
+
+{% block extra_head_tags %}
+	<meta name="robots" content="noindex"/>
+{% endblock %}
+
+{% block body_extra_classes %}registration-page{% endblock %}
+
+{% block content %}
+
+	<div id="auth-box">
+
+		<h1>{{ 'registration.register.title'|trans(domain='security')|title }}</h1>
+
+		{% include '@security/registration/register_content.html.twig' %}
+
+	</div>
+
+{% endblock %}

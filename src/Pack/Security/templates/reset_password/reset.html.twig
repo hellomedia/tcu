@@ -1,0 +1,27 @@
+{% extends 'layout/default.html.twig' %}
+
+{% block extra_head_tags %}
+    <title>{{ 'password_reset.title'|trans(domain='security') }}</title>
+    <meta name="robots" content="noindex" />
+{% endblock %}
+
+{% block title %}
+    {{ 'password_reset.title'|trans(domain='security') }}
+{% endblock %}
+
+{% block content %}
+
+    {{ form_start(form, {'attr': {'class': 'form form-horizontal'}}) }}
+
+        {# add hidden username for browser auto-complete #}
+        {{ form_row(form.email) }}
+        
+        {{ form_row(form.plainPassword) }}
+
+        {% embed 'form/_form_actions.html.twig' %}
+            {% block cancel '' %}
+        {% endembed %}
+
+    {{ form_end(form) }}
+
+{% endblock %}

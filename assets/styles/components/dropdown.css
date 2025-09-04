@@ -1,0 +1,60 @@
+@layer components {
+
+    .dropdown-container {
+        position: relative;
+    }
+
+    .dropdown-button {
+        cursor: pointer;
+    }
+
+    .dropdown-menu {
+        position: absolute;
+        z-index: 100;
+        display: flex;
+        width: 100vw;
+        max-width: min-content;
+        padding-inline: calc(var(--spacing) * 4);
+        margin-top: calc(var(--spacing)* 5);
+    }
+
+    .dropdown-inner {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        flex-shrink: 1;
+        color: var(--color-primary-text);
+        padding: calc(var(--spacing)* 4);
+        background-color: var(--color-secondary-background);
+        border-radius: var(--radius-sm);
+        @apply text-sm/6;
+        @apply font-semibold;
+        @apply ring-1;
+        @apply shadow-lg;
+        @apply ring-gray-900/5;
+
+        hr {
+            width: 100%; /* needed because inside a flexbox with flex-direction column */
+            margin-top: calc(var(--spacing) * 3);
+            margin-bottom: calc(var(--spacing) * 3);
+        }
+    }
+
+    .dropdown-link {
+        display: flex;
+        flex-direction: row;
+        gap: calc(var(--spacing)* 3);
+        white-space: nowrap;
+        padding: calc(var(--spacing)* 2);
+        @apply text-sm/6;
+
+        svg {
+            height: 1.5rem;
+        }
+        
+        &:hover {
+            color: var(--color-secondary-text);
+            cursor: pointer;
+        }
+    }
+}

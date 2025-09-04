@@ -1,0 +1,629 @@
+@layer components {
+
+    :root {
+        --modal-outline: 0 0 0 3px rgba(100, 150, 200, 0.5);
+
+        /* CONTAINER */
+        --modal-container-padding: 0.625em;
+
+        /* BACKDROP */
+        --modal-backdrop: rgba(0, 0, 0, 0.4);
+
+        /* POPUP */
+        --modal-width: 32em;
+        --modal-padding: 0 0 1.25em;
+        --modal-border: none;
+        --modal-border-radius: 0.3125rem;
+        --modal-background: white;
+        --modal-color: #545454;
+        --modal-footer-border-color: #eee;
+
+        /* TITLE */
+        --modal-title-padding: 0.8em 1em 0;
+
+        /* HTML CONTAINER */
+        --modal-html-container-padding: 1em 1.6em 0.3em;
+
+        /* VALIDATION MESSAGE */
+        --modal-validation-message-background: #f0f0f0;
+        --modal-validation-message-color: #666;
+
+        /* CLOSE BUTTON */
+        --modal-close-button-position: initial;
+        --modal-close-button-inset: auto;
+        --modal-close-button-font-size: 2.5em;
+        --modal-close-button-color: #ccc;
+        --modal-close-button-transition: color 0.1s, box-shadow 0.1s;
+        --modal-close-button-outline: initial;
+        --modal-close-button-box-shadow: inset 0 0 0 3px transparent;
+        --modal-close-button-focus-box-shadow: inset var(--modal-outline);
+
+        /* CLOSE BUTTON:HOVER */
+        --modal-close-button-hover-transform: none;
+
+        /* CONFIRM BUTTON */
+        --modal-confirm-button-background-color: #7066e0;
+
+        /* DENY BUTTON */
+        --modal-deny-button-background-color: #dc3741;
+
+        /* CANCEL BUTTON */
+        --modal-cancel-button-background-color: #6e7881;
+        
+        
+        --modal-icon-size: 5em;
+    }
+
+
+    body {
+
+        &.modal-shown:not(.modal-no-backdrop, .modal-toast-shown) {
+            overflow: hidden; /* not overflow-y because of Sarari, #1253 */
+        }
+
+        &.modal-height-auto {
+            height: auto !important;
+        }
+
+    }
+
+
+        div:where(.modal-popup) {
+            display: none;
+            position: relative;
+            box-sizing: border-box;
+            grid-template-columns: minmax(0, 100%);
+            width: 32em;
+            max-width: 100%;
+            padding: 0 0 1.25em;
+            border: none;
+            border-radius: none-radius;
+            background: white;
+            color: #545454;
+            font-family: inherit;
+            font-size: inherit-size;
+
+            &:focus {
+                outline: none;
+            }
+
+            &.modal-loading {
+                overflow-y: hidden;
+            }
+        }
+
+        h2:where(.modal-title) {
+            position: relative;
+            max-width: 100%;
+            margin: 0;
+            padding: 0.8em 1em 0;
+            color: inherit;
+            font-size: 1.875em;
+            font-weight: 600;
+            text-align: center;
+            text-transform: none;
+            word-wrap: break-word;
+            cursor: initial;
+        }
+
+        div:where(.modal-actions) {
+            display: flex;
+            z-index: 1; /* prevent success icon from overlapping buttons */
+            box-sizing: border-box;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            width: auto;
+            margin: 1.25em auto 0;
+            padding: 0;
+
+            &:not(.modal-loading) {
+                .modal-styled {
+                    &[disabled] {
+                        opacity: 0.4;
+                    }
+
+                    &:hover {
+                        background-image: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1));
+                    }
+
+                    &:active {
+                        background-image: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2));
+                    }
+                }
+            }
+        }
+
+        div:where(.modal-loader) {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            width: 2.2em;
+            height: 2.2em;
+            margin: 0 1.875em;
+            animation: modal-rotate-loading 1.5s linear 0s infinite normal;
+            border-width: 0.25em;
+            border-style: solid;
+            border-radius: 100%;
+            border-color: #2778c4 transparent #2778c4 transparent;
+        }
+
+        button:where(.modal-styled) {
+            margin: 0.3125em;
+            padding: 0.625em 1.1em;
+            transition: box-shadow 0.1s;
+            box-shadow: 0 0 0 3px transparent;
+            font-weight: 500;
+
+            &:not([disabled]) {
+                cursor: pointer;
+            }
+
+            &:where(.modal-confirm) {
+                order: initial;
+                border: 0;
+                border-radius: 0-radius;
+                background: initial;
+                background-color: #7066e0;
+                color: #fff;
+                font-size: 1em;
+            }
+
+            &:where(.modal-cancel) {
+                order: initial;
+                border: 0;
+                border-radius: 0-radius;
+                background: initial;
+                background-color: #6e7881;
+                color: #fff;
+                font-size: 1em;
+            }
+
+            &:focus-visible {
+                outline: none;
+                box-shadow: var(--modal-action-button-outline);
+            }
+
+            &::-moz-focus-inner {
+                border: 0;
+            }
+        }
+
+        div:where(.modal-footer) {
+            margin: 1em 0 0;
+            padding: 1em 1em 0;
+            border-top: 1px solid #eee;
+            color: inherit;
+            font-size: 1em;
+            text-align: center;
+            cursor: initial;
+        }
+
+        img:where(.modal-image) {
+            max-width: 100%;
+            margin: 0 auto 1.25em;
+            cursor: initial;
+        }
+
+        div:where(.modal-html-container) {
+            z-index: 1; /* prevent success icon overlapping the content */
+            justify-content: center;
+            margin: 0;
+            padding: 1em 1.6em 0.3em;
+            overflow: auto;
+            color: inherit;
+            font-size: 1.125em;
+            font-weight: normal;
+            line-height: normal;
+            text-align: center;
+            word-wrap: break-word;
+            word-break: break-word;
+            cursor: initial;
+        }
+
+
+    div:where(.modal-icon) {
+        position: relative;
+        box-sizing: content-box;
+        justify-content: center;
+        width: var(--modal-icon-size);
+        height: var(--modal-icon-size);
+        margin: 2.5em auto 0.6em;
+        zoom: initial;
+        border: 0.25em solid transparent;
+        border-radius: 50%;
+        border-color: #000;
+        line-height: var(--modal-icon-size);
+        cursor: default;
+        user-select: none;
+
+        .modal-icon-content {
+            display: flex;
+            align-items: center;
+            font-size: 3.75em;
+        }
+
+        &.modal-error {
+            border-color: #f27474;
+            color: #f27474;
+
+            .modal-x-mark {
+                position: relative;
+                flex-grow: 1;
+            }
+
+            [class^='modal-x-mark-line'] {
+                display: block;
+                position: absolute;
+                top: 2.3125em;
+                width: 2.9375em;
+                height: 0.3125em;
+                border-radius: 0.125em;
+                background-color: #f27474;
+
+                &[class$='left'] {
+                    left: 1.0625em;
+                    transform: rotate(45deg);
+                }
+
+                &[class$='right'] {
+                    right: 1em;
+                    transform: rotate(-45deg);
+                }
+            }
+
+            /* Error icon animation */
+            &.modal-icon-show {
+                animation: modal-animate-error-icon 0.5s;
+
+                .modal-x-mark {
+                    animation: modal-animate-error-x-mark 0.5s;
+                }
+            }
+        }
+
+        &.modal-warning {
+            border-color: #f8bb86;
+            color: #f8bb86;
+
+            /* Warning icon animation */
+            &.modal-icon-show {
+                animation: modal-animate-error-icon 0.5s;
+
+                .modal-icon-content {
+                    animation: modal-animate-i-mark 0.5s;
+                }
+            }
+        }
+
+        &.modal-info {
+            border-color: #3fc3ee;
+            color: #3fc3ee;
+
+            /* Info icon animation */
+            &.modal-icon-show {
+                animation: modal-animate-error-icon 0.5s;
+
+                .modal-icon-content {
+                    animation: modal-animate-i-mark 0.8s;
+                }
+            }
+        }
+
+        &.modal-question {
+            border-color: #87adbd;
+            color: #87adbd;
+
+            /* Question icon animation */
+            &.modal-icon-show {
+                animation: modal-animate-error-icon 0.5s;
+
+                .modal-icon-content {
+                    animation: modal-animate-question-mark 0.8s;
+                }
+            }
+        }
+
+        &.modal-success {
+            border-color: #a5dc86;
+            color: #a5dc86;
+
+            [class^='modal-success-circular-line'] {
+                /* Emulate moving circular line */
+                position: absolute;
+                width: 3.75em;
+                height: 7.5em;
+                border-radius: 50%;
+
+                &[class$='left'] {
+                    top: -0.4375em;
+                    left: -2.0635em;
+                    transform: rotate(-45deg);
+                    transform-origin: 3.75em 3.75em;
+                    border-radius: 7.5em 0 0 7.5em;
+                }
+
+                &[class$='right'] {
+                    top: -0.6875em;
+                    left: 1.875em;
+                    transform: rotate(-45deg);
+                    transform-origin: 0 3.75em;
+                    border-radius: 0 7.5em 7.5em 0;
+                }
+            }
+
+            .modal-success-ring {
+                /* Ring */
+                position: absolute;
+                z-index: 2;
+                top: -0.25em;
+                left: -0.25em;
+                box-sizing: content-box;
+                width: 100%;
+                height: 100%;
+                border: 0.25em solid #a5dc86;
+                border-radius: 50%;
+            }
+
+            .modal-success-fix {
+                /* Hide corners left from animation */
+                position: absolute;
+                z-index: 1;
+                top: 0.5em;
+                left: 1.625em;
+                width: 0.4375em;
+                height: 5.625em;
+                transform: rotate(-45deg);
+            }
+
+            [class^='modal-success-line'] {
+                display: block;
+                position: absolute;
+                z-index: 2;
+                height: 0.3125em;
+                border-radius: 0.125em;
+                background-color: #a5dc86;
+
+                &[class$='tip'] {
+                    top: 2.875em;
+                    left: 0.8125em;
+                    width: 1.5625em;
+                    transform: rotate(45deg);
+                }
+
+                &[class$='long'] {
+                    top: 2.375em;
+                    right: 0.5em;
+                    width: 2.9375em;
+                    transform: rotate(-45deg);
+                }
+            }
+
+            /* Success icon animation */
+            &.modal-icon-show {
+                .modal-success-line-tip {
+                    animation: modal-animate-success-line-tip 0.75s;
+                }
+
+                .modal-success-line-long {
+                    animation: modal-animate-success-line-long 0.75s;
+                }
+
+                .modal-success-circular-line-right {
+                    animation: modal-rotate-success-circular-line 4.25s ease-in;
+                }
+            }
+        }
+    }
+
+    /* github.com/sweetalert2/sweetalert2/issues/268 */
+    [class^='modal'] {
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .modal-show {
+        animation: modal-show 0.3s;
+    }
+
+    .modal-hide {
+        animation: modal-hide 0.15s forwards;
+    }
+
+
+    /* ANIMATIONS */
+    @keyframes modal-show {
+        0% {
+            transform: scale(0.7);
+        }
+
+        45% {
+            transform: scale(1.05);
+        }
+
+        80% {
+            transform: scale(0.95);
+        }
+
+        100% {
+            transform: scale(1);
+        }
+    }
+
+    /* Disppearance animation */
+    @keyframes modal-hide {
+        0% {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        100% {
+            transform: scale(0.5);
+            opacity: 0;
+        }
+    }
+
+    /* Success icon animations */
+    @keyframes modal-animate-success-line-tip {
+        0% {
+            top: 1.1875em;
+            left: 0.0625em;
+            width: 0;
+        }
+
+        54% {
+            top: 1.0625em;
+            left: 0.125em;
+            width: 0;
+        }
+
+        70% {
+            top: 2.1875em;
+            left: -0.375em;
+            width: 3.125em;
+        }
+
+        84% {
+            top: 3em;
+            left: 1.3125em;
+            width: 1.0625em;
+        }
+
+        100% {
+            top: 2.8125em;
+            left: 0.8125em;
+            width: 1.5625em;
+        }
+    }
+
+    @keyframes modal-animate-success-line-long {
+        0% {
+            top: 3.375em;
+            right: 2.875em;
+            width: 0;
+        }
+
+        65% {
+            top: 3.375em;
+            right: 2.875em;
+            width: 0;
+        }
+
+        84% {
+            top: 2.1875em;
+            right: 0;
+            width: 3.4375em;
+        }
+
+        100% {
+            top: 2.375em;
+            right: 0.5em;
+            width: 2.9375em;
+        }
+    }
+
+    @keyframes modal-rotate-success-circular-line {
+        0% {
+            transform: rotate(-45deg);
+        }
+
+        5% {
+            transform: rotate(-45deg);
+        }
+
+        12% {
+            transform: rotate(-405deg);
+        }
+
+        100% {
+            transform: rotate(-405deg);
+        }
+    }
+
+    /* Error icon animations */
+    @keyframes modal-animate-error-x-mark {
+        0% {
+            margin-top: 1.625em;
+            transform: scale(0.4);
+            opacity: 0;
+        }
+
+        50% {
+            margin-top: 1.625em;
+            transform: scale(0.4);
+            opacity: 0;
+        }
+
+        80% {
+            margin-top: -0.375em;
+            transform: scale(1.15);
+        }
+
+        100% {
+            margin-top: 0;
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+
+    @keyframes modal-animate-error-icon {
+        0% {
+            transform: rotateX(100deg);
+            opacity: 0;
+        }
+
+        100% {
+            transform: rotateX(0deg);
+            opacity: 1;
+        }
+    }
+
+    @keyframes modal-rotate-loading {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    /* Question mark animation */
+    @keyframes modal-animate-question-mark {
+        0% {
+            transform: rotateY(-360deg);
+        }
+
+        100% {
+            transform: rotateY(0);
+        }
+    }
+
+    /* Info and Warning mark animation */
+    @keyframes modal-animate-i-mark {
+        0% {
+            transform: rotateZ(45deg);
+            opacity: 0;
+        }
+
+        25% {
+            transform: rotateZ(-25deg);
+            opacity: 0.4;
+        }
+
+        50% {
+            transform: rotateZ(15deg);
+            opacity: 0.8;
+        }
+
+        75% {
+            transform: rotateZ(-5deg);
+            opacity: 1;
+        }
+
+        100% {
+            transform: rotateX(0);
+            opacity: 1;
+        }
+    }
+
+}   

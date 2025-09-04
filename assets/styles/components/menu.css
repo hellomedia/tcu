@@ -1,0 +1,65 @@
+@layer components {
+
+    #main-menu {
+        position: relative; /* for menu-hover-border */
+        background-color: var(--color-menu-background);
+        color: var(--color-menu-text);
+        @apply shadow-xs;
+        @media (max-width: theme(--breakpoint-md)) {
+            background-color: var(--color-menu-background-mobile);
+            color: var(--color-menu-text-mobile);
+        }
+    }
+
+    .logo {
+        background-color: var(--color-logo-background);
+    }
+
+    #main-menu-categories {
+        display: none;
+        @media (min-width: theme(--breakpoint-lg)) {
+            display: flex;
+            overflow: hidden;
+            margin-block: -1px;
+            margin-left: calc(var(--spacing) * 6);
+            @apply space-x-3;
+        }
+        @media (min-width: theme(--breakpoint-xl)) {
+            padding-inline: calc(var(--spacing) * 5);
+            @apply space-x-5;
+        }
+    }
+        
+    .main-menu-item {
+        @apply inline-flex;
+        @apply items-center;
+        @apply border-b-2;
+        @apply border-transparent;
+        @apply px-1;
+        @apply pt-1;
+        @apply text-base;
+        @apply font-medium;
+        @apply hover:text-gray-700;
+
+        transition: border 0.3s ease;
+
+        &.current {
+            color: var(--color-menu-text-current);
+            border-color: var(--color-menu-border-current);
+        }
+
+        &:not(.current):hover {
+            /* border-bottom is handled by menu_hover_controller for smooth sliding between items */
+            color: var(--color-menu-text-hover);
+        }
+    }
+
+    #menu-hover-border {
+        position: absolute;
+        bottom: 0;
+        height: 2px;
+        width: 0;
+        background-color: var(--color-menu-border-hover);
+        transition: left 0.3s ease, width 0.3s ease, background-color 0.3s ease;
+    }
+}

@@ -1,0 +1,6 @@
+.git/
+var/
+tags
+vendor.tags
+node_modules/
+vendor/

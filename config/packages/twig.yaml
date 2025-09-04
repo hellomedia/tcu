@@ -1,0 +1,25 @@
+twig:
+    file_name_pattern: '*.twig'
+    
+    default_path: '%kernel.project_dir%/templates'
+    paths:
+        src/Pack/Security/templates: 'security'
+        src/Pack/Status/templates: 'status'
+        templates/bundles/TwigBundle/Exception: 'exception'
+        controlroom/templates: 'controlroom'
+
+    form_themes:
+        - 'form/form_theme.html.twig'
+    
+    # twig globals can be added here or in App\Twig\SiteExtension
+    globals:
+        default_locale: '%default_locale%'
+        locales: '%locales%'
+
+    debug: '%kernel.debug%'
+    strict_variables: '%kernel.debug%'
+    exception_controller: null
+
+when@test:
+    twig:
+        strict_variables: true

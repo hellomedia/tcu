@@ -1,0 +1,38 @@
+{% extends 'layout/base.html.twig' %}
+
+{% block menu %}
+	{% include 'layout/menu/_menu.html.twig' %}
+{% endblock %}
+
+{% block main %}
+<div id="main-wrapper">
+	<header class="{% block header_classes '' %}">
+		<div class="default-container default-container-xpadding">
+
+			{% block breadcrumbs %}
+				<twig:breadcrumbs/>
+			{% endblock %}
+
+			{# Use with caution, as h1 is included in breadcrumbs #}
+			{% if block('title') is not empty %}
+				<h1>{% block title '' %}</h1>
+			{% endif %}
+
+			{% block header_extra_content '' %}
+
+		</div>
+	</header>
+
+	<main>
+		<div
+			class="default-container default-container-xpadding">
+
+			{# old school flash messages still used in some instances (security...) #}
+			{% block flash_messages '' %}
+
+			{% block content '' %}
+
+			</div>
+		</main>
+	</div>
+{% endblock %}

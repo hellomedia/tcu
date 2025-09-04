@@ -1,0 +1,52 @@
+@layer components {
+    footer {
+        background-color: var(--color-footer-background);
+        color: var(--color-footer-text);
+
+        padding-top: 60px;
+        padding-bottom: 60px;
+        
+        @apply hidden;
+        @media (min-width: theme(--breakpoint-bottom-menu)) {
+            display: block;
+        }
+        
+        ul {
+            @apply text-sm;
+        }
+
+        li {
+            @apply mb-4;
+        }
+
+        a {
+            @apply hover:text-gray-100;
+        }
+    }
+
+    #footer-logo {
+        margin-bottom: 50px;
+    }
+
+    #footer-columns {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .footer-section {
+        flex: 1;
+        display: flex;
+    }
+
+    .footer-section-centered {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .footer-section-title {
+        font-family: 'Inter Variable', sans-serif;
+        @apply text-base;
+        color: var(--color-footer-section-title-text);
+        margin-bottom: calc(var(--spacing) * 8);
+    }
+}

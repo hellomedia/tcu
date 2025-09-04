@@ -1,0 +1,67 @@
+@layer base {
+
+    form {
+
+        /* light theme variables */
+        /* -- dark theme handled differenly for each form element type -- */
+        --color-form-widget-background: var(--color-gray-50);
+        --color-form-widget-border: var(--color-gray-300);
+        --color-form-widget-border-focus: var(--color-gray-400);
+
+        @apply text-base;
+        color: var(--color-primary-text);
+    }
+
+    .form-row {
+        margin-bottom: calc(var(--spacing) * 3);
+    }
+
+    .form-row > label:not(.checkbox) {
+        display: block;
+        margin-bottom: calc(var(--spacing) * 2);
+        font-size: var(--text-sm);
+        font-weight: bold;
+    }
+
+    .choice-expanded-item {
+        margin-bottom: 0px;
+    }
+
+    /* common styles for form elements */
+
+    input, select, textarea {
+        display: block;
+        width: 100%;
+        border: 1px solid var(--color-form-widget-border);
+        background-color: var(--color-form-widget-background);
+
+        @apply rounded-md;
+        @apply p-2.5;
+    }
+
+    input:focus, select:focus, textarea:focus {
+        outline: 0;
+        border: 1px solid var(--color-form-widget-border-focus);
+    }
+
+    .form-errors {
+        background-color: var(--color-red-50);
+        color: var(--color-red-800);
+        padding: calc(var(--spacing) * 4);
+        margin-bottom: calc(var(--spacing) * 3);
+    }
+
+    .form-actions {
+        margin-top: 30px;
+        display: flex;
+        align-items: center;
+        a, button {
+            margin-right: 10px;
+        }
+    }
+
+    .modal .form-actions {
+        margin-top: 0;
+    }
+
+}

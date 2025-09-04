@@ -1,0 +1,35 @@
+@layer base {
+
+    @keyframes move-out {
+        from {
+            transform: translateX(0%);
+        }
+        to {
+            transform: translateX(100%);
+        }
+    }
+
+    @keyframes move-in {
+        from {
+            transform: translateX(-100%);
+        }
+        to {
+            transform: translateX(0%);
+        }
+    }
+
+    /* only use translation view transition on mobile where it feels native */
+    @media (max-width: theme(--breakpoint-mobile-end)) {
+        html[data-turbo-visit-direction="back"]::view-transition-old(root) {
+            /* on mobile, screen width is small so animation needs to be fast to feel snappy */
+            animation: 0.2s ease-in both move-out;
+        }
+
+        html[data-turbo-visit-direction="back"]::view-transition-new(root) {
+            /* on mobile, screen width is small so animation needs to be fast to feel snappy */
+            animation: 0.2s ease-in both move-in;
+        }
+    }
+
+    /* on desktop, translating the page horizontally in view transition feels strange */
+}

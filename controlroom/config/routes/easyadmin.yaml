@@ -1,0 +1,4 @@
+easyadmin:
+    host: '%host_controlroom%' # use parameter instead of env var : https://github.com/symfony/symfony/issues/20682
+    resource: .
+    type: easyadmin.routes

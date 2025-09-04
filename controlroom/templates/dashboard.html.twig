@@ -1,0 +1,41 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block content_title %}Dashboard
+{% endblock %}
+
+{% block main %}
+
+	<div class="grid-dashboard">
+
+		{% include '@controlroom/_chart.html.twig'
+            with {
+                title: 'Inscriptions',
+                chart: registration_activity_chart,
+            } only
+        %}
+
+		{% include '@controlroom/_chart.html.twig'
+            with {
+                title: 'Connections',
+                chart: connection_activity_chart
+            } only
+        %}
+
+		{% include '@controlroom/_chart.html.twig'
+            with {
+                title: 'Listing Pageviews',
+                chart: views_activity_chart
+            } only
+        %}
+
+		{% include '@controlroom/_chart.html.twig'
+            with {
+                title: 'Messages',
+                chart: message_activity_chart
+            } only
+        %}
+
+	</div>
+
+{% endblock %}
+

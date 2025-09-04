@@ -1,0 +1,54 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block content_title %}
+    Realpath Cache
+{% endblock %}
+
+
+{% block main %}
+    <style>
+        #charts {
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 40px;
+        }
+        .chart-container {
+            height: 300px;
+        }
+        .chart-container h4 {
+            text-align: center;
+        }
+        #stats {
+            margin-top: 40px;
+            max-width: 900px;
+            margin-right: auto;
+            margin-left: auto;
+            padding: 15px 0;
+        }
+        .form-tabs-content {
+            border: 1px solid #ccc;
+        }
+        .form-tabs-tablist .nav-tabs {
+            margin-bottom: 30px;
+        }
+        .form-tabs-tablist .nav-tabs a,
+        .form-tabs-tablist .nav-tabs a:hover
+        {
+            padding-bottom: 15px;
+        }
+        .table>:not(caption)>*>* {
+            padding: 0.5rem 1rem;
+        }
+    </style>
+    
+
+    <div id="charts">
+
+        <div class="chart-container">
+            {{ render_chart(realpath_chart, {'data-controller': 'format-bytes-axis'}) }}
+        </div>
+
+    </div>
+
+{% endblock %}

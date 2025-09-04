@@ -1,0 +1,121 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block content_title %}
+    {{ opcache.pageTitle }}
+{% endblock %}
+
+{% block main %}
+    <style>
+        #charts {
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 40px;
+        }
+        .chart-container {
+            height: 300px;
+        }
+        .chart-container h4 {
+            text-align: center;
+        }
+        #stats {
+            margin-top: 40px;
+            max-width: 900px;
+            margin-right: auto;
+            margin-left: auto;
+            padding: 15px 0;
+        }
+        .form-tabs-content {
+            border: 1px solid #ccc;
+        }
+        .form-tabs-tablist .nav-tabs {
+            margin-bottom: 30px;
+        }
+        .form-tabs-tablist .nav-tabs a,
+        .form-tabs-tablist .nav-tabs a:hover
+        {
+            padding-bottom: 15px;
+        }
+        .table>:not(caption)>*>* {
+            padding: 0.5rem 1rem;
+        }
+    </style>
+    
+
+    <div id="charts">
+
+        <div class="chart-container">
+            <h4>Memory</h4>
+            {{ render_chart(memory_chart, {'data-controller': 'format-bytes-axis'}) }}
+        </div>
+
+        <div class="chart-container">
+            <h4>Files</h4>
+            {{ render_chart(keys_chart) }}
+        </div>
+
+        <div class="chart-container">
+            <h4>Hits</h4>
+            {{ render_chart(hits_chart) }}
+        </div>
+
+        <div class="chart-container">
+            <h4>Restarts</h4>
+            {{ render_chart(restarts_chart) }}
+        </div>
+    </div>
+
+    <div id="stats">
+
+        <nav class="nav-tabs-custom form-tabs-tablist nav-fill">
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#status" data-bs-toggle="tab">
+                        Status
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#config" data-bs-toggle="tab">
+                        Config
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#scripts" data-bs-toggle="tab">
+                        Files
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="nav-tabs-custom form-tabs-content">
+            <div class="tab-content">
+                
+                <div id="status" class="tab-pane active">
+                    <table class="table table-striped">
+                        {{ opcache.statusDataRows|raw }}
+                    </table>
+                </div>
+
+                <div id="config" class="tab-pane">
+                    <table class="table table-striped">
+                        {{ opcache.configDataRows|raw }}
+                    </table>
+                </div>
+
+                <div id="scripts" class="tab-pane">
+                    <table class="table table-striped">
+                        <tr>
+                            <th width="10%">Hits</th>
+                            <th width="20%">Memory</th>
+                            <th width="70%">Path</th>
+                        </tr>
+                        {{ opcache.scriptStatusRows|raw }}
+                    </table>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    {% endblock %}

@@ -1,0 +1,15 @@
+{# templates/bundles/TwigBundle/Exception/error400.html.twig #}
+{% extends 'layout/error.html.twig' %}
+
+{% block title %}
+    <h1>{{ 'bad_request.title'|trans(domain='security') }}</h1>
+{% endblock %}
+
+{% block content %}
+    {# This is not really a flash-message, just needs the look of it #}
+    <div id="flash-messages">
+        <div class="alert alert-info">
+            {{ 'bad_request.message'|trans({'%url%': path('homepage')}, 'security')|raw }}
+        </div>
+    </div>
+{% endblock %}

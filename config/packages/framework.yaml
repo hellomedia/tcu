@@ -1,0 +1,46 @@
+# see https://symfony.com/doc/current/reference/configuration/framework.html
+framework:
+    secret: '%env(APP_SECRET)%'
+    http_method_override: true
+    # https://github.com/symfony/symfony/pull/47467#issuecomment-1282578442
+    annotations: false
+    handle_all_throwables: true
+
+    esi:
+        enabled: false
+
+    fragments:
+        enabled: false
+        path: /_fragment
+
+    # Log php errors in application logs to centralize errors for Sentry
+    php_errors:
+        log: true
+
+    # Note that the session will be started ONLY if you read or write from it.
+    session:
+        name: "tcu"
+        handler_id: session.handler.native_file
+        storage_factory_id: session.storage.factory.native
+        save_path: "%kernel.project_dir%/var/sessions/"
+        # http://symfony.com/doc/current/reference/configuration/framework.html#session
+        # set cookie_lifetime to 0 means session cookie is valid for the length of browser session
+        # Not to be confused with remember_me cookie in security.yaml
+        # http://symfony.com/doc/current/cookbook/security/remember_me.html
+        cookie_lifetime: 0
+        cookie_secure: true
+        cookie_samesite: lax # 'lax' for app. See comments in controlroom/config/packages/framework.yaml
+
+    serializer:
+        name_converter: 'serializer.name_converter.camel_case_to_snake_case'
+
+    validation:
+        enabled:              true
+        enable_attributes:    true
+        translation_domain:   validators
+
+when@test:
+    framework:
+        test: true
+        session:
+            storage_factory_id: session.storage.factory.mock_file

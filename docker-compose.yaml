@@ -1,0 +1,91 @@
+services:
+  nginx:
+    build: ./docker/nginx
+    depends_on:
+      - php
+    ports:
+      - "80:80"
+      - "443:443"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+    volumes:
+      - "./:/data/www"
+      - "./docker/nginx/nginx.conf:/etc/nginx/nginx.conf"
+      - "./docker/nginx/fcgi.conf:/etc/nginx/fcgi.conf"
+      - "./docker/nginx/common_locations.conf:/etc/nginx/common_locations.conf"
+      - "./docker/nginx/ssl.conf:/etc/nginx/ssl.conf"
+
+  php:
+    build: .
+    working_dir: /data/www
+    depends_on:
+      - database
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+    environment:
+      DATABASE_HOST: database
+      DATABASE_PASSWORD: "000000"
+      DATABASE_USER: hellomedia
+    volumes:
+      - "./:/data/www"
+      - "./docker/php/php-fpm.conf:/etc/php/8.3/fpm/pool.d/www.conf" # mounts php-fpm settings into the container
+      - "./docker/php/80-xdebug.ini:/etc/php/8.3/fpm/conf.d/80-xdebug.ini" # mounts xdebug settings into the container
+
+  database:
+    build: docker/postgres
+    environment:
+      POSTGRES_USER: "hellomedia"
+      POSTGRES_PASSWORD: "000000"
+      POSTGRES_DB: tcu
+    ports:
+      - "5432:5432"
+    volumes:
+      - "db-data:/var/lib/postgresql/data"
+   
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "hellomedia@hellomedia.be"
+      PGADMIN_DEFAULT_PASSWORD: "000000"
+    ports:
+      - '5050:80'
+    volumes:
+      - 'db-pgadmin:/var/lib/pgadmin'
+
+###> doctrine/doctrine-bundle ###
+  # database:
+  #   image: postgres:${POSTGRES_VERSION:-13}-alpine
+  #   environment:
+  #     POSTGRES_DB: ${POSTGRES_DB:-app}
+  #     # You should definitely change the password in production
+  #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ChangeMe}
+  #     POSTGRES_USER: ${POSTGRES_USER:-symfony}
+  #   volumes:
+  #     - db-data:/var/lib/postgresql/data:rw
+  #     # You may use a bind-mounted host directory instead, so that it is harder to accidentally remove the volume and lose all your data!
+  #     # - ./docker/db/data:/var/lib/postgresql/data:rw
+###< doctrine/doctrine-bundle ###
+
+
+# NAMED VOLUMES
+
+volumes:
+  db-data:
+  db-pgadmin:
+  #shared_certs:  # not neeeded since we use http internally between nginx and caddy
+
+# NB: Named Volumes vs Bind Mounts
+# For Named Volumes, storage location is handled internally by docker.
+# For bind mounts (in volumes section of the services), storage location is defined in this file.
+# For example, we don't really care where db-data is stored, so it makes sense to let docker handle it internally.
+# For sharing the code living on the host with the php container, however, we want to specify the location, so we use a bind mount.
+
+###> doctrine/doctrine-bundle ###
+  # db-data:
+###< doctrine/doctrine-bundle ###

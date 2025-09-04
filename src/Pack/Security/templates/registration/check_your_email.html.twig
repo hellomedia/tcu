@@ -1,0 +1,26 @@
+{% extends 'layout/default.html.twig' %}
+
+{% block extra_head_tags %}
+	<meta name="robots" content="noindex"/>
+{% endblock %}
+
+{% block title %}
+	{{ 'registration.check_email.title'|trans(domain='security') }}
+{% endblock %}
+
+{% block flash_messages '' %}
+
+{% block content %}
+
+    {% if gmail_junk_warning %}
+        <div class="alert alert-info">
+            <p style="font-weight: bold; font-size: 16px;margin-bottom: 10px;">{{ 'gmail_junk_warning.title'|trans }}</p>
+            <p style="font-weight: bold; font-size: 16px;">{{ 'gmail_junk_warning.message'|trans }}</p>
+        </div>
+    {% endif %}
+
+    <div class="alert alert-info">
+        <p>{{ 'registration.check_email.message'|trans({'%email%': email}, 'security')|raw }}</p>
+    </div>
+
+{% endblock content %}

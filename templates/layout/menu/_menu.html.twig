@@ -1,0 +1,48 @@
+<nav
+	id="main-menu"
+	data-controller="menu-hover"
+>
+
+	<div class="full-w-container full-w-container-xpadding">
+		<div class="flex h-16 justify-between">
+			<div class="flex">
+				<div class="flex shrink-0 items-center logo">
+					<a href="{{ path('homepage') }}"
+                        class="flex items-center space-x-2 px-5 rtl:space-x-reverse"
+                        style="color: white;"
+                    >
+						Home
+					</a>
+				</div>
+			</div>
+
+			<div class="flex">
+
+				{% if is_granted('ROLE_USER') %}
+					<div class="hidden lg:flex lg:mr-0 md:items-center">
+						{% include "layout/menu/_account_menu.html.twig" %}
+					</div>
+				{% endif %}
+
+				{% if not is_granted('ROLE_USER') %}
+					<div class="hidden md:flex items-center md:mr-5">
+						<a href="{{ path('login') }}" />{{ 'Login'|trans }}</a>
+					</div>
+				{% endif %}
+
+				<div
+					class="-mr-2 flex items-center lg:hidden"
+					data-controller="mobile-menu"
+				>
+					{% include "layout/menu/_mobile_menu_button.html.twig" with {
+						mobile_menu_button_extra_classes: 'mr-2',
+						mobile_menu_button_svg_classes: 'h-7'
+					} %}
+					{% include "layout/menu/_mobile_menu.html.twig" %}
+					{% include 'layout/menu/_bottom_menu.html.twig' %}
+				</div>
+			</div>
+		</div>
+	</div>
+
+</nav>

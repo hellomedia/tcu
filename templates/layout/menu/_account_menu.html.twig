@@ -1,0 +1,31 @@
+<div id="account-menu"
+	data-controller="dropdown"
+	class="dropdown-container h-6"
+>
+	<button type="button"
+		class="dropdown-button"
+		data-action="dropdown#toggle"
+	>
+		<twig:ux:icon name="account" class="h-6"/>
+	</button>
+
+	<div data-dropdown-target="menu" class="dropdown-menu hidden" style="right: -30px; left: auto;">
+		<div class="dropdown-inner">
+			<a href="{{ path('dashboard') }}" class="dropdown-link" data-action="dropdown#toggle">
+				{{ 'Dashboard'|trans }}
+			</a>
+			<a href="{{ path('admin_listing_index') }}" class="dropdown-link" data-action="dropdown#toggle">
+				{{ 'My listings'|trans }}
+			</a>
+			<a href="{{ path('admin_message_index') }}" class="dropdown-link" data-action="dropdown#toggle">
+				{{ 'Messages'|trans }}
+			</a>
+			{% if is_granted('ROLE_USER') %}
+				<hr style="margin-top:12px;margin-bottom:12px">
+				<a href="/logout" class="dropdown-link" data-action="dropdown#toggle">
+					{{ 'Logout'|trans }}
+				</a>
+			{% endif %}
+		</div>
+	</div>
+</div>

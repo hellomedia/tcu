@@ -1,0 +1,21 @@
+{% extends 'layout/default.html.twig' %}
+
+{% block extra_head_tags %}
+    <title>{{ 'password reset'|trans }}</title>
+    <meta name="robots" content="noindex" />
+{% endblock %}
+
+{% block title %}
+	{{ 'password_reset.title'|trans(domain='security') }}
+{% endblock %}
+
+{% block content %}
+    {# Here, we use a static info/success message instead of a flash message to survive page reload #}
+    {# in case of error, we are redirected to the request page instead of here #}
+    {# in that page, we show the flash messages #}
+    <div class="alert alert-info">
+        <p>
+            {{ 'password_reset.check_email'|trans(domain='security')|raw }}
+        </p>
+    </div>
+{% endblock %}

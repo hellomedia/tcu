@@ -1,0 +1,49 @@
+
+!.gitkeep
+
+pg_upgrade_internal.log
+pg_upgrade_restore.log
+pg_upgrade_server.log
+pg_upgrade_utility.log
+
+/public/uploads/
+
+###> liip/imagine-bundle ###
+/public/media/cache/
+###< liip/imagine-bundle ###
+
+###> symfony/framework-bundle ###
+/.env.local
+/.env.local.php
+/.env.*.local
+/config/secrets/prod/prod.decrypt.private.php
+/public/bundles/
+/var/
+/vendor/
+###< symfony/framework-bundle ###
+
+###> symfony/webpack-encore-bundle ###
+/node_modules/
+/public/build/
+npm-debug.log
+yarn-error.log
+###< symfony/webpack-encore-bundle ###
+
+*.override.yaml
+
+###> phpstan/phpstan ###
+phpstan.neon
+###< phpstan/phpstan ###
+
+# see /docker/nginx/ssl/README.txt
+/docker/nginx/ssl/rootCA.key
+/docker/nginx/ssl/rootCA.crt
+
+# vscode
+*.code-workspace
+###> symfony/asset-mapper ###
+/public/assets/
+/assets/vendor/
+###< symfony/asset-mapper ###
+
+/bin/webhook.sh

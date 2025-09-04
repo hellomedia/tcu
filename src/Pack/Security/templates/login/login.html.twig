@@ -1,0 +1,87 @@
+{% extends 'layout/default.html.twig' %}
+
+{% set email = force_full_authentication ? app.user.email : (app.request.query.get("email") ?? last_email ?? "") %}
+
+{% block extra_head_tags %}
+    <title>{{ 'connection.title'|trans(domain='security') }}</title>
+    <meta name="robots" content="noindex" />
+{% endblock %}
+
+{% block body_extra_classes %}login-page{% endblock %}
+
+{% block content %}
+
+    <div id="auth-box">
+   
+        {# let's not use flash_messages on login page since it could be a transition page #}
+
+        {% if not force_full_authentication %}
+            <h1>{{ 'connection.title'|trans(domain='security')|title }}</h1>
+        {% endif %}
+
+        {% if force_full_authentication %}
+            <div class="alert alert-info">
+                <p><b>{{ 'force_full_authentication.info'|trans(domain='security') }}</b></p>
+            </div>
+        {% endif %}
+
+        {% if error %}
+            <div class="alert alert-error">
+                <p>{{ error.messageKey|trans(error.messageData, 'security')|raw }}</p>
+            </div>
+        {% endif %}
+
+        <form id="login-form" class="form" method="post">
+
+            <div class="form-row">
+                <label for="email">Email</label>
+                <input
+                    type="{{ force_full_authentication ? 'hidden' : 'text' }}"
+                    id="email"
+                    name="email"
+                    value="{{ email }}"
+                    placeholder="{{ 'email'|trans(domain='security') }}"
+                    autocomplete="username"
+                    required
+                    autofocus
+                />
+            </div>
+
+            <div class="form-row">
+                <label for="password">{{ 'Password'|trans }}</label>
+                <div data-controller="password-visibility" class="password-visibility">
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="{{ 'password'|trans(domain='security') }}"
+                        autocomplete="current-password"
+                        data-password-visibility-target="input"
+                        spellcheck="false"
+                        required
+                    />
+                    <button type="button" data-action="password-visibility#toggle">
+                        <span data-password-visibility-target="icon"><img src="{{ asset('images/eye-off.svg') }}"/></span>
+                        <span data-password-visibility-target="icon" class="hidden"><img src="{{ asset('images/eye.svg') }}"/></span>
+                    </button>
+                </div>
+            </div>
+
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}" />
+
+            {% embed 'form/_form_actions.html.twig' %}
+                {% block cancel '' %}
+                {% block submit_label (force_full_authentication ? 'Submit' : 'Login')|trans %}
+            {% endembed %}
+
+        </form>
+        
+        {{ render(controller('App\\Pack\\Security\\Controller\\LoginController::showPasswordResetLink', {'email': email })) }}
+
+        {% if not force_full_authentication %}
+            {{ render(controller('App\\Pack\\Security\\Controller\\LoginController::showRegistrationLink', {'email': email})) }}
+        {% endif %}
+
+    </div>
+
+{% endblock content %}

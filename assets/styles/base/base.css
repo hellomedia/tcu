@@ -1,0 +1,48 @@
+@layer base {
+
+    body {
+        font-family: 'Inter Variable', sans-serif;
+        @apply text-base;
+    }
+
+    h1 {
+        font-family: 'Poppins', 'Inter Variable', sans-serif;
+        @apply text-2xl;
+        @apply mt-6;
+        @apply mb-6;
+        color: var(--color-page-title);
+    }
+
+    h2 {
+        font-family: 'Poppins', 'Inter Variable', sans-serif;
+        @apply text-2xl;
+    }
+
+    h3 {
+        font-family: 'Poppins', 'Inter Variable', sans-serif;
+        @apply text-xl;
+    }
+
+    h3:not(nav h3, footer h3) {
+        color: var(--color-highlight-text);
+    }
+
+    a {
+        text-decoration: none;
+    }
+
+    hr {
+        color: var(--color-separator);
+        @apply mt-5;
+        @apply mb-5;
+    }
+
+    p {
+        margin-bottom: calc(var(--spacing) * 5);
+    }
+
+    .text-wrapper {
+        max-width: 800px;
+    }
+
+}

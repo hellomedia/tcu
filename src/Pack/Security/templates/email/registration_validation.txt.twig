@@ -1,0 +1,15 @@
+{% extends 'email/layout/template.txt.twig' %}
+
+{% trans_default_domain 'security' %}
+
+{% block content %}
+
+{{ 'registration.validation_email.subject'|trans(locale=language) }}
+
+==================================
+
+{{ 'registration.validation_email.click_link'|trans(locale=language) }}
+
+{{ signedUrl|raw }}
+
+{% endblock %}

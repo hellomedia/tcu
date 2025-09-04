@@ -1,0 +1,25 @@
+# Enable traditional CSRF protection OR new system: stateless CSRF protection
+# for forms and logins/logouts
+# https://symfony.com/doc/current/security/csrf.html
+# with traditional system, you cannot fully cache pages that include CSRF protected forms.
+# https://symfony.com/blog/new-in-symfony-7-2-stateless-csrf
+framework:
+
+    # enables csrf tokens in general
+    # so that services like CsrfTokenManagerInterface are available
+    csrf_protection: true
+
+    # new system
+    # csrf_protection:
+    #     stateless_token_ids:
+    #         - submit
+    #         - authenticate
+    #         - logout
+
+    form:
+        # enables csrf tokens in forms
+        # traditional style, using the session
+        csrf_protection:
+            enabled: true
+            # new system
+            # token_id: submit

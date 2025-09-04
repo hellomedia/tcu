@@ -1,0 +1,71 @@
+when@prod: &sentry_prod
+    sentry:
+        dsn: '%env(SENTRY_DSN)%'
+        messenger:
+            enabled: true # flushes Sentry messages at the end of each message handling
+            capture_soft_fails: true # captures exceptions marked for retry too
+        options:
+            environment: '%kernel.environment%'
+            release: '%env(APP_VERSION)%' # your app version
+            send_default_pii: true
+            before_send: 'sentry.callback.before_send'
+            ignore_exceptions:
+                - 'Symfony\Component\ErrorHandler\Error\FatalError'
+                - 'Symfony\Component\Debug\Exception\FatalErrorException'
+                - 'Symfony\Component\HttpKernel\Exception\NotFoundHttpException'
+                - 'Knp\Component\Pager\Exception\InvalidValueException' # SQL injection attempts in search query params (handled by DQL escaping) from bots and PCI DSS scan cause this pager exception
+                # On the flip side, this does silence this exception which can be thrown in case of a valid error: mismatch between a sort alias and the query alias. Not sure how to balance the two.
+
+        # this hooks into critical paths of the framework (and vendors) to perform
+        # automatic instrumentation (there might be some performance penalty)
+        # https://docs.sentry.io/platforms/php/guides/symfony/performance/instrumentation/automatic-instrumentation/
+        tracing:
+            enabled: false
+
+        # If you are using Monolog, you also need this additional configuration to log the errors correctly:
+        # (includes the next 10 lines)
+        # https://docs.sentry.io/platforms/php/guides/symfony/#monolog-integration
+
+        # Disable symfony error reporting -- Sentry reports monolog errors instead
+        register_error_listener: false
+        register_error_handler: false
+
+    monolog:
+       handlers:
+           sentry:
+               type: sentry
+               level: !php/const Monolog\Logger::ERROR
+               hub_id: Sentry\State\HubInterface
+               fill_extra_context: true # Enables sending monolog context to Sentry
+
+#    Uncomment these lines to register a log message processor that resolves PSR-3 placeholders
+#    https://docs.sentry.io/platforms/php/guides/symfony/#monolog-integration
+#    services:
+#        Monolog\Processor\PsrLogMessageProcessor:
+#            tags: { name: monolog.processor, handler: sentry }
+
+services:
+    sentry.callback.before_send:
+        class: 'App\Service\Sentry'
+        factory: [ '@App\Service\Sentry', 'getBeforeSend' ]
+
+when@staging: *sentry_prod
+
+######## DEBUGGING SENTRY #############
+# - Toggle between configs below
+# ( Sentry needs to be enabled for dev in bundles.php )
+# - Visit /_check/sentry
+#######################################
+
+# Enable Sentry in dev
+# when@dev: *sentry_prod
+
+# Disable Sentry in dev
+when@dev:
+    sentry:
+        dsn: null
+        register_error_listener: false
+        register_error_handler: false
+
+
+

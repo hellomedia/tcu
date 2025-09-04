@@ -1,0 +1,103 @@
+@layer components {
+
+    .scroll-lock {
+        overflow: hidden;
+    }
+
+    #mobile-menu {
+        z-index: 500;
+        position: fixed;
+        bottom: calc(var(--spacing) * 18 * -1); /* a bit more than top menu height */
+        padding-bottom: 75px; /* offset bottom menu height */
+        left: 0;
+        width: 100dvw;
+        height: 100dvh; /* dynamic viewport height to account for dynamic OS UI elements */
+        
+        border-radius: 10px;
+        background-color: var(--color-mobile-menu-background);        
+        overflow-y: auto;
+        border: 1px solid var(--color-gray-200);
+        box-shadow: 0 -1px 5px var(--color-gray-200);
+
+        /* TRANSITION */
+
+        translate: 0 100%;
+        opacity: 0.5;
+
+        transition-property: all;
+        transition-duration: 300ms;
+        transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
+
+        &.open {
+            translate: 0 0;
+            opacity: 1;
+        }
+
+        .dark & {
+            border-color: var(--color-gray-600);
+            box-shadow: 0 -1px 5px var(--color-gray-700);
+        }
+    }
+
+    #mobile-menu-drag-indicator {
+
+        padding-bottom: 10px;
+
+        &::before {
+            content: ' ';
+            display: block;
+            background-color: var(--color-gray-200);
+            width: 20%;
+            height: 8px;
+            border-radius: 5px;
+            margin-top: 5px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .dark &::before {
+            background-color: var(--color-gray-500);
+        }
+    }
+
+    .mobile-menu-item {
+        @apply flex;
+        @apply border-l-4;
+        @apply border-transparent;
+        @apply py-2;
+        @apply pr-4;
+        @apply pl-3;
+        @apply text-base;
+        @apply font-medium;
+        color: var(--color-mobile-menu-text);
+        @apply hover:border-gray-300;
+        @apply hover:bg-gray-50;
+        @apply hover:text-gray-800;
+
+        &.active {
+            border-color: var(--color-mobile-menu-active-border);
+            background-color: var(--color-mobile-menu-active-background);
+            color: var(--color-mobile-menu-active-text);
+        }
+    }
+
+    .mobile-menu-item-icon {
+        @apply w-9;
+        @apply pr-3;
+    }
+
+    /* can have multiple buttons - one in top menu and 1 in bottom menu */
+    .mobile-menu-button {
+        @apply relative;
+        @apply inline-flex;
+        @apply items-center;
+        @apply justify-center;
+        @apply rounded-md;
+    }
+
+    .mobile-menu-path {
+        transition: d 0.5s cubic-bezier(0.42, 0, 0.58, 1), transform 0.5s ease-in-out;
+        transform-origin: center;
+        view-transition-name: mobile-menu-button;
+    }
+}

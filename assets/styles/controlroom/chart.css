@@ -1,0 +1,7 @@
+.secondary-charts {
+    display: flex;
+}
+
+.secondary-chart {
+    flex-basis: 1;
+}

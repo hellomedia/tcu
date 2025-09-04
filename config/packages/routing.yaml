@@ -1,0 +1,12 @@
+framework:
+    router:
+        # Configure how to generate URLs in non-HTTP contexts, such as CLI commands and messenger queue
+        # See https://symfony.com/doc/current/routing.html#generating-urls-in-commands
+        # Another option for messenger queue is to add 'router_context' middleware (see messenger.yaml)
+        # But this seems simpler and works for all non HTTP contexts (messenger + command)
+        default_uri: 'https://%env(HOST)%'
+
+when@prod:
+    framework:
+        router:
+            strict_requirements: null

@@ -1,0 +1,65 @@
+{% use "form_div_layout.html.twig" %}
+
+{% block form_row %}
+    {%- set row_attr = row_attr|merge({'class': ('form-row' ~ ' ' ~ row_attr.class|default(''))|trim}) -%}
+    {{ parent() }}
+{% endblock %}
+
+{%- block choice_widget_expanded -%}
+    <div {{ block('widget_container_attributes') }}>
+        {%- for child in form %}
+            <div class="choice-expanded-item">
+                <label class="{{ multiple ? 'checkbox' : 'radio' }} {{ child.vars.checked ? 'checked' }}">
+                    {{ form_widget(child) }}
+                    <span class="{{ multiple ? 'custom-checkbox' : 'custom-radio' }}"></span>
+                    <span class="label">{{- child.vars.label|trans -}}</span>
+                </label>
+            </div>
+        {% endfor -%}
+    </div>
+{%- endblock choice_widget_expanded -%}
+
+{%- block checkbox_row -%}
+    {%- set row_attr = row_attr|merge({'class': ('form-row' ~ ' ' ~ row_attr.class|default(''))|trim}) -%}
+    <div {% with {attr: row_attr} %}{{ block('attributes') }}{% endwith %}>
+        <label class="checkbox {{ checked ? 'checked' }}">
+            {{ form_widget(form) }}
+            <span class="custom-checkbox"></span>
+            <span class="label">{{- label|trans -}}</span>
+        </label>
+    </div>
+{%- endblock checkbox_row -%}
+
+
+{% block textarea_widget %}
+    {%- set attr = attr|merge({
+        'data-controller': ('autogrow' ~ ' ' ~ attr['data-controller']|default(''))|trim,
+        'data-action': ('input->autogrow#resize' ~ ' ' ~ attr['data-action']|default(''))|trim,
+    }) 
+    -%}
+	{{ parent() }}
+{% endblock %}
+
+{%- block form_errors -%}
+    {%- if errors|length > 0 -%}
+        <ul class="form-errors">
+            {%- for error in errors -%}
+                <li>{{ error.message }}</li>
+            {%- endfor -%}
+        </ul>
+    {%- endif -%}
+{%- endblock form_errors -%}
+
+{# Add loader #}
+{% block button_widget %}
+	{% set attr = attr|merge({'data-controller': 'loading', 
+                              'data-loading-target': 'button', 
+                              'class': (attr.class|default('') ~ ' loading-btn')|trim }) %}
+	<button {{ block('button_attributes') }}>
+		<span>{{ label|default('Save') }}</span>
+		<div class="loader" data-loading-target="loader"><div class="spinner"></div></div>
+	</button>
+{% endblock %}
+
+
+

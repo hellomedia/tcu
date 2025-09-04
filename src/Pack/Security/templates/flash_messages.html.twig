@@ -1,0 +1,17 @@
+{% if app.session.flashbag.peekAll() is not empty %}
+<div id="flash-messages" class="{% block flash_messages_classes '' %}">
+    {% for type, flash_messages in app.session.flashbag.all() %}
+        {% for flash_message in flash_messages %}
+        <div class="alert alert-{{ type }}">
+            {% if flash_message is instanceOf('App\\Translation\\TranslatableHtmlMessage') %}
+                {{ flash_message|trans|raw }}
+            {% elseif flash_message is instanceOf('App\\Translation\\TranslatableMessage') %}
+                {{ flash_message|trans }}
+            {% else %}
+                {{ flash_message|trans(domain='flash_messages') }}
+            {% endif %}
+        </div>
+        {% endfor %}
+    {% endfor %}
+</div>
+{% endif %}

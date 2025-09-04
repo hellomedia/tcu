@@ -1,0 +1,34 @@
+<button type="button"
+	data-action="mobile-menu#toggle"
+	class="mobile-menu-button {{ mobile_menu_button_extra_classes ?? '' }}"
+>
+	<span class="sr-only">Open menu</span>
+
+	<svg
+		class="{{ mobile_menu_button_svg_classes ?? '' }}"
+		fill="none"
+		viewbox="0 0 24 24"
+		stroke-width="1.5"
+		stroke="currentColor"
+		aria-hidden="true"
+	>
+		<path
+			class="mobile-menu-path"
+			data-mobile-menu-target="buttonPath"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+			d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+		>
+			<animate
+				data-mobile-menu-target="buttonAnimation"
+				attributename="d"
+				dur="0.5s"
+				repeatcount="1"
+				fill="freeze"
+			/>
+		</path>
+	</svg>
+
+	{% block label '' %}
+
+</button>

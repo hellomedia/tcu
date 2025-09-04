@@ -1,0 +1,21 @@
+@layer base {
+
+    textarea {
+        /* see form_theme for adding autoresize stimulus controller */
+        min-height: 5rem;
+        max-height: 80vh;
+        overflow: hidden;
+        resize: none;
+    }
+
+    .dark textarea {
+        background-color: var(--color-gray-600);
+        border-color: var(--color-gray-600);
+        color: var(--color-gray-200);
+
+        &:focus {
+            border-color: var(--color-gray-400);
+        }
+    }
+
+}

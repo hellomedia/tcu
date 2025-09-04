@@ -1,0 +1,7 @@
+/* tailwind variables replacement for modal css imported from controlroom.js */
+/* since controlroom does not have tailwind compilation */
+:root {
+    --spacing: 0.25em;
+    --color-primary-text: #444;
+    --color-primary-background: white;
+}

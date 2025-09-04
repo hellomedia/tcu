@@ -1,0 +1,20 @@
+@layer base {
+    @media (max-width: theme(--breakpoint-mobile-end)) {
+        .mobile-focus-layout {
+            #main-wrapper {
+                padding-top: 0;
+                padding-bottom: 0;
+            }
+            
+            header {
+                display: none;
+            }
+
+            .default-container-xpadding {
+                /* override layout.css */
+                @apply px-0;
+                @apply sm:px-0;
+            }
+        }
+    }
+}

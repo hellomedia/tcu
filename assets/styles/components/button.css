@@ -1,0 +1,210 @@
+@layer components {
+    
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        appearance: button;
+        cursor: pointer;
+        border-radius: var(--radius-md);
+        padding-inline: calc(var(--spacing) * 6);
+        padding-block: calc(var(--spacing) * 2);
+        margin-block: calc(var(--spacing) * 3);
+
+        svg {
+            width: 30px;
+        }
+    }
+
+    .btn-primary {
+        background-color: var(--color-button-primary);
+        border: 1px solid var(--color-button-primary);
+        color: var(--color-gray-100);
+
+        position: relative;
+        overflow: hidden;
+        z-index: 0;
+
+        transition: background-color 0.3s ease, color 0.3s ease;
+
+        &:hover {
+            color: var(--color-gray-100);
+            background-color: var(--color-button-primary-hover);
+            border: 1px solid var(--color-button-primary-hover);
+        }
+
+        .dark &:hover {
+            color: var(--color-gray-900);
+            background-color: var(--color-gray-300);
+            border: 1px solid var(--color-gray-300);
+        }
+    }
+
+    .btn-danger {
+        background-color: var(--color-button-danger);
+        border: 1px solid var(--color-button-danger);
+        color: var(--color-gray-100);
+
+        position: relative;
+        overflow: hidden;
+        z-index: 0;
+
+        transition: background-color 0.3s ease, color 0.3s ease;
+
+        &:hover {
+            color: var(--color-gray-100);
+            background-color: var(--color-button-danger-hover);
+            border: 1px solid var(--color-button-danger-hover);
+        }
+
+        .dark &:hover {
+            color: var(--color-gray-100);
+            background-color: var(--color-button-danger-hover);
+            border: 1px solid var(--color-button-danger-hover);
+        }
+    }
+
+    .btn-default {
+        background-color: var(--color-button-default);
+        border: 1px solid var(--color-button-default);
+        color: var(--color-gray-600);
+
+        transition: background-color 0.3s ease;
+
+        &:hover {
+            background-color: var(--color-gray-300);
+            border: 1px solid var(--color-gray-300);
+            color: var(--color-gray-700);
+        }
+    }
+
+    .btn-card-primary-action {
+        @apply text-base;
+        color: var(--color-primary-text);
+        border: none;
+        background: none;
+        margin: 0 !important;
+        /* fixes layout bug inside grid */
+        padding: 0 !important;
+        /* fixes layout bug inside grid */
+    }
+
+    .btn-icon-round {
+        cursor: pointer;
+        flex-shrink: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 0;
+        margin: 0;
+        width: 50px;
+        height: 50px;
+        border-radius: 25px;
+
+        background-color: var(--color-button-primary);
+        border: 1px solid var(--color-button-primary);
+        color: var(--color-gray-100);
+
+        &:hover {
+            color: var(--color-gray-100);
+            background-color: var(--color-cyan-600);
+            border: 1px solid var(--color-cyan-600);
+        }
+    
+        .dark &:hover {
+            color: var(--color-gray-900);
+            background-color: var(--color-gray-300);
+            border: 1px solid var(--color-gray-300);
+        }
+
+        svg {
+            width: 30px;
+        }
+    }
+
+    .btn-swipe-back {
+
+        /* positionned relative to #main-wrapper with padding-bottom */
+        position: absolute;
+        display: flex;
+        justify-content: space-between;
+        bottom: 0;
+        left: 0;
+        right: 0;
+
+        text-decoration: none;
+        cursor: hand;
+        
+        color: var(--color-gray-400);
+        border-color: var(--color-gray-300);
+        border-width: 0px 0 0 0;
+        border-style: dashed;
+
+        @apply text-lg;
+
+        padding-block: calc(var(--spacing) * 7);
+        padding-inline: calc(var(--spacing) * 2);
+
+        @media (min-width: 400px) {
+            @apply px-3;
+        }
+        @media (min-width: 450px) {
+            @apply px-4;
+        }
+        @media (min-width: 500px) {
+            @apply px-5;
+        }
+
+        @media (min-width: theme(--breakpoint-md)) {
+            display: none;
+        }
+
+        .back, .forward {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            color: var(--color-gray-350);
+            margin-left: -18px;
+            @media (min-width: 400px) {
+                margin-left: -15px;
+            }
+            @media (min-width: 450px) {
+                margin-left: -12px;
+            }
+            @media (min-width: 500px) {
+                margin-left: -8px;
+            }
+        }
+
+        .back.first, .forward.first {
+            margin-left: 0;
+        }
+    }
+
+    .btn-allow-location-search {
+        @apply text-sm;
+        align-items: start;
+        justify-content: start;
+        padding: 8px 8px;
+        margin-top: 2px;
+        margin-bottom: 0;
+        background-color: var(--color-gray-300);
+        border: 1px solid var(--color-gray-300);
+        &:hover {
+            background-color: var(--color-gray-300);
+            border: 1px solid var(--color-gray-400);
+            color: var(--color-gray-700);
+        }
+    }
+
+    /* :focus should not necessarily be style */
+
+    /* :focus-visible should. it is meant to be visible */
+    :focus-visible {
+        outline: var(--color-button-focus-visible) solid 2px;
+    }
+
+    .no-focus-visible:focus-visible {
+        outline: none;
+    }
+}

@@ -1,0 +1,43 @@
+<form id="login-box" action="{{ path("login") }}" method="post">
+
+    <fieldset>
+
+        <input type="text"
+            id="email" name="email"
+            placeholder="{{ 'login'|trans(domain='security')|humanize }} ({{ 'email'|trans(domain='security') }})"
+            autocomplete="username"
+            required
+        />
+
+        <br/>
+
+        <div data-controller="password-visibility" class="password-visibility">
+            <input type="password"
+                id="password" name="password"
+                placeholder="{{ 'password'|trans(domain='security') }}"
+                autocomplete="current-password"
+                data-password-visibility-target="input"
+                spellcheck="false"
+                required
+            />
+            <button type="button" data-action="password-visibility#toggle">
+                <span data-password-visibility-target="icon"><img src="{{ asset('images/eye-off.svg') }}" /></span>
+                <span data-password-visibility-target="icon" class="hidden"><img src="{{ asset('images/eye.svg') }}" /></span>
+            </button>
+        </div>
+
+        {% embed 'form/_form_actions.html.twig' %}
+            {% block submit_label 'login.submit'|trans(domain='security') %}
+            {% block submit_class 'btn-login' %}
+            {% block cancel '' %}
+        {% endembed %}
+
+        <div style="margin-top: 10px; font-size: small;">
+            <a href="{{ path('password_reset_request') }}">
+                {{ 'lost_password'|trans(domain='security') }}
+            </a>
+        </div>
+
+    </fieldset>
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}" />
+</form>

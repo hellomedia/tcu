@@ -1,0 +1,36 @@
+{% extends 'layout/default.html.twig' %}
+
+{% block extra_head_tags %}
+	<meta name="robots" content="noindex"/>
+{% endblock %}
+
+{% block title %}
+	{{ 'unconfirmed.title'|trans(domain='security') }}
+{% endblock %}
+
+{% block flash_messages %}
+
+	{# show flash messages if set. Else show default message #}
+	{% if app.session.flashbag.peekAll() is not empty %}
+		{% embed '@security/flash_messages.html.twig' %}{% endembed %}
+	{% else %}
+		<div class="alert alert-error">
+			{{ 'unconfirmed.default_message'|trans(domain='security')|raw }}
+		</div>
+	{% endif %}
+
+{% endblock %}
+
+{% block content %}
+
+	<form id="resend-validation-email" method="POST">
+		<input type="hidden" name="email" value="{{ email }}"/>
+
+		{% embed 'form/_form_actions.html.twig' %}
+			{% block submit_label 'unconfirmed.request_new_validation_link'|trans(domain='security') %}
+			{% block cancel '' %}
+		{% endembed %}
+	</form>
+{% endblock %}
+
+

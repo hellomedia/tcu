@@ -1,0 +1,99 @@
+/* IMPORTANT: outside of layer 
+    to allow overriding styles from global scope (bootstrap in easyadmin) 
+*/
+
+/* modal-container = dialog
+    the purpose of this container's is to create a flexbox
+    for centering the modal without using transform: translate(-50%, -50%);
+    which would conflict with the modal-show animation 
+*/
+.modal-container {
+    position: fixed;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 100%; /* user-agent override */
+    height: 100%;
+    max-height: 100%; /* user-agent override */
+    padding: 0;
+    background: transparent;
+    border: none;
+    margin: 0;
+}
+
+.modal-container[open] {
+    display: flex;
+}
+
+.modal.hk-override {
+    /* remove existing styles (bootstrap in easyadmin) */
+    /* double class helpful for specificity */
+    all: unset;
+}
+
+/* visible modal */
+.modal,
+.modal.hk-override {
+    background: var(--color-primary-background);
+    color: var(--color-primary-text);
+    border-radius: 0.5rem;
+    border: none;
+    padding: 2rem;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    width: 90%;
+
+    /* breakpoint-md without tailwind theme -- for portability */
+    @media (width >=48rem) {
+        min-width: 50%;
+        max-width: 70%;
+    }
+
+    /* breakpoint-lg without tailwind theme -- for portability */
+    @media (width >=64rem) {
+        max-width: 60%;
+    }
+
+    /* breakpoint-xl without tailwind theme -- for portability */
+    @media (width >=80rem) {
+        max-width: 50%;
+    }
+}
+
+dialog::backdrop {
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+}
+
+/* defines layout inside the modal */
+.modal-inner-layout {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+}
+
+.modal-title {
+    margin: 0;
+    padding: 0.8em 1em 0;
+}
+
+.modal-form {
+    align-self: stretch;
+}
+
+.modal-actions {
+    margin-top: calc(var(--spacing) * 7);
+    display: flex;
+    justify-content: center;
+    .btn {
+        margin-block: 0;
+    }
+}
+
+.modal-show {
+    animation: modal-show 0.3s;
+}
+
+.modal-hide {
+    animation: modal-hide 0.15s forwards;
+}
