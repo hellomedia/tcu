@@ -7,6 +7,8 @@ when@prod: &sentry_prod
         options:
             environment: '%kernel.environment%'
             release: '%env(APP_VERSION)%' # your app version
+            # Add request headers, cookies, IP address and the authenticated user
+            # see https://docs.sentry.io/platforms/php/data-management/data-collected/ for more info
             send_default_pii: true
             before_send: 'sentry.callback.before_send'
             ignore_exceptions:
@@ -66,6 +68,3 @@ when@dev:
         dsn: null
         register_error_listener: false
         register_error_handler: false
-
-
-
