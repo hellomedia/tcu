@@ -1,0 +1,39 @@
+<style>
+	.spinner-wrapper {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+	.spinner {
+		width: 22px;
+		height: 22px;
+		border: 3px solid currentColor;
+		border-right-color: transparent;
+		border-radius: 9999px;
+		animation: spin 0.6s linear infinite;
+	}
+	@keyframes spin {
+		to {
+			transform: rotate(360deg);
+		}
+	}
+	.hidden {
+		display: none;
+	}
+</style>
+
+{# button and spinner live outside of container replaced in ajax #}
+<div style="position: relative; display: inline-block; margin-top: 20px;">
+	<button type="submit" class="btn btn-primary btn-lg" data-ajax-target="submitBtn">
+		Save
+	</button>
+
+	<div data-ajax-target="spinner" class="spinner-wrapper hidden">
+		<div class="spinner" aria-hidden="true"></div>
+	</div>
+</div>

@@ -2,13 +2,14 @@
 
 namespace App\Entity;
 
+use App\Entity\Interface\EntityInterface;
 use App\Repository\InterfacMatchRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: InterfacMatchRepository::class)]
-class InterfacMatch
+class InterfacMatch implements EntityInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -18,19 +19,24 @@ class InterfacMatch
     /**
      * @var Collection<int, Player>
      */
-    #[ORM\ManyToMany(targetEntity: Player::class, inversedBy: 'interfacMatches')]
+    #[ORM\ManyToMany(targetEntity: Player::class, inversedBy: 'matchs')]
     private Collection $players;
 
-    #[ORM\ManyToOne(inversedBy: 'matches')]
+    #[ORM\ManyToOne(inversedBy: 'matchs')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Group $playerGroup = null;
+    private ?Group $group = null;
 
-    #[ORM\OneToOne(inversedBy: 'interfacMatch', cascade: ['persist', 'remove'])]
-    private ?TimeSlot $timeslot = null;
+    #[ORM\OneToOne(inversedBy: 'match')]
+    private ?TimeSlot $timeSlot = null;
 
     public function __construct()
     {
         $this->players = new ArrayCollection();
+    }
+
+    public function __toString()
+    {
+        return 'match ' . $this->id;
     }
 
     public function getId(): ?int
@@ -62,26 +68,26 @@ class InterfacMatch
         return $this;
     }
 
-    public function getPlayerGroup(): ?Group
+    public function getGroup(): ?Group
     {
-        return $this->playerGroup;
+        return $this->group;
     }
 
-    public function setPlayerGroup(?Group $playerGroup): static
+    public function setGroup(?Group $group): static
     {
-        $this->playerGroup = $playerGroup;
+        $this->group = $group;
 
         return $this;
     }
 
-    public function getTimeslot(): ?TimeSlot
+    public function getTimeSlot(): ?TimeSlot
     {
-        return $this->timeslot;
+        return $this->timeSlot;
     }
 
-    public function setTimeslot(?TimeSlot $timeslot): static
+    public function setTimeSlot(?TimeSlot $timeSlot): static
     {
-        $this->timeslot = $timeslot;
+        $this->timeSlot = $timeSlot;
 
         return $this;
     }

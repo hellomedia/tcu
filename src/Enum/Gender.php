@@ -12,14 +12,11 @@ enum Gender: string implements TranslatableInterface
 
     // Ordering
     // Condition::cases() returns an array of cases, in order of declaration.
-    case MEN = 'M';
-    case WOMEN = 'W';
+    case MEN = 'Homme';
+    case WOMEN = 'Femme';
 
     public function trans(TranslatorInterface $translator, ?string $locale = null): string
     {
-        return match ($this) {
-            self::MEN  => $translator->trans('gender.men', domain: 'enum', locale: $locale),
-            self::WOMEN => $translator->trans('gender.women', domain: 'enum', locale: $locale),
-        };
+        return $this->value;
     }
 }

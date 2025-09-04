@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Interface\EntityInterface;
 use App\Enum\Birthyear;
 use App\Enum\Gender;
 use App\Enum\Ranking;
@@ -12,7 +13,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PlayerRepository::class)]
-class Player
+class Player implements EntityInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -47,12 +48,22 @@ class Player
      * @var Collection<int, InterfacMatch>
      */
     #[ORM\ManyToMany(targetEntity: InterfacMatch::class, mappedBy: 'players')]
-    private Collection $interfacMatches;
+    private Collection $matchs;
 
     public function __construct()
     {
         $this->groups = new ArrayCollection();
-        $this->interfacMatches = new ArrayCollection();
+        $this->matchs = new ArrayCollection();
+    }
+
+    public function __toString()
+    {
+        return $this->firstname . ' ' . ($this->lastname ?? '') . ' ' . $this->ranking->value;
+    }
+
+    public function getFullName(): string
+    {
+        return $this->firstname . ' ' . ($this->lastname ?? '');
     }
 
     public function getId(): ?int
@@ -162,25 +173,25 @@ class Player
     /**
      * @return Collection<int, InterfacMatch>
      */
-    public function getInterfacMatches(): Collection
+    public function getMatchs(): Collection
     {
-        return $this->interfacMatches;
+        return $this->matchs;
     }
 
-    public function addInterfacMatch(InterfacMatch $interfacMatch): static
+    public function addMatch(InterfacMatch $match): static
     {
-        if (!$this->interfacMatches->contains($interfacMatch)) {
-            $this->interfacMatches->add($interfacMatch);
-            $interfacMatch->addPlayer($this);
+        if (!$this->matchs->contains($match)) {
+            $this->matchs->add($match);
+            $match->addPlayer($this);
         }
 
         return $this;
     }
 
-    public function removeInterfacMatch(InterfacMatch $interfacMatch): static
+    public function removeMatch(InterfacMatch $match): static
     {
-        if ($this->interfacMatches->removeElement($interfacMatch)) {
-            $interfacMatch->removePlayer($this);
+        if ($this->matchs->removeElement($match)) {
+            $match->removePlayer($this);
         }
 
         return $this;

@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Interface\EntityInterface;
 use App\Repository\GroupRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -9,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: GroupRepository::class)]
 #[ORM\Table(name: '`group`')]
-class Group
+class Group implements EntityInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -28,13 +29,18 @@ class Group
     /**
      * @var Collection<int, InterfacMatch>
      */
-    #[ORM\OneToMany(targetEntity: InterfacMatch::class, mappedBy: 'playerGroup')]
-    private Collection $matches;
+    #[ORM\OneToMany(targetEntity: InterfacMatch::class, mappedBy: 'group')]
+    private Collection $matchs;
 
     public function __construct()
     {
         $this->players = new ArrayCollection();
-        $this->matches = new ArrayCollection();
+        $this->matchs = new ArrayCollection();
+    }
+
+    public function __toString(): string
+    {
+        return $this->getName() ?? '';
     }
 
     public function getId(): ?int
@@ -81,16 +87,16 @@ class Group
     /**
      * @return Collection<int, InterfacMatch>
      */
-    public function getMatches(): Collection
+    public function getMatchs(): Collection
     {
-        return $this->matches;
+        return $this->matchs;
     }
 
     public function addMatch(InterfacMatch $match): static
     {
-        if (!$this->matches->contains($match)) {
-            $this->matches->add($match);
-            $match->setPlayerGroup($this);
+        if (!$this->matchs->contains($match)) {
+            $this->matchs->add($match);
+            $match->setGroup($this);
         }
 
         return $this;
@@ -98,10 +104,10 @@ class Group
 
     public function removeMatch(InterfacMatch $match): static
     {
-        if ($this->matches->removeElement($match)) {
+        if ($this->matchs->removeElement($match)) {
             // set the owning side to null (unless already changed)
-            if ($match->getPlayerGroup() === $this) {
-                $match->setPlayerGroup(null);
+            if ($match->getGroup() === $this) {
+                $match->setGroup(null);
             }
         }
 

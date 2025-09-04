@@ -2,14 +2,16 @@
 
 namespace App\Entity;
 
+use App\Entity\Interface\EntityInterface;
 use App\Repository\DateRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use IntlDateFormatter;
 
 #[ORM\Entity(repositoryClass: DateRepository::class)]
-class Date
+class Date implements EntityInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -28,6 +30,15 @@ class Date
     public function __construct()
     {
         $this->timeSlots = new ArrayCollection();
+    }
+
+    public function __toString()
+    {
+        $fmt = new IntlDateFormatter(
+            locale: 'fr-FR',
+            pattern: 'EEEE dd/MM/YY'
+        );
+        return $fmt->format($this->date);
     }
 
     public function getId(): ?int
@@ -75,5 +86,16 @@ class Date
         }
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, InterfacMatch>
+     */
+    public function getMatches(): Collection
+    {
+        return $this->timeSlots
+            ->map(static fn (TimeSlot $slot) => $slot->getMatch())
+            ->filter(static fn($v) => null !== $v)
+        ;
     }
 }

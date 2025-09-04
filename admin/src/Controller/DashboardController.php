@@ -4,6 +4,7 @@ namespace Admin\Controller;
 
 use App\Entity\Date;
 use App\Entity\Group;
+use App\Entity\Interface\EntityInterface;
 use App\Entity\InterfacMatch;
 use App\Entity\Player;
 use App\Entity\Time;
@@ -52,10 +53,10 @@ class DashboardController extends AbstractDashboardController
             ->setAutofocusSearch()
             ->showEntityActionsInlined()
             ->setFormThemes(['@admin/form/form_theme.html.twig'])
-            ->setPageTitle(Crud::PAGE_DETAIL, static function (Entity $entity) {
+            ->setPageTitle(Crud::PAGE_DETAIL, static function (EntityInterface $entity) {
                 return $entity;
             })
-            ->setPageTitle(Crud::PAGE_EDIT, static function (Entity $entity) {
+            ->setPageTitle(Crud::PAGE_EDIT, static function (EntityInterface $entity) {
                 return 'Modifier ' . $entity;
             })
         ;

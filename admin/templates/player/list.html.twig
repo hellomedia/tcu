@@ -1,0 +1,5 @@
+{% set players = field.value %}
+{% for player in players %}
+    <span class="tag">{{ player.fullName }}</span>
+    {{ not loop.last ? ', ' }}
+{% endfor %}
