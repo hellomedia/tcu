@@ -16,8 +16,8 @@ return [
         'path' => './assets/app.js',
         'entrypoint' => true,
     ],
-    'controlroom' => [
-        'path' => './assets/controlroom.js',
+    'admin' => [
+        'path' => './assets/admin.js',
         'entrypoint' => true,
     ],
     '@hotwired/stimulus' => [

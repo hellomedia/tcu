@@ -1,7 +1,7 @@
 # see https://symfony.com/doc/current/reference/configuration/framework.html
 framework:
     session:
-        name: controlroom # last value overrides previous ones
+        name: admin # last value overrides previous ones
         cookie_samesite: lax
 # !!! ATTN: for remember me cookie, it is set in security.yaml firewall config !!!
 # SAMESITE STRATEGY

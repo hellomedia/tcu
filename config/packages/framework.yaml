@@ -29,7 +29,7 @@ framework:
         # http://symfony.com/doc/current/cookbook/security/remember_me.html
         cookie_lifetime: 0
         cookie_secure: true
-        cookie_samesite: lax # 'lax' for app. See comments in controlroom/config/packages/framework.yaml
+        cookie_samesite: lax # 'lax' for app. See comments in admin/config/packages/framework.yaml
 
     serializer:
         name_converter: 'serializer.name_converter.camel_case_to_snake_case'

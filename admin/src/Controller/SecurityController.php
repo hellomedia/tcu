@@ -1,6 +1,6 @@
 <?php
 
-namespace Controlroom\Controller;
+namespace Admin\Controller;
 
 use App\Controller\BaseController;
 
@@ -10,13 +10,13 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends BaseController
 {
-    #[Route('/login', name: 'controlroom_login')]
+    #[Route('/login', name: 'admin_login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
         $error = $authenticationUtils->getLastAuthenticationError();
         $lastUsername = $authenticationUtils->getLastUsername();
 
-        return $this->render('@controlroom/login.html.twig', [
+        return $this->render('@admin/login.html.twig', [
             // parameters usually defined in Symfony login forms
             'error' => $error,
             'last_username' => $lastUsername,
@@ -49,7 +49,7 @@ class SecurityController extends BaseController
             'csrf_token_intention' => 'authenticate',
 
             // the URL users are redirected to after the login (default: '/admin')
-            'target_path' => $this->generateUrl('controlroom'),
+            'target_path' => $this->generateUrl('admin'),
 
             // the label displayed for the username form field (the |trans filter is applied to it)
             //'username_label' => 'Your username',
@@ -89,7 +89,7 @@ class SecurityController extends BaseController
         ]);
     }
 
-    #[Route(path: '/login-check', name: 'controlroom_login_check')]
+    #[Route(path: '/login-check', name: 'admin_login_check')]
     public function loginCheck(): never
     {
         throw new \LogicException('This method can be blank - it will be intercepted by the login check of your firewall.');

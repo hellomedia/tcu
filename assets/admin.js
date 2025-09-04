@@ -6,18 +6,18 @@
  */
 
 // Load all CSS directly in this file
-// DO NOT USE 2nd level imports ( like... import './styles/controlroom.css -- and then import css from there )
+// DO NOT USE 2nd level imports ( like... import './styles/admin.css -- and then import css from there )
 // 2nd level imports are not handled by asset mapper
 // They can be handled by tailwind -- as we do for assets/styles/app.css
 // BUT symfonycast/tailwind binary which builds tailwind assets only supports 1 entry point
 // ( see symfonycasts_tailwind.yaml )
 // So in the end, 2nd level imports are not recognized in a file other than app.css
-import './styles/controlroom/controlroom.css';
-import './styles/controlroom/grid.css';
-import './styles/controlroom/card.css';
-import './styles/controlroom/chart.css';
+import './styles/admin/admin.css';
+import './styles/admin/grid.css';
+import './styles/admin/card.css';
+import './styles/admin/chart.css';
 
-import "./styles/controlroom/modal-variables.css";
+import "./styles/admin/modal-variables.css";
 import "./styles/components/modal.css";
 import "./styles/components/modal-icon.css";
 import "./styles/components/modal-animation.css";

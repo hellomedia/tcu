@@ -1,3 +1,0 @@
-framework:
-    router:
-        default_uri: 'https://%env(HOST_CONTROLROOM)%'

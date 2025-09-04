@@ -13,8 +13,6 @@ security:
             id: App\Pack\Security\UserProvider
 
     role_hierarchy:
-        ROLE_SEARCHER:      ROLE_USER
-        ROLE_POSTER:        ROLE_USER
         ROLE_ADMIN:         ROLE_USER
         ROLE_SUPER_ADMIN:   [ROLE_ADMIN, ROLE_ALLOWED_TO_SWITCH]
 
@@ -23,18 +21,18 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         
-        # more basic firewall for controlroom
+        # more basic firewall for admin
         # need to be first since first firewall wins
         # (restricted on host thus does not affect main site)
         # -- or we could change loading order in Kernel.php
-        controlroom:
+        admin:
             lazy: true
-            host: '%env(HOST_CONTROLROOM)%'
+            host: '%env(HOST_ADMIN)%'
             pattern: ^/
             provider: app_user_provider
             form_login:
-                login_path: controlroom_login
-                check_path: controlroom_login_check
+                login_path: admin_login
+                check_path: admin_login_check
                 enable_csrf: true
             logout:
                 path: /logout
@@ -47,7 +45,7 @@ security:
                 user_provider: app_user_provider
                 always_remember_me: true
                 signature_properties: [password]
-                samesite: lax # 'strict' would make the remember_me useless. See commments in controlroom/config/packages/framework.yaml
+                samesite: lax # 'strict' would make the remember_me useless. See commments in admin/config/packages/framework.yaml
 
         main:
             lazy: true
@@ -69,7 +67,7 @@ security:
                 user_provider: app_user_provider
                 always_remember_me: true
                 signature_properties: [password]
-                samesite: lax # 'lax' is OK for app. See commments in controlroom/config/packages/framework.yaml
+                samesite: lax # 'lax' is OK for app. See commments in admin/config/packages/framework.yaml
 
     # First matching rule grants or denies access
     access_control:
@@ -77,11 +75,11 @@ security:
         - { path: '^/([a-z]{2}/)?my/', role: ROLE_USER }
         # Control Room
         # Unlike for core sites, public access needs to be given specifically to login 
-        # and login check, as the ROLE_ADMIN restriction applies to all controlroom urls
+        # and login check, as the ROLE_ADMIN restriction applies to all admin urls
         # (for core sites, default is PUBLIC_ACCESS as specified below)
-        - { host: '%env(HOST_CONTROLROOM)%', route: controlroom_login, role: PUBLIC_ACCESS }
-        - { host: '%env(HOST_CONTROLROOM)%', route: controlroom_login_check, role: PUBLIC_ACCESS }
-        - { host: '%env(HOST_CONTROLROOM)%', role: ROLE_ADMIN }
+        - { host: '%env(HOST_ADMIN)%', route: admin_login, role: PUBLIC_ACCESS }
+        - { host: '%env(HOST_ADMIN)%', route: admin_login_check, role: PUBLIC_ACCESS }
+        - { host: '%env(HOST_ADMIN)%', role: ROLE_ADMIN }
         # Default
         - { path: ^/.*, role: PUBLIC_ACCESS }
 

@@ -35,7 +35,7 @@ class Sentry
      * Else, send the ip, which will be used as user identifier.
      * 
      * IP should be useful for linking sentry errors belonging to a bot,
-     * which would not have an account (thus no ip in controlroom) and no js tracker data.
+     * which would not have an account (thus no ip in admin) and no js tracker data.
      */
     public function getBeforeSend(): callable
     {

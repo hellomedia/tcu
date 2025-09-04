@@ -5,8 +5,8 @@ symfonycasts_tailwind:
     # There is a PR for accepting multiplt entry points, but I could not get it to work
     # https://github.com/SymfonyCasts/tailwind-bundle/issues/46
     # https://github.com/SymfonyCasts/tailwind-bundle/pull/58
-    # We would have liked to build also controlroom.css with tailwind
-    # which would allow us to import css files from controlroom.css 
-    # but since it's not working, we DO NOT build controlroom.css with tailwind
-    # thus we do all css imports in controlroom.js (handled by asset mapper), not in controlroom.css
+    # We would have liked to build also admin.css with tailwind
+    # which would allow us to import css files from admin.css 
+    # but since it's not working, we DO NOT build admin.css with tailwind
+    # thus we do all css imports in admin.js (handled by asset mapper), not in admin.css
     input_css: 'assets/styles/app.css'

@@ -1,6 +1,6 @@
 # our custom routes from controller attributes
 # for easyadmin automated routes, loaded from a custom loader, see routes/easyadmin.yaml
-controlroom:
-    host: '%host_controlroom%' # use parameter instead of env var : https://github.com/symfony/symfony/issues/20682
+admin:
+    host: '%host_admin%' # use parameter instead of env var : https://github.com/symfony/symfony/issues/20682
     resource: '../src/Controller/'
     type: attribute

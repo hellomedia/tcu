@@ -9,7 +9,7 @@ use App\Pack\Status\Model\OpCacheStatus;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route(path: '/status', name: 'controlroom_status_')]
+#[Route(path: '/status', name: 'admin_status_')]
 class StatusController extends BaseController
 {
     #[Route(path: '/opcache', name: 'opcache')]

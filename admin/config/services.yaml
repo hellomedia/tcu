@@ -8,9 +8,9 @@ services:
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
         bind:
 
-    # makes classes in sites/controlroom/src/ available to be used as services
+    # makes classes in sites/admin/src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
-    Controlroom\:
+    Admin\:
         resource: '../src/'
         exclude:
             - '../src/Utils/'

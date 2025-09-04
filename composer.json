@@ -4,7 +4,7 @@
     "autoload": {
         "psr-4": {
             "App\\": "src/",
-            "Controlroom\\": "controlroom/src/"
+            "Admin\\": "admin/src/"
         }
     },
     "require": {
@@ -36,7 +36,6 @@
         "symfony/intl": "7.2.*",
         "symfony/lock": "7.2.*",
         "symfony/mailer": "7.2.*",
-        "symfony/mercure-bundle": "^0.3.9",
         "symfony/messenger": "7.2.*",
         "symfony/monolog-bundle": "^3.7",
         "symfony/postmark-mailer": "7.2.*",
@@ -63,9 +62,8 @@
         "twig/extra-bundle": "^3.3",
         "twig/intl-extra": "^3.3",
         "twig/string-extra": "^3.3",
-        "whichbrowser/parser": "^2.1",
-        "zenstruck/foundry": "^2.2"
         "twig/twig": "3.20",
+        "whichbrowser/parser": "^2.1"
     },
     "minimum-stability": "stable",
     "require-dev": {

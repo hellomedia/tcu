@@ -1,5 +1,5 @@
 /* DO NOT IMPMORT CSS FILES FROM HERE
-unless we fix tailwind build for controlroom.css */
+unless we fix tailwind build for admin.css */
 
 html {
     --bg-gray: #f8fafc;
