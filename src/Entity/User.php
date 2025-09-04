@@ -5,8 +5,6 @@ namespace App\Entity;
 use App\Repository\UserRepository;
 use App\Pack\Security\Entity\Trait\UserSecurityTrait;
 use DateTimeImmutable;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints;
@@ -39,20 +37,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Equatab
     #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE)]
     private ?DateTimeImmutable $updatedAt = null;
 
-    /**
-     * @var Collection<int, Address>
-     */
-    #[ORM\OneToMany(targetEntity: Address::class, mappedBy: 'poster', orphanRemoval: true)]
-    private Collection $addresses;
-
     public function __construct()
     {
-        $this->addresses = new ArrayCollection();
     }
 
-    public function __toString()
+    public function __toString(): string
     {
-        return $this->name ?? '';
+        return $this->name ?? $this->email;
     }
 
     public function getId(): ?int
@@ -109,36 +100,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Equatab
     public function setUpdatedAt(?DateTimeImmutable $updatedAt = null): static
     {
         $this->updatedAt = $updatedAt ?? new DateTimeImmutable();
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Address>
-     */
-    public function getAddresses(): Collection
-    {
-        return $this->addresses;
-    }
-
-    public function addAddress(Address $address): static
-    {
-        if (!$this->addresses->contains($address)) {
-            $this->addresses->add($address);
-            $address->setPoster($this);
-        }
-
-        return $this;
-    }
-
-    public function removeAddress(Address $address): static
-    {
-        if ($this->addresses->removeElement($address)) {
-            // set the owning side to null (unless already changed)
-            if ($address->getPoster() === $this) {
-                $address->setPoster(null);
-            }
-        }
 
         return $this;
     }
