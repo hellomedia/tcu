@@ -42,12 +42,18 @@ return [
         'version' => '5.0.36',
     ],
     'chart.js' => [
-        'version' => '4.5.0',
+        'version' => '4.2.0',
     ],
     '@kurkle/color' => [
-        'version' => '0.3.4',
+        'version' => '0.3.2',
     ],
     '@rails/request.js' => [
         'version' => '0.0.12',
+    ],
+    'chartjs-adapter-luxon' => [
+        'version' => '1.3.1',
+    ],
+    'luxon' => [
+        'version' => '3.2.1',
     ],
 ];
