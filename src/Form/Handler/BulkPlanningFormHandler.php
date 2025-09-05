@@ -1,10 +1,10 @@
 <?php
 
-namespace Admin\Form\Handler;
+namespace App\Form\Handler;
 
+use Admin\Exception\InvalidWindowException;
 use App\Entity\Date;
 use App\Entity\Slot;
-use App\Exception\InvalidWindowException;
 use App\Repository\DateRepository;
 use DateInterval;
 use DateTimeImmutable;

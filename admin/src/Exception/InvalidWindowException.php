@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Exception;
+namespace Admin\Exception;
 
 class InvalidWindowException extends \InvalidArgumentException {
 
