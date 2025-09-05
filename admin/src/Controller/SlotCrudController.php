@@ -3,6 +3,8 @@
 namespace Admin\Controller;
 
 use App\Entity\Slot;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
@@ -18,8 +20,8 @@ class SlotCrudController extends AbstractCrudController
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
-            ->setEntityLabelInSingular('Plage horaire')
-            ->setEntityLabelInPlural('Plages horaires')
+            ->setEntityLabelInSingular('Créneau horaire')
+            ->setEntityLabelInPlural('Créneaux horaires')
             ->setDefaultSort([
                 'date' => 'ASC',
                 'court' => 'ASC',
@@ -38,5 +40,19 @@ class SlotCrudController extends AbstractCrudController
 
         yield TimeField::new('endsAt', 'fin')
             ->setFormat('short');
+    }
+
+    public function configureActions(Actions $actions): Actions
+    {
+        $bulkAdd = Action::new('bulkAdd', 'Ajouter des créneaux')
+            ->linkToRoute('admin_planning_bulk_add_slots')
+            ->setIcon('fa fa-add')
+            ->addCssClass('btn-primary')
+            ->createAsGlobalAction();
+
+        $actions
+            ->add(Action::INDEX, $bulkAdd);
+
+        return $actions;
     }
 }

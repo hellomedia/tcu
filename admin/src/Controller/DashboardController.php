@@ -92,13 +92,14 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::section('Matchs');
         yield MenuItem::linkToCrud('Matchs', 'fa fa-trophy', InterfacMatch::class);
 
-        yield MenuItem::section('Plannings');
-        yield MenuItem::linkToRoute('Plannings', 'fa fa-calendar', 'admin_planning');
+        yield MenuItem::section('Plages horaires');
+        yield MenuItem::linkToRoute('Vue globale', 'fa fa-calendar', 'admin_planning');
+        yield MenuItem::linkToRoute('Ajout de créneaux', 'fa fa-calendar', 'admin_planning_bulk_add_slots');
+        yield MenuItem::linkToCrud('Créneaux', 'fa fa-calendar', Slot::class);
 
         yield MenuItem::section('Admin');
         yield MenuItem::linkToCrud('Users', 'fa fa-user', User::class);
         yield MenuItem::linkToCrud('Réservations', 'fa fa-calendar', Booking::class);
-        yield MenuItem::linkToCrud('Plages horaires', 'fa fa-calendar', Slot::class);
         yield MenuItem::linkToCrud('Jours', 'fa fa-calendar-day', Date::class);
         yield MenuItem::linkToCrud('Terrains', 'fa fa-calendar-day', Court::class);
     }
