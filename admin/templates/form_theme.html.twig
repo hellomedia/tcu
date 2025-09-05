@@ -1,9 +1,0 @@
-{# @var ea \EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext #}
-
-{# EasyAdminAutocomplete form type #}
-{% block ea_autocomplete_widget %}
-    {{ form_widget(form.autocomplete, { attr: attr|merge({ required: required }) }) }}
-    <script>
-        document.dispatchEvent(new Event('ea.collection.item-added'));
-    </script>
-{% endblock ea_autocomplete_widget %}

@@ -38,7 +38,5 @@ class DateCrudController extends AbstractCrudController
         ;
 
         yield DateField::new('date');
-
-        yield AssociationField::new('timeSlots');
     }
 }

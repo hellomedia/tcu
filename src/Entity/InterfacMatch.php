@@ -26,8 +26,8 @@ class InterfacMatch implements EntityInterface
     #[ORM\JoinColumn(nullable: false)]
     private ?Group $group = null;
 
-    #[ORM\OneToOne(inversedBy: 'match')]
-    private ?TimeSlot $timeSlot = null;
+    #[ORM\OneToOne(mappedBy: 'match', cascade: ['remove'])]
+    private ?Booking $booking = null;
 
     public function __construct()
     {
@@ -80,14 +80,24 @@ class InterfacMatch implements EntityInterface
         return $this;
     }
 
-    public function getTimeSlot(): ?TimeSlot
+    public function getBooking(): ?Booking
     {
-        return $this->timeSlot;
+        return $this->booking;
     }
 
-    public function setTimeSlot(?TimeSlot $timeSlot): static
+    public function setBooking(?Booking $booking): static
     {
-        $this->timeSlot = $timeSlot;
+        // unset the owning side of the relation if necessary
+        if ($booking === null && $this->booking !== null) {
+            $this->booking->setMatch(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($booking !== null && $booking->getMatch() !== $this) {
+            $booking->setMatch($this);
+        }
+
+        $this->booking = $booking;
 
         return $this;
     }

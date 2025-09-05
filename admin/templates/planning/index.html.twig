@@ -1,0 +1,54 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block head_stylesheets %}
+    {{ parent() }}
+    <style>
+        .planning {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 30px;
+        }
+        .courts {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 30px;
+        }
+    </style>
+{% endblock %}
+
+{% block content_title %}Plages horaires{% endblock %}
+
+{% block page_actions %}
+
+    <a class="btn btn-default" href="{{ path('admin_planning_bulk_add_slots')}}">
+        + Ajouter des plages horaires
+    </a>
+
+{% endblock %}
+
+
+{% block main %}
+
+    <div class="planning">
+        {% for date in dates %}
+            <div class="date">
+                <h4>{{ date }}</h4>
+                <div class="courts">
+                    {% for court in courts %}
+                        <div class="court">
+                            <h5>{{ court }}</h5>
+                            <div class="time-slots">
+                                {% for slot in date.slots %}
+                                    <div class="time-slot">
+                                        {{ slot.timeRange }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </div>
+
+{% endblock %}

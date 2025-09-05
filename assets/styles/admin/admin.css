@@ -16,3 +16,15 @@ html {
         margin-right: 10px;
     }
 }
+
+.btn-lg {
+    --bs-btn-font-size: 1.25rem;
+    --bs-btn-border-radius: var(--bs-border-radius-lg);
+    padding: 8px 30px;
+}
+
+.btn-sm {
+    --bs-btn-font-size: 0.8rem;
+    --bs-btn-border-radius: var(--bs-border-radius);
+    padding: 3px 7px;
+}

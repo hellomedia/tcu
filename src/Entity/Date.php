@@ -10,6 +10,11 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use IntlDateFormatter;
 
+/**
+ * Could do without, but it seems a bit cleaner..
+ * Somewhat useful for handling slots by batch
+ * ie: remove all slots on a certain date
+ */
 #[ORM\Entity(repositoryClass: DateRepository::class)]
 class Date implements EntityInterface
 {
@@ -18,18 +23,23 @@ class Date implements EntityInterface
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE)]
+    #[ORM\Column(type: Types::DATE_IMMUTABLE)]
     private ?\DateTimeInterface $date = null;
 
     /**
-     * @var Collection<int, TimeSlot>
+     * @var Collection<int, Slot>
+     * 
+     * orphanRemoval: true ensures that if you remove a Slot from $date->getSlots()
+     * and keep your add/remove helpers in sync, Doctrine will DELETE that Slot
+     * (see removeSlot() )
      */
-    #[ORM\OneToMany(targetEntity: TimeSlot::class, mappedBy: 'date')]
-    private Collection $timeSlots;
+    #[ORM\OneToMany(targetEntity: Slot::class, mappedBy: 'date', orphanRemoval: true)]
+    #[ORM\OrderBy(['startsAt' => 'ASC'])]
+    private Collection $slots;
 
     public function __construct()
     {
-        $this->timeSlots = new ArrayCollection();
+        $this->slots = new ArrayCollection();
     }
 
     public function __toString()
@@ -59,29 +69,33 @@ class Date implements EntityInterface
     }
 
     /**
-     * @return Collection<int, TimeSlot>
+     * @return Collection<int, Slot>
      */
-    public function getTimeSlots(): Collection
+    public function getSlots(): Collection
     {
-        return $this->timeSlots;
+        return $this->slots;
     }
 
-    public function addTimeSlot(TimeSlot $timeSlot): static
+    public function addSlot(Slot $slot): static
     {
-        if (!$this->timeSlots->contains($timeSlot)) {
-            $this->timeSlots->add($timeSlot);
-            $timeSlot->setDate($this);
+        if (!$this->slots->contains($slot)) {
+            $this->slots->add($slot);
+            $slot->setDate($this);
         }
 
         return $this;
     }
 
-    public function removeTimeSlot(TimeSlot $timeSlot): static
+    /**
+     * Removing a slot from a date means the slot should be removed from DB
+     * ==> orphan removal
+     */
+    public function removeSlot(Slot $slot): static
     {
-        if ($this->timeSlots->removeElement($timeSlot)) {
+        if ($this->slots->removeElement($slot)) {
             // set the owning side to null (unless already changed)
-            if ($timeSlot->getDate() === $this) {
-                $timeSlot->setDate(null);
+            if ($slot->getDate() === $this) {
+                $slot->setDate(null); // triggers orphanRemoval -> DELETE (no UPDATE to NULL generated)
             }
         }
 
@@ -93,8 +107,8 @@ class Date implements EntityInterface
      */
     public function getMatches(): Collection
     {
-        return $this->timeSlots
-            ->map(static fn (TimeSlot $slot) => $slot->getMatch())
+        return $this->slots
+            ->map(static fn (Slot $slot) => $slot->getBooking()?->getMatch())
             ->filter(static fn($v) => null !== $v)
         ;
     }

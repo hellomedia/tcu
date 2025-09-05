@@ -2,17 +2,17 @@
 
 namespace Admin\Controller;
 
-use App\Entity\TimeSlot;
+use App\Entity\Slot;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TimeField;
 
-class TimeSlotCrudController extends AbstractCrudController
+class SlotCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string
     {
-        return TimeSlot::class;
+        return Slot::class;
     }
 
     public function configureCrud(Crud $crud): Crud
@@ -22,22 +22,21 @@ class TimeSlotCrudController extends AbstractCrudController
             ->setEntityLabelInPlural('Plages horaires')
             ->setDefaultSort([
                 'date' => 'ASC',
-                'time' => 'ASC',
+                'court' => 'ASC',
+                'startsAt' => 'ASC',
             ])
         ;
     }
 
     public function configureFields(string $pageName): iterable
     {
-        yield IdField::new('id')
-            ->hideOnForm();
-
         yield AssociationField::new('date', 'Jour');
+        yield AssociationField::new('court', 'Terrain');
 
-        yield AssociationField::new('time', 'Heure');
+        yield TimeField::new('startsAt', 'début')
+            ->setFormat('short');
 
-        yield AssociationField::new('endTime', 'Heure de fin');
-
-        yield AssociationField::new('match', 'Match');
+        yield TimeField::new('endsAt', 'fin')
+            ->setFormat('short');
     }
 }

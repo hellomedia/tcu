@@ -2,15 +2,15 @@
 
 namespace Admin\Controller;
 
+use App\Entity\Booking;
+use App\Entity\Court;
 use App\Entity\Date;
 use App\Entity\Group;
 use App\Entity\Interface\EntityInterface;
 use App\Entity\InterfacMatch;
 use App\Entity\Player;
-use App\Entity\Time;
-use App\Entity\TimeSlot;
+use App\Entity\Slot;
 use App\Entity\User;
-use Doctrine\ORM\Mapping\Entity;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
@@ -19,12 +19,10 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
-use EasyCorp\Bundle\EasyAdminBundle\Config\UserMenu;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Core\User\UserInterface;
 
 #[AdminDashboard(routePath: '/', routeName: 'admin')]
 class DashboardController extends AbstractDashboardController
@@ -87,7 +85,7 @@ class DashboardController extends AbstractDashboardController
                 MenuItem::linkToRoute('Php info', 'fa fa-info', 'admin_status_phpinfo'),
             ]);
 
-        yield MenuItem::section('Players');
+        yield MenuItem::section('Joueurs');
         yield MenuItem::linkToCrud('Joueurs', 'fa fa-user', Player::class);
         yield MenuItem::linkToCrud('Poules', 'fa fa-group', Group::class);
 
@@ -95,12 +93,14 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Matchs', 'fa fa-trophy', InterfacMatch::class);
 
         yield MenuItem::section('Plannings');
-        yield MenuItem::linkToCrud('Plages horaires', 'fa fa-calendar', TimeSlot::class);
-        yield MenuItem::linkToCrud('Jours', 'fa fa-calendar', Date::class);
-        yield MenuItem::linkToCrud('Heures', 'fa fa-clock', Time::class);
+        yield MenuItem::linkToRoute('Plannings', 'fa fa-calendar', 'admin_planning');
 
         yield MenuItem::section('Admin');
         yield MenuItem::linkToCrud('Users', 'fa fa-user', User::class);
+        yield MenuItem::linkToCrud('Réservations', 'fa fa-calendar', Booking::class);
+        yield MenuItem::linkToCrud('Plages horaires', 'fa fa-calendar', Slot::class);
+        yield MenuItem::linkToCrud('Jours', 'fa fa-calendar-day', Date::class);
+        yield MenuItem::linkToCrud('Terrains', 'fa fa-calendar-day', Court::class);
     }
 
     public function configureActions(): Actions

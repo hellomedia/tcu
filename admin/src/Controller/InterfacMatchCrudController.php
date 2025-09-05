@@ -21,7 +21,7 @@ class InterfacMatchCrudController extends AbstractCrudController
             ->setEntityLabelInSingular('Match')
             ->setEntityLabelInPlural('Matchs')
             ->setDefaultSort([
-                'timeSlot' => 'ASC',
+                'booking' => 'ASC',
             ])
         ;
     }
@@ -31,12 +31,10 @@ class InterfacMatchCrudController extends AbstractCrudController
         yield IdField::new('id')
             ->hideOnForm();
 
-        yield AssociationField::new('timeSlot', 'Horaire');
-
+        yield AssociationField::new('booking', 'Booking');
+        
         yield AssociationField::new('players', 'Joueurs')
             ->setTemplatePath('@admin/player/list.html.twig')
         ;
-
-        yield AssociationField::new('group', 'Poule');
     }
 }
