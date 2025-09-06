@@ -1,0 +1,63 @@
+<nav id="breadcrumbs" aria-label="breadcrumb">
+
+    <ol>
+        {% for breadcrumb in this.breadcrumbs %}
+
+            {% if loop.first %}
+                <li class="hidden md:inline-flex">
+                    <a href="{{ path(breadcrumb.route, breadcrumb.routeParams) }}"
+                        class="inline-flex items-baseline breadcrumb-item breadcrumb-link-hover"
+                    >
+                        <twig:ux:icon name="home" class="breadcrumb-home-svg" />
+
+                        <span class="hidden md:block">{{ breadcrumb.item|trans(domain: 'breadcrumbs') }}</span>
+                    </a>
+                </li>
+            {% endif %}
+
+            {% if not loop.first and not loop.last %}
+                <li>
+                    <div class="flex items-baseline">
+                        <svg class="breadcrumb-separator {{ loop.index == 2 ? 'breadcrumb-separator-second' }}"
+                            aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none" viewbox="0 0 6 10"
+                        >
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m1 9 4-4-4-4"/>
+                        </svg>
+
+                        {% if breadcrumb.route %}
+                            <a
+                                href="{{ path(breadcrumb.route, breadcrumb.routeParams) }}"
+                                class="breadcrumb-item breadcrumb-link-hover"
+                            >
+                                {{ breadcrumb.item|trans(domain: 'breadcrumbs') }}
+                            </a>
+                        {% else %}
+							<span class="breadcrumb-item">
+								{{ breadcrumb.item|trans(domain: 'breadcrumbs') }}
+							</span>
+                        {% endif %}
+                    </div>
+                </li>
+            {% endif %}
+
+            {% if loop.last and not loop.first %}
+                <li aria-current="page">
+                    <div class="flex items-baseline">
+                        <svg class="breadcrumb-separator {{ loop.index == 2 ? 'breadcrumb-separator-second' }}"
+                            aria-hidden="true"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none" viewbox="0 0 6 10"
+                        >
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m1 9 4-4-4-4"/>
+                        </svg>
+                        <h1 class="breadcrumb-item">
+                            {{ breadcrumb.item|trans(domain: 'breadcrumbs') }}
+                        </h1>
+                    </div>
+                </li>
+            {% endif %}
+		{% endfor %}
+	</ol>
+</nav>

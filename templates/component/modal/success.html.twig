@@ -1,0 +1,22 @@
+{% if app.request.headers.has('turbo-frame') %}<turbo-frame id="{{ frameId }}">{% endif %}
+    <div class="modal-inner-layout">
+        
+        {% include 'components/modal/_icon_success.html.twig' %}
+
+        <h2 class="modal-title">
+            {{ (feedback ?? 'Success !')|trans }}
+        </h2>
+
+        <div class="modal-actions">
+            <button
+                class="btn btn-primary"
+                type="button"
+                data-action="modal#close"
+                data-controller="auto-focus"
+            >
+                {{ 'OK'|trans }}
+            </button>
+        </div>
+    </div>
+    {% block streams '' %} {# optional streams inside the turbo-frame to update other page elements #}
+{% if app.request.headers.has('turbo-frame') %}</turbo-frame>{% endif %}

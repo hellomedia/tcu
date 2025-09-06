@@ -1,0 +1,42 @@
+<template id="dialog-template">
+	<dialog
+		class="modal-container" {# container needed to center modal with flex instead of transform and avoid conflict with animation #} 
+		data-modal-target="dialog"
+		data-action="close->modal#close click->modal#clickOutside" {# click event of modal on backdrop triggers our clickOutside stimulus event #}
+	>
+		{# visible modal #}
+		<div 
+			class="modal {{ (css_override ?? false) ? 'hk-override' }}"
+			data-modal-target="modal"
+			role="dialog" aria-modal="true"
+		>
+			
+			<turbo-frame id="confirm-modal-frame">
+
+				{# turbo expects a form submission to return a redirect unless it is inside a turbo-frame #}
+				{# so submitting the original form in the page throws a js error #}
+				{# so add a form here and submit this one when the submit button is clicked #}
+				<form class="modal-inner-layout" method="POST">
+
+					<div data-modal-target="icon" class="modal-icon-container"></div>
+
+					<h2 data-modal-target="title" class="modal-title"></h2>
+
+					<div data-modal-target="details" class="modal-details"></div>
+
+					<input type="hidden" name="from_route" value="{{ app.current_route }}" />
+
+					{% embed "components/modal/_actions.html.twig" %}
+						{% block submit_attributes %}
+							{% if (turbo ?? true) == false %}data-action="modal#submitForm"{% endif %}
+						{% endblock %}
+					{% endembed %}
+
+				</form>
+
+			</turbo-frame>
+
+		</div>
+
+	</dialog>
+</template>

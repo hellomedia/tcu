@@ -1,0 +1,21 @@
+<div class="form-actions modal-actions {% block attributes '' %}">
+    {% block cancel %}
+        <button class="btn btn-default" type="button" data-action="modal#close">
+            {{ 'Cancel'|trans }}
+        </button>
+    {% endblock %}
+    {% block submit_button %}
+        <button
+            type="submit"
+            class="btn btn-primary loading-btn {% block submit_class '' %}"
+            data-controller="loading"
+            data-loading-target="button"
+            data-modal-target="confirmButton"
+            {% block submit_attributes '' %}
+        >
+            <span data-modal-target="confirmButtonLabel">{% block submit_label 'Save'|trans %}</span>
+            <div class="loader" data-loading-target="loader"><div class="spinner"></div></div>
+        </button>
+    {% endblock %}
+</div>
+
