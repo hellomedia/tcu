@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class BulkPlanningFormHandler
+class SlotBulkAddFormHandler
 {
     public function __construct(
         private DateRepository $dateRepository,
@@ -28,7 +28,7 @@ class BulkPlanningFormHandler
         
     }
 
-    public function processBulkAddSlots(FormInterface $form): array
+    public function processForm(FormInterface $form): array
     {
         $courts       = $form->get('courts')->getData();
         $startDate    = $form->get('startDate')->getData();   // DateTimeInterface (date-only)

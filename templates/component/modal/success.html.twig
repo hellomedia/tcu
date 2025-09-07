@@ -1,7 +1,7 @@
 {% if app.request.headers.has('turbo-frame') %}<turbo-frame id="{{ frameId }}">{% endif %}
     <div class="modal-inner-layout">
         
-        {% include 'components/modal/_icon_success.html.twig' %}
+        {% include 'component/modal/_icon_success.html.twig' %}
 
         <h2 class="modal-title">
             {{ (feedback ?? 'Success !')|trans }}

@@ -1,0 +1,60 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block head_stylesheets %}
+    {{ parent() }}
+    <style>
+        h4 {
+            margin-bottom: 20px;
+        }
+        .planning {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+        .group {
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            padding: 15px;
+        }
+        .group-header {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+        .matchs {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .match {
+            display: flex;
+            flex-wrap: nowrap;
+            justify-content: space-between;
+            gap: 20px;
+        }
+    </style>
+{% endblock %}
+
+{% block content_title %}Planning par poule{% endblock %}
+
+{% block page_actions %}
+
+{% endblock %}
+
+
+{% block main %}
+
+    <div class="planning"
+        data-controller="modal"
+        data-modal-type-value="confirm"
+    >
+        {% for group in groups %}
+            {% include '@admin/planning/_group.html.twig' %}
+        {% endfor %}
+
+        {% include '@admin/modal/_confirm_modal.html.twig' %}
+        {% include 'component/modal/_icons_templates.html.twig' %}
+
+    </div>
+
+{% endblock %}

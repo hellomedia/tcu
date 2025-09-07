@@ -42,8 +42,12 @@ class PlayerCrudController extends AbstractCrudController
         yield ChoiceField::new('birthyear', 'Année de naissance');
         yield ChoiceField::new('comment', 'Commentaire');
 
-        yield AssociationField::new('groups', 'Poule(s)');
+        yield AssociationField::new('groups', 'Poule(s)')
+            ->setFormTypeOption('by_reference', false)
+        ;
         
-        yield AssociationField::new('matchs', 'Matchs');
+        yield AssociationField::new('matchs', 'Matchs')
+            ->hideOnForm()
+        ;
     }
 }

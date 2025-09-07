@@ -21,6 +21,7 @@ class Group implements EntityInterface
      * @var Collection<int, Player>
      */
     #[ORM\ManyToMany(targetEntity: Player::class, inversedBy: 'groups')]
+    #[ORM\OrderBy(['lastname' => 'ASC'])]
     private Collection $players;
 
     #[ORM\Column(length: 255, nullable: true)]

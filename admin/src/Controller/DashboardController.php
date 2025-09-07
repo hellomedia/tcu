@@ -23,10 +23,17 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 #[AdminDashboard(routePath: '/', routeName: 'admin')]
 class DashboardController extends AbstractDashboardController
 {
+
+    public function __construct(
+        private UrlGeneratorInterface $urlGenerator,
+    ) {
+    }
+
     // route attribute here is deprecated and should be removed in next version
     // but at the moment, removing it cause error: 'missing admin_dashboard' route
     #[Route('/', name: 'admin_dashboard')]
@@ -79,27 +86,30 @@ class DashboardController extends AbstractDashboardController
 
         yield MenuItem::subMenu('Status', 'fa fa-dashboard')
             ->setSubItems([
-                MenuItem::linkToRoute('Opcache', 'fa fa-dashboard', 'admin_status_opcache'),
-                MenuItem::linkToRoute('Realpath cache', 'fa fa-dashboard', 'admin_status_realpath_cache'),
+                MenuItem::linkToUrl('Opcache', 'fa fa-dashboard', $this->urlGenerator->generate('admin_status_opcache')),
+                MenuItem::linkToUrl('Realpath cache', 'fa fa-dashboard', $this->urlGenerator->generate('admin_status_realpath_cache')),
                 MenuItem::linkToUrl('Php-fpm', 'fa fa-dashboard', '/status/php-fpm'),
-                MenuItem::linkToRoute('Php info', 'fa fa-info', 'admin_status_phpinfo'),
+                MenuItem::linkToUrl('Php info', 'fa fa-info', $this->urlGenerator->generate('admin_status_phpinfo')),
             ]);
 
         yield MenuItem::section('Joueurs');
         yield MenuItem::linkToCrud('Joueurs', 'fa fa-user', Player::class);
         yield MenuItem::linkToCrud('Poules', 'fa fa-group', Group::class);
 
-        yield MenuItem::section('Matchs');
-        yield MenuItem::linkToCrud('Matchs', 'fa fa-trophy', InterfacMatch::class);
+        yield MenuItem::section('Planning');
+        yield MenuItem::linkToUrl('Planning par poule', 'fa fa-calendar', $this->urlGenerator->generate('admin_planning_by_group'));
+        yield MenuItem::linkToUrl('Planning par date', 'fa fa-calendar', $this->urlGenerator->generate('admin_planning_by_date'));
+        yield MenuItem::linkToUrl('Ajout de match', 'fa fa-calendar', $this->urlGenerator->generate('admin_planning_add_match'));
 
         yield MenuItem::section('Plages horaires');
-        yield MenuItem::linkToRoute('Vue globale', 'fa fa-calendar', 'admin_planning');
-        yield MenuItem::linkToRoute('Ajout de créneaux', 'fa fa-calendar', 'admin_planning_bulk_add_slots');
-        yield MenuItem::linkToCrud('Créneaux', 'fa fa-calendar', Slot::class);
-
+        yield MenuItem::linkToUrl('Plages horaires', 'fa fa-calendar', $this->urlGenerator->generate('admin_planning_slots'));
+        yield MenuItem::linkToUrl('Ajout de créneaux', 'fa fa-calendar', $this->urlGenerator->generate('admin_planning_bulk_add_slots'));
+        
         yield MenuItem::section('Admin');
         yield MenuItem::linkToCrud('Users', 'fa fa-user', User::class);
+        yield MenuItem::linkToCrud('Matchs', 'fa fa-trophy', InterfacMatch::class);
         yield MenuItem::linkToCrud('Réservations', 'fa fa-calendar', Booking::class);
+        yield MenuItem::linkToCrud('Créneaux', 'fa fa-calendar', Slot::class);
         yield MenuItem::linkToCrud('Jours', 'fa fa-calendar-day', Date::class);
         yield MenuItem::linkToCrud('Terrains', 'fa fa-calendar-day', Court::class);
     }

@@ -10,10 +10,10 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints;
 
 #[ORM\Entity(repositoryClass: SlotRepository::class)]
-#[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_DATE_AND_START', fields: ['date', 'startsAt'])]
-#[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_DATE_AND_END', fields: ['date', 'endsAt'])]
-#[Constraints\UniqueEntity(fields: ['startsAt', 'date'], message: 'Il y a déjà une plage horaire démarrant à cette heure')]
-#[Constraints\UniqueEntity(fields: ['endsAt', 'date'], message: 'Il y a déjà une plage horaire terminant à cette heure')]
+#[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_DATE_START_COURT', fields: ['date', 'startsAt', 'court'])]
+#[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_DATE_END_COURT', fields: ['date', 'endsAt', 'court'])]
+#[Constraints\UniqueEntity(fields: ['startsAt', 'date', 'court'], message: 'Il y a déjà une plage horaire démarrant à cette heure')]
+#[Constraints\UniqueEntity(fields: ['endsAt', 'date', 'court'], message: 'Il y a déjà une plage horaire terminant à cette heure')]
 class Slot implements EntityInterface
 {
     #[ORM\Id]
@@ -40,7 +40,7 @@ class Slot implements EntityInterface
 
     public function __toString()
     {
-        return $this->date . ' ' . $this->getTimeRange();
+        return $this->date . ' • ' . $this->getTimeRange() . ' • ' . $this->getCourt();
     }
 
     public function getTimeRange()

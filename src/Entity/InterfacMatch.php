@@ -36,7 +36,7 @@ class InterfacMatch implements EntityInterface
 
     public function __toString()
     {
-        return 'match ' . $this->id;
+        return $this->getPlayersAsString();
     }
 
     public function getId(): ?int
@@ -59,6 +59,15 @@ class InterfacMatch implements EntityInterface
         }
 
         return $this;
+    }
+
+    public function getPlayersAsString(): string
+    {
+        if ($this->players->isEmpty()) {
+            return '';
+        }
+    
+        return implode(' - ', $this->players->map(fn($player) => $player->getFullName())->toArray());
     }
 
     public function removePlayer(Player $player): static

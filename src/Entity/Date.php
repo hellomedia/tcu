@@ -48,7 +48,7 @@ class Date implements EntityInterface
             locale: 'fr-FR',
             pattern: 'EEEE dd/MM/YY'
         );
-        return $fmt->format($this->date);
+        return ucfirst($fmt->format($this->date));
     }
 
     public function getId(): ?int
@@ -74,6 +74,14 @@ class Date implements EntityInterface
     public function getSlots(): Collection
     {
         return $this->slots;
+    }
+
+    /**
+     * @return Collection<int, Slot>
+     */
+    public function getSlotsByCourt(Court $court): Collection
+    {
+        return $this->slots->filter(static fn($slot) => $slot->getCourt() === $court);
     }
 
     public function addSlot(Slot $slot): static
@@ -104,10 +112,25 @@ class Date implements EntityInterface
 
     /**
      * @return Collection<int, InterfacMatch>
+     * 
+     * Should be sorted by startsAt ASC since slots are sorted that way
      */
-    public function getMatches(): Collection
+    public function getMatchs(): Collection
     {
         return $this->slots
+            ->map(static fn (Slot $slot) => $slot->getBooking()?->getMatch())
+            ->filter(static fn($v) => null !== $v)
+        ;
+    }
+
+    /**
+     * @return Collection<int, InterfacMatch>
+     * 
+     * Should be sorted by startsAt ASC since slots are sorted that way
+     */
+    public function getMatchsByCourt(Court $court): Collection
+    {
+        return $this->getSlotsByCourt($court)
             ->map(static fn (Slot $slot) => $slot->getBooking()?->getMatch())
             ->filter(static fn($v) => null !== $v)
         ;

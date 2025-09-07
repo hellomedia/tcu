@@ -28,3 +28,6 @@ html {
     --bs-btn-border-radius: var(--bs-border-radius);
     padding: 3px 7px;
 }
+.btn-danger:focus {
+    color: #fff !important;
+}

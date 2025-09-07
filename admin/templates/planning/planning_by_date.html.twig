@@ -1,0 +1,74 @@
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block head_stylesheets %}
+    {{ parent() }}
+    <style>
+        .planning {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+        .date {
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            padding: 15px;
+        }
+        .courts {
+            display: flex;
+            gap: 20px;
+            h5 {
+                text-align: center;
+                white-space: nowrap;
+            }
+        }
+        .court {
+        }
+        .match {
+            white-space: nowrap;
+        }
+    </style>
+{% endblock %}
+
+{% block content_title %}Planning par date{% endblock %}
+
+{% block page_actions %}
+
+    <a class="btn btn-primary" href="{{ path('admin_planning_add_match')}}">
+        + Ajouter un match
+    </a>
+
+{% endblock %}
+
+
+{% block main %}
+
+    <div class="planning">
+        {% for date in dates %}
+            <div class="date">
+                <h4>{{ date }}</h4>
+                <div class="courts">
+                    {% for court in courts %}
+                        <div class="court">
+                            <h5>{{ court }}
+                                <a class="btn btn-default"
+                                    style="margin-left: 5px"
+                                    href="{{ path('admin_planning_add_match', {'court': court.id, 'date': date.id}) }}"
+                                >
+                                    + Match
+                                </a>
+                            </h5>
+                            <div class="matchs">
+                                {% for match in date.matchsByCourt(court) %}
+                                    <div class="match">
+                                        {{ match }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+{% endblock %}

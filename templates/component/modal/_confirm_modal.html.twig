@@ -26,7 +26,7 @@
 
 					<input type="hidden" name="from_route" value="{{ app.current_route }}" />
 
-					{% embed "components/modal/_actions.html.twig" %}
+					{% embed "component/modal/_actions.html.twig" %}
 						{% block submit_attributes %}
 							{% if (turbo ?? true) == false %}data-action="modal#submitForm"{% endif %}
 						{% endblock %}

@@ -20,9 +20,6 @@ class InterfacMatchCrudController extends AbstractCrudController
         return $crud
             ->setEntityLabelInSingular('Match')
             ->setEntityLabelInPlural('Matchs')
-            ->setDefaultSort([
-                'booking' => 'ASC',
-            ])
         ;
     }
 
@@ -34,6 +31,7 @@ class InterfacMatchCrudController extends AbstractCrudController
         yield AssociationField::new('booking', 'Booking');
         
         yield AssociationField::new('players', 'Joueurs')
+            ->setFormTypeOption('by_reference', false)
             ->setTemplatePath('@admin/player/list.html.twig')
         ;
     }

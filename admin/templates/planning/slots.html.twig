@@ -4,14 +4,27 @@
     {{ parent() }}
     <style>
         .planning {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            display: flex;
+            flex-wrap: wrap;
             gap: 30px;
         }
+        .date {
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            padding: 15px;
+        }
         .courts {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-            gap: 30px;
+            display: flex;
+            gap: 20px;
+            h5 {
+                text-align: center;
+                white-space: nowrap;
+            }
+        }
+        .court {
+        }
+        .slot {
+            white-space: nowrap;
         }
     </style>
 {% endblock %}
@@ -37,16 +50,16 @@
                     {% for court in courts %}
                         <div class="court">
                             <h5>{{ court }}</h5>
-                            <div class="time-slots">
-                                {% for slot in date.slots %}
-                                    <div class="time-slot">
+                            <div class="slots">
+                                {% for slot in date.slotsByCourt(court) %}
+                                    <div class="slot">
                                         {{ slot.timeRange }}
                                     </div>
                                 {% endfor %}
                             </div>
                         </div>
-                    </div>
-                {% endfor %}
+                    {% endfor %}
+                </div>
             </div>
         {% endfor %}
     </div>
