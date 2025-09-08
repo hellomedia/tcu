@@ -1,13 +1,47 @@
 import { Controller } from '@hotwired/stimulus';
 
 /**
+ * ========================================
+ *               SUMMARY
+ * ========================================
+ * 
+ * No need for a form in the page.
+ * Form lives inside modal template.
+ *                 
+    <button type="button"
+        formaction="{{ path('route') }}"
+        data-action="modal#open"
+        data-title="Supprimer les matchs"
+        data-html="<p>Attention, les matchs existants seront supprimés!</p>"
+        data-button-label="Supprimer les matchs"
+        data-variant="warning"
+    >
+        <twig:ux:icon name="delete" />
+        Supprimer les matchs
+    </button>
+
+ * 
+ * button click ------> open confirmation modal
+ * 
+ * inside confirmation modal:
+ *      - turbo-frame
+ *      - form 
+ * 
+ * confirm button click ----> 
+ *      A) Turbo submit ----> response includes turbo frame, replaces existing turbo frame
+ *      B) No turbo (easy admin) ----> submitForm() replicates turbo submit
+ * 
+ * In server reponse, we can include a turbo stream to replace page elements
+ * by simply targetting them with their id. It fires automatically.
+ * 
+ * ==========================================
+ * 
  * For confirm modals:
  * Modal controller must be attached to parent element wrapping:
  *  - trigger buttons
  *  - #modal-template element
  * knowing that #modal-template must be outside of the items with trigger buttons
  * in order to not conflict with item updates with turbo-streams
- * 
  * 
  *  SECURITY:
  * - POST request for modifying state
