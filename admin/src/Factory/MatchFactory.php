@@ -45,7 +45,7 @@ class MatchFactory
 
                 // 1. Create the first match entity.
                 $match = new InterfacMatch();
-                $match->setGroup($group);
+                $group->addMatch($match);
                 // Note: The Match entity's ManyToMany relationship with Player is crucial here.
                 // The provided code assumes this has been corrected.
                 $match->addPlayer($player1);
@@ -57,7 +57,7 @@ class MatchFactory
                 // 2. Handle the optional double round-robin.
                 if ($isDoubleRoundRobin) {
                     $matchReturn = new InterfacMatch();
-                    $matchReturn->setGroup($group);
+                    $group->addMatch($matchReturn);
                     // Add players again for the second match. The order doesn't matter
                     // unless you plan on tracking home/away status, for example.
                     $matchReturn->addPlayer($player1);
@@ -79,7 +79,13 @@ class MatchFactory
             $this->entityManager->remove($match);
         }
 
-
         $this->entityManager->flush();
+    }
+
+    public function regenerateGroupMatchs(Group $group)
+    {
+        $this->deleteGroupMatchs($group);
+
+        $this->generateGroupMatchs($group);
     }
 }

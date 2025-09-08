@@ -60,6 +60,19 @@ class PlanningController extends BaseController
         return $this->redirectToRoute('admin_planning_by_group');
     }
 
+    #[Route('/planning/group/{id:group}/regenerate', name: 'admin_planning_regenerate_group_matchs', methods: ['POST'])]
+    public function regenerateGroupMatchs(Group $group, MatchFactory $matchFactory): Response
+    {
+        $matchFactory->regenerateGroupMatchs($group);
+
+        $feedback = 'Regénération des matchs réussie';
+
+        return $this->render('@admin/planning/regenerate_group_matchs_success.html.twig', [
+            'group' => $group,  
+            'feedback' => $feedback,
+        ]);
+    }
+
     #[Route('/planning/group/{id:group}/delete', name: 'admin_planning_delete_group_matchs', methods: ['POST'])]
     public function deleteGroupMatchs(Group $group, MatchFactory $matchFactory): Response
     {

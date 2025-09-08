@@ -22,6 +22,7 @@ ux_icons:
         new: 'ic:baseline-add'
         show: 'ic:baseline-remove-red-eye'
         edit: 'ic:baseline-edit'
+        refresh: 'ion:refresh'
         delete: 'ic:baseline-delete'
         archive: 'ic:baseline-archive'
         unarchive: 'ic:baseline-unarchive'

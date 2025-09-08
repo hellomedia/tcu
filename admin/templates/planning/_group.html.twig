@@ -1,28 +1,10 @@
 <div class="group" id="group-{{ group.id }}">
-    <h4 class="group-header">
-        <span>{{ group }}</span>
-        {% if group.matchs is empty %}
-            <a class="btn btn-default"
-                style="margin-left: 5px"
-                href="{{ path('admin_planning_generate_group_matchs', {'id': group.id}) }}"
-            >
-                Générer les matchs
-            </a>
-        {% else %}
-            <button
-                type="button"
-                class="btn btn-default btn-sm"
-                formaction="{{ path('admin_planning_delete_group_matchs', {'id': group.id}) }}"
-                data-action="modal#open"
-                data-title="Supprimer les matchs"
-                data-html="<p>Ceci supprimera les matchs pour cette poule</p>"
-                data-button-label="Supprimer les matchs"
-                data-variant="warning"
-            >
-                Supprimer les matchs
-            </button>
+    <div class="group-header">
+        <h4>{{ group }}</h4>    
+        {% if group.matchs is not empty %}
+            {% include '@admin/planning/_secondary_actions.html.twig' %}
         {% endif %}
-    </h4>
+    </div>
     <div class="matchs">
         {% for match in group.matchs %}
             <div class="match">
@@ -43,5 +25,10 @@
                 </div>
             </div>
         {% endfor %}
+        {% if group.matchs is empty %}
+            <a class="btn btn-primary" href="{{ path('admin_planning_generate_group_matchs', {'id': group.id}) }}">
+                Générer les matchs
+            </a>
+        {% endif %}
     </div>
 </div>
