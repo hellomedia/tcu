@@ -97,10 +97,9 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Poules', 'fa fa-group', Group::class);
 
         yield MenuItem::section('Planning');
-        yield MenuItem::linkToUrl('Planning par poule', 'fa fa-calendar', $this->urlGenerator->generate('admin_planning_by_group'));
+        yield MenuItem::linkToUrl('Poules', 'fa fa-calendar', $this->urlGenerator->generate('admin_planning_by_group'));
         yield MenuItem::linkToUrl('Planning par date', 'fa fa-calendar', $this->urlGenerator->generate('admin_planning_by_date'));
-        yield MenuItem::linkToUrl('Ajout de match', 'fa fa-calendar', $this->urlGenerator->generate('admin_planning_add_match'));
-
+        
         yield MenuItem::section('Plages horaires');
         yield MenuItem::linkToUrl('Plages horaires', 'fa fa-calendar', $this->urlGenerator->generate('admin_planning_slots'));
         yield MenuItem::linkToUrl('Ajout de créneaux', 'fa fa-calendar', $this->urlGenerator->generate('admin_planning_bulk_add_slots'));
@@ -108,6 +107,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::section('Admin');
         yield MenuItem::linkToCrud('Users', 'fa fa-user', User::class);
         yield MenuItem::linkToCrud('Matchs', 'fa fa-trophy', InterfacMatch::class);
+        yield MenuItem::linkToUrl('Ajout de match', 'fa fa-calendar', $this->urlGenerator->generate('admin_planning_add_match'));
         yield MenuItem::linkToCrud('Réservations', 'fa fa-calendar', Booking::class);
         yield MenuItem::linkToCrud('Créneaux', 'fa fa-calendar', Slot::class);
         yield MenuItem::linkToCrud('Jours', 'fa fa-calendar-day', Date::class);

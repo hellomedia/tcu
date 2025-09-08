@@ -88,4 +88,12 @@ class MatchFactory
 
         $this->generateGroupMatchs($group);
     }
+
+    /**
+     * Add a series of group matchs to a group with existing matches
+     */
+    public function addGroupMatchs(Group $group)
+    {
+        $this->generateGroupMatchs($group);
+    }
 }

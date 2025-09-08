@@ -14,6 +14,18 @@
 
                 <button type="button"
                     class="hk-dropdown-link"
+                    formaction="{{ path('admin_planning_add_group_matchs', {'id': group.id}) }}"
+                    data-action="modal#open"
+                    data-title="Ajouter 1 série de matchs"
+                    data-html="<p>Chaque joueur joue 1x de plus contre les autres joueurs de la poule</p>"
+                    data-button-label="Ajouter 1 série de matchs"
+                >
+                    <twig:ux:icon name="add" />
+                    Ajouter 1 série de matchs
+                </button>
+
+                <button type="button"
+                    class="hk-dropdown-link"
                     formaction="{{ path('admin_planning_regenerate_group_matchs', {'id': group.id}) }}"
                     data-action="modal#open"
                     data-title="Regénérer les matchs"
