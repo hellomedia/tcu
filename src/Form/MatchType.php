@@ -8,6 +8,7 @@ use App\Entity\Slot;
 use App\Entity\Booking;
 use App\Entity\Court;
 use App\Entity\Date;
+use App\Entity\Group;
 use App\Enum\BookingType;
 use App\Repository\SlotRepository;
 use DateTimeImmutable;
@@ -19,15 +20,24 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfonycasts\DynamicForms\DynamicFormBuilder;
 
 final class MatchType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $builder = new DynamicFormBuilder($builder);
 
         $court = $options['court'];
         $date = $options['date'];
 
+        $builder->add('group', EntityType::class, [
+            'label' => 'Poule',
+            'class' => Group::class,
+            'multiple' => false,
+            'autocomplete' => true,
+        ]);
+    
         $builder->add('date', EntityType::class, [
             'label' => 'Date',
             'class' => Date::class,

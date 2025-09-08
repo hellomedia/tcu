@@ -8,7 +8,8 @@
 			<div class="court">
 				<h5>{{ court }}
 					<a class="btn btn-default" style="margin-left: 5px" href="{{ path('admin_planning_match_add', {'court': court.id, 'date': date.id}) }}">
-						+ Match
+                        + Match
+                        {# {{ path('admin_planning_date_add_match', {'id': date.id}) }} #}
 					</a>
 				</h5>
 				<div class="matchs">

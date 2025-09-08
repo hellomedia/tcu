@@ -8,6 +8,10 @@
             flex-wrap: wrap;
             gap: 30px;
         }
+        .placeholder {
+            visibility: hidden;
+            width: 15px;
+        }
         .group-header {
             display: flex;
             justify-content: space-between;
@@ -20,14 +24,38 @@
             padding: 15px;
         }
         .courts {
-            display: flex;
-            gap: 20px;
             h5 {
                 text-align: center;
                 white-space: nowrap;
             }
         }
         .court {
+            display: inline-block;
+            vertical-align: top;
+            width: 150px;
+        }
+        .slots {
+            margin-top: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+        }
+        .slot-row {
+            display: flex;
+            gap: 5px;
+            justify-content: space-between;
+            align-items: center;
+            .btn {
+                visibility: hidden;
+                svg {
+                    width: 15px;
+                }
+            }
+            &:hover {
+                .btn {
+                    visibility: visible;
+                }
+            }
         }
         .slot {
             white-space: nowrap;
@@ -39,7 +67,7 @@
 
 {% block page_actions %}
 
-    <a class="btn btn-primary" href="{{ path('admin_planning_slot_bulk_add')}}">
+    <a class="btn btn-primary" href="{{ path('admin_planning_slot_bulk_add') }}">
         + Ajouter des créneaux hebdomadaires
     </a>
 

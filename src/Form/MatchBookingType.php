@@ -20,14 +20,15 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfonycasts\DynamicForms\DependentField;
 use Symfonycasts\DynamicForms\DynamicFormBuilder;
 
-final class MatchScheduleType extends AbstractType
+/**
+ * Make a booking for a given match
+ */
+final class MatchBookingType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-
         $court = $options['court'];
         $date = $options['date'];
-
 
         $builder = new DynamicFormBuilder($builder);
 
@@ -43,7 +44,7 @@ final class MatchScheduleType extends AbstractType
             'mapped' => false,
         ]);
 
-        $builder->addDependent('date', 'slot', function(DependentField $field, ?Date $selectedDate) {
+        $builder->addDependent('date', 'slot', function(DependentField $field, ?Date $selectedDate) use ($court) {
             if ($selectedDate === null) {
                 return;
             }
@@ -51,13 +52,15 @@ final class MatchScheduleType extends AbstractType
                 'label' => 'Créneau',
                 'class' => Slot::class,
                 'property_path' => 'booking.slot', // <- key part
-                'query_builder' => function (SlotRepository $repo) use ($selectedDate): QueryBuilder {
+                'query_builder' => function (SlotRepository $repo) use ($selectedDate, $court): QueryBuilder {
                     $qb = $repo->createQueryBuilder('s')
                         ->leftJoin('s.booking', 'b')->addSelect('b')
                         ->andWhere('b.id IS NULL')
                         ->innerJoin('s.date', 'd')->addSelect('d')
                         ->andWhere('s.date = :date')
                         ->setParameter('date', $selectedDate)
+                        ->andWhere('s.court = :court')
+                        ->setParameter('court', $court)
                         ->addOrderBy('s.startsAt', 'ASC');
                     
                     return $qb;

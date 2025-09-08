@@ -1,5 +1,6 @@
 <div class="date" id="date-{{ date.id }}">
     <div class="group-header">
+        <div class="placeholder"></div>
         <h4>{{ date }}</h4>
         {% include '@admin/planning/slot/_secondary_actions.html.twig' %}
     </div>
@@ -9,9 +10,17 @@
 				<h5>{{ court }}</h5>
 				<div class="slots">
 					{% for slot in date.slotsByCourt(court) %}
-						<div class="slot">
-							{{ slot.timeRange }}
-						</div>
+                        <div class="slot-row">
+                            <div class="placeholder"></div>
+                            <div class="slot">
+                                {{ slot.timeRange }}
+                            </div>
+                            <a class="btn btn-default"
+                                href="{{ path('admin_planning_slot_add_booking', {'id': slot.id}) }}"
+                            >
+                                <twig:ux:icon name="add" />
+                            </a>
+                        </div>  
 					{% endfor %}
 				</div>
 			</div>

@@ -50,7 +50,10 @@ class MatchController extends BaseController
         ]);
     }
 
-    #[Route('/planning/match/add/{court}/{date}', name: 'admin_planning_match_add', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
+    /**
+     * Make a booking for a match (to be selected) at given date/court
+     */
+    #[Route('/planning/match/add/{date}/{court}', name: 'admin_planning_match_add', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
     public function add(
         Request $request,
         #[MapEntity(mapping: ['court' => 'id'])]
