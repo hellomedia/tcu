@@ -10,9 +10,6 @@ export default class extends Controller {
     toggle(event) {
         this.menuTarget.classList.toggle("hidden");
         this.menuTarget.classList.toggle("opacity-0");
-        this.menuTarget.classList.toggle("scale-95");
-        this.menuTarget.classList.toggle("opacity-100");
-        this.menuTarget.classList.toggle("scale-100");
 
         this.updateListeners();
     }
@@ -25,8 +22,7 @@ export default class extends Controller {
     }
 
     closeMenu() {
-        this.menuTarget.classList.add("hidden", "opacity-0", "scale-95");
-        this.menuTarget.classList.remove("opacity-100", "scale-100");
+        this.menuTarget.classList.add("hidden", "opacity-0");
         
         this.updateListeners();
     }
