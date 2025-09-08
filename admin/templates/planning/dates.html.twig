@@ -29,18 +29,18 @@
         }
         .court {
         }
-        .slot {
+        .match {
             white-space: nowrap;
         }
     </style>
 {% endblock %}
 
-{% block content_title %}Plages horaires{% endblock %}
+{% block content_title %}Dates{% endblock %}
 
 {% block page_actions %}
 
-    <a class="btn btn-primary" href="{{ path('admin_planning_slot_bulk_add')}}">
-        + Ajouter des créneaux hebdomadaires
+    <a class="btn btn-primary" href="{{ path('admin_planning_match_add')}}">
+        + Ajouter un match
     </a>
 
 {% endblock %}
@@ -53,7 +53,7 @@
         data-modal-type-value="confirm"
     >
         {% for date in dates %}
-            {% include '@admin/planning/slot/_date.html.twig' %}
+            {% include '@admin/planning/date/_date.html.twig' %}
         {% endfor %}
 
         {% include '@admin/modal/_confirm_modal.html.twig' %}

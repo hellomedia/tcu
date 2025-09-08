@@ -1,0 +1,24 @@
+<div class="date">
+    <div class="group-header">
+	    <h4>{{ date }}</h4>
+        {% include '@admin/planning/date/_secondary_actions.html.twig' %}
+    </div>
+	<div class="courts">
+		{% for court in courts %}
+			<div class="court">
+				<h5>{{ court }}
+					<a class="btn btn-default" style="margin-left: 5px" href="{{ path('admin_planning_match_add', {'court': court.id, 'date': date.id}) }}">
+						+ Match
+					</a>
+				</h5>
+				<div class="matchs">
+					{% for match in date.matchsByCourt(court) %}
+						<div class="match">
+							{{ match }}
+						</div>
+					{% endfor %}
+				</div>
+			</div>
+		{% endfor %}
+	</div>
+</div>

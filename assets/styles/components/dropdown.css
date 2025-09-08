@@ -88,4 +88,8 @@
     margin-top: 5px;
     right: 0;
 }
+.hk-dropdown-link {
+    color: var(--color-primary-text); /* easy admin CSS var not accessible in CSS layer */
+}
+
 

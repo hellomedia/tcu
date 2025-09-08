@@ -1,0 +1,20 @@
+<div class="date" id="date-{{ date.id }}">
+    <div class="group-header">
+        <h4>{{ date }}</h4>
+        {% include '@admin/planning/slot/_secondary_actions.html.twig' %}
+    </div>
+	<div class="courts">
+		{% for court in courts %}
+			<div class="court">
+				<h5>{{ court }}</h5>
+				<div class="slots">
+					{% for slot in date.slotsByCourt(court) %}
+						<div class="slot">
+							{{ slot.timeRange }}
+						</div>
+					{% endfor %}
+				</div>
+			</div>
+		{% endfor %}
+	</div>
+</div>

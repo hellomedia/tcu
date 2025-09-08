@@ -1,7 +1,8 @@
 <?php
 
-namespace Admin\Controller;
+namespace Admin\Controller\Planning;
 
+use Admin\Controller\DashboardController;
 use Admin\Exception\InvalidWindowException;
 use App\Form\Handler\SlotBulkAddFormHandler;
 use App\Controller\BaseController;
@@ -24,20 +25,8 @@ class SlotController extends BaseController
         
     }
 
-    #[Route('/planning/slots', name: 'admin_planning_slots', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
-    public function slots(DateRepository $dateRepository, CourtRepository $courtRepository): Response
-    {
-        $dates = $dateRepository->findFutureDates();
-        $courts = $courtRepository->findAll();
-
-        return $this->render('@admin/planning/slots.html.twig', [
-            'dates' => $dates,
-            'courts' => $courts,
-        ]);
-    }
-
-    #[Route('/planning/bulk-add-slots', name: 'admin_planning_bulk_add_slots', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
-    public function bulkAddSlots(Request $request): Response
+    #[Route('/planning/slot/bulk-add', name: 'admin_planning_slot_bulk_add', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
+    public function bulkAdd(Request $request): Response
     {
         $form = $this->createForm(SlotBulkAddType::class);
 
@@ -54,7 +43,7 @@ class SlotController extends BaseController
 
                 $this->addFlash('danger', $exception->getMessage());
 
-                return $this->redirectToRoute('admin_planning_bulk_add_slots', [
+                return $this->redirectToRoute('admin_planning_slot_bulk_add', [
                     'form' => $form,
                 ]);
             }
@@ -66,7 +55,7 @@ class SlotController extends BaseController
             return $this->redirectToRoute('admin_planning_slots');
         }
 
-        return $this->render('@admin/planning/bulk_add_slots.html.twig', [
+        return $this->render('@admin/planning/slot/bulk_add.html.twig', [
             'form' => $form,
         ]);
     }

@@ -3,6 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Court;
+use App\Entity\Date;
 use App\Enum\SlotDuration;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -16,6 +17,8 @@ class SlotBulkAddType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $date = $options['date'];
+
         $builder
             ->add('courts', EntityType::class, [
                 'label' => 'Terrains',
@@ -23,13 +26,18 @@ class SlotBulkAddType extends AbstractType
                 'multiple' => true,
                 'expanded' => false,
                 'autocomplete' => true,
-            ])
-            ->add('startDate', DateType::class, [
+            ]);
+        
+        if ($date == null) {
+            $builder->add('startDate', DateType::class, [
                 'label' => 'Date de début',
             ])
             ->add('endDate', DateType::class, [
                 'label' => 'Date de fin (inclue)',
-            ])
+            ]);
+        }
+
+        $builder
             ->add('startTime', TimeType::class, [
                 'label' => 'Heure de début',
             ])
@@ -50,7 +58,9 @@ class SlotBulkAddType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            // Configure your form options here
+            'date' => null,
         ]);
+
+        $resolver->addAllowedTypes('date', ['null', Date::class]);
     }
 }

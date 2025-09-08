@@ -1,0 +1,45 @@
+{# Important: Note the syntax with [] and only #}
+{# Ignore global themes; use only EasyAdmin #}
+{# important to avoid theme conflicts #}
+{% form_theme form with ['@admin/form/form_theme.html.twig'] only %}
+
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block head_stylesheets %}
+    {{ parent() }}
+    <style>
+        @media (min-width: 768px) {
+            .form-wrapper {
+                max-width: 300px;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block content_title %}Ajouter un match{% endblock %}
+
+{% block page_actions %}
+
+    <a class="btn btn-default" href="{{ path('admin_planning_dates')}}">
+        Planning
+    </a>
+
+{% endblock %}
+
+
+{% block main %}
+
+    <div class="form-wrapper">
+
+        {{ form_start(form) }}
+
+            {{ form_rest(form) }}
+
+            {% include '@admin/form/_ajax_button.html.twig' %}
+        
+        {{ form_end(form) }}
+
+    </div>
+
+
+{% endblock %}

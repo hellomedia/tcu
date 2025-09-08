@@ -30,9 +30,17 @@ class SlotBulkAddFormHandler
 
     public function processForm(FormInterface $form): array
     {
+        $date = $form->getConfig()->getOption('date');
+
+        if ($date) {
+            $startDate = $date->getDate();
+            $endDate = $date->getDate();
+        } else {
+            $startDate = $form->get('startDate')->getData();   // DateTimeInterface (date-only)
+            $endDate = $form->get('endDate')->getData();     // DateTimeInterface (date-only)
+        }
+
         $courts       = $form->get('courts')->getData();
-        $startDate    = $form->get('startDate')->getData();   // DateTimeInterface (date-only)
-        $endDate      = $form->get('endDate')->getData();     // DateTimeInterface (date-only)
         $startTime    = $form->get('startTime')->getData();   // DateTimeInterface (time-only)
         $endTime      = $form->get('endTime')->getData();     // DateTimeInterface (time-only)
         $slotDuration = $form->get('duration')->getData();    // SlotDuration enum

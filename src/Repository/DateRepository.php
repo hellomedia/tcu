@@ -6,6 +6,7 @@ use App\Entity\Date;
 use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -26,11 +27,32 @@ class DateRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('d')
             ->leftJoin('d.slots', 's')
             ->addSelect('s')
-            ->andWhere('d.date >= :today')
-            ->setParameter('today', (new DateTimeImmutable('today')), Types::DATE_IMMUTABLE)
+            ->andWhere('d.date >= CURRENT_DATE()')
             ->orderBy('d.date', 'ASC')
             ->getQuery()
             ->getResult()
+        ;
+    }
+
+    /**
+    * @return Date[] Returns an array of Date objects
+    */
+    public function findFutureDatesWithAvailableSlots(): array
+    {
+        return $this->getFutureDatesWithAvailableSlotsQueryBuilder()
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    public function getFutureDatesWithAvailableSlotsQueryBuilder(): QueryBuilder
+    {
+        return $this->createQueryBuilder('d')
+            ->innerJoin('d.slots', 's')
+            ->addSelect('s')
+            ->andWhere('s.booking IS NULL')
+            ->andWhere('d.date >= CURRENT_DATE()')
+            ->orderBy('d.date', 'ASC')
         ;
     }
 

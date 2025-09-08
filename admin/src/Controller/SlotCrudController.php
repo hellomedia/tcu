@@ -45,7 +45,7 @@ class SlotCrudController extends AbstractCrudController
     public function configureActions(Actions $actions): Actions
     {
         $bulkAdd = Action::new('bulkAdd', 'Ajouter des créneaux')
-            ->linkToRoute('admin_planning_bulk_add_slots')
+            ->linkToRoute('admin_planning_slot_bulk_add')
             ->setIcon('fa fa-add')
             ->addCssClass('btn-primary')
             ->createAsGlobalAction();
