@@ -163,6 +163,7 @@ export default class extends Controller {
     // OPTION 2: REGULAR NON-TURBO FORM SUBMIT
     // =======================================
     // Handle form submission and server response
+    // In our easyadmin setup, we do this
     async submitForm(event) {
         event.preventDefault();
 

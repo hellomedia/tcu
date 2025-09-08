@@ -12,12 +12,19 @@
 // BUT symfonycast/tailwind binary which builds tailwind assets only supports 1 entry point
 // ( see symfonycasts_tailwind.yaml )
 // So in the end, 2nd level imports are not recognized in a file other than app.css
+
+// DO NOT import lights.css
+// it only kicks in if body has .light class, which we don't do in easyadmin
+// import './styles/themes/light.css';
+// INSTEAD, import custom version for easyadmin or rely on easyadmin variables
+
 import './styles/admin/admin.css';
 import './styles/admin/grid.css';
 import './styles/admin/card.css';
 import './styles/admin/chart.css';
 
 import "./styles/admin/modal-variables.css";
+import "./styles/components/dropdown.css";
 import "./styles/components/modal.css";
 import "./styles/components/modal-icon.css";
 import "./styles/components/modal-animation.css";

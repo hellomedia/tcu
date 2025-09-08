@@ -1,14 +1,28 @@
 @layer components {
 
-    .dropdown-container {
+    /* Add hk namespace for easyadmin, to avoid collision with bootstrap styles */
+
+    .hk-dropdown-container {
+        all: unset; /* for easyadmin */
+    }
+    .dropdown-container, .hk-dropdown-container {
         position: relative;
     }
 
-    .dropdown-button {
+    .hk-dropdown-button {
+        all: unset; /* for easyadmin */
+    }
+    .dropdown-button, .hk-dropdown-button {
         cursor: pointer;
+        svg {
+            height: 27px;
+        }
     }
 
-    .dropdown-menu {
+    .hk-dropdown-menu {
+        all: unset; /* for easyadmin */
+    }
+    .dropdown-menu, .hk-dropdown-menu {
         position: absolute;
         z-index: 100;
         display: flex;
@@ -16,9 +30,14 @@
         max-width: min-content;
         padding-inline: calc(var(--spacing) * 4);
         margin-top: calc(var(--spacing)* 5);
+        background-color: white;
+        border: 1px solid var(--color-border);
     }
 
-    .dropdown-inner {
+    .hk-dropdown-inner {
+        all: unset; /* for easyadmin */
+    }
+    .dropdown-inner, .hk-dropdown-inner {
         display: flex;
         flex-direction: column;
         align-items: flex-start;
@@ -40,9 +59,12 @@
         }
     }
 
-    .dropdown-link {
+    .hk-dropdown-link {
+        all:unset; /* for easyadmin */
+    }
+    .dropdown-link, .hk-dropdown-link {
         display: flex;
-        flex-direction: row;
+        align-items: center;
         gap: calc(var(--spacing)* 3);
         white-space: nowrap;
         padding: calc(var(--spacing)* 2);
@@ -58,3 +80,12 @@
         }
     }
 }
+
+/* outside of layer components for easyadmin !! */
+
+.hk-dropdown-menu {
+    border: 1px solid var(--border-color); /* easy admin CSS var not accessible in CSS layer */
+    margin-top: 5px;
+    right: 0;
+}
+
