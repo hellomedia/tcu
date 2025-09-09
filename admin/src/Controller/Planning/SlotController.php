@@ -95,4 +95,11 @@ class SlotController extends BaseController
             'form' => $form,
         ]);
     }
+
+    #[Route('/planning/slot/{id:slot}/remove-booking', name: 'admin_planning_slot_remove_booking', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
+    public function removeBooking(Slot $slot, Request $request): Response
+    {
+        return $this->render('@admin/planning/planning.html.twig', [
+        ]);
+    }
 }

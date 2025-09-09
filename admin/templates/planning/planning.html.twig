@@ -48,6 +48,7 @@
             grid-template-columns: 50px 150px 50px;
             gap: 5px;
             .btn {
+
                 visibility: hidden;
                 svg {
                     width: 15px;
@@ -66,6 +67,14 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
+        }
+        .slot-actions {
+            .btn {
+                box-shadow: none;
+                svg {
+                    width: 24px;
+                }
+            }
         }
     </style>
 {% endblock %}
