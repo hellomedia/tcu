@@ -39,7 +39,7 @@ PREFIX=/data/tcu/www/$TRACK
 SSH="ssh"
 RELEASE_NAME=$(date +"%Y%m%d-%H%M%S")
 LOCAL_REPO=$(git rev-parse --show-toplevel || pwd)
-REPO=git@github.com:hellokot/tcu
+REPO=git@github.com:hellomedia/tcu
 DEST=$PREFIX/releases/$RELEASE_NAME
 TMP_REPO=$(TMPDIR=$(pwd) mktemp -d -t tcu-deploy.XXXXX)
 
