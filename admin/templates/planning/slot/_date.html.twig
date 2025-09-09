@@ -11,15 +11,9 @@
 				<div class="slots">
 					{% for slot in date.slotsByCourt(court) %}
                         <div class="slot-row">
-                            <div class="placeholder"></div>
                             <div class="slot">
                                 {{ slot.timeRange }}
                             </div>
-                            <a class="btn btn-default"
-                                href="{{ path('admin_planning_slot_add_booking', {'id': slot.id}) }}"
-                            >
-                                <twig:ux:icon name="add" />
-                            </a>
                         </div>  
 					{% endfor %}
 				</div>

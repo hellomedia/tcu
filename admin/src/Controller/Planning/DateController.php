@@ -57,7 +57,7 @@ class DateController extends BaseController
 
                 $this->addFlash('danger', $exception->getMessage());
 
-                return $this->redirectToRoute('admin_planning_dates', [
+                return $this->redirectToRoute('admin_planning_matchs', [
                     'form' => $form,
                 ]);
             }

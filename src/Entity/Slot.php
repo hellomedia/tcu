@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Entity\Interface\EntityInterface;
 use App\Repository\SlotRepository;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -116,5 +117,15 @@ class Slot implements EntityInterface
         $this->booking = $booking;
 
         return $this;
+    }
+
+    public function getMatch(): ?InterfacMatch
+    {
+        return $this->booking?->getMatch();
+    }
+
+    public function getPlayers(): ?Collection
+    {
+        return $this->booking?->getMatch()?->getPlayers()?->map(fn ($player) => $player->getFullName());
     }
 }

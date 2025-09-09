@@ -35,29 +35,15 @@
     </style>
 {% endblock %}
 
-{% block content_title %}Planning journalier{% endblock %}
-
-{% block page_actions %}
-
-    <a class="btn btn-primary" href="{{ path('admin_planning_match_add')}}">
-        + Ajouter un match
-    </a>
-
-{% endblock %}
+{% block content_title %}Matchs{% endblock %}
 
 
 {% block main %}
 
-    <div class="planning"
-        data-controller="modal"
-        data-modal-type-value="confirm"
-    >
+    <div class="planning">
         {% for date in dates %}
-            {% include '@admin/planning/date/_date.html.twig' %}
+            {% include '@admin/planning/match/_date.html.twig' %}
         {% endfor %}
-
-        {% include '@admin/modal/_confirm_modal.html.twig' %}
-        {% include 'component/modal/_icons_templates.html.twig' %}
 
     </div>
 

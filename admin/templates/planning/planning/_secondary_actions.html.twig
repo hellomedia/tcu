@@ -1,0 +1,37 @@
+<div class="planning-secondary-actions hk-dropdown-container"
+	data-controller="dropdown"
+>
+	<button type="button"
+		class="hk-dropdown-button"
+		data-action="dropdown#toggle"
+	>
+		<twig:ux:icon name="dots"/>
+	</button>
+
+	<div data-dropdown-target="menu" class="hk-dropdown-menu hidden opacity-0">
+		
+        <div class="hk-dropdown-inner">
+
+            <a class="hk-dropdown-link"
+                href="{{ path('admin_planning_date_add_slots', {'id': date.id}) }}"
+            >
+                <twig:ux:icon name="add" />
+                Ajouter des créneaux
+            </a>
+
+            <button type="button"
+                class="hk-dropdown-link"
+                formaction="{{ path('admin_planning_date_delete', {'id': date.id}) }}"
+                data-action="modal#open"
+                data-title="Supprimer la date"
+                data-html="<p>Les plages horaires de cette date et les réservations associées seront supprimés</p>"
+                data-button-label="Supprimer la date"
+                data-variant="warning"
+            >
+                <twig:ux:icon name="delete" />
+                Supprimer la date
+            </button>
+
+        </div>
+	</div>
+</div>

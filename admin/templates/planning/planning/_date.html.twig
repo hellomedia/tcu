@@ -1,0 +1,39 @@
+<div class="date" id="date-{{ date.id }}">
+    <div class="group-header">
+        <h4>{{ date }}</h4>
+    </div>
+	<div class="courts">
+		{% for court in courts %}
+			<div class="court">
+				<h5>{{ court }}</h5>
+				<div class="slots">
+					{% for slot in date.slotsByCourt(court) %}
+                        <div class="slot-row">
+                            <div class="slot-time">
+                                {{ slot.startsAt|date('H:i') }}
+                            </div>
+                            <div class="slot-content">
+                                <div class="slot-content-inner">
+                                    <div class="placeholder"></div>
+                                    {% for player in slot.players %}
+                                        <span class="player">{{ player }}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="slot-actions">
+                                <div class="slot-actions-inner">
+                                    <div class="placeholder"></div>
+                                    <a class="btn btn-default"
+                                        href="{{ path('admin_planning_slot_add_booking', {'id': slot.id}) }}"
+                                    >
+                                        <twig:ux:icon name="add" />
+                                    </a>
+                                </div>
+                            </div>
+                        </div>  
+					{% endfor %}
+				</div>
+			</div>
+		{% endfor %}
+	</div>
+</div>

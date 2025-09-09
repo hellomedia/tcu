@@ -7,6 +7,9 @@
             display: flex;
             flex-wrap: wrap;
             gap: 30px;
+            /* display:grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px; */
         }
         .placeholder {
             visibility: hidden;
@@ -14,7 +17,7 @@
         }
         .group-header {
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             gap: 10px;
             margin-bottom: 10px;
         }
@@ -32,19 +35,18 @@
         .court {
             display: inline-block;
             vertical-align: top;
-            width: 120px;
+            width: 250px;
         }
         .slots {
             margin-top: 15px;
             display: flex;
             flex-direction: column;
-            gap: 1px;
         }
         .slot-row {
-            display: flex;
+            height: 60px;
+            display: grid;
+            grid-template-columns: 50px 150px 50px;
             gap: 5px;
-            justify-content: center;
-            align-items: center;
             .btn {
                 visibility: hidden;
                 svg {
@@ -57,19 +59,20 @@
                 }
             }
         }
-        .slot {
-            white-space: nowrap;
+        .slot-content-inner,
+        .slot-actions-inner {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
     </style>
 {% endblock %}
 
-{% block content_title %}Plages horaires{% endblock %}
+{% block content_title %}Planning{% endblock %}
 
 {% block page_actions %}
-
-    <a class="btn btn-primary" href="{{ path('admin_planning_slot_bulk_add') }}">
-        + Ajouter des créneaux hebdomadaires
-    </a>
 
 {% endblock %}
 
@@ -81,7 +84,7 @@
         data-modal-type-value="confirm"
     >
         {% for date in dates %}
-            {% include '@admin/planning/slot/_date.html.twig' %}
+            {% include '@admin/planning/planning/_date.html.twig' %}
         {% endfor %}
 
         {% include '@admin/modal/_confirm_modal.html.twig' %}

@@ -80,7 +80,7 @@ class MatchController extends BaseController
 
             $this->addFlash('success', 'Match ajouté');
 
-            return $this->redirectToRoute('admin_planning_dates');
+            return $this->redirectToRoute('admin_planning_matchs');
         }
 
         return $this->render('@admin/planning/match/add.html.twig', [
