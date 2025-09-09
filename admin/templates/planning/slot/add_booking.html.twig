@@ -29,22 +29,25 @@
 
 {% block main %}
 
-    <div class="form-wrapper" data-controller="ajax">
+    <div class="form-wrapper"
+        data-controller="ajax"
+        data-ajax-full-ajax-submit-value="false"
+    >
 
         {{ form_start(form, {
             'attr': {
-                'data-ajax-target': 'form',
-                'data-action': 'submit->ajax#submit change->ajax#submitOnChange'
+                'novalidate': 'novalidate',
+                'data-ajax-target': 'form'
             }
         }) }}
 
-            <div data-ajax-target="container" class="quick-edit">
+            <div data-ajax-target="container">
                 {{ form_rest(form) }}
-
-                {% include '@admin/form/_ajax_button.html.twig' %}
-                
-                {{ form_end(form) }}
             </div>
+
+            {% include '@admin/form/_ajax_button.html.twig' %}
+        </form>
+                
     </div>
 
 {% endblock %}

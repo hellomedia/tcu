@@ -4,9 +4,12 @@ namespace Admin\Controller\Planning;
 
 use Admin\Controller\DashboardController;
 use App\Controller\BaseController;
+use App\Entity\Booking;
 use App\Entity\Court;
 use App\Entity\Date;
 use App\Entity\InterfacMatch;
+use App\Enum\BookingType;
+use App\Form\MatchBookingForm;
 use App\Form\MatchType;
 use Doctrine\ORM\EntityManager;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
@@ -29,20 +32,23 @@ class MatchController extends BaseController
     #[Route('/planning/match/{id:match}/schedule', name: 'admin_planning_match_schedule', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
     public function schedule(InterfacMatch $match, Request $request): Response
     {
-        $form = $this->createForm(MatchType::class, $match);
+        $booking = new Booking();
+        $booking->setType(BookingType::MATCH);
+        $booking->setMatch($match);
+        $match->setBooking($booking);
+
+        $form = $this->createForm(MatchBookingForm::class, $match);
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->has('slot') && $form['slot']->getData() != null && $form->isSubmitted() && $form->isValid()) {
 
-            $this->entityManager->persist($match->getBooking()); // persist the new booking too
-            $this->entityManager->persist($match);
-
+            $this->entityManager->persist($booking);
             $this->entityManager->flush();
 
             $this->addFlash('success', 'Match programmé');
 
-            return $this->redirectToRoute('admin_planning_groups');
+            return $this->redirectToRoute('admin_planning_index');
         }
 
         return $this->render('@admin/planning/match/schedule.html.twig', [

@@ -2,8 +2,11 @@
 
 namespace App\Repository;
 
+use App\Entity\Booking;
+use App\Entity\Date;
 use App\Entity\Slot;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -40,4 +43,24 @@ class SlotRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+    /**
+     * Why the explicit join on Booking::class ?
+     * A single-valued association path expression to an inverse side
+     * is not supported in DQL queries. Instead of "s.booking" use an explicit join.
+     * 
+     * 
+     */
+    public function getFutureAvailableSlotsQueryBuilder(Date $date): QueryBuilder
+    {
+        return $this->createQueryBuilder('s')
+            ->andWhere('NOT EXISTS (
+                SELECT 1 FROM ' . Booking::class . ' b WHERE b.slot = s
+            )')
+            ->innerJoin('s.date', 'd')->addSelect('d')
+            ->andWhere('s.date = :date')
+            ->setParameter('date', $date)
+            ->addOrderBy('s.startsAt', 'ASC')
+        ;
+    }
 }

@@ -73,13 +73,8 @@ class MatchFactory
     public function deleteGroupMatchs(Group $group)
     {
         foreach ($group->getMatchs() as $match) {
-            
-            $group->removeMatch($match);
-
-            $this->entityManager->remove($match);
+            $this->remove($match);
         }
-
-        $this->entityManager->flush();
     }
 
     public function regenerateGroupMatchs(Group $group)
@@ -95,5 +90,24 @@ class MatchFactory
     public function addGroupMatchs(Group $group)
     {
         $this->generateGroupMatchs($group);
+    }
+
+    public function remove(InterfacMatch $match)
+    {
+        $booking = $match->getBooking();
+        $group = $match->getGroup();
+
+        if ($group) {
+            $group->removeMatch($match);
+        }
+
+        if ($booking) {
+            $booking->getSlot()->setBooking(null);
+            $this->entityManager->remove($booking);
+        }
+
+        $this->entityManager->remove($match);
+
+        $this->entityManager->flush();
     }
 }

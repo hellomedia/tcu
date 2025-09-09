@@ -29,15 +29,25 @@
 
 {% block main %}
 
-    <div class="form-wrapper">
+    <div class="form-wrapper"
+        data-controller="ajax"
+        data-ajax-full-ajax-submit-value="false"
+    >
 
-        {{ form_start(form) }}
+        {{ form_start(form, {
+            'attr': {
+                'novalidate': 'novalidate',
+                'data-ajax-target': 'form'
+            }
+        }) }}
 
-            {{ form_rest(form) }}
-
+            <div data-ajax-target="container">
+                {{ form_rest(form) }}
+            </div>
+            
             {% include '@admin/form/_ajax_button.html.twig' %}
-        
-        {{ form_end(form) }}
+    
+        </form>
 
     </div>
 

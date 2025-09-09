@@ -97,7 +97,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Poules', 'fa fa-group', Group::class);
 
         yield MenuItem::section('Planning');
-        yield MenuItem::linkToUrl('Poules', 'fa fa-calendar', $this->urlGenerator->generate('admin_planning_groups'));
+        yield MenuItem::linkToUrl('Poules', 'fa fa-calendar', $this->urlGenerator->generate('admin_planning_index'));
         yield MenuItem::linkToUrl('Planning', 'fa fa-calendar', $this->urlGenerator->generate('admin_planning'));
         yield MenuItem::linkToUrl('Matchs', 'fa fa-calendar', $this->urlGenerator->generate('admin_planning_matchs'));
         

@@ -10,7 +10,7 @@
 				<h5>{{ court }}</h5>
 				<div class="slots">
 					{% for slot in date.slotsByCourt(court) %}
-                        <div class="slot-row">
+                        <div class="slot-row" id="slot-{{ slot.id }}">
                             <div class="slot">
                                 {{ slot.timeRange }}
                             </div>

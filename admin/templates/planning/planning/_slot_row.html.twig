@@ -1,0 +1,28 @@
+<div class="slot-row" id="slot-{{ slot.id }}">
+	<div class="slot-time">
+		{{ slot.startsAt|date('H:i') }}
+	</div>
+	<div class="slot-content">
+		<div class="slot-content-inner">
+			{# <div class="placeholder"></div> #}
+			{% for player in slot.players %}
+				<span class="player">{{ player }}</span>
+			{% else %}
+				<a class="btn btn-default" href="{{ path('admin_planning_slot_add_booking', {'id': slot.id}) }}">
+					<twig:ux:icon name="add"/>
+					Match
+				</a>
+			{% endfor %}
+		</div>
+	</div>
+	<div class="slot-actions">
+		<div class="slot-actions-inner">
+			{# <div class="placeholder"></div> #}
+			{% if slot.booking is not empty %}
+				<button type="button" class="btn btn-default" formaction="{{ path('admin_planning_slot_remove_booking', {'id': slot.id}) }}" data-action="modal#open" data-title="Supprimer la réservation" data-html="<p>Le match devra être re-programmé</p>" data-button-label="Supprimer la réservation" data-variant="warning">
+					<twig:ux:icon name="delete"/>
+				</button>
+			{% endif %}
+		</div>
+	</div>
+</div>

@@ -107,8 +107,14 @@ class Slot implements EntityInterface
         return $this->booking;
     }
 
-    public function setBooking(Booking $booking): static
+    public function setBooking(?Booking $booking): static
     {
+        if ($booking == null) {
+            $this->booking = null;
+            
+            return $this;
+        }
+
         // set the owning side of the relation if necessary
         if ($booking->getSlot() !== $this) {
             $booking->setSlot($this);

@@ -35,17 +35,18 @@
         .court {
             display: inline-block;
             vertical-align: top;
-            width: 250px;
+            width: 270px;
         }
         .slots {
             margin-top: 15px;
             display: flex;
             flex-direction: column;
+            gap: 3px;
         }
         .slot-row {
             height: 60px;
             display: grid;
-            grid-template-columns: 50px 150px 50px;
+            grid-template-columns: 50px 160px 40px;
             gap: 5px;
             .btn {
 
@@ -59,6 +60,9 @@
                     visibility: visible;
                 }
             }
+        }
+        .slot-content {
+            border: 1px dashed #ccc;
         }
         .slot-content-inner,
         .slot-actions-inner {

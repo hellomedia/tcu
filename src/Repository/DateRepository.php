@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Booking;
 use App\Entity\Date;
 use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
@@ -48,9 +49,10 @@ class DateRepository extends ServiceEntityRepository
     public function getFutureDatesWithAvailableSlotsQueryBuilder(): QueryBuilder
     {
         return $this->createQueryBuilder('d')
-            ->innerJoin('d.slots', 's')
-            ->addSelect('s')
-            ->andWhere('s.booking IS NULL')
+            ->innerJoin('d.slots', 's')->addSelect('s')
+            ->andWhere('NOT EXISTS (
+                SELECT 1 FROM ' . Booking::class . ' b WHERE b.slot = s
+            )')
             ->andWhere('d.date >= CURRENT_DATE()')
             ->orderBy('d.date', 'ASC')
         ;

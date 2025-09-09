@@ -8,12 +8,13 @@ use App\Form\Handler\SlotBulkAddFormHandler;
 use App\Controller\BaseController;
 use App\Entity\Booking;
 use App\Entity\Slot;
-use App\Enum\BookingType as BookingTypeEnum;
-use App\Form\BookingType;
+use App\Enum\BookingType;
+use App\Form\SlotBookingForm;
 use App\Form\SlotBulkAddType;
+use App\Repository\CourtRepository;
+use App\Repository\DateRepository;
 use Doctrine\ORM\EntityManager;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -26,6 +27,18 @@ class SlotController extends BaseController
     )
     {
         
+    }
+
+    #[Route('/planning/slots', name: 'admin_planning_slots', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
+    public function slots(DateRepository $dateRepository, CourtRepository $courtRepository): Response
+    {
+        $dates = $dateRepository->findFutureDates();
+        $courts = $courtRepository->findAll();
+
+        return $this->render('@admin/planning/slots.html.twig', [
+            'dates' => $dates,
+            'courts' => $courts,
+        ]);
     }
 
     #[Route('/planning/slot/bulk-add', name: 'admin_planning_slot_bulk_add', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
@@ -63,15 +76,15 @@ class SlotController extends BaseController
         ]);
     }
 
-
     #[Route('/planning/slot/{id:slot}/add-booking', name: 'admin_planning_slot_add_booking', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
     public function addBooking(Slot $slot, Request $request): Response
     {
         $booking = new Booking();
-        $booking->setType(BookingTypeEnum::MATCH);
+        $booking->setType(BookingType::MATCH);
+        $booking->setSlot($slot);
         $slot->setBooking($booking);
 
-        $form = $this->createForm(BookingType::class, $booking);
+        $form = $this->createForm(SlotBookingForm::class, $booking);
 
         $form->handleRequest($request);
 
@@ -82,7 +95,7 @@ class SlotController extends BaseController
             
             $this->addFlash('success', 'Match programmé');
 
-            return $this->redirectToRoute('admin_planning_slots');
+            return $this->redirectToRoute('admin_planning');
         }
 
         // if ($request->isXmlHttpRequest()) {
@@ -96,10 +109,22 @@ class SlotController extends BaseController
         ]);
     }
 
-    #[Route('/planning/slot/{id:slot}/remove-booking', name: 'admin_planning_slot_remove_booking', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
+    #[Route('/planning/slot/{id:slot}/remove-booking', name: 'admin_planning_slot_remove_booking')]
     public function removeBooking(Slot $slot, Request $request): Response
     {
-        return $this->render('@admin/planning/planning.html.twig', [
+        $booking = $slot->getBooking();
+
+        $this->entityManager->remove($booking);
+
+        $this->entityManager->flush();
+
+        // the DB is updated but the other doctrine objects did not see the change
+        // (Unless we tell them like $slot->setBooking(null) or orphan removal)
+        // This refreshes the doctrine object
+        $this->entityManager->refresh($slot);
+
+        return $this->render('@admin/planning/planning/booking_removed_success.html.twig', [
+            'slot' => $slot,
         ]);
     }
 }

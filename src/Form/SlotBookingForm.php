@@ -4,9 +4,7 @@ namespace App\Form;
 
 use App\Entity\InterfacMatch;
 use App\Entity\Booking;
-use App\Entity\Date;
 use App\Entity\Group;
-use App\Repository\GroupRepository;
 use App\Repository\InterfacMatchRepository;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -19,7 +17,7 @@ use Symfonycasts\DynamicForms\DynamicFormBuilder;
 /**
  * Make a booking for a slot
  */
-final class BookingType extends AbstractType
+final class SlotBookingForm extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -31,7 +29,10 @@ final class BookingType extends AbstractType
             'multiple' => false,
             'autocomplete' => true,
             'mapped' => false,
-            'placeholder' => 'pick sth',
+            'placeholder' => 'choisir une poule',
+            'attr' => [
+                'data-action' => 'change->ajax#submitOnChange',
+            ]
         ]);
 
         $builder->addDependent('match', 'group', function(DependentField $field, ?Group $selectedGroup) {

@@ -6,18 +6,29 @@ use Admin\Controller\DashboardController;
 use Admin\Factory\MatchFactory;
 use App\Controller\BaseController;
 use App\Entity\Group;
+use App\Repository\GroupRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 class GroupController extends BaseController
 {
+    #[Route('/planning/groups', name: 'admin_planning_index', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
+    public function groups(GroupRepository $repository): Response
+    {
+        $groups = $repository->findAll();
+
+        return $this->render('@admin/planning/group/index.html.twig', [
+            'groups' => $groups,
+        ]);
+    }
+
     #[Route('/planning/group/{id:group}/generate-matchs', name: 'admin_planning_group_generate_matchs', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
     public function generateMatchs(Group $group, MatchFactory $matchFactory): Response
     {
         $matchFactory->generateGroupMatchs($group);
 
-        return $this->redirectToRoute('admin_planning_groups');
+        return $this->redirectToRoute('admin_planning_index');
     }
 
     /**
