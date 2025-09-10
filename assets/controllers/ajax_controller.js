@@ -2,6 +2,13 @@ import { Controller } from "@hotwired/stimulus";
 
 /*
 
+USAGE SUMMARY
+=============
+- Use data-action="submit->ajax#submit" on form for ajax on submit button click
+- Use data-action="change->ajax#submitOnChange" on form for ajax on any select/checkbox of the form
+- Use data-action="change->ajax#submitOnChange" on field for ajax on that field (useful for trigger/dependent fields)
+- Combine as necessary 
+
 1) Ajax on full form submit
 ===========================
 
@@ -9,6 +16,7 @@ import { Controller } from "@hotwired/stimulus";
         {{ form_start(form, {
             'attr': {
                 'data-ajax-target': 'form',
+                'data-action': 'submit->ajax#submit'
             }
         }) }}
             <div data-ajax-target="container">
@@ -25,7 +33,7 @@ import { Controller } from "@hotwired/stimulus";
         {{ form_start(form, {
             'attr': {
                 'data-ajax-target': 'form',
-                'data-action': 'change->ajax#submitOnChange'
+                'data-action': 'submit->ajax#submit change->ajax#submitOnChange'
             }
         }) }}
             <div data-ajax-target="container">
@@ -35,20 +43,17 @@ import { Controller } from "@hotwired/stimulus";
         </form>
     </div>
 
-3) Ajax only on change of dependent fields (not full form)
-==========================================================
+3) Ajax only on change of dependent fields (no form submit btn, no other fields)
+==========================================================================
 
 NB: novalidate allows to trigger submit if the depedent field
     is required and not filled (changed multiple times)
 
-        <div class="form-wrapper"
-            data-controller="ajax"
-            data-ajax-full-ajax-submit-value="false"
-        >
+        <div class="form-wrapper" data-controller="ajax">
             {{ form_start(form, {
                 'attr': {
-                    'novalidate': 'novalidate',
                     'data-ajax-target': 'form',
+                    'novalidate': 'novalidate',
                 }
             }) }}
                 <div data-ajax-target="container">
@@ -67,12 +72,22 @@ NB: novalidate allows to trigger submit if the depedent field
             </form>
         </div>
 
-NB: submit button added in form builder so we can check if it's clicked
-
         == FORM ==
+
+        In form type, add action to trigger fields
+
+        $builder->add('triggerProperty', FormFieldType::class, [
+            'attr' => [
+                'data-action' => 'change->ajax#submitOnChange',
+            ]
+        ]);
+
+        and add submit button so we can check if it's clicked
+
         $builder->add('save', AjaxSubmitType::class);
 
         == CONTROLLER ==
+
         $form = $this->createForm(FooForm::class, $foo);
         
         $form->handleRequest($request);
@@ -98,81 +113,28 @@ NB: submit button added in form builder so we can check if it's clicked
 3) Ajax on change of dependent fields + full form submit
 ========================================================
 
-Same as 2) and remove 
+Same as 2) and add on form:
     
-        data-ajax-full-ajax-submit-value="false"
+        'data-action': 'submit->ajax#submit'
 
-3) and 4) Inputs that should trigger Ajax on change
-===================================================
-
-    in Form Type:
-        $builder->add('bar', EntityType::class, [
-            ...
-            'attr' => [
-                'data-action' => 'change->ajax#submitOnChange',
-            ]
-        ]);
-
-Submit button overrides
-=======================
-
-<!-- Full page (or Turbo) submit -->
-<button type="submit" data-ajax="full">Save</button>
-
-<!-- Force AJAX submit even if fullAjaxSubmit=false -->
-<button type="submit" data-ajax="ajax">Save (AJAX)</button>
-
-<!-- Force hard reload (no Turbo) -->
-<button type="submit" data-ajax="full" data-hard="true">Save & Reload</button>
  */
 
 export default class extends Controller {
     static targets = ["form", "container", "spinner", "submitBtn"];
     static values = {
         debounce: { type: Number, default: 250 },
-        fullAjaxSubmit: { type: Boolean, default: true }
     };
 
     connect() {
         this._submitTimer = null;
         this._isSubmitting = false;
-        this._ajaxMode = false; // set to true only for change-triggered submits
-
-        this._onSubmit = this.submit.bind(this);
-        this.formTarget.addEventListener('submit', this._onSubmit);
     }
 
-    disconnect() {
-        this.hasFormTarget && this.formTarget.removeEventListener('submit', this._onSubmit);
-    }
-
-    // Handles all form submits
-    submit(event) {
-
-        const submitter = event?.submitter;
-        const buttonForcesFull = submitter?.dataset.ajax === "full";
-        const buttonForcesAjax = submitter?.dataset.ajax === "ajax";
-
-        // Decide whether to hijack
-        const shouldAjax =
-            (this._ajaxMode || this.fullAjaxSubmitValue || buttonForcesAjax) && !buttonForcesFull;
-
-        // Optional: allow a "hard" full reload (bypass Turbo) when requested
-        if (!shouldAjax && submitter?.dataset.hard === "true") {
-            event.preventDefault();
-            this.formTarget.setAttribute("data-turbo", "false");
-            this.formTarget.submit(); // real browser submit
-            return;
-        }
-
-        if (!shouldAjax) {
-            // Let the native/Turbo submit proceed
-            return;
-        }
-
+    // Attach when you want full-submit to be AJAX
+    async submit(event) {
         event.preventDefault();
-        this._ajaxMode = false; // reset immediately
-        this._ajaxSubmit();
+
+        await this._submitAjax();
     }
 
     // Debounced auto-submit for selects/checkboxes
@@ -183,18 +145,14 @@ export default class extends Controller {
         if (!isSelect && !isCheckbox) return;
 
         clearTimeout(this._submitTimer);
+
+        // setTimeout accepts async functions inside the callback
         this._submitTimer = setTimeout(() => {
-            this._ajaxMode = true; // only this submit will be hijacked
-            // here we don't want to check form validity
-            // we want to trigger onchange even if fields are missing
-            // because it can be the case that the field that needs to change
-            // is a required field
-            // NB: We aslo need to set "novalidate" on the form.
-            this.formTarget.requestSubmit(); // fires submit()
+            this._submitAjax();
         }, this.debounceValue);
     }
 
-    async _ajaxSubmit() {
+    async _submitAjax() {
         if (this._isSubmitting) return;
         this._isSubmitting = true;
 
