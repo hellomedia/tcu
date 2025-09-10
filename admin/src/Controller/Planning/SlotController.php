@@ -15,6 +15,7 @@ use App\Repository\CourtRepository;
 use App\Repository\DateRepository;
 use Doctrine\ORM\EntityManager;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
+use Symfony\Component\Form\ClickableInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -88,7 +89,11 @@ class SlotController extends BaseController
 
         $form->handleRequest($request);
 
-        if ($form->has('match') && $form['match']->getData() != null && $form->isSubmitted() && $form->isValid()) {
+        $submitBtn = $form->get('save');
+        assert($submitBtn instanceof ClickableInterface);
+
+        /* isClicked() avoids submitting when updating dependent field */
+        if ($submitBtn->isClicked() && $form->isSubmitted() && $form->isValid()) {
 
             $this->entityManager->persist($booking);
             $this->entityManager->flush();

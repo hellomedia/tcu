@@ -12,8 +12,6 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class PlanningController extends BaseController
 {
-
-
     #[Route('/planning/matchs', name: 'admin_planning_matchs', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
     public function matchs(DateRepository $dateRepository, CourtRepository $courtRepository): Response
     {
@@ -25,7 +23,6 @@ class PlanningController extends BaseController
             'courts' => $courts,
         ]);
     }
-
 
     #[Route('/planning', name: 'admin_planning', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
     public function planning(DateRepository $dateRepository, CourtRepository $courtRepository): Response

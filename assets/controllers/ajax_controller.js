@@ -17,41 +17,15 @@ import { Controller } from "@hotwired/stimulus";
             {% include '@admin/form/_ajax_button.html.twig' %}
         </form>
     </div>
-
-2) Ajax only on change of dependent fields (not full form)
-=======================================================
-
-NB: novalidate allows to trigger submit if the depedent field
-is required and not filled (changed multiple times)
-
-    <div class="form-wrapper"
-        data-controller="ajax"
-        data-ajax-full-ajax-submit-value="false"
-    >
-        {{ form_start(form, {
-            'attr': {
-                'novalidate': 'novalidate',
-                'data-ajax-target': 'form',
-            }
-        }) }}
-            <div data-ajax-target="container">
-                {{ form_rest(form) }}
-            </div>
-            {% include '@admin/form/_ajax_button.html.twig' %}
-        </form>
-    </div>
-
-3) Ajax on change of dependent fields + full form submit
-========================================================
-
-NB: novalidate allows to trigger submit if the depedent field
-is required and not filled (changed multiple times)
+    
+2) Ajax on full form submit + onChange for all select/checkbox
+==============================================================
 
     <div class="form-wrapper" data-controller="ajax">
         {{ form_start(form, {
             'attr': {
-                'novalidate': 'novalidate',
                 'data-ajax-target': 'form',
+                'data-action': 'change->ajax#submitOnChange'
             }
         }) }}
             <div data-ajax-target="container">
@@ -61,11 +35,83 @@ is required and not filled (changed multiple times)
         </form>
     </div>
 
-2) and 3) Inputs that should trigger Ajax on change
+3) Ajax only on change of dependent fields (not full form)
+==========================================================
+
+NB: novalidate allows to trigger submit if the depedent field
+    is required and not filled (changed multiple times)
+
+        <div class="form-wrapper"
+            data-controller="ajax"
+            data-ajax-full-ajax-submit-value="false"
+        >
+            {{ form_start(form, {
+                'attr': {
+                    'novalidate': 'novalidate',
+                    'data-ajax-target': 'form',
+                }
+            }) }}
+                <div data-ajax-target="container">
+                    {{ form_row(form.trigggerField) }}
+                    
+                    {% if form.dependentField is defined %}
+                        {{ form_row(form.dependentField) }}
+                    {% endif %}
+
+                    {% set submitBtn = form_row(form.save) %}
+
+                    {{ form_rest(form) }}
+                </div>
+                
+                {{ submitBtn|raw }}
+            </form>
+        </div>
+
+NB: submit button added in form builder so we can check if it's clicked
+
+        == FORM ==
+        $builder->add('save', AjaxSubmitType::class);
+
+        == CONTROLLER ==
+        $form = $this->createForm(FooForm::class, $foo);
+        
+        $form->handleRequest($request);
+
+        $submitBtn = $form->get('save');
+        assert($submitBtn instanceof ClickableInterface);
+
+        // isClicked() avoids submitting when updating dependent field
+        if ($submitBtn->isClicked() && $form->isSubmitted() && $form->isValid()) {
+
+            $this->entityManager->persist($foo);
+            $this->entityManager->flush();
+
+            $this->addFlash('success', 'message');
+
+            return $this->redirectToRoute('route');
+        }
+
+        return $this->render('foo.html.twig', [
+            'form' => $form,
+        ]);
+
+3) Ajax on change of dependent fields + full form submit
+========================================================
+
+Same as 2) and remove 
+    
+        data-ajax-full-ajax-submit-value="false"
+
+3) and 4) Inputs that should trigger Ajax on change
 ===================================================
 
-<select data-action="change->ajax#submitOnChange">...</select>
-<input type="checkbox" data-action="change->ajax#submitOnChange">
+    in Form Type:
+        $builder->add('bar', EntityType::class, [
+            ...
+            'attr' => [
+                'data-action' => 'change->ajax#submitOnChange',
+            ]
+        ]);
 
 Submit button overrides
 =======================
@@ -151,29 +197,57 @@ export default class extends Controller {
     async _ajaxSubmit() {
         if (this._isSubmitting) return;
         this._isSubmitting = true;
+
+        // Optional: cancel in-flight request if user types fast
+        this._abortController?.abort();
+        this._abortController = new AbortController();
+
         this.showLoading();
 
         try {
             const response = await fetch(this.formTarget.action, {
                 method: "POST",
                 body: new FormData(this.formTarget),
-                headers: { "X-Requested-With": "XMLHttpRequest" },
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    "Accept": "text/vnd.turbo-stream.html, text/html"
+                },
+                signal: this._abortController.signal,
             });
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
-            const html = await response.text();
-            const doc = new DOMParser().parseFromString(html, "text/html");
-            const container = doc.querySelector("[data-ajax-target='container']");
-            if (!container) throw new Error("No [data-ajax-target='container'] in response");
+            const contentType = response.headers.get("content-type") || "";
+            const html = await response.text(); // read body even on 422
 
-            this.containerTarget.innerHTML = container.innerHTML;
+            // If server responded with Turbo Streams (standalone turbo streams),
+            // let Turbo process them
+            if (contentType.includes("text/vnd.turbo-stream.html")) {
+                if (window.Turbo?.renderStreamMessage) {
+                    window.Turbo.renderStreamMessage(html);
+                }
+                return; // streams handled; nothing more to do here
+            }
+
+            // For regular HTML, accept both 2xx and 422
+            // NB: Regular HTML can also include turbo streams, in which case they are
+            // processed by turbo automatically when they are rendered in the DOM
+            if (response.ok || response.status === 422) {
+                const doc = new DOMParser().parseFromString(html, "text/html");
+                const container = doc.querySelector("[data-ajax-target='container']");
+                if (!container) throw new Error("No [data-ajax-target='container'] in response");
+                this.containerTarget.innerHTML = container.innerHTML;
+            } else {
+                throw new Error(`HTTP ${response.status}`);
+            }
         } catch (err) {
-            console.error(err);
+            if (err.name !== "AbortError") {
+                console.error(err);
+            }
         } finally {
             this.hideLoading();
             this._isSubmitting = false;
         }
     }
+
 
     showLoading() {
         this.containerTarget.style.opacity = 0.3;

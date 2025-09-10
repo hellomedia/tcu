@@ -42,10 +42,19 @@
         }) }}
 
             <div data-ajax-target="container">
+                {{ form_row(form.group) }}
+                
+                {% if form.match is defined %}
+                    {{ form_row(form.match) }}
+                {% endif %}
+
+                {% set saveBtn = form_row(form.save) %}
+
                 {{ form_rest(form) }}
             </div>
+            
+            {{ saveBtn|raw }}
 
-            {% include '@admin/form/_ajax_button.html.twig' %}
         </form>
                 
     </div>

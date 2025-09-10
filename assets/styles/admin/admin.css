@@ -20,7 +20,7 @@ html {
 .btn-lg {
     --bs-btn-font-size: 1.25rem;
     --bs-btn-border-radius: var(--bs-border-radius-lg);
-    padding: 8px 30px;
+    padding: 7px 25px;
 }
 
 .btn-sm {

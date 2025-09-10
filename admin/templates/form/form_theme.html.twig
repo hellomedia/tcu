@@ -20,3 +20,20 @@
 	{{ parent() }}
 {% endblock %}
 
+{# AjaxSubmitType #}
+{% block ajax_submit_widget %}
+	<div class="ajax-submit">
+		<button {{ block('button_attributes') }}
+            type="{{ type|default('submit') }}"
+        >
+            {{ label|trans }}
+        </button>
+		<div data-ajax-target="spinner"
+            class="spinner-wrapper hidden"
+        >
+			<div class="spinner" aria-hidden="true"></div>
+		</div>
+	</div>
+{% endblock %}
+
+

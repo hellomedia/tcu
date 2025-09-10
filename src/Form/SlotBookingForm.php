@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Entity\InterfacMatch;
 use App\Entity\Booking;
 use App\Entity\Group;
+use App\Form\Type\AjaxSubmitType;
 use App\Repository\InterfacMatchRepository;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -56,6 +57,8 @@ final class SlotBookingForm extends AbstractType
                 'autocomplete' => true,
             ]);
         });
+
+        $builder->add('save', AjaxSubmitType::class);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

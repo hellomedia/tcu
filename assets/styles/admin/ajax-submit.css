@@ -1,0 +1,32 @@
+.ajax-submit {
+    position: relative;
+    display: inline-block;
+    margin-top: 20px;
+    
+    .spinner-wrapper {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center
+    }
+
+    .spinner {
+        width: 22px;
+        height: 22px;
+        border: 3px solid currentColor;
+        border-right-color: transparent;
+        border-radius: 9999px;
+        animation: spin 0.6s linear infinite
+    }
+
+    @keyframes spin {
+        to {
+            transform: rotate(360deg)
+        }
+    }
+
+    .hidden {
+        display: none
+    }
+}

@@ -2,14 +2,17 @@
 
 namespace App\Form;
 
+use App\Entity\Booking;
 use App\Entity\InterfacMatch;
 use App\Entity\Slot;
 use App\Entity\Date;
+use App\Form\Type\AjaxSubmitType;
 use App\Repository\DateRepository;
 use App\Repository\SlotRepository;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfonycasts\DynamicForms\DependentField;
@@ -18,7 +21,7 @@ use Symfonycasts\DynamicForms\DynamicFormBuilder;
 /**
  * Make a booking for a given match
  */
-final class MatchBookingForm extends AbstractType
+final class BookingForMatchForm extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -46,7 +49,7 @@ final class MatchBookingForm extends AbstractType
             $field->add(EntityType::class, [
                 'label' => 'Créneau',
                 'class' => Slot::class,
-                'property_path' => 'booking.slot',
+                'property_path' => 'slot',
                 'query_builder' => function (SlotRepository $repo) use ($selectedDate): QueryBuilder {
                     return $repo->getFutureAvailableSlotsQueryBuilder($selectedDate);
                 },
@@ -57,12 +60,14 @@ final class MatchBookingForm extends AbstractType
                 },
             ]);
         });
+
+        $builder->add('save', AjaxSubmitType::class);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => InterfacMatch::class,
+            'data_class' => Booking::class,
         ]);
     }
 }
