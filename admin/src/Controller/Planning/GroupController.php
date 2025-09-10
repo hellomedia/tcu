@@ -13,12 +13,12 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class GroupController extends BaseController
 {
-    #[Route('/planning/groups', name: 'admin_planning_index', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
+    #[Route('/planning/groups', name: 'admin_planning_groups', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
     public function groups(GroupRepository $repository): Response
     {
         $groups = $repository->findAll();
 
-        return $this->render('@admin/planning/group/index.html.twig', [
+        return $this->render('@admin/group/index.html.twig', [
             'groups' => $groups,
         ]);
     }
@@ -28,7 +28,7 @@ class GroupController extends BaseController
     {
         $matchFactory->generateGroupMatchs($group);
 
-        return $this->redirectToRoute('admin_planning_index');
+        return $this->redirectToRoute('admin_planning_groups');
     }
 
     /**
@@ -41,7 +41,7 @@ class GroupController extends BaseController
 
         $feedback = 'Ajout des matchs réussi';
 
-        return $this->render('@admin/planning/group/add_matchs_success.html.twig', [
+        return $this->render('@admin/group/add_matchs_success.html.twig', [
             'group' => $group,
             'feedback' => $feedback,
         ]);
@@ -54,7 +54,7 @@ class GroupController extends BaseController
 
         $feedback = 'Regénération des matchs réussie';
 
-        return $this->render('@admin/planning/group/regenerate_matchs_success.html.twig', [
+        return $this->render('@admin/group/regenerate_matchs_success.html.twig', [
             'group' => $group,  
             'feedback' => $feedback,
         ]);
@@ -67,7 +67,7 @@ class GroupController extends BaseController
 
         $feedback = 'Supression réussie';
 
-        return $this->render('@admin/planning/group/delete_matchs_success.html.twig', [
+        return $this->render('@admin/group/delete_matchs_success.html.twig', [
             'group' => $group,  
             'feedback' => $feedback,
         ]);

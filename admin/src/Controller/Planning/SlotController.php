@@ -36,7 +36,7 @@ class SlotController extends BaseController
         $dates = $dateRepository->findFutureDates();
         $courts = $courtRepository->findAll();
 
-        return $this->render('@admin/planning/slots.html.twig', [
+        return $this->render('@admin/slot/slots.html.twig', [
             'dates' => $dates,
             'courts' => $courts,
         ]);
@@ -72,7 +72,7 @@ class SlotController extends BaseController
             return $this->redirectToRoute('admin_planning_slots');
         }
 
-        return $this->render('@admin/planning/slot/bulk_add.html.twig', [
+        return $this->render('@admin/slot/bulk_add.html.twig', [
             'form' => $form,
         ]);
     }
@@ -104,12 +104,12 @@ class SlotController extends BaseController
         }
 
         // if ($request->isXmlHttpRequest()) {
-        //     return $this->render('@admin/planning/slot/_add_booking_form_container.html.twig', [
+        //     return $this->render('@admin/slot/_add_booking_form_container.html.twig', [
         //         'form' => $form,
         //     ]);
         // }
 
-        return $this->render('@admin/planning/slot/add_booking.html.twig', [
+        return $this->render('@admin/slot/add_booking.html.twig', [
             'form' => $form,
         ]);
     }
@@ -128,7 +128,7 @@ class SlotController extends BaseController
         // This refreshes the doctrine object
         $this->entityManager->refresh($slot);
 
-        return $this->render('@admin/planning/planning/booking_removed_success.html.twig', [
+        return $this->render('@admin/planning/booking_removed_success.html.twig', [
             'slot' => $slot,
         ]);
     }

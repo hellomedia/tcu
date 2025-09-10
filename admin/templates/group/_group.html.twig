@@ -2,7 +2,7 @@
     <div class="group-header">
         <h4>{{ group }}</h4>    
         {% if group.matchs is not empty %}
-            {% include '@admin/planning/group/_secondary_actions.html.twig' %}
+            {% include '@admin/group/_secondary_actions.html.twig' %}
         {% endif %}
     </div>
     <div class="matchs">
@@ -17,7 +17,7 @@
                     {% else %}
                         <a class="btn btn-default"
                             style="margin-left: 5px"
-                            href="{{ path('admin_planning_match_schedule', {'id': match.id}) }}"
+                            href="{{ path('admin_match_add_booking', {'id': match.id}) }}"
                         >
                             Programmer
                         </a>

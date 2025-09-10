@@ -97,17 +97,13 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Poules', 'fa fa-group', Group::class);
 
         yield MenuItem::section('Planning');
-        yield MenuItem::linkToUrl('Poules', 'fa fa-calendar', $this->urlGenerator->generate('admin_planning_index'));
+        yield MenuItem::linkToUrl('Poules', 'fa fa-calendar', $this->urlGenerator->generate('admin_planning_groups'));
         yield MenuItem::linkToUrl('Planning', 'fa fa-calendar', $this->urlGenerator->generate('admin_planning'));
-        yield MenuItem::linkToUrl('Matchs', 'fa fa-calendar', $this->urlGenerator->generate('admin_planning_matchs'));
-        
-        yield MenuItem::section('Plages horaires');
         yield MenuItem::linkToUrl('Plages horaires', 'fa fa-calendar', $this->urlGenerator->generate('admin_planning_slots'));
         
         yield MenuItem::section('Admin');
         yield MenuItem::linkToCrud('Users', 'fa fa-user', User::class);
         yield MenuItem::linkToCrud('Matchs', 'fa fa-trophy', InterfacMatch::class);
-        yield MenuItem::linkToUrl('Ajout de match', 'fa fa-calendar', $this->urlGenerator->generate('admin_planning_match_add'));
         yield MenuItem::linkToCrud('Réservations', 'fa fa-calendar', Booking::class);
         yield MenuItem::linkToCrud('Créneaux', 'fa fa-calendar', Slot::class);
         yield MenuItem::linkToCrud('Jours', 'fa fa-calendar-day', Date::class);

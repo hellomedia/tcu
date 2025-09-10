@@ -2,7 +2,7 @@
 	{% block streams %}
         <turbo-stream action="replace" target="slot-{{ slot.id }}">
             <template>
-                {% include "@admin/planning/planning/_slot_row.html.twig" %}
+                {% include "@admin/planning/_slot_row.html.twig" %}
             </template>
         </turbo-stream>
 	{% endblock %}

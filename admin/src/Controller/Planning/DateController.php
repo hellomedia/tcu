@@ -32,7 +32,7 @@ class DateController extends BaseController
 
         $feedback = 'Supression réussie';
 
-        return $this->render('@admin/planning/date/delete_success.html.twig', [
+        return $this->render('@admin/date/delete_success.html.twig', [
             'feedback' => $feedback,
             'deletedDateId' => $dateId,
         ]);
@@ -69,18 +69,8 @@ class DateController extends BaseController
             return $this->redirectToRoute('admin_planning_slots');
         }
 
-        return $this->render('@admin/planning/date/add_slots.html.twig', [
+        return $this->render('@admin/date/add_slots.html.twig', [
             'form' => $form,
-            'date' => $date,
-        ]);
-    }
-
-    #[Route('/planning/date/{id:date}/add-match', name: 'admin_planning_date_add_match', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
-    public function addMatch(Date $date, Request $request, SlotBulkAddFormHandler $handler): Response
-    {
-
-
-        return $this->render('@admin/planning/date/add_slots.html.twig', [
             'date' => $date,
         ]);
     }

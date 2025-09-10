@@ -8,7 +8,7 @@
 				<h5>{{ court }}</h5>
 				<div class="slots">
 					{% for slot in date.slotsByCourt(court) %}
-                        {% include "@admin/planning/planning/_slot_row.html.twig" %}
+                        {% include "@admin/planning/_slot_row.html.twig" %}
 					{% endfor %}
 				</div>
 			</div>

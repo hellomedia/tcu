@@ -16,16 +16,15 @@
     </style>
 {% endblock %}
 
-{% block content_title %}Progammer un match{% endblock %}
+{% block content_title %}Programmer un match{% endblock %}
 
 {% block page_actions %}
 
-    <a class="btn btn-default" href="{{ path('admin_planning_slots')}}">
-        Planning
+    <a class="btn btn-default" href="{{ path('admin_planning_groups')}}">
+        Retour
     </a>
 
 {% endblock %}
-
 
 {% block main %}
 
@@ -33,18 +32,28 @@
 
         {{ form_start(form, {
             'attr': {
-                'data-ajax-target': 'form',
-                'data-action': 'submit->ajax#submit change->ajax#submitOnChange'
+                'novalidate': 'novalidate',
+                'data-ajax-target': 'form'
             }
         }) }}
 
-            <div data-ajax-target="container" class="quick-edit">
-                {{ form_rest(form) }}
-
-                {% include '@admin/form/_ajax_button.html.twig' %}
+            <div data-ajax-target="container">
+                {{ form_row(form.date) }}
                 
-                {{ form_end(form) }}
+                {% if form.slot is defined %}
+                    {{ form_row(form.slot) }}
+                {% endif %}
+
+                {% set saveBtn = form_row(form.save) %}
+
+                {{ form_rest(form) }}
             </div>
+            
+            {{ saveBtn|raw }}
+    
+        </form>
+
     </div>
+
 
 {% endblock %}

@@ -4,17 +4,13 @@ namespace Admin\Controller\Planning;
 
 use Admin\Controller\DashboardController;
 use App\Controller\BaseController;
-use App\Entity\Booking;
 use App\Entity\Court;
 use App\Entity\Date;
 use App\Entity\InterfacMatch;
-use App\Enum\BookingType;
-use App\Form\BookingForMatchForm;
 use App\Form\MatchType;
 use Doctrine\ORM\EntityManager;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
-use Symfony\Component\Form\ClickableInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -28,44 +24,14 @@ class BookingController extends BaseController
     }
 
     /**
-     * Schedule existing match
+     * Add a match booking from scratch
+     * -- Creates a match too --
+     * For adding a booking for an existing match, see MatchController::addBooking()
+     * 
+     * STATUS: buggy, unused
      */
-    #[Route('/booking/add/match/{id:match}', name: 'admin_planning_match_schedule', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
-    public function addForMatch(InterfacMatch $match, Request $request): Response
-    {        
-        $booking = new Booking();
-        $booking->setType(BookingType::MATCH);
-        $booking->setMatch($match);
-        $match->setBooking($booking);
-
-        $form = $this->createForm(BookingForMatchForm::class, $booking);
-
-        $form->handleRequest($request);
-
-        $submitBtn = $form->get('save');
-        assert($submitBtn instanceof ClickableInterface);
-
-        /* isClicked() avoids submitting when updating dependent field */
-        if ($submitBtn->isClicked() && $form->isSubmitted() && $form->isValid()) {
-
-            $this->entityManager->persist($booking);
-            $this->entityManager->flush();
-
-            $this->addFlash('success', 'Match programmé');
-
-            return $this->redirectToRoute('admin_planning_index');
-        }
-
-        return $this->render('@admin/planning/match/schedule.html.twig', [
-            'form' => $form,
-        ]);
-    }
-
-    /**
-     * Make a booking for a match (to be selected) at given date/court
-     */
-    #[Route('/booking/add/{date}/{court}', name: 'admin_planning_match_add', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
-    public function add(
+    #[Route('/booking/add-match-booking/{date}/{court}', name: 'admin_match_booking_add', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
+    public function addMatchBooking(
         Request $request,
         #[MapEntity(mapping: ['court' => 'id'])]
         ?Court $court = null,
@@ -94,7 +60,7 @@ class BookingController extends BaseController
             return $this->redirectToRoute('admin_planning_matchs');
         }
 
-        return $this->render('@admin/planning/match/add.html.twig', [
+        return $this->render('@admin/match/add.html.twig', [
             'form' => $form,
         ]);
     }
