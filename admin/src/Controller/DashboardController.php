@@ -85,6 +85,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToDashboard('Dashboard', 'fa fa-dashboard');
 
         yield MenuItem::subMenu('Status', 'fa fa-dashboard')
+            ->setPermission('ROLE_SUPER_ADMIN')
             ->setSubItems([
                 MenuItem::linkToUrl('Opcache', 'fa fa-dashboard', $this->urlGenerator->generate('admin_status_opcache')),
                 MenuItem::linkToUrl('Realpath cache', 'fa fa-dashboard', $this->urlGenerator->generate('admin_status_realpath_cache')),
@@ -92,22 +93,39 @@ class DashboardController extends AbstractDashboardController
                 MenuItem::linkToUrl('Php info', 'fa fa-info', $this->urlGenerator->generate('admin_status_phpinfo')),
             ]);
 
-        yield MenuItem::section('Joueurs');
-        yield MenuItem::linkToCrud('Joueurs', 'fa fa-user', Player::class);
-        yield MenuItem::linkToCrud('Poules', 'fa fa-group', Group::class);
+        yield MenuItem::section('Joueurs')
+            ->setPermission('ROLE_EDITOR');
+        yield MenuItem::linkToCrud('Joueurs', 'fa fa-user', Player::class)
+            ->setPermission('ROLE_EDITOR');
+        yield MenuItem::linkToCrud('Poules', 'fa fa-group', Group::class)
+            ->setPermission('ROLE_EDITOR');
 
-        yield MenuItem::section('Planning');
-        yield MenuItem::linkToUrl('Poules', 'fa fa-calendar', $this->urlGenerator->generate('admin_planning_groups'));
-        yield MenuItem::linkToUrl('Planning', 'fa fa-calendar', $this->urlGenerator->generate('admin_planning'));
-        yield MenuItem::linkToUrl('Plages horaires', 'fa fa-calendar', $this->urlGenerator->generate('admin_planning_slots'));
+        yield MenuItem::section('Planning')
+            ->setPermission('ROLE_EDITOR');
+        yield MenuItem::linkToUrl('Poules', 'fa fa-calendar', $this->urlGenerator->generate('admin_planning_groups'))
+            ->setPermission('ROLE_EDITOR');
+        yield MenuItem::linkToUrl('Planning', 'fa fa-calendar', $this->urlGenerator->generate('admin_planning'))
+            ->setPermission('ROLE_EDITOR');
         
-        yield MenuItem::section('Admin');
-        yield MenuItem::linkToCrud('Users', 'fa fa-user', User::class);
-        yield MenuItem::linkToCrud('Matchs', 'fa fa-trophy', InterfacMatch::class);
-        yield MenuItem::linkToCrud('Réservations', 'fa fa-calendar', Booking::class);
-        yield MenuItem::linkToCrud('Créneaux', 'fa fa-calendar', Slot::class);
-        yield MenuItem::linkToCrud('Jours', 'fa fa-calendar-day', Date::class);
-        yield MenuItem::linkToCrud('Terrains', 'fa fa-calendar-day', Court::class);
+        yield MenuItem::section('Admin')
+            ->setPermission('ROLE_MANAGER');
+        yield MenuItem::linkToUrl('Plages horaires', 'fa fa-calendar', $this->urlGenerator->generate('admin_planning_slots'))
+            ->setPermission('ROLE_MANAGER');
+        yield MenuItem::linkToCrud('Jours', 'fa fa-calendar-day', Date::class)
+            ->setPermission('ROLE_MANAGER');
+        yield MenuItem::linkToCrud('Terrains', 'fa fa-calendar-day', Court::class)
+            ->setPermission('ROLE_MANAGER');
+        yield MenuItem::linkToCrud('Admins', 'fa fa-user', User::class)
+            ->setPermission('ROLE_MANAGER');
+        
+        yield MenuItem::section('Dev Admin')
+            ->setPermission('ROLE_SUPER_ADMIN');
+        yield MenuItem::linkToCrud('Matchs', 'fa fa-trophy', InterfacMatch::class)
+            ->setPermission('ROLE_SUPER_ADMIN');
+        yield MenuItem::linkToCrud('Réservations', 'fa fa-calendar', Booking::class)
+            ->setPermission('ROLE_SUPER_ADMIN');
+        yield MenuItem::linkToCrud('Créneaux', 'fa fa-calendar', Slot::class)
+            ->setPermission('ROLE_SUPER_ADMIN');
     }
 
     public function configureActions(): Actions

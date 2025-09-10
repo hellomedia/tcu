@@ -3,6 +3,9 @@
 namespace Admin\Controller;
 
 use App\Entity\User;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
@@ -13,12 +16,22 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\TextFilter;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[IsGranted('ROLE_MANAGER')]
 class UserCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string
     {
         return User::class;
+    }
+
+    public function configureCrud(Crud $crud): Crud
+    {
+        return $crud
+            ->setEntityLabelInSingular('Admin')
+            ->setEntityLabelInPlural('Admins')
+        ;
     }
 
     public function configureFields(string $pageName): iterable
@@ -40,6 +53,14 @@ class UserCrudController extends AbstractCrudController
             ])
             ->allowMultipleChoices()
             ->renderExpanded();
+    }
+
+    public function configureActions(Actions $actions): Actions
+    {
+        return $actions
+            ->setPermission(Action::NEW, 'ROLE_SUPER_ADMIN')
+            ->setPermission(Action::DELETE, 'ROLE_SUPER_ADMIN')
+            ->setPermission(Action::EDIT, 'ROLE_SUPER_ADMIN');
     }
 
     public function configureFilters(Filters $filters): Filters

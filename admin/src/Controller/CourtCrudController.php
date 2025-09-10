@@ -6,7 +6,9 @@ use App\Entity\Court;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[IsGranted('ROLE_MANAGER')]
 class CourtCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string

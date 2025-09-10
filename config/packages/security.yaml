@@ -15,7 +15,7 @@ security:
     role_hierarchy:
         ROLE_ADMIN:         ROLE_USER
         ROLE_EDITOR:        ROLE_ADMIN
-        ROLE_MANAGER:       ROLE_ADMIN
+        ROLE_MANAGER:       ROLE_EDITOR
         ROLE_SUPER_ADMIN:   [ROLE_EDITOR, ROLE_MANAGER, ROLE_ALLOWED_TO_SWITCH]
 
     firewalls:
