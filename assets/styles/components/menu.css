@@ -15,7 +15,7 @@
         background-color: var(--color-logo-background);
     }
 
-    #main-menu-categories {
+    #main-menu-items {
         display: none;
         @media (min-width: theme(--breakpoint-lg)) {
             display: flex;

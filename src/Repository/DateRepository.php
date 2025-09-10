@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Booking;
 use App\Entity\Date;
+use App\Entity\Group;
 use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Types\Types;
@@ -55,6 +56,24 @@ class DateRepository extends ServiceEntityRepository
             )')
             ->andWhere('d.date >= CURRENT_DATE()')
             ->orderBy('d.date', 'ASC')
+        ;
+    }
+
+
+    /**
+     * @return Date[] Returns an array of Date objects
+     */
+    public function findDatesByGroup(Group $group): array
+    {
+        return $this->createQueryBuilder('d')
+            ->leftJoin('d.slots', 's')->addSelect('s')
+            ->innerJoin('s.booking', 'b')->addSelect('b')
+            ->innerJoin('b.match', 'm')->addSelect('m')
+            ->andWhere('m.group = :group')
+            ->setParameter('group', $group)
+            ->orderBy('d.date', 'ASC')
+            ->getQuery()
+            ->getResult()
         ;
     }
 

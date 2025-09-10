@@ -70,4 +70,14 @@ class Booking
 
         return $this;
     }
+
+    public function getTimeRange(): string
+    {
+        return $this->slot->getTimeRange();
+    }
+
+    public function getCourt(): Court
+    {
+        return $this->slot->getCourt();
+    }
 }

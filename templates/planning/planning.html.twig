@@ -1,0 +1,135 @@
+{% extends 'layout/default.html.twig' %}
+
+{% block body_extra_classes 'with-cards' %}
+
+{% block title %}
+	Planning
+{% endblock %}
+
+{% block content %}
+
+    <style>
+        .planning {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            /* display:grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px; */
+        }
+        .date {
+            background-color: #fff;
+            border: 0px solid #ddd;
+            border-radius: 3px;
+            padding: 30px;
+            h4 {
+                margin-top: 10px;
+                margin-bottom: 5px;
+                font-weight: bold;
+            }
+        }
+        .placeholder {
+            visibility: hidden;
+            width: 15px;
+        }
+        .group-header {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .courts {
+            h5 {
+                text-align: center;
+                white-space: nowrap;
+            }
+        }
+        .court {
+            display: inline-block;
+            vertical-align: top;
+            width: 260px;
+        }
+        .slots {
+            margin-top: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+        .slot-row {
+            height: 60px;
+            display: grid;
+            grid-template-columns: 50px 190px;
+            gap: 5px;
+            .btn {
+
+                visibility: hidden;
+                svg {
+                    width: 15px;
+                }
+            }
+            &:hover {
+                .btn {
+                    visibility: visible;
+                }
+            }
+        }
+        .slot-content {
+            border: 1px dashed #ccc;
+        }
+        .slot-content-inner,
+        .slot-actions-inner {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .slot-actions {
+            .btn {
+                box-shadow: none;
+                svg {
+                    width: 24px;
+                }
+            }
+        }
+    </style>
+
+
+    <div class="planning">
+
+        {% for date in dates %}
+            <div class="date">
+                <div class="group-header">
+                    <h4>{{ date }}</h4>
+                </div>
+                <div class="courts">
+                    {% for court in courts %}
+                        <div class="court">
+                            <h5>{{ court }}</h5>
+                            <div class="slots">
+                                {% for slot in date.slotsByCourt(court) %}
+                                    <div class="slot-row">
+                                        <div class="slot-time">
+                                            {{ slot.startsAt|date('H:i') }}
+                                        </div>
+                                        <div class="slot-content">
+                                            <div class="slot-content-inner">
+                                                {# <div class="placeholder"></div> #}
+                                                {% for player in slot.players %}
+                                                    <span class="player">{{ player }}</span>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+
+    </div>
+
+{% endblock %}

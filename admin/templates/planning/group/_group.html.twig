@@ -24,11 +24,10 @@
                     {% endif %}
                 </div>
             </div>
-        {% endfor %}
-        {% if group.matchs is empty %}
+        {% else %}
             <a class="btn btn-primary" href="{{ path('admin_planning_group_generate_matchs', {'id': group.id}) }}">
                 Générer les matchs
             </a>
-        {% endif %}
+        {% endfor %}
     </div>
 </div>

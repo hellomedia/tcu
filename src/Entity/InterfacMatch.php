@@ -110,4 +110,14 @@ class InterfacMatch implements EntityInterface
 
         return $this;
     }
+
+    public function getTimeRange(): ?string
+    {
+        return $this->booking?->getTimeRange();
+    }
+
+    public function getCourt(): ?Court
+    {
+        return $this->booking?->getCourt();
+    }
 }

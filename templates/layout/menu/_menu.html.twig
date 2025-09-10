@@ -11,7 +11,25 @@
                         class="flex items-center space-x-2 px-5 rtl:space-x-reverse"
                         style="color: white;"
                     >
-						Home
+						TC Université
+					</a>
+				</div>
+
+                <div id="main-menu-items">
+					<a href="{{ path('groups') }}"
+						class="main-menu-item {{ app.current_route starts with 'group' ? 'current' }}"
+						data-action="mouseenter->menu-hover#enter mouseleave->menu-hover#leave">
+						Poules
+					</a>
+					<a href="{{ path('planning') }}"
+						class="main-menu-item {{ app.current_route starts with 'planning' ? 'current' }}"
+						data-action="mouseenter->menu-hover#enter mouseleave->menu-hover#leave">
+						Planning
+					</a>
+					<a href="{{ path('results') }}"
+						class="main-menu-item {{ app.current_route starts with 'result' ? 'current' }}"
+						data-action="mouseenter->menu-hover#enter mouseleave->menu-hover#leave">
+						Résultats
 					</a>
 				</div>
 			</div>

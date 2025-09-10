@@ -6,7 +6,6 @@ use Admin\Controller\DashboardController;
 use App\Controller\BaseController;
 use App\Repository\CourtRepository;
 use App\Repository\DateRepository;
-use App\Repository\GroupRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -26,7 +25,6 @@ class PlanningController extends BaseController
             'courts' => $courts,
         ]);
     }
-
 
 
     #[Route('/planning', name: 'admin_planning', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
