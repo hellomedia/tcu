@@ -1,0 +1,171 @@
+{% autoescape 'html' %}
+
+{% set language = language ?? app.locale ?? 'fr' %}
+{% set theme_color = '#ba5520' %}
+
+<!DOCTYPE html>
+<html xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" lang="{{ language }}">
+
+	<head>
+		<title></title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<!--[if mso]>
+		<xml><w:WordDocument xmlns:w="urn:schemas-microsoft-com:office:word"><w:DontUseAdvancedTypographyReadingMail/></w:WordDocument>
+		<o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch><o:AllowPNG/></o:OfficeDocumentSettings></xml>
+		<![endif]-->
+		<!--[if !mso]><!-->
+		<link
+		href="https://fonts.googleapis.com/css2?family=Raleway:wght@100;200;300;400;500;600;700;800;900" rel="stylesheet" type="text/css"> <!--<![endif]-->
+		<style>
+			* {
+				box-sizing: border-box;
+			}
+
+			body {
+				margin: 0;
+				padding: 0;
+			}
+
+			a[x-apple-data-detectors] {
+				color: inherit !important;
+				text-decoration: inherit !important;
+			}
+
+			#MessageViewBody a {
+				color: inherit;
+				text-decoration: none;
+			}
+
+			p {
+				line-height: inherit
+			}
+
+			.desktop_hide,
+			.desktop_hide table {
+				mso-hide: all;
+				display: none;
+				max-height: 0;
+				overflow: hidden;
+			}
+
+			.image_block img+div {
+				display: none;
+			}
+
+			sup,
+			sub {
+				font-size: 75%;
+				line-height: 0;
+			}
+
+			@media(max-width:660px) {
+				.desktop_hide table.icons-inner {
+					display: inline-block !important;
+				}
+
+				.icons-inner {
+					text-align: center;
+				}
+
+				.icons-inner td {
+					margin: 0 auto;
+				}
+
+				.image_block div.fullWidth {
+					max-width: 100% !important;
+				}
+
+				.mobile_hide {
+					display: none;
+				}
+
+				.row-content {
+					width: 100% !important;
+				}
+
+				.stack .column {
+					width: 100%;
+					display: block;
+				}
+
+				.mobile_hide {
+					min-height: 0;
+					max-height: 0;
+					max-width: 0;
+					overflow: hidden;
+					font-size: 0;
+				}
+
+				.desktop_hide,
+				.desktop_hide table {
+					display: table !important;
+					max-height: none !important;
+				}
+			}
+		</style>
+		<!--[if mso ]><style>sup, sub { font-size: 100% !important; } sup { mso-text-raise:10% } sub { mso-text-raise:-10% }</style> <![endif]-->
+	</head>
+
+	<body class="body" style="background-color: #f8f8f9; margin: 0; padding: 0; -webkit-text-size-adjust: none; text-size-adjust: none;">
+		<table class="container" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f8f8f9;">
+			<tbody>
+				<tr>
+					<td>
+
+						{% include "email/includes/_header.html.twig" %}
+						
+						{% include "email/includes/_divider_row.html.twig" %}
+
+						<table class="row" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+							<tbody>
+								<tr>
+									<td>
+										<table class="row-content stack" align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #fff; color: #000000; width: 640px; margin: 0 auto;" width="640">
+											<tbody>
+												<tr>
+													<td class="column column-1" width="100%" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; font-weight: 400; text-align: left; vertical-align: top;">
+														
+														{% include "email/includes/_divider.html.twig" %}
+
+														{% block content %}
+
+															{% block image '' %}
+							
+															{% block title '' %}
+
+															{% block paragraphs '' %}
+
+															{% block button '' %}
+
+															{% block extra_rows '' %}
+
+														{% endblock %}
+
+														{% include "email/includes/_divider.html.twig" %}
+													</td>
+												</tr>
+											</tbody>
+										</table>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+						
+						{% include "email/includes/_divider_row.html.twig" %}
+
+						{% include "email/includes/_footer.html.twig" %}
+
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<!-- End -->
+	</body>
+
+</html>
+
+{% endautoescape %}
+
+
+

@@ -134,7 +134,7 @@ class ResetPasswordController extends BaseController
 
             $this->cleanSessionAfterReset();
 
-            $this->addFlash('success', 'resetting.flash.success');
+            $this->addFlash('success', 'resetting.flash.success', domain: 'security');
 
             // calls LoginFormAuthenticator::authenticate
             // then LoginFormAuthenticator::onAuthenticationSuccess

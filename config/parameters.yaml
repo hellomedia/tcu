@@ -18,7 +18,7 @@ parameters:
     .container.dumper.inline_factories: true
 
     site_name: 'TCU'
-    email_domain: 'tcu.be'
+    email_domain: 'tcuniversite.be'
     host: '%env(HOST)%'
     host_admin: '%env(HOST_ADMIN)%'
     host_webhook: '%env(default:host:HOST_WEBHOOK)%'

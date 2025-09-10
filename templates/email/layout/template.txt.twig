@@ -1,0 +1,14 @@
+{% set language = language ?? app.locale ?? 'fr' %}
+
+
+{% block content %}{% endblock %}
+
+
+============
+
+TC Université
+
+{{ 'footer.text'|trans(domain='email', locale=language) }}
+
+https://www.tcuniversite.be
+

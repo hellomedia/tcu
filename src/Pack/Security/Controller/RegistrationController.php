@@ -4,8 +4,6 @@ namespace App\Pack\Security\Controller;
 
 use App\Controller\BaseController;
 use App\Entity\User;
-use App\Enum\AccountLanguage;
-use App\Event\AccountCreatedEvent;
 use App\Pack\Security\Exception\EmailAlreadyVerifiedException;
 use App\Pack\Security\Form\RegistrationForm;
 use App\Pack\Security\BotDetector;
@@ -50,8 +48,6 @@ class RegistrationController extends BaseController
         }
 
         $user = new User();
-
-        $user->setAccountLanguage(AccountLanguage::tryFrom($request->getLocale()));
 
         $form = $this->createForm(
             type: RegistrationForm::class,
@@ -106,12 +102,6 @@ class RegistrationController extends BaseController
             }
 
             $mailer->sendRegistrationValidationLink($user);
-
-            $dispatcher->dispatch(new AccountCreatedEvent(
-                user: $user,
-                ip: $request->getClientIp(),
-                password: $form->get('plainPassword')->getData(),
-            ));
 
             $session->set('unverified_email', $user->getEmail());
 

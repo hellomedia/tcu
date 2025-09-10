@@ -1,0 +1,30 @@
+{% extends "email/layout/template.html.twig" %}
+
+{% block title %}
+
+    {% include "email/includes/_title.html.twig" with {
+        title: 'test.title'|trans(domain='email', locale=language)
+    } %}
+
+{% endblock %}
+
+{% block paragraphs %}
+
+    {% embed "email/includes/_paragraph.html.twig" %}
+
+        {% block text %}
+            Test email content Test email content Test email content Test email content
+        {% endblock %}
+
+    {% endembed %}
+{% endblock %}
+
+{% block button %}
+
+    {% include "email/includes/_button.html.twig" with {
+            url: 'https://www.kotmarket.be',
+            label: 'test.button_label'|trans(domain='email', locale=language) 
+        }
+    %}
+
+{% endblock %}
