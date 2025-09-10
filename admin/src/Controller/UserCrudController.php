@@ -6,6 +6,7 @@ use App\Entity\User;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
@@ -29,6 +30,16 @@ class UserCrudController extends AbstractCrudController
         yield EmailField::new('email');
         yield BooleanField::new('verified')->renderAsSwitch(false);
         yield DateTimeField::new('lastLogin')->hideOnForm();
+        yield ChoiceField::new('roles')
+            ->setChoices([
+                'User' => 'ROLE_USER',
+                'Admin' => 'ROLE_ADMIN',
+                'Editor' => 'ROLE_EDITOR',
+                'Manager' => 'ROLE_MANAGER',
+                'Super Admin' => 'ROLE_SUPER_ADMIN',
+            ])
+            ->allowMultipleChoices()
+            ->renderExpanded();
     }
 
     public function configureFilters(Filters $filters): Filters
