@@ -18,7 +18,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\TextFilter;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[IsGranted('ROLE_MANAGER')]
+#[IsGranted('ROLE_ADMIN')]
 class UserCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string
@@ -60,7 +60,7 @@ class UserCrudController extends AbstractCrudController
         return $actions
             ->setPermission(Action::NEW, 'ROLE_SUPER_ADMIN')
             ->setPermission(Action::DELETE, 'ROLE_SUPER_ADMIN')
-            ->setPermission(Action::EDIT, 'ROLE_SUPER_ADMIN');
+            ->setPermission(Action::EDIT, 'ROLE_ADMIN');
     }
 
     public function configureFilters(Filters $filters): Filters
