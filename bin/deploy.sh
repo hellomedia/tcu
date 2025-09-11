@@ -58,16 +58,19 @@ if [ $1 = "--no-docker" ]; then
 fi
 
 # mirror COMPOSER_INSTALL_ARGS on server for optimizing rsync
-# live ==> no dev dependencies
-# staging ==> all dependencies - since we load DoctrineFixturesBundle and WebProfilerBundle in bundles.php
+# live    ==> no dev dependencies
+# staging ==> no dev dependencies 
+# NB: if for staging, we load DoctrineFixturesBundle and/or WebProfilerBundle in bundles.php,
+#     we would use BUILD_APP_ENV=dev
+#                  COMPOSER_INSTALL_ARGS="--no-scripts"
 case $TRACK in
     live)
     BUILD_APP_ENV=prod
     COMPOSER_INSTALL_ARGS="--no-scripts --no-dev"
     ;;
     staging)
-    BUILD_APP_ENV=dev
-    COMPOSER_INSTALL_ARGS="--no-scripts"
+    BUILD_APP_ENV=prod
+    COMPOSER_INSTALL_ARGS="--no-scripts --no-dev"
     ;;
 esac
 
