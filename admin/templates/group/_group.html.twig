@@ -5,7 +5,13 @@
             {% include '@admin/group/_secondary_actions.html.twig' %}
         {% endif %}
     </div>
+    <div class="players">
+        {% for player in group.players %}
+            <div class="player">{{ loop.index }}. {{ player }}</div>
+        {% endfor %}
+    </div>
     <div class="matchs">
+        <h5>Matchs</h5>
         {% for match in group.matchs %}
             <div class="match">
                 <div class="match-label">

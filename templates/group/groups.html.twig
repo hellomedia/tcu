@@ -9,9 +9,6 @@
 {% block content %}
 
 <style>
-	h4 {
-		margin-bottom: 20px;
-	}
 	.planning {
 		display: flex;
 		flex-wrap: wrap;
@@ -27,16 +24,26 @@
 		display: flex;
 		justify-content: space-between;
 		gap: 10px;
-		margin-bottom: 10px;
+		margin-bottom: 0;
 	}
-	h5 {
+    h4 {
+		margin-bottom: 20px;
+        font-weight: bold;
+	}
+    .players {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        margin-bottom: 30px;
+    }
+    h5 {
 		margin-bottom: 15px;
 		font-weight: bold;
 	}
 	.matchs {
 		display: flex;
 		flex-direction: column;
-		gap: 20px;
+		gap: 15px;
 		margin-top: 20px;
 		margin-bottom: 30px;
 	}
@@ -55,25 +62,32 @@
                 <div class="group-header">
                     <h4>{{ group }}</h4>
                 </div>
-                {% for date in dates[group.id] %}
-                    <h5 class="date">{{ date }}</h5>
-                    <div class="matchs">
-                        {% for match in date.matchs %}
-                            <div class="match">
-                                <div class="match-label">
-                                    {{ match }}
+                <div class="players">
+                    {% for player in group.players %}
+                        <div class="player">{{ loop.index }}. {{ player }}</div>
+                    {% endfor %}
+                </div>
+                <div class="dates">
+                    {% for date in dates[group.id] %}
+                        <h5 class="date">{{ date }}</h5>
+                        <div class="matchs">
+                            {% for match in date.matchs %}
+                                <div class="match">
+                                    <div class="match-label">
+                                        {{ match }}
+                                    </div>
+                                    <div class="booking">
+                                        {% if match.booking is not null %}
+                                            {{ match.timeRange }}
+                                            •
+                                            {{ match.court }}
+                                        {% endif %}
+                                    </div>
                                 </div>
-                                <div class="booking">
-                                    {% if match.booking is not null %}
-                                        {{ match.timeRange }}
-                                        •
-                                        {{ match.court }}
-                                    {% endif %}
-                                </div>
-                            </div>
-                        {% endfor %}
-                    </div>
-                {% endfor %}
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                </div>
             </div>
         {% endfor %}
 
