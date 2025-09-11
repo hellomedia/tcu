@@ -36,5 +36,7 @@ class InterfacMatchCrudController extends AbstractCrudController
             ->setFormTypeOption('by_reference', false)
             ->setTemplatePath('@admin/player/list.html.twig')
         ;
+
+        yield AssociationField::new('group');
     }
 }

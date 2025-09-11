@@ -135,4 +135,17 @@ class Date implements EntityInterface
             ->filter(static fn($v) => null !== $v)
         ;
     }
+
+    /**
+     * @return Collection<int, InterfacMatch>
+     * 
+     * Should be sorted by startsAt ASC since slots are sorted that way
+     */
+    public function getMatchsByGroup(Group $group): Collection
+    {
+        return $this->slots
+            ->map(static fn (Slot $slot) => $slot->getBooking()?->getMatch())
+            ->filter(static fn($match) => $match !== null && $match->getGroup() === $group)
+        ;
+    }
 }

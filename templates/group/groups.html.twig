@@ -71,7 +71,7 @@
                     {% for date in dates[group.id] %}
                         <h5 class="date">{{ date }}</h5>
                         <div class="matchs">
-                            {% for match in date.matchs %}
+                            {% for match in date.matchsByGroup(group) %}
                                 <div class="match">
                                     <div class="match-label">
                                         {{ match }}

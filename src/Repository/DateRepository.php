@@ -65,10 +65,20 @@ class DateRepository extends ServiceEntityRepository
      */
     public function findDatesByGroup(Group $group): array
     {
+        // IMPORTANT: DO NOT SELECT slots, bookings and matches
+        // Or else, only the matches for the first group queried 
+        // are hydrated in the date.
+        // When the same date entity is seen by doctrine in another query,
+        // it reuses the cached entity, which only contains matches from the first query.
+        // If we don't select the slots/bookings/matches in the query
+        // date.matches is a proxy object.
+        // date.matchsByGroup(group) triggers a query on matches, which returns **all the matchs**. 
+        // Date::matches now contains all the matchs and date.matchsByGroup(group)
+        // returns the expected matches for each group.
         return $this->createQueryBuilder('d')
-            ->leftJoin('d.slots', 's')->addSelect('s')
-            ->innerJoin('s.booking', 'b')->addSelect('b')
-            ->innerJoin('b.match', 'm')->addSelect('m')
+            ->innerJoin('d.slots', 's')
+            ->innerJoin('s.booking', 'b')
+            ->innerJoin('b.match', 'm')
             ->andWhere('m.group = :group')
             ->setParameter('group', $group)
             ->orderBy('d.date', 'ASC')
