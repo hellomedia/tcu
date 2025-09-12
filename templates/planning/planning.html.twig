@@ -9,14 +9,6 @@
 {% block content %}
 
     <style>
-        .planning {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 30px;
-            /* display:grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px; */
-        }
         .date {
             background-color: #fff;
             border: 0px solid #ddd;
@@ -32,23 +24,17 @@
             visibility: hidden;
             width: 15px;
         }
-        .group-header {
+        .date-header {
             display: flex;
             justify-content: center;
             gap: 10px;
             margin-bottom: 10px;
         }
-
         .courts {
             h5 {
                 text-align: center;
                 white-space: nowrap;
             }
-        }
-        .court {
-            display: inline-block;
-            vertical-align: top;
-            width: 260px;
         }
         .slots {
             margin-top: 15px;
@@ -58,21 +44,6 @@
         }
         .slot-row {
             height: 60px;
-            display: grid;
-            grid-template-columns: 50px 190px;
-            gap: 5px;
-            .btn {
-
-                visibility: hidden;
-                svg {
-                    width: 15px;
-                }
-            }
-            &:hover {
-                .btn {
-                    visibility: visible;
-                }
-            }
         }
         .slot-content {
             border: 1px dashed #ccc;
@@ -85,11 +56,60 @@
             align-items: center;
             justify-content: center;
         }
-        .slot-actions {
-            .btn {
-                box-shadow: none;
-                svg {
-                    width: 24px;
+
+        /* LAYOUT */
+        .planning {
+            display: grid;
+            gap: 30px;
+            grid-template-columns: 1fr;
+        }
+        .date {
+            overflow-x: auto; /* add scrollbar when necessary */
+        }
+        .courts {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .court {
+            width: 100%;
+            margin-bottom: 30px;
+        }
+        .slot-row, .court-header {
+            display: grid;
+            grid-template-columns: 50px minmax(190px, 1fr);
+            gap: 5px;
+        }
+        @media (min-width: 768px) {
+            .planning {
+                grid-template-columns: 1fr;
+                &.court-count-1 {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+            }
+            .courts {
+                flex-wrap: nowrap;
+                gap: 15px;
+            }
+            .court {
+                width: 100%; /* makes all items the same size no matter the content */
+                margin-bottom: 0;
+            }
+            .slot-row, .court-header {
+                grid-template-columns: 50px minmax(190px, 1fr);
+                .btn {
+                    visibility: hidden;
+                }
+                &:hover {
+                    .btn {
+                        visibility: visible;
+                    }
+                }
+            }
+        }
+        @media (min-width: 1400px) {
+            .planning {
+                &.court-count-2 {
+                    grid-template-columns: repeat(2, 1fr);
                 }
             }
         }
@@ -100,13 +120,16 @@
 
         {% for date in dates %}
             <div class="date">
-                <div class="group-header">
+                <div class="date-header">
                     <h4>{{ date }}</h4>
                 </div>
                 <div class="courts">
                     {% for court in courts %}
                         <div class="court">
-                            <h5>{{ court }}</h5>
+                            <div class="court-header">
+                                <div class="court-header-placeholder"></div>
+                                <h5>{{ court }}</h5>
+                            </div>
                             <div class="slots">
                                 {% for slot in date.slotsByCourt(court) %}
                                     <div class="slot-row">

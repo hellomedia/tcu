@@ -7,7 +7,7 @@
             visibility: hidden;
             width: 15px;
         }
-        .group-header {
+        .date-header {
             display: flex;
             justify-content: center;
             gap: 10px;
@@ -36,8 +36,6 @@
         }
         .slot-row {
             height: 60px;
-            display: grid;
-            gap: 5px;
             .btn {
                 svg {
                     width: 15px;
@@ -85,6 +83,8 @@
             width: 100%;
         }
         .slot-row {
+            display: grid;
+            gap: 5px;
             grid-template-columns: 50px minmax(160px, 1fr) 40px;
             &.slot-row-placeholder {
                 grid-template-columns: minmax(160px, 1fr);
@@ -119,12 +119,13 @@
                 }
             }
         }
-         @media (min-width: 1400px) {
+        @media (min-width: 1400px) {
             .planning {
                 &.court-count-2 {
                     grid-template-columns: repeat(2, 1fr);
                 }
             }
+        }
     </style>
 {% endblock %}
 
