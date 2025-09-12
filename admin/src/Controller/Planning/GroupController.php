@@ -18,7 +18,7 @@ class GroupController extends BaseController
     {
         $groups = $repository->findAll();
 
-        return $this->render('@admin/group/index.html.twig', [
+        return $this->render('@admin/group/groups.html.twig', [
             'groups' => $groups,
         ]);
     }

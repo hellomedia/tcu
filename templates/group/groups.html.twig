@@ -9,11 +9,6 @@
 {% block content %}
 
 <style>
-	.planning {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 30px;
-	}
 	.group {
 		border: 0px solid #ddd;
         background-color: #fff;
@@ -53,9 +48,20 @@
 		justify-content: space-between;
 		gap: 70px;
 	}
+
+    /* LAYOUT */
+    .groups {
+        display: grid;
+        gap: 30px;
+    }
+    @media (min-width: 768px) {
+        .groups {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
 </style>
 
-    <div class="planning">
+    <div class="groups">
 
         {% for group in groups %}
            <div class="group">
