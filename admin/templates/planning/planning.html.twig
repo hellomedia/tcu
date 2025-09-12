@@ -3,14 +3,6 @@
 {% block head_stylesheets %}
     {{ parent() }}
     <style>
-        .planning {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 30px;
-            /* display:grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px; */
-        }
         .placeholder {
             visibility: hidden;
             width: 15px;
@@ -19,7 +11,8 @@
             display: flex;
             justify-content: center;
             gap: 10px;
-            margin-bottom: 10px;
+            margin-top: 5px;
+            margin-bottom: 15px;
         }
         .date {
             border: 1px solid #ddd;
@@ -33,9 +26,7 @@
             }
         }
         .court {
-            display: inline-block;
-            vertical-align: top;
-            width: 270px;
+            margin-bottom: 30px;
         }
         .slots {
             margin-top: 15px;
@@ -46,23 +37,19 @@
         .slot-row {
             height: 60px;
             display: grid;
-            grid-template-columns: 50px 160px 40px;
             gap: 5px;
             .btn {
-
-                visibility: hidden;
                 svg {
                     width: 15px;
-                }
-            }
-            &:hover {
-                .btn {
-                    visibility: visible;
                 }
             }
         }
         .slot-content {
             border: 1px dashed #ccc;
+            .slot-row-placeholder & {
+                border: 0;
+                color: #bbb;
+            }
         }
         .slot-content-inner,
         .slot-actions-inner {
@@ -80,6 +67,61 @@
                 }
             }
         }
+
+        /* LAYOUT */
+        .planning {
+            display: grid;
+            gap: 30px;
+            grid-template-columns: 1fr;
+        }
+        .date {
+            overflow-x: auto; /* add scrollbar when necessary */
+        }
+        .courts {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .court {
+            width: 100%;
+        }
+        .slot-row {
+            grid-template-columns: 50px minmax(160px, 1fr) 40px;
+        }
+        @media (min-width: 768px) {
+            .planning {
+                grid-template-columns: 1fr;
+                &.court-count-1 {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+            }
+            .courts {
+                flex-wrap: nowrap;
+            }
+            .court {
+                width: 100%; /* makes all items the same size no matter the content */
+                margin-bottom: 0;
+            }
+            .slot-row {
+                grid-template-columns: 50px minmax(160px, 1fr) 40px;
+                &.slot-row-placeholder {
+                    grid-template-columns: minmax(160px, 1fr);
+                }
+                .btn {
+                    visibility: hidden;
+                }
+                &:hover {
+                    .btn {
+                        visibility: visible;
+                    }
+                }
+            }
+        }
+         @media (min-width: 1400px) {
+            .planning {
+                &.court-count-2 {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+            }
     </style>
 {% endblock %}
 
