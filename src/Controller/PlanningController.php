@@ -16,6 +16,9 @@ class PlanningController extends BaseController
         $dates = $dateRepository->findFutureDates();
         $courts = $courtRepository->findAll();
 
+        $this->addBreadcrumb('Homepage', 'homepage');
+        $this->addBreadcrumb('Planning');
+    
         return $this->render('planning/planning.html.twig', [
             'dates' => $dates,
             'courts' => $courts,

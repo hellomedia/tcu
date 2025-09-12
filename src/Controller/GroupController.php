@@ -19,6 +19,9 @@ class GroupController extends BaseController
             $dates[$group->getId()] = $dateRepository->findDatesByGroup($group);
         }
 
+        $this->addBreadcrumb('Homepage', 'homepage');
+        $this->addBreadcrumb('Poules');
+
         return $this->render('group/groups.html.twig', [
             'groups' => $groups,
             'dates' => $dates,
