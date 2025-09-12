@@ -86,6 +86,9 @@
         }
         .slot-row {
             grid-template-columns: 50px minmax(160px, 1fr) 40px;
+            &.slot-row-placeholder {
+                grid-template-columns: minmax(160px, 1fr);
+            }
         }
         @media (min-width: 768px) {
             .planning {
