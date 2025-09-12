@@ -37,6 +37,26 @@
 			Home
 		</a>
 
+        <a href="{{ path('groups') }}"
+            class="mobile-menu-item {{ app.current_route starts with 'group' ? 'active' }}"
+            data-action="mobile-menu#toggle"
+        >
+            Poules
+        </a>
+        <a href="{{ path('planning') }}"
+            class="mobile-menu-item {{ app.current_route starts with 'planning' ? 'active' }}"
+            data-action="mobile-menu#toggle"
+        >
+            Planning
+        </a>
+        <a href="{{ path('results') }}"
+            class="mobile-menu-item {{ app.current_route starts with 'result' ? 'active' }}"
+            data-action="mobile-menu#toggle"
+        >
+            Résultats
+        </a>
+
+
 	</div>
 
 </div>
