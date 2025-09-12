@@ -102,16 +102,16 @@ class DashboardController extends AbstractDashboardController
 
         yield MenuItem::section('Planning')
             ->setPermission('ROLE_EDITOR');
-        yield MenuItem::linkToUrl('Poules', 'fa fa-calendar', $this->urlGenerator->generate('admin_planning_groups'))
+        yield MenuItem::linkToUrl('Planning par poule', 'fa fa-calendar', $this->urlGenerator->generate('admin_planning_groups'))
             ->setPermission('ROLE_EDITOR');
-        yield MenuItem::linkToUrl('Planning', 'fa fa-calendar', $this->urlGenerator->generate('admin_planning'))
+        yield MenuItem::linkToUrl('Planning par date', 'fa fa-calendar', $this->urlGenerator->generate('admin_planning'))
             ->setPermission('ROLE_EDITOR');
         
         yield MenuItem::section('Admin')
             ->setPermission('ROLE_MANAGER');
         yield MenuItem::linkToUrl('Plages horaires', 'fa fa-calendar', $this->urlGenerator->generate('admin_planning_slots'))
             ->setPermission('ROLE_MANAGER');
-        yield MenuItem::linkToCrud('Jours', 'fa fa-calendar-day', Date::class)
+        yield MenuItem::linkToCrud('Dates', 'fa fa-calendar-day', Date::class)
             ->setPermission('ROLE_MANAGER');
         yield MenuItem::linkToCrud('Terrains', 'fa fa-calendar-day', Court::class)
             ->setPermission('ROLE_MANAGER');

@@ -7,4 +7,29 @@
 
 {% block content %}
 
+    <style>
+        .homepage-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        .item {
+            background-color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100px;
+            border-radius: 3px;
+            font-size: 20px;
+        }
+    </style>
+
+    <div class="homepage-grid">
+        <a class="item" href="{{ path('groups') }}">
+            Poules
+        </a>
+        <a class="item" href="{{ path('planning') }}">
+            Planning
+        </a>
+    </div>
 {% endblock %}
