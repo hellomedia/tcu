@@ -3,36 +3,23 @@
 {% block head_stylesheets %}
     {{ parent() }}
     <style>
-        .planning {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 30px;
-        }
         .placeholder {
             visibility: hidden;
             width: 15px;
-        }
-        .group-header {
-            display: flex;
-            justify-content: space-between;
-            gap: 10px;
-            margin-bottom: 10px;
         }
         .date {
             border: 1px solid #ddd;
             border-radius: 3px;
             padding: 15px;
         }
+        .date-header {
+            margin-top: 5px;
+        }
         .courts {
             h5 {
                 text-align: center;
                 white-space: nowrap;
             }
-        }
-        .court {
-            display: inline-block;
-            vertical-align: top;
-            width: 120px;
         }
         .slots {
             margin-top: 15px;
@@ -45,20 +32,57 @@
             gap: 5px;
             justify-content: center;
             align-items: center;
-            .btn {
-                visibility: hidden;
-                svg {
-                    width: 15px;
-                }
-            }
-            &:hover {
-                .btn {
-                    visibility: visible;
-                }
-            }
         }
         .slot {
             white-space: nowrap;
+        }
+        /* LAYOUT */
+        .planning {
+            --court-width: 100px;
+            --court-gap: 5px;
+            display: grid;
+            gap: 10px;
+            &[data-court-count="1"] {
+                grid-template-columns: repeat(auto-fit, minmax(calc(1 * (var(--court-width) + var(--court-gap))), 1fr));
+            }
+            &[data-court-count="2"] {
+                grid-template-columns: repeat(auto-fit, minmax(calc(2 * (var(--court-width) + var(--court-gap))), 1fr));
+            }
+            &[data-court-count="3"] {
+                grid-template-columns: repeat(auto-fit, minmax(calc(3 * (var(--court-width) + var(--court-gap))), 1fr));
+            }
+            &[data-court-count="4"] {
+                grid-template-columns: repeat(auto-fit, minmax(calc(4 * (var(--court-width) + var(--court-gap))), 1fr));
+            }
+            &[data-court-count="5"] {
+                grid-template-columns: repeat(auto-fit, minmax(calc(5 * (var(--court-width) + var(--court-gap))), 1fr));
+            }
+        }
+        .date {
+            display: grid;
+            /* Define two rows: one for the header, one for the courts */
+            grid-template-rows: auto 1fr;
+            gap: 15px; /* Space between the header and the courts */
+            padding: 10px;
+            overflow-x: auto;
+        }
+        /* The header spans the full width of the .date grid container */
+        .date-header {
+            grid-column: 1 / -1; /* Spans from the first to the last grid line */
+            display: flex;
+            justify-content: space-between;
+        }
+        .courts {
+            display: grid;
+            gap: var(--court-gap);
+            grid-auto-flow: column;
+            overflow-auto;
+        }
+        .court {
+            width: var(--court-width);
+        }
+        @media (min-width: 768px) {
+
         }
     </style>
 {% endblock %}
@@ -79,6 +103,7 @@
     <div class="planning"
         data-controller="modal"
         data-modal-type-value="confirm"
+        data-court-count="{{ courts|length }}"
     >
         {% for date in dates %}
             {% include '@admin/slot/_date.html.twig' %}
