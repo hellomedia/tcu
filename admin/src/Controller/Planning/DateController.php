@@ -57,8 +57,9 @@ class DateController extends BaseController
 
                 $this->addFlash('danger', $exception->getMessage());
 
-                return $this->redirectToRoute('admin_planning_matchs', [
+                return $this->redirectToRoute('@admin/date/add_slots.html.twig', [
                     'form' => $form,
+                    'date' => $date,
                 ]);
             }
 

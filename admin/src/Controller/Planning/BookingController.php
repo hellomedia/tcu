@@ -57,7 +57,7 @@ class BookingController extends BaseController
 
             $this->addFlash('success', 'Match ajouté');
 
-            return $this->redirectToRoute('admin_planning_matchs');
+            return $this->redirectToRoute('admin_planning_slots');
         }
 
         return $this->render('@admin/match/add.html.twig', [

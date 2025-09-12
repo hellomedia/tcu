@@ -9,6 +9,9 @@
 				<div class="slots">
 					{% for slot in date.slotsByCourt(court) %}
                         {% include "@admin/planning/_slot_row.html.twig" %}
+                    {% else %}
+                        {# invisible -- only for layout purposes #}
+                        {% include "@admin/planning/_slot_row_placeholder.html.twig" %}
 					{% endfor %}
 				</div>
 			</div>
