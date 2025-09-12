@@ -29,6 +29,9 @@ class Player implements EntityInterface
     #[ORM\Column(nullable: true, enumType: Ranking::class)]
     private ?Ranking $ranking = null;
 
+    #[ORM\Column(type: 'smallint', nullable: true)]
+    private ?int $rankingOrder = null; // <-- for sorting
+
     #[ORM\Column(enumType: Gender::class)]
     private ?Gender $gender = null;
 
@@ -103,6 +106,15 @@ class Player implements EntityInterface
     public function setRanking(?Ranking $ranking): static
     {
         $this->ranking = $ranking;
+
+        // Update the sorting order
+        if ($ranking === null) {
+            $this->rankingOrder = null;
+        } else {
+            // Get the array of all enum cases in their declared order
+            $order = array_flip(array_column(Ranking::cases(), 'name'));
+            $this->rankingOrder = $order[$ranking->name] ?? null;
+        }
 
         return $this;
     }
