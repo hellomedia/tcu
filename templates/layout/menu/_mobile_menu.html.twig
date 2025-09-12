@@ -41,18 +41,21 @@
             class="mobile-menu-item {{ app.current_route starts with 'group' ? 'active' }}"
             data-action="mobile-menu#toggle"
         >
+            <twig:ux:icon name="bracket" class="mobile-menu-item-icon"/>
             Poules
         </a>
         <a href="{{ path('planning') }}"
             class="mobile-menu-item {{ app.current_route starts with 'planning' ? 'active' }}"
             data-action="mobile-menu#toggle"
         >
+            <twig:ux:icon name="calendar" class="mobile-menu-item-icon"/>
             Planning
         </a>
         <a href="{{ path('results') }}"
             class="mobile-menu-item {{ app.current_route starts with 'result' ? 'active' }}"
             data-action="mobile-menu#toggle"
         >
+            <twig:ux:icon name="trophy" class="mobile-menu-item-icon"/>
             Résultats
         </a>
 

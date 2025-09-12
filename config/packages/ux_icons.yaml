@@ -29,3 +29,6 @@ ux_icons:
         unarchive: 'ic:baseline-unarchive'
         login: 'material-symbols:login'
         logout: 'material-symbols:logout'
+        calendar: 'bx:calendar'
+        trophy: 'bx:trophy'
+        bracket: 'mdi:bracket'
