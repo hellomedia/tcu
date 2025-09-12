@@ -1,10 +1,6 @@
 /* DO NOT IMPMORT CSS FILES FROM HERE
 unless we fix tailwind build for admin.css */
 
-html {
-    --bg-gray: #f8fafc;
-    --border-color: #ddd;
-}
 
 .custom-actions {
     border: 1px solid var(--border-color);

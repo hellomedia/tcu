@@ -18,6 +18,7 @@
 // import './styles/themes/light.css';
 // INSTEAD, import custom version for easyadmin or rely on easyadmin variables
 
+import './styles/admin/admin-variables.css';
 import './styles/admin/admin.css';
 import './styles/admin/grid.css';
 import './styles/admin/card.css';
