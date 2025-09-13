@@ -22,8 +22,9 @@
     }
 	.item {
 		height: 100px;
+        /* recommended way to center text inside a grid item, using grid as well */
         display: grid; /* could also be done with flexbox, justify-content, align-items, and text-align instead */
-        place-items: center; /* for a grid with plain text, this combines align and justify */
+        place-items: center; /* for a grid containing plain text, this combines align and justify */
         text-align: center; /* aligns text horizontally in case of full line or multiple lines */
         padding: 10px;
         border: 1px solid var(--border-color);

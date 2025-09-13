@@ -15,10 +15,12 @@
         }
         .item {
             background-color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            /* recommended way to center text inside a grid item, using grid as well */
+            display: grid; /* could also be done with flexbox, justify-content, align-items, and text-align instead */
+            place-items: center; /* for a grid containing plain text, this combines align and justify */
+            text-align: center; /* aligns text horizontally in case of full line or multiple lines */
             height: 100px;
+            padding: 10px;
             border-radius: 3px;
             font-size: 20px;
         }
