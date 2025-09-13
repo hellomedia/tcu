@@ -21,11 +21,11 @@
         margin-bottom: 10px;
     }
 	.item {
-        display: flex;
-        justify-content: center; /* horizontal -- aligns the item, but not text ***inside*** the item */
-        align-items: center; /* vertical */
-        text-align: center; /* aligns text horizontally **inside item** when full line or multiple lines */
 		height: 100px;
+        display: grid; /* could also be done with flexbox, justify-content, align-items, and text-align instead */
+        place-items: center; /* for a grid with plain text, this combines align and justify */
+        text-align: center; /* aligns text horizontally in case of full line or multiple lines */
+        padding: 10px;
         border: 1px solid var(--border-color);
 		border-radius: 3px;
 		font-size: 20px;
