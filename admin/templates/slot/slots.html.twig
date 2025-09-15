@@ -39,23 +39,24 @@
         /* LAYOUT */
         .planning {
             --court-width: 100px;
+            --date-header-width: 280px;
             --court-gap: 5px;
             display: grid;
             gap: 10px;
             &[data-court-count="1"] {
-                grid-template-columns: repeat(auto-fit, minmax(calc(1 * (var(--court-width) + var(--court-gap))), 1fr));
+                grid-template-columns: repeat(auto-fit, minmax(max(var(--date-header-width), calc(1 * (var(--court-width) + var(--court-gap)))), 1fr));
             }
             &[data-court-count="2"] {
-                grid-template-columns: repeat(auto-fit, minmax(calc(2 * (var(--court-width) + var(--court-gap))), 1fr));
+                grid-template-columns: repeat(auto-fit, minmax(max(var(--date-header-width), calc(2 * (var(--court-width) + var(--court-gap)))), 1fr));
             }
             &[data-court-count="3"] {
-                grid-template-columns: repeat(auto-fit, minmax(calc(3 * (var(--court-width) + var(--court-gap))), 1fr));
+                grid-template-columns: repeat(auto-fit, minmax(max(var(--date-header-width), calc(3 * (var(--court-width) + var(--court-gap)))), 1fr));
             }
             &[data-court-count="4"] {
-                grid-template-columns: repeat(auto-fit, minmax(calc(4 * (var(--court-width) + var(--court-gap))), 1fr));
+                grid-template-columns: repeat(auto-fit, minmax(max(var(--date-header-width), calc(4 * (var(--court-width) + var(--court-gap)))), 1fr));
             }
             &[data-court-count="5"] {
-                grid-template-columns: repeat(auto-fit, minmax(calc(5 * (var(--court-width) + var(--court-gap))), 1fr));
+                grid-template-columns: repeat(auto-fit, minmax(max(var(--date-header-width), calc(5 * (var(--court-width) + var(--court-gap)))), 1fr));
             }
         }
         .date {
