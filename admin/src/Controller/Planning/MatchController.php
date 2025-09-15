@@ -13,6 +13,7 @@ use App\Repository\DateRepository;
 use Doctrine\ORM\EntityManager;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use Symfony\Component\Form\ClickableInterface;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -45,6 +46,14 @@ class MatchController extends BaseController
 
         /* isClicked() avoids submitting when updating dependent field */
         if ($submitBtn->isClicked() && $form->isSubmitted() && $form->isValid()) {
+
+            if ($form->get('slot')->getData() == null) {
+                $form->get('slot')->addError(new FormError('Veuillez sélectionner une plage horaire'));
+
+                return $this->render('@admin/match/add_booking.html.twig', [
+                    'form' => $form,
+                ]);
+            }
 
             $this->entityManager->persist($booking);
             $this->entityManager->flush();

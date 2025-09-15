@@ -34,6 +34,7 @@ final class BookingForMatchForm extends AbstractType
                 return $repo->getFutureDatesWithAvailableSlotsQueryBuilder();
             },
             'multiple' => false,
+            'expanded' => true,
             'autocomplete' => true,
             'mapped' => false,
             'placeholder' => 'choisir une date',
