@@ -33,7 +33,7 @@ class Slot implements EntityInterface
     private ?\DateTimeImmutable $endsAt = null;
 
     #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")] // <- DB will delete slots when Court is deleted
     private ?Court $court = null;
 
     #[ORM\OneToOne(mappedBy: 'slot')]
