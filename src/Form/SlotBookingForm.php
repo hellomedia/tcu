@@ -32,6 +32,7 @@ final class SlotBookingForm extends AbstractType
                 return $repo->getGroupsWithNonProgrammedMatchesQueryBuilder();
             },
             'multiple' => false,
+            'expanded' => true,
             'autocomplete' => true,
             'mapped' => false,
             'placeholder' => 'Choisir une poule',
@@ -51,7 +52,7 @@ final class SlotBookingForm extends AbstractType
                     return $repo->getNonProgammedMatchsQueryBuilder($selectedGroup);
                 },
                 'multiple' => false,
-                'expanded' => false,
+                'expanded' => true,
                 'autocomplete' => true,
                 'placeholder' => 'Choisir un match'
             ]);
