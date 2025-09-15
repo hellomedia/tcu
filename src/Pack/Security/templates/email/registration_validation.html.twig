@@ -1,5 +1,8 @@
 {% extends 'email/layout/template.html.twig' %}
 
+{# only applies to translations evaluated in this template #}
+{# for variables passed to includes, it applies #}
+{# for variables inside blocks passed to embeds, it does not #}
 {% trans_default_domain 'security' %}
 
 {% block title %}
@@ -12,8 +15,9 @@
 
 {% block paragraphs %}
 	{% embed "email/includes/_paragraph.html.twig" %}
+        {# for embeds, trans_default_domain above does NOT apply, must be redeclared here #}
 		{% block text %}
-			{{ 'registration.validation_email.click_link'|trans(locale=language) }}
+			{{ 'registration.validation_email.click_link'|trans(domain='security', locale=language) }}
 		{% endblock %}
 	{% endembed %}
 {% endblock %}
@@ -35,8 +39,9 @@
         } 
     %}
 	{% embed "email/includes/_paragraph.html.twig" %}
+        {# for embeds, trans_default_domain above does NOT apply, must be redeclared here #}
 		{% block text %}
-            {{ 'registration.validation_email.fallback_link'|trans(locale=language) }}
+            {{ 'registration.validation_email.fallback_link'|trans(domain='security', locale=language) }}
 		{% endblock %}
 	{% endembed %}
 	{% embed "email/includes/_paragraph.html.twig" %}
