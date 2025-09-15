@@ -10,4 +10,7 @@ when@dev: &intercept_emails
             envelope:
                 recipients: ['%env(DEV_EMAIL)%']
 
+# if intercept email is activated for staging, don't forget to set DEV_EMAIL !
+# or else you will get a Email "" does not comply with addr-spec of RFC 2822 error
+# when trying to send emails.
 #when@staging: *intercept_emails
