@@ -1,0 +1,97 @@
+# SYMFONY INTERNALS OVERRIDE
+# key from symfony security component (with final dot)
+Username could not be found.: >
+    <b>Verkeerde e-mail</b>.
+# key from symfony security component (with final dot)
+Invalid credentials.: >
+    <b>Verkeerde wachtwoord</b>.
+    <br/><br/>
+    You can reset your password using the link below.
+# HELLO KOT
+# Unconfirmed Accounts
+unconfirmed:
+    title: Confirm your account
+    default_message: >
+        Please confirm your account by clicking on the link
+        sent to you in the validation email.
+        <br/><br/>
+        You can receive a new validation email using the link below.
+    request_new_validation_link: Receive a new validation link
+# Connection
+connection:
+    title: Login
+# Registration
+registration:
+    not_yet_registered: Not registered yet?
+    signup: Register
+    email_already_used: An account already exists for this email
+    email_already_verified: Email already verified
+    register:
+        title: Registration
+    check_email:
+        title: Confirm your email
+        message: >
+            An email has been sent to <b>%email%</b>.
+            <br><br>
+            It contains a validation link on which you should
+            click to activate your account.
+    validation_email:
+        subject: Registration confirmation
+        click_link: To confirm your account, follow the link below
+        button: Confirm my account
+        fallback_link: Of kopieer en plak onderstaande url in de adresbalk van uw browser
+    account_created:
+        success: Account created successfully!
+resetting.flash.success: __Password changed successfully
+# Password Reset
+password_reset:
+    lost_password: __Lost password?
+    title: Password reset
+    submit: Reset password
+    check_email: >
+        An email has been sent to your email.
+        <br><br>
+        It contains a validation link on which you should
+        click to reset your password.
+    email:
+        subject: Password reset
+        click_link: To reset your password, follow the link below
+        button: Reset password
+        validity: This link expires in
+force_full_authentication:
+    info: To access this page, please enter your password.
+access_denied:
+    title: Access Denied
+    message: >-
+        <p style="font-size: 16px">Access to this page was denied.</p>
+        <p style="font-size: 16px">
+            This can happen if you have multiple accounts and you are logged in with the wrong account.
+        </p>
+        <p style="font-size: 16px">
+            If that is the case, you can access this page by login out and login back in with the correct account.
+        </p>.
+page_not_found:
+    title: Page not found
+    message: >-
+        <p style="font-size: 16px">This page could not be found.</p>
+        <p style="font-size: 16px">
+            Check the url, or let's go to the <a href="%url%"><b>homepage</b></a>.
+        </p>
+server_error:
+    title: Server Error
+    message: >-
+        <p style="font-size: 16px">There was a server error.</p>
+        <p style="font-size: 16px">If it happens again, don't hesitate to <a href="%url%">contact us</a>.</p>
+    message_without_contact: >-
+        <p style="font-size: 16px">There was a server error.</p>
+bad_request:
+    title: Bad Request
+    message: >-
+        <p style="font-size: 16px">400 Error: "Bad Request".</p>
+        <p style="font-size: 16px">
+            Vérifiez l'url, ou rendez-vous en <a href="%url%"><b>page d'accueil</b></a>.
+        </p>
+error:
+    title: '%status_code% Error'
+    message: >-
+        <p style="font-size: 16px">%status_code% Error: "%status_text%".</p>
