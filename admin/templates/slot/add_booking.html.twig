@@ -20,8 +20,8 @@
 
 {% block page_actions %}
 
-    <a class="btn btn-default" href="{{ path('admin_planning_slots')}}">
-        Planning
+    <a class="btn btn-default" href="{{ path('admin_planning')}}">
+        Retour
     </a>
 
 {% endblock %}
@@ -33,7 +33,6 @@
 
         {{ form_start(form, {
             'attr': {
-                'novalidate': 'novalidate',
                 'data-ajax-target': 'form'
             }
         }) }}

@@ -6,6 +6,7 @@ use App\Entity\InterfacMatch;
 use App\Entity\Booking;
 use App\Entity\Group;
 use App\Form\Type\AjaxSubmitType;
+use App\Repository\GroupRepository;
 use App\Repository\InterfacMatchRepository;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -27,10 +28,13 @@ final class SlotBookingForm extends AbstractType
         $builder->add('group', EntityType::class, [
             'label' => 'Poule',
             'class' => Group::class,
+            'query_builder' => function (GroupRepository $repo): QueryBuilder {
+                return $repo->getGroupsWithNonProgrammedMatchesQueryBuilder();
+            },
             'multiple' => false,
             'autocomplete' => true,
             'mapped' => false,
-            'placeholder' => 'choisir une poule',
+            'placeholder' => 'Choisir une poule',
             'attr' => [
                 'data-action' => 'change->ajax#submitOnChange',
             ]
@@ -44,17 +48,12 @@ final class SlotBookingForm extends AbstractType
                 'label' => 'Match',
                 'class' => InterfacMatch::class,
                 'query_builder' => function (InterfacMatchRepository $repo) use ($selectedGroup): QueryBuilder {
-                    $qb = $repo->createQueryBuilder('m')
-                        ->leftJoin('m.booking', 'b')->addSelect('b')
-                        ->andWhere('b.id IS NULL')
-                        ->andWhere('m.group = :group')
-                        ->setParameter('group', $selectedGroup);
-                    
-                    return $qb;
+                    return $repo->getNonProgammedMatchsQueryBuilder($selectedGroup);
                 },
                 'multiple' => false,
                 'expanded' => false,
                 'autocomplete' => true,
+                'placeholder' => 'Choisir un match'
             ]);
         });
 

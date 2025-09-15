@@ -16,6 +16,7 @@ use App\Repository\DateRepository;
 use Doctrine\ORM\EntityManager;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use Symfony\Component\Form\ClickableInterface;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -95,6 +96,14 @@ class SlotController extends BaseController
         /* isClicked() avoids submitting when updating dependent field */
         if ($submitBtn->isClicked() && $form->isSubmitted() && $form->isValid()) {
 
+            if ($form->get('match')->getData() == null) {
+                $form->get('match')->addError(new FormError('Veuillez sélectionner un match'));
+
+                return $this->render('@admin/slot/add_booking.html.twig', [
+                    'form' => $form,
+                ]);
+            }
+
             $this->entityManager->persist($booking);
             $this->entityManager->flush();
             
@@ -102,12 +111,6 @@ class SlotController extends BaseController
 
             return $this->redirectToRoute('admin_planning');
         }
-
-        // if ($request->isXmlHttpRequest()) {
-        //     return $this->render('@admin/slot/_add_booking_form_container.html.twig', [
-        //         'form' => $form,
-        //     ]);
-        // }
 
         return $this->render('@admin/slot/add_booking.html.twig', [
             'form' => $form,

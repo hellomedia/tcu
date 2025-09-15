@@ -2,8 +2,10 @@
 
 namespace App\Repository;
 
+use App\Entity\Booking;
 use App\Entity\Group;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -40,4 +42,16 @@ class GroupRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+    public function getGroupsWithNonProgrammedMatchesQueryBuilder(): QueryBuilder
+    {
+        return $this->createQueryBuilder('g')
+            ->innerJoin('g.matchs', 'm')->addSelect('m')
+            // explicit join instead of where('m.booking IS NULL')
+            // because single-valued association path expression to an inverse side is not supported in DQL queries
+            ->leftJoin('m.booking', 'b')->addSelect('b')
+            ->andWhere('b.id IS NULL')
+        ;
+    }
+
 }

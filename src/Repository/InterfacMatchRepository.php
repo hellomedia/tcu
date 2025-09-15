@@ -2,8 +2,10 @@
 
 namespace App\Repository;
 
+use App\Entity\Group;
 use App\Entity\InterfacMatch;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -40,4 +42,14 @@ class InterfacMatchRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+    public function getNonProgammedMatchsQueryBuilder(Group $group): QueryBuilder
+    {
+        return $this->createQueryBuilder('m')
+            ->leftJoin('m.booking', 'b')->addSelect('b')
+            ->andWhere('b.id IS NULL')
+            ->andWhere('m.group = :group')
+            ->setParameter('group', $group);
+        ;
+    }
 }
