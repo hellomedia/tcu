@@ -2,11 +2,12 @@ framework:
     mailer:
         dsn: '%env(MAILER_DSN)%'
 
-# Unnecessary if we use Postmark's sandbox,
+# NB: Unnecessary if we use Postmark's sandbox,
 # which makes emails available in the postmark UI without delivering them
 when@dev: &intercept_emails
     framework:
         mailer:
             envelope:
                 recipients: ['%env(DEV_EMAIL)%']
-when@staging: *intercept_emails
+
+#when@staging: *intercept_emails
