@@ -46,16 +46,9 @@ USAGE SUMMARY
 3) Ajax only on change of dependent fields (no form submit btn, no other fields)
 ==========================================================================
 
-NB: novalidate allows to trigger submit if the depedent field
-    is required and not filled (changed multiple times)
-
         <div class="form-wrapper" data-controller="ajax">
-            {{ form_start(form, {
-                'attr': {
-                    'data-ajax-target': 'form',
-                    'novalidate': 'novalidate',
-                }
-            }) }}
+            {{ form_start(form, { 'attr': {'data-ajax-target': 'form'} }) }}
+
                 <div data-ajax-target="container">
                     {{ form_row(form.trigggerField) }}
                     
@@ -137,12 +130,13 @@ export default class extends Controller {
         await this._submitAjax();
     }
 
-    // Debounced auto-submit for selects/checkboxes
+    // Debounced auto-submit for selects/checkboxes/radios
     submitOnChange(event) {
         const el = event.target;
         const isSelect = el instanceof HTMLSelectElement;
         const isCheckbox = el instanceof HTMLInputElement && el.type === "checkbox";
-        if (!isSelect && !isCheckbox) return;
+        const isRadio = el instanceof HTMLInputElement && el.type === "radio";
+        if (!isSelect && !isCheckbox && !isRadio) return;
 
         clearTimeout(this._submitTimer);
 
