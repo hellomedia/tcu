@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Entity\Interface\EntityInterface;
+use App\Enum\AccountLanguage;
 use App\Repository\UserRepository;
 use Pack\Security\Entity\Trait\UserSecurityTrait;
 use DateTimeImmutable;
@@ -37,6 +38,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Equatab
 
     #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE)]
     private ?DateTimeImmutable $updatedAt = null;
+
+    #[ORM\Column(enumType: AccountLanguage::class, options: ['default' => 'fr'])]
+    private ?AccountLanguage $accountLanguage = null;
 
     public function __construct()
     {
@@ -101,6 +105,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Equatab
     public function setUpdatedAt(?DateTimeImmutable $updatedAt = null): static
     {
         $this->updatedAt = $updatedAt ?? new DateTimeImmutable();
+
+        return $this;
+    }
+
+    public function getAccountLanguage(): ?AccountLanguage
+    {
+        return $this->accountLanguage;
+    }
+
+    public function setAccountLanguage(AccountLanguage $accountLanguage): static
+    {
+        $this->accountLanguage = $accountLanguage;
 
         return $this;
     }
