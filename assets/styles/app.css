@@ -1,6 +1,8 @@
 @layer reset, base, components;
 
-@import "tailwindcss" source("../../templates");
+@import "tailwindcss";
+@source "../../templates";
+@source "../../src/Twig/**/*.twig";
 @source "../../assets";
 
 @variant light (&:where(.light, .light *));
