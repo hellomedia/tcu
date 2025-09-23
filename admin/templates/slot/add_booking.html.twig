@@ -31,11 +31,7 @@
 
     <div data-controller="ajax">
 
-        {{ form_start(form, {
-            'attr': {
-                'data-ajax-target': 'form'
-            }
-        }) }}
+        {{ form_start(form, {'attr': {'data-ajax-target': 'form'}}) }}
 
             <div data-ajax-target="container">
                 {{ form_row(form.group) }}

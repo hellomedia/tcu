@@ -103,7 +103,7 @@ USAGE SUMMARY
             'form' => $form,
         ]);
 
-3) Ajax on change of dependent fields + full form submit
+4) Ajax on change of dependent fields + full form submit
 ========================================================
 
 Same as 2) and add on form:
