@@ -1,0 +1,191 @@
+<?php
+
+namespace Pack\Security\Controller;
+
+use App\Controller\BaseController;
+use App\Entity\User;
+use Pack\Security\Form\ChangePasswordForm;
+use Pack\Security\Form\ResetPasswordRequestForm;
+use Pack\Security\LoginFormAuthenticator;
+use Pack\Security\Mailer\SecurityMailer;
+use Doctrine\ORM\EntityManager;
+use LogicException;
+use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Contracts\Translation\TranslatorInterface;
+use SymfonyCasts\Bundle\ResetPassword\Controller\ResetPasswordControllerTrait;
+use SymfonyCasts\Bundle\ResetPassword\Exception\ResetPasswordExceptionInterface;
+use SymfonyCasts\Bundle\ResetPassword\ResetPasswordHelperInterface;
+
+#[Route('/reset-password')]
+class ResetPasswordController extends BaseController
+{
+    use ResetPasswordControllerTrait;
+
+    public function __construct(
+        private ResetPasswordHelperInterface $resetPasswordHelper
+    )
+    {
+        // Calling parent constructor not necessary as long as 
+        // we don't use its breadcrumb properties
+    }
+
+    /**
+     * Display & process form to request a password reset.
+     */
+    #[Route('', name: 'password_reset_request')]
+    public function request(Request $request, SecurityMailer $mailer, EntityManager $entityManager): Response
+    {
+        $form = $this->createForm(ResetPasswordRequestForm::class);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            return $this->_processSendingPasswordResetEmail(
+                $form->get('email')->getData(),
+                $mailer,
+                $entityManager
+            );
+        }
+
+        return $this->render('@security/reset_password/request.html.twig', [
+            'form' => $form,
+        ]);
+    }
+
+    /**
+     * Confirmation page after a user has requested a password reset.
+     */
+    #[Route('/check-email', name: 'password_reset_check_your_email')]
+    public function checkEmail(): Response
+    {
+        // Generate a fake token if the user does not exist or someone hit this page directly.
+        // This prevents exposing whether or not a user was found with the given email address or not
+        if (null === ($resetToken = $this->getTokenObjectFromSession())) {
+            $resetToken = $this->resetPasswordHelper->generateFakeResetToken();
+        }
+
+        return $this->render('@security/reset_password/check_email.html.twig', [
+            'resetToken' => $resetToken,
+        ]);
+    }
+
+    /**
+     * Validates and process the reset URL that the user clicked in their email.
+     */
+    #[Route('/reset/{token}', name: 'password_reset_reset')]
+    public function reset(Request $request, UserPasswordHasherInterface $passwordHasher, Security $security, LoginFormAuthenticator $loginFormAuthenticator, TranslatorInterface $translator, EntityManager $entityManager, string $token = null): Response
+    {
+        if ($token) {
+            // We store the token in session and remove it from the URL, to avoid the URL being
+            // loaded in a browser and potentially leaking the token to 3rd party JavaScript.
+            $this->storeTokenInSession($token);
+
+            return $this->redirectToRoute('password_reset_reset');
+        }
+
+        if (null === $token = $this->getTokenFromSession()) {
+            throw $this->createNotFoundException('No reset password token found in the URL or in the session.');
+        }
+
+        try {
+            $user = $this->resetPasswordHelper->validateTokenAndFetchUser($token);
+        } catch (ResetPasswordExceptionInterface $e) {
+            $this->addFlash('error', sprintf(
+                '%s - %s',
+                $translator->trans(ResetPasswordExceptionInterface::MESSAGE_PROBLEM_VALIDATE, [], 'ResetPasswordBundle'),
+                $translator->trans($e->getReason(), [], 'ResetPasswordBundle')
+            ));
+
+            return $this->redirectToRoute('password_reset_request');
+        }
+
+        // Valid token => continue
+        
+        if (!$user instanceof User) {
+            throw new LogicException('user not instance of User');
+        }
+
+        $form = $this->createForm(ChangePasswordForm::class, $user);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            // Password reset token should be used only once
+            $this->resetPasswordHelper->removeResetRequest($token);
+
+            $user->setPassword(
+                $passwordHasher->hashPassword(
+                    $user,
+                    $form->get('plainPassword')->getData(),
+                )
+            );
+
+            // if third-party registration
+            $user->removeRole('ROLE_AUTOGENERATED_PASSWORD');
+
+            $entityManager->flush();
+
+            $this->cleanSessionAfterReset();
+
+            $this->addFlash('success', 'resetting.flash.success', domain: 'security');
+
+            // calls LoginFormAuthenticator::authenticate
+            // then LoginFormAuthenticator::onAuthenticationSuccess
+            $redirectResponse = $security->login(
+                user: $user,
+                authenticatorName: $loginFormAuthenticator::class,
+            );
+
+            return $redirectResponse;
+        }
+
+        return $this->render('@security/reset_password/reset.html.twig', [
+            'form' => $form,
+        ]);
+    }
+
+    private function _processSendingPasswordResetEmail(string $emailFormData, SecurityMailer $mailer, EntityManager $entityManager): RedirectResponse
+    {
+        $user = $entityManager->getRepository(User::class)
+            ->findUserByIdentifier($emailFormData);
+
+        if (!$user) {
+            $this->addFlash(
+                type: 'error',
+                message: 'Username could not be found.', // re-use Symfony internals message key
+                parameters: ['%email%' => $emailFormData],
+                domain: 'security',
+                html: true
+            );
+
+            return $this->redirectToRoute('password_reset_request');
+        }
+
+        try {
+            $resetToken = $this->resetPasswordHelper->generateResetToken($user);
+        } catch (ResetPasswordExceptionInterface $e) {
+
+            $this->addFlash(
+                type: 'error',
+                message: $e->getReason(),
+                domain: 'ResetPasswordBundle'
+            );
+
+            return $this->redirectToRoute('password_reset_request');
+        }
+
+        $mailer->sendResetPasswordEmail($user, $resetToken);
+
+        // Store token object in session for retrieval in check-email route.
+        $this->setTokenObjectInSession($resetToken);
+
+        return $this->redirectToRoute('password_reset_check_your_email');
+    }
+}

@@ -3,9 +3,9 @@ twig:
     
     default_path: '%kernel.project_dir%/templates'
     paths:
-        src/Pack/Security/templates: 'security'
-        src/Pack/Status/templates: 'status'
-        templates/bundles/TwigBundle/Exception: 'exception'
+        src/Twig/Component: 'component'
+        pack/Security/templates: 'security'
+        pack/Status/templates: 'status'
         admin/templates: 'admin'
 
     form_themes:
@@ -18,6 +18,8 @@ twig:
 
     debug: '%kernel.debug%'
     strict_variables: '%kernel.debug%'
+
+    # deprecated. use "error_controller" under "framework" instead
     exception_controller: null
 
 when@test:

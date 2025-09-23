@@ -1,6 +1,6 @@
 import { Controller } from "@hotwired/stimulus";
 
-import '../styles/components/loading-btn.css';
+import '../styles/component/loading-btn.css';
 
 /**
  * 

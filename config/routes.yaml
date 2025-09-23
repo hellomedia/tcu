@@ -4,9 +4,9 @@ controllers:
     type: attribute
 
 security_controllers:
-    resource: '../src/Pack/Security/Controller/'
+    resource: '../pack/Security/Controller/'
     type: attribute
 
 status_controllers:
-    resource: '../src/Pack/Status/Controller/'
+    resource: '../pack/Status/Controller/'
     type: attribute

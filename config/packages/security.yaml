@@ -10,7 +10,7 @@ security:
     providers:
         # used to reload user from session & other features (e.g. switch_user)
         app_user_provider:
-            id: App\Pack\Security\UserProvider
+            id: Pack\Security\UserProvider
 
     role_hierarchy:
         ROLE_ADMIN:         ROLE_USER
@@ -54,13 +54,13 @@ security:
             pattern: ^/
             provider: app_user_provider
             custom_authenticators:
-                - App\Pack\Security\LoginFormAuthenticator
-            user_checker: App\Pack\Security\UserChecker
+                - Pack\Security\LoginFormAuthenticator
+            user_checker: Pack\Security\UserChecker
             logout:
                 path: /logout
             switch_user: { parameter: _hk_masq }
             login_throttling: true
-            access_denied_handler: App\Pack\Security\AccessDeniedHandler
+            access_denied_handler: Pack\Security\AccessDeniedHandler
             remember_me:
                 secret: "%env(APP_SECRET)%"
                 lifetime: 5184000 # 60 days in seconds

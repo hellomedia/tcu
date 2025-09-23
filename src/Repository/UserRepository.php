@@ -3,7 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\User;
-use App\Pack\Security\Repository\Trait\UserSecurityRepositoryTrait;
+use Pack\Security\Repository\Trait\UserSecurityRepositoryTrait;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;

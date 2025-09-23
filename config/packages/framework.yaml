@@ -6,6 +6,8 @@ framework:
     annotations: false
     handle_all_throwables: true
 
+    error_controller: 'Pack\Security\Controller\ExceptionController::show'
+
     esi:
         enabled: false
 

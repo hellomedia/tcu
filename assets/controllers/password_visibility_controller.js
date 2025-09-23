@@ -1,6 +1,6 @@
 import { Controller } from '@hotwired/stimulus';
 
-import '../styles/components/password-visibility.css';
+import '../styles/component/password-visibility.css';
 
 export default class extends Controller {
 

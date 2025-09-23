@@ -1,7 +1,7 @@
 // bin/console importmap:require @stimulus-components/sortable
 import SortableController from '@stimulus-components/sortable'
 
-import '../styles/components/sortable.css';
+import '../styles/component/sortable.css';
 
 // This controller has access to targets defined in the parent class.
 

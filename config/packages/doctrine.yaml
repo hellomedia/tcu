@@ -8,6 +8,14 @@ doctrine:
 
         profiling_collect_backtrace: '%kernel.debug%'
         use_savepoints: true
+
+        # Assigns type to SQL query
+        mapping_types:
+            citext: citext
+
+        # Data operations (does not affect SQL query)
+        types:
+            citext: Pack\Security\Doctrine\Types\CiText
         
     orm:
         auto_generate_proxy_classes: true
@@ -28,14 +36,14 @@ doctrine:
             Status:
                 type: attribute
                 is_bundle: false
-                dir: '%kernel.project_dir%/src/Pack/Status/Entity'
-                prefix: 'App\Pack\Status\Entity'
+                dir: '%kernel.project_dir%/pack/Status/Entity'
+                prefix: 'Pack\Status\Entity'
                 alias: App # simpler to just re-use App which does not have to be unique
             Security:
                 type: attribute
                 is_bundle: false
-                dir: '%kernel.project_dir%/src/Pack/Security/Entity'
-                prefix: 'App\Pack\Security\Entity'
+                dir: '%kernel.project_dir%/pack/Security/Entity'
+                prefix: 'Pack\Security\Entity'
                 alias: App # simpler to just re-use App which does not have to be unique
         controller_resolver:
             auto_mapping: false

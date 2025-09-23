@@ -19,9 +19,11 @@ services:
         exclude:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
-            - '../src/Pack/Security/Entity/'
-            - '../src/Pack/Status/Entity/'
             - '../src/Kernel.php'
+    Pack\:
+        resource: '../pack/'
+        exclude:
+            - '../pack/**/Entity/' 
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

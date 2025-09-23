@@ -4,7 +4,7 @@ namespace App\Entity;
 
 use App\Entity\Interface\EntityInterface;
 use App\Repository\UserRepository;
-use App\Pack\Security\Entity\Trait\UserSecurityTrait;
+use Pack\Security\Entity\Trait\UserSecurityTrait;
 use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;

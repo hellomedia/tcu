@@ -8,8 +8,8 @@
 
 @import "./theme.css";
 
-@import "./themes/light.css";
-@import "./themes/dark.css";
+@import "./theme/light.css";
+@import "./theme/dark.css";
 
 @import "./base/base.css";
 @import "./base/layout.css";
@@ -24,20 +24,20 @@
 @import "./form/select.css";
 @import "./form/textarea.css";
 
-@import "./components/header.css";
-@import "./components/menu.css";
-@import "./components/mobile-menu.css";
-@import "./components/bottom-menu.css";
-@import "./components/breadcrumbs.css";
-@import "./components/button.css";
-@import "./components/footer.css";
-@import "./components/security.css";
-@import "./components/dropdown.css";
-@import "./components/tag-filters.css";
-@import "./components/modal.css";
-@import "./components/modal-icon.css";
-@import "./components/modal-animation.css";
-@import "./components/flashes.css";
+@import "./component/header.css";
+@import "./component/menu.css";
+@import "./component/mobile-menu.css";
+@import "./component/bottom-menu.css";
+@import "./component/breadcrumbs.css";
+@import "./component/button.css";
+@import "./component/footer.css";
+@import "./component/security.css";
+@import "./component/dropdown.css";
+@import "./component/tag-filters.css";
+@import "./component/modal.css";
+@import "./component/modal-icon.css";
+@import "./component/modal-animation.css";
+@import "./component/flashes.css";
 
 /* path processing only works from app.css */
 #chat-box-container {

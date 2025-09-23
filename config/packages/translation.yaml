@@ -5,5 +5,5 @@ framework:
         default_path: '%kernel.project_dir%/translations'
         # additional paths
         paths:
-            - '%kernel.project_dir%/src/Pack/Security/translations'
+            - '%kernel.project_dir%/pack/Security/translations'
         fallbacks: ['%default_locale%']
