@@ -4,8 +4,8 @@ twig:
     default_path: '%kernel.project_dir%/templates'
     paths:
         src/Twig/Component: 'component'
-        pack/Security/templates: 'security'
-        pack/Status/templates: 'status'
+        packs/Security/templates: 'security'
+        packs/Status/templates: 'status'
         admin/templates: 'admin'
 
     form_themes:

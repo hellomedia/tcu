@@ -36,13 +36,13 @@ doctrine:
             Status:
                 type: attribute
                 is_bundle: false
-                dir: '%kernel.project_dir%/pack/Status/Entity'
+                dir: '%kernel.project_dir%/packs/Status/Entity'
                 prefix: 'Pack\Status\Entity'
                 alias: App # simpler to just re-use App which does not have to be unique
             Security:
                 type: attribute
                 is_bundle: false
-                dir: '%kernel.project_dir%/pack/Security/Entity'
+                dir: '%kernel.project_dir%/packs/Security/Entity'
                 prefix: 'Pack\Security\Entity'
                 alias: App # simpler to just re-use App which does not have to be unique
         controller_resolver:

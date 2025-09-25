@@ -21,9 +21,9 @@ services:
             - '../src/Entity/'
             - '../src/Kernel.php'
     Pack\:
-        resource: '../pack/'
+        resource: '../packs/'
         exclude:
-            - '../pack/**/Entity/' 
+            - '../packs/**/Entity/' 
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
