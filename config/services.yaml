@@ -18,8 +18,9 @@ services:
         resource: '../src/'
         exclude:
             - '../src/DependencyInjection/'
-            - '../src/Entity/'
             - '../src/Kernel.php'
+            - '../src/Entity/'
+            - '../src/**/Entity/'
     Pack\:
         resource: '../packs/'
         exclude:
