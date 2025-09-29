@@ -6,6 +6,7 @@ use App\Entity\Player;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
@@ -36,6 +37,10 @@ class PlayerCrudController extends AbstractCrudController
         yield ChoiceField::new('gender', 'H/F');
         yield ChoiceField::new('birthyear', 'Année de naissance');
         yield ChoiceField::new('comment', 'Commentaire');
+
+        yield BooleanField::new('interfacs', 'Interfacs');
+        yield BooleanField::new('cours', 'Cours');
+        yield BooleanField::new('interclubs', 'Interclubs');
 
         yield AssociationField::new('groups', 'Poule(s)')
             ->setFormTypeOption('by_reference', false)

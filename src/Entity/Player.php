@@ -53,6 +53,15 @@ class Player implements EntityInterface
     #[ORM\ManyToMany(targetEntity: InterfacMatch::class, mappedBy: 'players')]
     private Collection $matchs;
 
+    #[ORM\Column(nullable: true)]
+    private ?bool $interfacs = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?bool $interclubs = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?bool $cours = null;
+
     public function __construct()
     {
         $this->groups = new ArrayCollection();
@@ -205,6 +214,42 @@ class Player implements EntityInterface
         if ($this->matchs->removeElement($match)) {
             $match->removePlayer($this);
         }
+
+        return $this;
+    }
+
+    public function isInterfacs(): ?bool
+    {
+        return $this->interfacs;
+    }
+
+    public function setInterfacs(?bool $interfacs): static
+    {
+        $this->interfacs = $interfacs;
+
+        return $this;
+    }
+
+    public function isInterclubs(): ?bool
+    {
+        return $this->interclubs;
+    }
+
+    public function setInterclubs(?bool $interclubs): static
+    {
+        $this->interclubs = $interclubs;
+
+        return $this;
+    }
+
+    public function isCours(): ?bool
+    {
+        return $this->cours;
+    }
+
+    public function setCours(?bool $cours): static
+    {
+        $this->cours = $cours;
 
         return $this;
     }
