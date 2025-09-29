@@ -1,0 +1,13 @@
+# see https://symfony.com/doc/current/reference/configuration/framework.html
+framework:
+    http_client:
+        default_options:
+            # GOOD DEFAULTS WHEN HTTP CLIENT IS CALLED INSIDE THE QUEUE
+            # Disable retries as http client is called inside messenger queue, which handles retries more effectively
+            # We don't want to clog the queue with hanging/retrying http client calls when kotcop is down (maintenance or other)
+            # NB: 'max_retries' lives inside 'retry_failed', the doc seems wrong about that.
+            retry_failed:
+                enabled: false
+            # for the same reason (see above), set short caps of http client calls
+            timeout: 5 # Time, in seconds, to wait for network activity
+            max_duration: 15 # maximum execution time, in seconds, that the request and the response are allowed to take
