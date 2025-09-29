@@ -1,9 +1,7 @@
 <div class="group" id="group-{{ group.id }}">
     <div class="group-header">
         <h4>{{ group }}</h4>    
-        {% if group.matchs is not empty %}
-            {% include '@admin/group/_secondary_actions.html.twig' %}
-        {% endif %}
+        {% include '@admin/group/_secondary_actions.html.twig' %}
     </div>
     <div class="players">
         {% for player in group.players %}

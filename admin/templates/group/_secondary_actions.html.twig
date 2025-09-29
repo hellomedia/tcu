@@ -12,43 +12,54 @@
 		
             <div class="hk-dropdown-inner">
 
-                <button type="button"
+                <a href="{{ path('admin_group_edit', {'entityId': group.id} ) }}"
                     class="hk-dropdown-link"
-                    formaction="{{ path('admin_planning_group_add_matchs', {'id': group.id}) }}"
-                    data-action="modal#open"
-                    data-title="Ajouter 1 série de matchs"
-                    data-html="<p>Chaque joueur joue 1x de plus contre les autres joueurs de la poule</p>"
-                    data-button-label="Ajouter 1 série de matchs"
                 >
-                    <twig:ux:icon name="add" />
-                    Ajouter 1 série de matchs
-                </button>
+                    <twig:ux:icon name="edit" />
+                    Modifier
+                </a>
 
-                <button type="button"
-                    class="hk-dropdown-link"
-                    formaction="{{ path('admin_planning_group_regenerate_matchs', {'id': group.id}) }}"
-                    data-action="modal#open"
-                    data-title="Regénérer les matchs"
-                    data-html="<p>Attention, les matchs existants seront supprimés!</p>"
-                    data-button-label="Regénérer les matchs"
-                    data-variant="warning"
-                >
-                    <twig:ux:icon name="refresh" />
-                    Regénérer les matchs
-                </button>
+                {% if group.matchs is not empty %}
 
-                <button type="button"
-                    class="hk-dropdown-link"
-                    formaction="{{ path('admin_planning_group_delete_matchs', {'id': group.id}) }}"
-                    data-action="modal#open"
-                    data-title="Supprimer les matchs"
-                    data-html="<p>Les matchs et les réservations associées seront supprimés.</p>"
-                    data-button-label="Supprimer les matchs"
-                    data-variant="warning"
-                >
-                    <twig:ux:icon name="delete" />
-                    Supprimer les matchs
-                </button>
+                    <button type="button"
+                        class="hk-dropdown-link"
+                        formaction="{{ path('admin_planning_group_add_matchs', {'id': group.id}) }}"
+                        data-action="modal#open"
+                        data-title="Ajouter 1 série de matchs"
+                        data-html="<p>Chaque joueur joue 1x de plus contre les autres joueurs de la poule</p>"
+                        data-button-label="Ajouter 1 série de matchs"
+                    >
+                        <twig:ux:icon name="add" />
+                        Ajouter 1 série de matchs
+                    </button>
+
+                    <button type="button"
+                        class="hk-dropdown-link"
+                        formaction="{{ path('admin_planning_group_regenerate_matchs', {'id': group.id}) }}"
+                        data-action="modal#open"
+                        data-title="Regénérer les matchs"
+                        data-html="<p>Attention, les matchs existants seront supprimés!</p>"
+                        data-button-label="Regénérer les matchs"
+                        data-variant="warning"
+                    >
+                        <twig:ux:icon name="refresh" />
+                        Regénérer les matchs
+                    </button>
+
+                    <button type="button"
+                        class="hk-dropdown-link"
+                        formaction="{{ path('admin_planning_group_delete_matchs', {'id': group.id}) }}"
+                        data-action="modal#open"
+                        data-title="Supprimer les matchs"
+                        data-html="<p>Les matchs et les réservations associées seront supprimés.</p>"
+                        data-button-label="Supprimer les matchs"
+                        data-variant="warning"
+                    >
+                        <twig:ux:icon name="delete" />
+                        Supprimer les matchs
+                    </button>
+
+                {% endif %}
 
             </div>
 	</div>

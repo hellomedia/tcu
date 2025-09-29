@@ -48,9 +48,5 @@ class PlayerCrudController extends AbstractCrudController
         yield AssociationField::new('groups', 'Poule(s)')
             ->setFormTypeOption('by_reference', false)
         ;
-        
-        yield AssociationField::new('matchs', 'Matchs')
-            ->hideOnForm()
-        ;
     }
 }
