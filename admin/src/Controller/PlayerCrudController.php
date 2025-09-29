@@ -38,9 +38,12 @@ class PlayerCrudController extends AbstractCrudController
         yield ChoiceField::new('birthyear', 'Année de naissance');
         yield ChoiceField::new('comment', 'Commentaire');
 
-        yield BooleanField::new('interfacs', 'Interfacs');
-        yield BooleanField::new('cours', 'Cours');
-        yield BooleanField::new('interclubs', 'Interclubs');
+        yield BooleanField::new('interfacs', 'Interfacs')
+            ->renderAsSwitch(true);
+        yield BooleanField::new('cours', 'Cours')
+            ->renderAsSwitch(true);
+        yield BooleanField::new('interclubs', 'Interclubs')
+            ->renderAsSwitch(true);
 
         yield AssociationField::new('groups', 'Poule(s)')
             ->setFormTypeOption('by_reference', false)
