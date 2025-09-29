@@ -142,14 +142,14 @@ class RegistrationController extends BaseController
         $email = $request->getSession()->get('unverified_email');
 
         if ($email == null) {
-            return $this->redirectToRoute('dashboard');
+            return $this->redirectToRoute('admin_dashboard');
         }
 
         try {
             $user = $emailVerifier->getUnverifiedUserByEmail($email);
         } catch (EmailAlreadyVerifiedException $exception) {
             $this->addFlash('success', 'registration.email_already_verified', domain: 'security');
-            return $this->redirectToRoute('dashboard');
+            return $this->redirectToRoute('admin_dashboard');
         }
 
         if ($deliverabilityIssues && \str_contains($email, 'gmail')) {
@@ -171,7 +171,7 @@ class RegistrationController extends BaseController
             $user = $emailVerifier->getUnverifiedUser($request);
         } catch (EmailAlreadyVerifiedException $exception) {
             $this->addFlash('success', 'registration.email_already_verified', domain: 'security');
-            return $this->redirectToRoute('dashboard');
+            return $this->redirectToRoute('admin_dashboard');
         }
 
         try {
@@ -206,14 +206,14 @@ class RegistrationController extends BaseController
         $email = $session->get('unverified_email');
 
         if ($email == null) {
-            return $this->redirectToRoute('dashboard');
+            return $this->redirectToRoute('admin_dashboard');
         }
 
         try {
             $user = $emailVerifier->getUnverifiedUserByEmail($email);
         } catch (EmailAlreadyVerifiedException $exception) {
             $this->addFlash('success', 'registration.email_already_verified', domain: 'security');
-            return $this->redirectToRoute('dashboard');
+            return $this->redirectToRoute('admin_dashboard');
         }
 
         if (isset($_POST['email']) && $_POST['email'] == $session->get('unverified_email')) {
