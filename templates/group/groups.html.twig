@@ -25,25 +25,44 @@
         display: flex;
         flex-direction: column;
         gap: 5px;
-        margin-bottom: 30px;
+        margin-bottom: 10px;
     }
-    h5 {
-		margin-bottom: 15px;
-		font-weight: bold;
-	}
-	.matchs {
-		display: flex;
-		flex-direction: column;
-		gap: 15px;
-		margin-top: 20px;
-		margin-bottom: 30px;
-	}
-	.match {
-		display: flex;
-		flex-wrap: nowrap;
-		justify-content: space-between;
-		gap: 70px;
-	}
+    .dates {
+        display: grid;
+        grid-template-columns: 1fr auto; /* match label | booking */
+        gap: 15px;
+    }
+    .date {
+        margin-top: 20px;
+        grid-column: span 2;
+        font-weight: bold;
+    }
+
+    .matchs {
+        /* prentend div does not exist for grid and exposes children to the grid ! */
+        /* allows to keep div for semantic markup without getting in the way of the grid ! */
+        display: contents; 
+    }
+
+    .match {
+        /* prentend div does not exist for grid and exposes children to the grid ! */
+        /* allows to keep div for semantic markup without getting in the way of the grid ! */
+        display: contents;
+    }
+
+    .nowrap {
+        white-space: nowrap;
+    }
+
+    .match-label {
+    /* first column */
+    }
+
+    .booking {
+    /* second column */
+    text-align: right;
+    }
+
 
     /* LAYOUT */
     .groups {
@@ -76,13 +95,16 @@
                             {% for match in date.matchsByGroup(group) %}
                                 <div class="match">
                                     <div class="match-label">
-                                        {{ match }}
+                                        {% for player in match.players %}
+                                            <span class="nowrap">{{ player.fullName }}</span>
+                                            {{ not loop.last ? ' - ' }}
+                                        {% endfor %}
                                     </div>
                                     <div class="booking">
                                         {% if match.booking is not null %}
-                                            {{ match.timeRange }}
+                                            <span class="nowrap">{{ match.timeRange }}</span>
                                             •
-                                            {{ match.court }}
+                                            <span class="nowrap">{{ match.court }}</span>
                                         {% endif %}
                                     </div>
                                 </div>
