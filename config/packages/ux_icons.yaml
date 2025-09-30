@@ -32,3 +32,7 @@ ux_icons:
         calendar: 'bx:calendar'
         trophy: 'bx:trophy'
         bracket: 'mdi:bracket'
+        medal: 'fa-solid:medal'
+        interclubs: 'fluent:people-team-28-regular'
+        lessons: 'mdi:tennis'
+        practical-infos: 'mdi:information-outline'
