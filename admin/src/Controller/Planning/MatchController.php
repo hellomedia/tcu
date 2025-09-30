@@ -27,7 +27,7 @@ class MatchController extends BaseController
     }
 
     /**
-     * Add booking for existing match
+     * Add booking for existing match = schedule a match
      */
     #[Route('/match/{id:match}/add-booking', name: 'admin_match_add_booking', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
     public function addBooking(InterfacMatch $match, Request $request): Response

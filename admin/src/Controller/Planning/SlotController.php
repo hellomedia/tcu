@@ -78,6 +78,9 @@ class SlotController extends BaseController
         ]);
     }
 
+    /**
+     * Add booking for a slot = schedule a match
+     */
     #[Route('/planning/slot/{id:slot}/add-booking', name: 'admin_planning_slot_add_booking', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
     public function addBooking(Slot $slot, Request $request): Response
     {
