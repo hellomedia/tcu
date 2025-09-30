@@ -29,11 +29,19 @@
         color: var(--color-highlight-text);
     }
 
+    .group-header > h3 {
+        margin-top: 0;
+    }
+
     h4 {
         font-family: 'Poppins', 'Inter Variable', sans-serif;
         @apply text-lg;
         @apply mt-6;
         @apply mb-4;
+    }
+
+    .group-header > h4 {
+        margin-top: 0;
     }
 
     a {
