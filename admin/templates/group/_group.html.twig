@@ -5,7 +5,7 @@
     </div>
     <div class="players">
         {% for player in group.players %}
-            <div class="player">{{ loop.index }}. {{ player }}</div>
+            <div class="player">{{ loop.index }}. {{ player.nameWithRanking }}</div>
         {% endfor %}
     </div>
     <div class="matchs">
