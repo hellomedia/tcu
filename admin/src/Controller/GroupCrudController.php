@@ -54,7 +54,18 @@ class GroupCrudController extends AbstractCrudController
 
         yield AssociationField::new('players', 'Joueurs')
             ->setFormTypeOption('by_reference', false)
-            ->setTemplatePath('@admin/player/list.html.twig')
+            ->setTemplatePath('@admin/field/players.html.twig')
+            ->hideOnDetail()
+        ;
+    
+        yield AssociationField::new('players', 'Joueurs')
+            ->onlyOnDetail()
+            ->setTemplatePath('@admin/field/detail/players.html.twig')
+        ;
+
+        yield AssociationField::new('matchs', 'Matchs')
+            ->onlyOnDetail()
+            ->setTemplatePath('@admin/field/detail/matchs.html.twig')
         ;
     }
 

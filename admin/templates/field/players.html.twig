@@ -1,7 +1,9 @@
 {% set players = field.value %}
 {% if players is not null %}
     {% for player in players %}
-        <span class="tag">{{ player.fullName }}</span>
+        <a href="{{ path('admin_player_detail', {entityId: player.id}) }}">
+            <span class="tag">{{ player.fullName }}</span>
+        </a>
         {{ not loop.last ? ', ' }}
     {% endfor %}
 {% endif %}

@@ -34,7 +34,7 @@ class InterfacMatchCrudController extends AbstractCrudController
         
         yield AssociationField::new('players', 'Joueurs')
             ->setFormTypeOption('by_reference', false)
-            ->setTemplatePath('@admin/player/list.html.twig')
+            ->setTemplatePath('@admin/field/players.html.twig')
         ;
 
         yield AssociationField::new('group');

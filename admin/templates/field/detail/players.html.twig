@@ -1,0 +1,17 @@
+{% set players = field.value %}
+{% if players is not null %}
+	<style>
+		.player-list {
+			display: flex;
+			flex-direction: column;
+			gap: 10px;
+		}
+	</style>
+	<div class="player-list">
+		{% for player in players %}
+			<a href="{{ path('admin_player_detail', {entityId: player.id}) }}">
+				<span class="tag">{{ player.fullName }} - {{ player.ranking.value }}</span>
+			</a>
+		{% endfor %}
+	</div>
+{% endif %}

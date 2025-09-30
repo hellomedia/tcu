@@ -1,0 +1,12 @@
+<div class="entity-list">
+	{% if field.value|length > 0 %}
+        {% for item in field.value %}
+            <a href="{{ path('admin_group_detail', {entityId: item.id}) }}">
+                {{ item }}
+            </a>
+        {% endfor %}
+    {% else %}
+        <span class="badge badge-outline">{{ 'label.null'|trans({}, 'EasyAdminBundle') }}</span>
+    {% endif %}
+</div>
+

@@ -1,0 +1,18 @@
+{% set matchs = field.value %}
+{% if matchs is not null %}
+    <style>
+        .matchs-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+    </style>
+    <div class="matchs-list">
+        {% for match in matchs %}
+            
+                <a href="{{ path('admin_interfac_match_detail', {entityId: match.id}) }}">
+                    <span class="tag">{{ match }}</span>
+                </a>
+        {% endfor %}
+    </div>
+{% endif %}

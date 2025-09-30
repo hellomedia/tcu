@@ -30,8 +30,8 @@ class PlayerCrudController extends AbstractCrudController
 
     public function configureFields(string $pageName): iterable
     {
-        yield TextField::new('firstname', 'Prénom');
         yield TextField::new('lastname', 'Nom');
+        yield TextField::new('firstname', 'Prénom');
 
         yield ChoiceField::new('ranking', 'Classement');
         yield ChoiceField::new('gender', 'H/F');
@@ -46,6 +46,7 @@ class PlayerCrudController extends AbstractCrudController
             ->renderAsSwitch(true);
 
         yield AssociationField::new('groups', 'Poule(s)')
+            ->setTemplatePath('@admin/field/groups.html.twig')
             ->setFormTypeOption('by_reference', false)
         ;
     }
