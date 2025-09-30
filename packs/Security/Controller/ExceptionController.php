@@ -6,6 +6,16 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Log\DebugLoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
+/**
+ * Show custom error pages (only use in prod)
+ * 
+ * wiring in framework.yaml
+ * 
+ *     when@prod:
+ *         framework:
+ *             error_controller: 'Pack\Security\Controller\ExceptionController::show'
+ * 
+ */
 class ExceptionController extends AbstractController
 {
     public function show(FlattenException $exception, DebugLoggerInterface $logger = null): Response
