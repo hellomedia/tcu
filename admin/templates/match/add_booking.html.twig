@@ -8,6 +8,9 @@
 {% block head_stylesheets %}
     {{ parent() }}
     <style>
+        .infos {
+            margin-bottom: 20px;
+        }
         @media (min-width: 768px) {
             .form-wrapper {
                 max-width: 300px;
@@ -16,7 +19,7 @@
     </style>
 {% endblock %}
 
-{% block content_title %}Programmer un match{% endblock %}
+{% block content_title %}Programmer le match {{ match }}{% endblock %}
 
 {% block page_actions %}
 
@@ -34,6 +37,24 @@
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
         }
     </style>
+
+    {% for player in match.players %}
+        <div class="infos">
+            <h5>{{ player }}</h5>
+            <div><b>Dispos</b>:</div>
+            {% if player.availabilities is not empty %}
+                <div>{{ player.availabilities }}</div>
+            {% else %}
+                <div> --- </div>
+            {% endif %}
+            <div style="margin-top: 5px"><b>Matchs programmés</b>:</div>
+            <div class="scheduled-matchs">
+                {% for scheduledMatch in player.scheduledMatchs %}
+                    {% if scheduledMatch is not same as match %}<div>{{ scheduledMatch.booking }} : {{ scheduledMatch }}</div>{% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
 
     <div data-controller="ajax">
 

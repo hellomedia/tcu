@@ -100,6 +100,7 @@ class SlotController extends BaseController
                 $form->get('match')->addError(new FormError('Veuillez sélectionner un match'));
 
                 return $this->render('@admin/slot/add_booking.html.twig', [
+                    'slot' => $slot,
                     'form' => $form,
                 ]);
             }
@@ -113,6 +114,7 @@ class SlotController extends BaseController
         }
 
         return $this->render('@admin/slot/add_booking.html.twig', [
+            'slot' => $slot,
             'form' => $form,
         ]);
     }

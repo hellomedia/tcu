@@ -2,7 +2,7 @@
 {% if players is not null %}
     {% for player in players %}
         <a href="{{ path('admin_player_detail', {entityId: player.id}) }}">
-            <span class="tag">{{ player.fullName }}</span>
+            <span class="tag">{{ player }}</span>
         </a>
         {{ not loop.last ? ', ' }}
     {% endfor %}

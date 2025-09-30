@@ -10,7 +10,7 @@
 	<div class="player-list">
 		{% for player in players %}
 			<a href="{{ path('admin_player_detail', {entityId: player.id}) }}">
-				<span class="tag">{{ player.fullName }} - {{ player.ranking.value }}</span>
+				<span class="tag">{{ player.nameWithRanking }}</span>
 			</a>
 		{% endfor %}
 	</div>

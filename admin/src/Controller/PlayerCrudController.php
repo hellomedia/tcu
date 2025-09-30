@@ -8,6 +8,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 class PlayerCrudController extends AbstractCrudController
@@ -36,18 +37,21 @@ class PlayerCrudController extends AbstractCrudController
         yield ChoiceField::new('ranking', 'Classement');
         yield ChoiceField::new('gender', 'H/F');
         yield ChoiceField::new('birthyear', 'Année de naissance');
-        yield ChoiceField::new('comment', 'Commentaire');
 
         yield BooleanField::new('interfacs', 'Interfacs')
             ->renderAsSwitch(true);
+
+        yield AssociationField::new('groups', 'Poule(s)')
+            ->setTemplatePath('@admin/field/groups.html.twig')
+            ->setFormTypeOption('by_reference', false);
+
         yield BooleanField::new('cours', 'Cours')
             ->renderAsSwitch(true);
         yield BooleanField::new('interclubs', 'Interclubs')
             ->renderAsSwitch(true);
 
-        yield AssociationField::new('groups', 'Poule(s)')
-            ->setTemplatePath('@admin/field/groups.html.twig')
-            ->setFormTypeOption('by_reference', false)
-        ;
+        yield TextareaField::new('availabilities', 'Dispos');
+        yield TextareaField::new('comment', 'Commentaire');
+
     }
 }

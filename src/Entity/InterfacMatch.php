@@ -94,6 +94,11 @@ class InterfacMatch implements EntityInterface
         return $this->booking;
     }
 
+    public function isScheduled(): bool
+    {
+        return $this->booking != null;
+    }
+
     public function setBooking(?Booking $booking): static
     {
         // unset the owning side of the relation if necessary

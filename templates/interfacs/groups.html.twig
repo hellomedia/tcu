@@ -85,7 +85,7 @@
                 </div>
                 <div class="players">
                     {% for player in group.players %}
-                        <div class="player">{{ loop.index }}. {{ player }}</div>
+                        <div class="player">{{ loop.index }}. {{ player.nameWithRanking }} </div>
                     {% endfor %}
                 </div>
                 <div class="dates">
@@ -96,7 +96,7 @@
                                 <div class="match">
                                     <div class="match-label">
                                         {% for player in match.players %}
-                                            <span class="nowrap">{{ player.fullName }}</span>
+                                            <span class="nowrap">{{ player }}</span>
                                             {{ not loop.last ? ' - ' }}
                                         {% endfor %}
                                     </div>

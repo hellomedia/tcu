@@ -51,6 +51,7 @@ class MatchController extends BaseController
                 $form->get('slot')->addError(new FormError('Veuillez sélectionner une plage horaire'));
 
                 return $this->render('@admin/match/add_booking.html.twig', [
+                    'match', $match,
                     'form' => $form,
                 ]);
             }
@@ -64,6 +65,7 @@ class MatchController extends BaseController
         }
 
         return $this->render('@admin/match/add_booking.html.twig', [
+            'match' => $match,
             'form' => $form,
         ]);
     }

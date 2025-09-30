@@ -62,6 +62,9 @@ class Player implements EntityInterface
     #[ORM\Column(nullable: true)]
     private ?bool $cours = null;
 
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $availabilities = null;
+
     public function __construct()
     {
         $this->groups = new ArrayCollection();
@@ -70,7 +73,12 @@ class Player implements EntityInterface
 
     public function __toString()
     {
-        return $this->firstname . ' ' . ($this->lastname ?? '') . ' ' . $this->ranking->value;
+        return $this->getFullName();
+    }
+
+    public function getNameWithRanking(): string
+    {
+        return $this->getFullName() . ' - ' . $this->ranking->value;
     }
 
     public function getFullName(): string
@@ -199,6 +207,16 @@ class Player implements EntityInterface
         return $this->matchs;
     }
 
+    /**
+     * @return Collection<int, InterfacMatch>
+     */
+    public function getScheduledMatchs(): Collection
+    {
+        return $this->matchs->filter(function(InterfacMatch $match) {
+            return $match->isScheduled();
+        });
+    }
+
     public function addMatch(InterfacMatch $match): static
     {
         if (!$this->matchs->contains($match)) {
@@ -250,6 +268,18 @@ class Player implements EntityInterface
     public function setCours(?bool $cours): static
     {
         $this->cours = $cours;
+
+        return $this;
+    }
+
+    public function getAvailabilities(): ?string
+    {
+        return $this->availabilities;
+    }
+
+    public function setAvailabilities(?string $availabilities): static
+    {
+        $this->availabilities = $availabilities;
 
         return $this;
     }
