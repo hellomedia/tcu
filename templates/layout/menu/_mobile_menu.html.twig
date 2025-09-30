@@ -37,26 +37,34 @@
 			Home
 		</a>
 
-        <a href="{{ path('groups') }}"
-            class="mobile-menu-item {{ app.current_route starts with 'group' ? 'active' }}"
-            data-action="mobile-menu#toggle"
-        >
-            <twig:ux:icon name="bracket" class="mobile-menu-item-icon"/>
-            Poules
-        </a>
-        <a href="{{ path('planning') }}"
-            class="mobile-menu-item {{ app.current_route starts with 'planning' ? 'active' }}"
-            data-action="mobile-menu#toggle"
-        >
-            <twig:ux:icon name="calendar" class="mobile-menu-item-icon"/>
-            Planning
-        </a>
-        <a href="{{ path('results') }}"
-            class="mobile-menu-item {{ app.current_route starts with 'result' ? 'active' }}"
+        <a href="{{ path('interfacs') }}"
+            class="mobile-menu-item {{ app.current_route starts with 'interfacs' ? 'active' }}"
             data-action="mobile-menu#toggle"
         >
             <twig:ux:icon name="trophy" class="mobile-menu-item-icon"/>
-            Résultats
+            Interfacs
+        </a>
+
+        <a href="{{ path('interclubs') }}"
+            class="mobile-menu-item {{ app.current_route starts with 'interclubs' ? 'active' }}"
+            data-action="mobile-menu#toggle"
+        >
+            <twig:ux:icon name="interclubs" class="mobile-menu-item-icon"/>
+            Interclubs
+        </a>
+        <a href="{{ path('cours') }}"
+            class="mobile-menu-item {{ app.current_route starts with 'cours' ? 'active' }}"
+            data-action="mobile-menu#toggle"
+        >
+            <twig:ux:icon name="lessons" class="mobile-menu-item-icon"/>
+            Cours
+        </a>
+        <a href="{{ path('practical_infos') }}"
+            class="mobile-menu-item {{ app.current_route == 'practical_infos' ? 'active' }}"
+            data-action="mobile-menu#toggle"
+        >
+            <twig:ux:icon name="practical-infos" class="mobile-menu-item-icon"/>
+            Infos pratiques
         </a>
 
 

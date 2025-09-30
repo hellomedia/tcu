@@ -8,6 +8,9 @@
 {% block content %}
 
     <style>
+        .info {
+            margin-bottom: 50px;
+        }
         .homepage-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -26,18 +29,21 @@
         }
     </style>
 
-    <div class="homepage-grid">
-        <a class="item" href="{{ path('interfacs') }}">
-            Interfacs
-        </a>
-        <a class="item" href="{{ path('interclubs') }}">
-            Interclubs
-        </a>
-        <a class="item" href="{{ path('cours') }}">
-            Cours
-        </a>
-        <a class="item" href="{{ path('practical_infos') }}">
-            Infos pratiques
-        </a>
+    <div class="info">
+        <p>
+            Les réservations de terrains extérieurs sont possibles via
+            <a href="https://ballejaune.com/club/tcu">balle jaune</a>.
+        </p>
+        <p>
+            Les 2 terrains en french courts sont disponibles de mars à novembre.
+        </p>
+        <p>
+            Les 3 terrains en brique pilée sont disponibles d'avril à octobre.
+        </p>
+        <p>
+            NB: Il faut être <a href="{{ path('practical_infos_membership') }}">membre</a>
+            pour pouvoir réserver un terrain.
+        </p>
     </div>
+
 {% endblock %}

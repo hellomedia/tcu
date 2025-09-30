@@ -1,0 +1,72 @@
+{% extends 'layout/default.html.twig' %}
+
+{% block title %}
+{% endblock %}
+
+{% block body_extra_classes 'with-cards' %}
+
+{% block content %}
+
+    <style>
+        .info {
+            margin-bottom: 50px;
+        }
+        .homepage-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        .item {
+            background-color: white;
+            /* recommended way to center text inside a grid item, using grid as well */
+            display: grid; /* could also be done with flexbox, justify-content, align-items, and text-align instead */
+            place-items: center; /* for a grid containing plain text, this combines align and justify */
+            text-align: center; /* aligns text horizontally in case of full line or multiple lines */
+            height: 100px;
+            padding: 10px;
+            border-radius: 3px;
+            font-size: 20px;
+        }
+    </style>
+
+    <div class="info">
+
+        <p>
+            Devenir membre vous donne accès aux terrains extérieurs
+            de mars à novembre.
+        <p>
+
+        <h3>1. Inscription ULiège sports</h3>
+
+        <p>
+            Comme pour tous les sports à ULiège, il faut d'abord la carte ULiège Sports.
+        <p>
+        <p>
+            <a href="https://www.sports.uliege.be/cms/c_12319460/fr/inscriptions">
+                Obtenir la carte ULiège sports
+            </a>
+        </p>
+
+        <h3>2. Inscription au TCU</h3>
+
+        <h4>Tarifs (annuel)</h4>
+        <ul>
+            <li>Adultes: 85 €</li>
+            <li>Etudiants enseignements supérieur (Université + Hautes écoles): 75 €</li>
+            <li>Adolescents - enseignement secondaire: 75 €</li>
+            <li>Enfants - enseignement primaire: 50 €</li>
+        </ul>
+
+        <h4>Procédure</h4>
+        <p>
+            1 formulaire à remplir et 1 appli à télécharger.
+        </p>
+        <p>
+            La procédure en détail
+            <a href"https://www.sports.uliege.be/cms/c_12472836/fr/sports-tennis-club-universite">est expliquée ici</a>.
+        </p>
+
+
+    </div>
+
+{% endblock %}

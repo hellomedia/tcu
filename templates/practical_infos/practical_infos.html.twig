@@ -8,6 +8,9 @@
 {% block content %}
 
     <style>
+        .info {
+            margin-bottom: 50px;
+        }
         .homepage-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -27,17 +30,12 @@
     </style>
 
     <div class="homepage-grid">
-        <a class="item" href="{{ path('interfacs') }}">
-            Interfacs
+        <a class="item" href="{{ path('practical_infos_bookings') }}">
+            Réserver des terrains
         </a>
-        <a class="item" href="{{ path('interclubs') }}">
-            Interclubs
-        </a>
-        <a class="item" href="{{ path('cours') }}">
-            Cours
-        </a>
-        <a class="item" href="{{ path('practical_infos') }}">
-            Infos pratiques
+        <a class="item" href="{{ path('practical_infos_membership') }}">
+            Devenir membre
         </a>
     </div>
+
 {% endblock %}

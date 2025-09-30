@@ -1,0 +1,66 @@
+<?php
+
+namespace App\Controller;
+
+use App\Repository\CourtRepository;
+use App\Repository\DateRepository;
+use App\Repository\GroupRepository;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
+
+class InterfacsController extends BaseController
+{
+    #[Route('/interfacs', name: 'interfacs')]
+    public function homepage(): Response
+    {
+        $this->addBreadcrumb('Homepage', 'homepage');
+        $this->addBreadcrumb('Interfacs', 'interfacs');
+        
+        return $this->render('interfacs/interfacs.html.twig', []);
+    }
+
+    #[Route('/interfacs/poules', name: 'interfacs_groups')]
+    public function groups(GroupRepository $repository, DateRepository $dateRepository): Response
+    {
+        $groups = $repository->findAll();
+
+        foreach ($groups as $group) {
+            $dates[$group->getId()] = $dateRepository->findDatesByGroup($group);
+        }
+
+        $this->addBreadcrumb('Homepage', 'homepage');
+        $this->addBreadcrumb('Interfacs', 'interfacs');
+        $this->addBreadcrumb('Poules');
+
+        return $this->render('interfacs/groups.html.twig', [
+            'groups' => $groups,
+            'dates' => $dates,
+        ]);
+    }
+
+    #[Route('/interfacs/planning', name: 'interfacs_planning')]
+    public function planning(DateRepository $dateRepository, CourtRepository $courtRepository): Response
+    {
+        $dates = $dateRepository->findFutureDates();
+        $courts = $courtRepository->findAll();
+
+        $this->addBreadcrumb('Homepage', 'homepage');
+        $this->addBreadcrumb('Interfacs', 'interfacs');
+        $this->addBreadcrumb('Planning');
+
+        return $this->render('interfacs/planning.html.twig', [
+            'dates' => $dates,
+            'courts' => $courts,
+        ]);
+    }
+
+    #[Route('/interfacs/resultats', name: 'interfacs_results')]
+    public function results(): Response
+    {
+        $this->addBreadcrumb('Homepage', 'homepage');
+        $this->addBreadcrumb('Interfacs', 'interfacs');
+        $this->addBreadcrumb('Résultats');
+
+        return $this->render('interfacs/results.html.twig', []);
+    }
+}

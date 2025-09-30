@@ -8,6 +8,9 @@
 {% block content %}
 
     <style>
+        .info {
+            margin-bottom: 50px;
+        }
         .homepage-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -26,18 +29,27 @@
         }
     </style>
 
+    <div class="info">
+        <p>Les interfacs 2025-2026 se déroulent le samedi après-midi du 4 octobre à fin mars.</p>
+        <p>C'est une compétition individuelle par petits matchs de 1 heure.<p>
+        <p>
+            Vu le peu de terrains dont dispose le club cet hiver (bâtiments en travaux), le nombre de match
+            est limité.
+        </p>
+        <p>
+            Compter 1 match par mois et un tour final en mars avec quelques matchs supplémentaires.
+        </p>
+    </div>
+
     <div class="homepage-grid">
-        <a class="item" href="{{ path('interfacs') }}">
-            Interfacs
+        <a class="item" href="{{ path('interfacs_groups') }}">
+            Poules
         </a>
-        <a class="item" href="{{ path('interclubs') }}">
-            Interclubs
+        <a class="item" href="{{ path('interfacs_planning') }}">
+            Planning
         </a>
-        <a class="item" href="{{ path('cours') }}">
-            Cours
-        </a>
-        <a class="item" href="{{ path('practical_infos') }}">
-            Infos pratiques
+        <a class="item" href="{{ path('interfacs_results') }}">
+            Résultats
         </a>
     </div>
 {% endblock %}

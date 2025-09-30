@@ -16,22 +16,28 @@
 				</div>
 
                 <div id="main-menu-items">
-					<a href="{{ path('groups') }}"
-						class="main-menu-item {{ app.current_route starts with 'group' ? 'current' }}"
+					<a href="{{ path('interfacs') }}"
+						class="main-menu-item {{ app.current_route starts with 'interfacs' ? 'current' }}"
 						data-action="mouseenter->menu-hover#enter mouseleave->menu-hover#leave">
-						Poules
+						Interfacs
 					</a>
-					<a href="{{ path('planning') }}"
-						class="main-menu-item {{ app.current_route starts with 'planning' ? 'current' }}"
+					<a href="{{ path('interclubs') }}"
+						class="main-menu-item {{ app.current_route starts with 'interclubs' ? 'current' }}"
 						data-action="mouseenter->menu-hover#enter mouseleave->menu-hover#leave">
-						Planning
+						Interclubs
 					</a>
-					<a href="{{ path('results') }}"
-						class="main-menu-item {{ app.current_route starts with 'result' ? 'current' }}"
+                    <a href="{{ path('cours') }}"
+						class="main-menu-item {{ app.current_route starts with 'cours' ? 'current' }}"
 						data-action="mouseenter->menu-hover#enter mouseleave->menu-hover#leave">
-						Résultats
+						Cours
 					</a>
-				</div>
+					<a href="{{ path('practical_infos') }}"
+						class="main-menu-item {{ app.current_route starts with 'practical_infos' ? 'current' }}"
+						data-action="mouseenter->menu-hover#enter mouseleave->menu-hover#leave">
+						Infos pratiques
+					</a>
+
+                </div>
 			</div>
 
 			<div class="flex">
