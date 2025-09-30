@@ -2,12 +2,13 @@
 
 namespace App\Entity;
 
+use App\Entity\Interface\EntityInterface;
 use App\Enum\BookingType;
 use App\Repository\BookingRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: BookingRepository::class)]
-class Booking
+class Booking implements EntityInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
