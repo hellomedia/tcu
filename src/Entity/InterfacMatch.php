@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Entity\Interface\EntityInterface;
 use App\Repository\InterfacMatchRepository;
+use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -124,5 +125,15 @@ class InterfacMatch implements EntityInterface
     public function getCourt(): ?Court
     {
         return $this->booking?->getCourt();
+    }
+
+    public function getDateEntity(): ?Date
+    {
+        return $this->getBooking()?->getSlot()?->getDate();
+    }
+
+    public function getDate(): ?DateTimeInterface
+    {
+        return $this->getDateEntity()?->getDate();
     }
 }

@@ -215,9 +215,17 @@ class Player implements EntityInterface
      */
     public function getScheduledMatchs(): Collection
     {
-        return $this->matchs->filter(function(InterfacMatch $match) {
+        $filtered = $this->matchs->filter(function(InterfacMatch $match) {
             return $match->isScheduled();
         });
+
+        $sorted = $filtered->toArray();
+
+        usort($sorted, function (InterfacMatch $a, InterfacMatch $b) {
+            return $a->getDate() <=> $b->getDate();
+        });
+
+        return new ArrayCollection($sorted);
     }
 
     public function addMatch(InterfacMatch $match): static

@@ -50,7 +50,9 @@
             <div style="margin-top: 5px"><b>Matchs programmés</b>:</div>
             <div class="scheduled-matchs">
                 {% for scheduledMatch in player.scheduledMatchs %}
-                    {% if scheduledMatch is not same as match %}<div>{{ scheduledMatch.booking }} : {{ scheduledMatch }}</div>{% endif %}
+                    {% if scheduledMatch is not same as match %}
+                        <div>{{ scheduledMatch.booking }} : {{ scheduledMatch }}</div>
+                    {% endif %}
                 {% endfor %}
             </div>
         </div>
