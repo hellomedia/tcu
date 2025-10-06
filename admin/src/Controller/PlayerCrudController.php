@@ -50,6 +50,7 @@ class PlayerCrudController extends AbstractCrudController
         yield BooleanField::new('interclubs', 'Interclubs')
             ->renderAsSwitch(true);
 
+        yield TextareaField::new('phone', 'Téléphone');
         yield TextareaField::new('availabilities', 'Dispos');
         yield TextareaField::new('comment', 'Commentaire');
 

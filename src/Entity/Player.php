@@ -65,6 +65,9 @@ class Player implements EntityInterface
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $availabilities = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $phone = null;
+
     public function __construct()
     {
         $this->groups = new ArrayCollection();
@@ -280,6 +283,18 @@ class Player implements EntityInterface
     public function setAvailabilities(?string $availabilities): static
     {
         $this->availabilities = $availabilities;
+
+        return $this;
+    }
+
+    public function getPhone(): ?string
+    {
+        return $this->phone;
+    }
+
+    public function setPhone(?string $phone): static
+    {
+        $this->phone = $phone;
 
         return $this;
     }
