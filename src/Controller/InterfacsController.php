@@ -2,12 +2,10 @@
 
 namespace App\Controller;
 
-use App\Entity\Player;
-use App\Form\Type\PlayerPickerType;
+use App\Form\PlayerPickerForm;
 use App\Repository\CourtRepository;
 use App\Repository\DateRepository;
 use App\Repository\GroupRepository;
-use App\Repository\InterfacMatchRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -24,9 +22,9 @@ class InterfacsController extends BaseController
     }
 
     #[Route('/interfacs/mes-matchs', name: 'interfacs_my_matchs', methods: ['GET'])]
-    public function myMatchs(Request $request, InterfacMatchRepository $repository): Response
+    public function myMatchs(Request $request): Response
     {
-        $form = $this->createForm(PlayerPickerType::class);
+        $form = $this->createForm(PlayerPickerForm::class);
 
         $form->handleRequest($request);
 
