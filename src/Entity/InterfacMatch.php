@@ -127,13 +127,13 @@ class InterfacMatch implements EntityInterface
         return $this->booking?->getCourt();
     }
 
-    public function getDateEntity(): ?Date
+    public function getDate(): ?Date
     {
         return $this->getBooking()?->getSlot()?->getDate();
     }
 
-    public function getDate(): ?DateTimeInterface
+    public function getDateEntityDate(): ?DateTimeInterface
     {
-        return $this->getDateEntity()?->getDate();
+        return $this->getDate()?->getDate();
     }
 }

@@ -2,9 +2,13 @@
 
 namespace App\Controller;
 
+use App\Entity\Player;
+use App\Form\Type\PlayerPickerType;
 use App\Repository\CourtRepository;
 use App\Repository\DateRepository;
 use App\Repository\GroupRepository;
+use App\Repository\InterfacMatchRepository;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -17,6 +21,25 @@ class InterfacsController extends BaseController
         $this->addBreadcrumb('Interfacs', 'interfacs');
         
         return $this->render('interfacs/interfacs.html.twig', []);
+    }
+
+    #[Route('/interfacs/mes-matchs', name: 'interfacs_my_matchs', methods: ['GET'])]
+    public function myMatchs(Request $request, InterfacMatchRepository $repository): Response
+    {
+        $form = $this->createForm(PlayerPickerType::class);
+
+        $form->handleRequest($request);
+
+        $player = $form->get('player')?->getData();
+    
+        $this->addBreadcrumb('Homepage', 'homepage');
+        $this->addBreadcrumb('Interfacs', 'interfacs');
+        $this->addBreadcrumb('Mes matchs');
+
+        return $this->render('interfacs/my_matchs.html.twig', [
+            'form' => $form,
+            'player' => $player,
+        ]);
     }
 
     #[Route('/interfacs/poules', name: 'interfacs_groups')]

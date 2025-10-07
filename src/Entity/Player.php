@@ -222,7 +222,25 @@ class Player implements EntityInterface
         $sorted = $filtered->toArray();
 
         usort($sorted, function (InterfacMatch $a, InterfacMatch $b) {
-            return $a->getDate() <=> $b->getDate();
+            return $a->getDateEntityDate() <=> $b->getDateEntityDate();
+        });
+
+        return new ArrayCollection($sorted);
+    }
+
+    /**
+     * @return Collection<int, InterfacMatch>
+     */
+    public function getNonScheduledMatchs(): Collection
+    {
+        $filtered = $this->matchs->filter(function(InterfacMatch $match) {
+            return $match->isScheduled() == false;
+        });
+
+        $sorted = $filtered->toArray();
+
+        usort($sorted, function (InterfacMatch $a, InterfacMatch $b) {
+            return $a->getDateEntityDate() <=> $b->getDateEntityDate();
         });
 
         return new ArrayCollection($sorted);
