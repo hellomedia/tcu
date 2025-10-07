@@ -79,18 +79,20 @@
                     </div>
                 {% endfor %}
 
-                <h2 style="margin-top: 40px;">Tu as aussi des matchs qui ne sont pas encore programmés...</h2>
+                {% if player.nonScheduledMatchs is not empty %}
+                    <h2 style="margin-top: 40px;">Tu as aussi des matchs qui ne sont pas encore programmés...</h2>
 
-                {% for match in player.nonScheduledMatchs %}
-                    <div class="match">
-                        <div class="label">
-                            {% for player in match.players %}
-                                <span class="nowrap">{{ player }}</span>
-                                {{ not loop.last ? ' - ' }}
-                            {% endfor %}
+                    {% for match in player.nonScheduledMatchs %}
+                        <div class="match">
+                            <div class="label">
+                                {% for player in match.players %}
+                                    <span class="nowrap">{{ player }}</span>
+                                    {{ not loop.last ? ' - ' }}
+                                {% endfor %}
+                            </div>
                         </div>
-                    </div>
-                {% endfor %}
+                    {% endfor %}
+                {% endif %}
             {% endif %}
 
 		{% endif %}
