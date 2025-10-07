@@ -3,73 +3,88 @@
     /* Add hk namespace for easyadmin, to avoid collision with bootstrap styles */
 
     .hk-dropdown-container {
-        all: unset; /* for easyadmin */
+        all: unset;
+        /* for easyadmin */
     }
-    .dropdown-container, .hk-dropdown-container {
+
+    .dropdown-container,
+    .hk-dropdown-container {
         position: relative;
     }
 
     .hk-dropdown-button {
-        all: unset; /* for easyadmin */
+        all: unset;
+        /* for easyadmin */
     }
-    .dropdown-button, .hk-dropdown-button {
+
+    .dropdown-button,
+    .hk-dropdown-button {
         cursor: pointer;
+
         svg {
             height: 27px;
         }
     }
 
     .hk-dropdown-menu {
-        all: unset; /* for easyadmin */
+        all: unset;
+        /* for easyadmin */
     }
-    .dropdown-menu, .hk-dropdown-menu {
+
+    .dropdown-menu,
+    .hk-dropdown-menu {
         position: absolute;
         z-index: 100;
-        display: flex;
         width: 100vw;
         max-width: min-content;
-        padding-inline: calc(var(--spacing) * 4);
+        padding-inline: calc(var(--spacing) * 2);
         margin-top: calc(var(--spacing)* 5);
-        background-color: white;
-        border: 1px solid var(--color-border);
+        background-color: var(--color-secondary-background);
+        border-radius: var(--radius-sm);
+        @apply ring-1;
+        @apply shadow-lg;
+        @apply ring-gray-900/5;
 
-        &.hidden {
-            display: none;
-        }
-        &.opacity-0 {
-            opacity: 0;
+        display: none;
+        opacity: 0;
+
+        &.open {
+            display: block;
+            opacity: 1;
         }
     }
 
     .hk-dropdown-inner {
-        all: unset; /* for easyadmin */
+        all: unset;
+        /* for easyadmin */
     }
-    .dropdown-inner, .hk-dropdown-inner {
+
+    .dropdown-inner,
+    .hk-dropdown-inner {
         display: flex;
         flex-direction: column;
         align-items: flex-start;
         flex-shrink: 1;
         color: var(--color-primary-text);
         padding: calc(var(--spacing)* 4);
-        background-color: var(--color-secondary-background);
-        border-radius: var(--radius-sm);
         @apply text-sm/6;
         @apply font-semibold;
-        @apply ring-1;
-        @apply shadow-lg;
-        @apply ring-gray-900/5;
 
         hr {
-            width: 100%; /* needed because inside a flexbox with flex-direction column */
+            width: 100%;
+            /* needed because inside a flexbox with flex-direction column */
             margin-top: calc(var(--spacing) * 3);
             margin-bottom: calc(var(--spacing) * 3);
         }
     }
 
     .hk-dropdown-link {
-        all:unset; /* for easyadmin */
+        all: unset;
+        /* for easyadmin */
     }
-    .dropdown-link, .hk-dropdown-link {
+
+    .dropdown-link,
+    .hk-dropdown-link {
         display: flex;
         align-items: center;
         gap: calc(var(--spacing)* 3);
@@ -80,7 +95,7 @@
         svg {
             height: 1.5rem;
         }
-        
+
         &:hover {
             color: var(--color-secondary-text);
             cursor: pointer;
@@ -91,12 +106,8 @@
 /* outside of layer components for easyadmin !! */
 
 .hk-dropdown-menu {
-    border: 1px solid var(--border-color); /* easy admin CSS var not accessible in CSS layer */
+    border: 1px solid var(--border-color);
+    /* easy admin CSS var not accessible in CSS layer */
     margin-top: 5px;
     right: 0;
 }
-.hk-dropdown-link {
-    color: var(--color-primary-text); /* easy admin CSS var not accessible in CSS layer */
-}
-
-

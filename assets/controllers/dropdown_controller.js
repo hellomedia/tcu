@@ -8,9 +8,7 @@ export default class extends Controller {
     }
 
     toggle(event) {
-        this.menuTarget.classList.toggle("hidden");
-        this.menuTarget.classList.toggle("opacity-0");
-
+        this.menuTarget.classList.toggle("open");
         this.updateListeners();
     }
 
@@ -22,16 +20,15 @@ export default class extends Controller {
     }
 
     closeMenu() {
-        this.menuTarget.classList.add("hidden", "opacity-0");
-        
+        this.menuTarget.classList.remove("open");
         this.updateListeners();
     }
 
     updateListeners() {
-        if (this.menuTarget.classList.contains('hidden')) {
-            document.removeEventListener("click", this.boundHide);
-        } else {
+        if (this.menuTarget.classList.contains('open')) {
             document.addEventListener("click", this.boundHide);
+        } else {
+            document.removeEventListener("click", this.boundHide);
         }
     }
 }
