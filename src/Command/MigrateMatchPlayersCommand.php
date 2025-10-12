@@ -26,7 +26,10 @@ class MigrateMatchPlayersCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        // Ask for email
+        $io->error('This command was meant as a single use migration command. Do not run again. Exiting.');
+
+        return Command::FAILURE;
+
         $response = $io->confirm('Do you want to migrate match players into participants ?');
 
         if (!$response) {
