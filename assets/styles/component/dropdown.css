@@ -91,6 +91,7 @@
         white-space: nowrap;
         padding: calc(var(--spacing)* 2);
         @apply text-sm/6;
+        color: var(--color-secondary-text);
 
         svg {
             height: 1.5rem;
@@ -110,4 +111,12 @@
     /* easy admin CSS var not accessible in CSS layer */
     margin-top: 5px;
     right: 0;
+}
+
+.hk-dropdown-link {
+    color: var(--color-secondary-text);
+    &:hover {
+        color: var(--link-hover-color);
+        cursor: pointer;
+    }
 }
