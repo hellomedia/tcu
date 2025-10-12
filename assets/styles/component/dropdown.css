@@ -111,6 +111,7 @@
     /* easy admin CSS var not accessible in CSS layer */
     margin-top: 5px;
     right: 0;
+    background-color: white;
 }
 
 .hk-dropdown-link {
