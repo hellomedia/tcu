@@ -39,6 +39,21 @@ class DateRepository extends ServiceEntityRepository
     /**
     * @return Date[] Returns an array of Date objects
     */
+    public function findPastDates(): array
+    {
+        return $this->createQueryBuilder('d')
+            ->leftJoin('d.slots', 's')
+            ->addSelect('s')
+            ->andWhere('d.date < CURRENT_DATE()')
+            ->orderBy('d.date', 'DESC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    /**
+    * @return Date[] Returns an array of Date objects
+    */
     public function findFutureDatesWithAvailableSlots(): array
     {
         return $this->getFutureDatesWithAvailableSlotsQueryBuilder()

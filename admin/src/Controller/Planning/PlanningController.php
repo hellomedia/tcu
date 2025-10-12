@@ -23,4 +23,16 @@ class PlanningController extends BaseController
             'courts' => $courts,
         ]);
     }
+
+    #[Route('/planning/past', name: 'admin_planning_past', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
+    public function planningPast(DateRepository $dateRepository, CourtRepository $courtRepository): Response
+    {
+        $dates = $dateRepository->findPastDates();
+        $courts = $courtRepository->findAll();
+
+        return $this->render('@admin/planning/past.html.twig', [
+            'dates' => $dates,
+            'courts' => $courts,
+        ]);
+    }
 }
