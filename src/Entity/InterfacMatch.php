@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Entity\Interface\EntityInterface;
+use App\Enum\MatchFormat;
+use App\Enum\Side;
 use App\Repository\InterfacMatchRepository;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -17,11 +19,8 @@ class InterfacMatch implements EntityInterface
     #[ORM\Column]
     private ?int $id = null;
 
-    /**
-     * @var Collection<int, Player>
-     */
-    #[ORM\ManyToMany(targetEntity: Player::class, inversedBy: 'matchs')]
-    private Collection $players;
+    #[ORM\Column(enumType: MatchFormat::class, options: ['default' => MatchFormat::SINGLES->value])]
+    private ?MatchFormat $format = MatchFormat::SINGLES;
 
     #[ORM\ManyToOne(inversedBy: 'matchs')]
     #[ORM\JoinColumn(nullable: false)]
@@ -33,12 +32,11 @@ class InterfacMatch implements EntityInterface
     /**
      * @var Collection<int, MatchParticipant>
      */
-    #[ORM\OneToMany(targetEntity: MatchParticipant::class, mappedBy: 'match')]
+    #[ORM\OneToMany(targetEntity: MatchParticipant::class, mappedBy: 'match',  cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $participants;
 
     public function __construct()
     {
-        $this->players = new ArrayCollection();
         $this->participants = new ArrayCollection();
     }
 
@@ -52,37 +50,35 @@ class InterfacMatch implements EntityInterface
         return $this->id;
     }
 
+    public function getFormat(): ?MatchFormat
+    {
+        return $this->format;
+    }
+
+    public function setFormat(MatchFormat $format): static
+    {
+        $this->format = $format;
+
+        return $this;
+    }
+
     /**
      * @return Collection<int, Player>
      */
     public function getPlayers(): Collection
     {
-        return $this->players;
-    }
-
-    public function addPlayer(Player $player): static
-    {
-        if (!$this->players->contains($player)) {
-            $this->players->add($player);
-        }
-
-        return $this;
+        return $this->participants->map(
+            fn(MatchParticipant $participant) => $participant->getPlayer()
+        );
     }
 
     public function getPlayersAsString(): string
     {
-        if ($this->players->isEmpty()) {
+        if ($this->participants->isEmpty()) {
             return '';
         }
     
-        return implode(' - ', $this->players->map(fn($player) => $player->getFullName())->toArray());
-    }
-
-    public function removePlayer(Player $player): static
-    {
-        $this->players->removeElement($player);
-
-        return $this;
+        return implode(' - ', $this->participants->map(fn(MatchParticipant $participant) => $participant->getPlayer()->getFullName())->toArray());
     }
 
     public function getGroup(): ?Group
@@ -172,5 +168,35 @@ class InterfacMatch implements EntityInterface
         }
 
         return $this;
+    }
+
+    public function replaceParticipantsForSide(Side $side, Player ...$players): void
+    {
+        foreach ($this->participants->toArray() as $p) {
+            if ($p->getSide() === $side) {
+                $this->participants->removeElement($p); // orphanRemoval
+            }
+        }
+    
+        foreach ($players as $player) {
+            $this->participants->add(
+                (new MatchParticipant())->setMatch($this)->setSide($side)->setPlayer($player)
+            );
+        }
+    }
+
+    public function getPlayersForSide(Side $side): ?array
+    {
+        $filtered = $this->participants->filter(function (MatchParticipant $participant) use ($side) {
+            return $participant->getSide() === $side;
+        });
+
+        $sorted = $filtered->toArray();
+
+        usort($sorted, function (MatchParticipant $a, MatchParticipant $b) {
+            return $a->getPlayer()->getLastname() <=> $b->getPlayer()->getLastname();
+        });
+
+        return $sorted;
     }
 }

@@ -18,12 +18,17 @@ class MatchParticipant
     #[ORM\JoinColumn(nullable: false)]
     private ?InterfacMatch $match = null;
 
-    #[ORM\ManyToOne]
+    #[ORM\ManyToOne(inversedBy: 'matchParticipations')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Player $player = null;
 
     #[ORM\Column(enumType: Side::class)]
     private ?Side $side = null;
+
+    public function __toString()
+    {
+        return $this->player;
+    }
 
     public function getId(): ?int
     {

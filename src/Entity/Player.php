@@ -47,12 +47,6 @@ class Player implements EntityInterface
     #[ORM\ManyToMany(targetEntity: Group::class, mappedBy: 'players')]
     private Collection $groups;
 
-    /**
-     * @var Collection<int, InterfacMatch>
-     */
-    #[ORM\ManyToMany(targetEntity: InterfacMatch::class, mappedBy: 'players')]
-    private Collection $matchs;
-
     #[ORM\Column(nullable: true)]
     private ?bool $interfacs = null;
 
@@ -68,10 +62,16 @@ class Player implements EntityInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $phone = null;
 
+    /**
+     * @var Collection<int, MatchParticipant>
+     */
+    #[ORM\OneToMany(targetEntity: MatchParticipant::class, mappedBy: 'player')]
+    private Collection $matchParticipations;
+
     public function __construct()
     {
         $this->groups = new ArrayCollection();
-        $this->matchs = new ArrayCollection();
+        $this->matchParticipations = new ArrayCollection();
     }
 
     public function __toString()
@@ -203,11 +203,21 @@ class Player implements EntityInterface
     }
 
     /**
+     * @return Collection<int, MatchParticipant>
+     */
+    public function getMatchParticipations(): Collection
+    {
+        return $this->matchParticipations;
+    }
+
+    /**
      * @return Collection<int, InterfacMatch>
      */
     public function getMatchs(): Collection
     {
-        return $this->matchs;
+        return $this->matchParticipations->map(function(MatchParticipant $participant) {
+            return $participant->getMatch();
+        });
     }
 
     /**
@@ -215,7 +225,7 @@ class Player implements EntityInterface
      */
     public function getScheduledMatchs(): Collection
     {
-        $filtered = $this->matchs->filter(function(InterfacMatch $match) {
+        $filtered = $this->getMatchs()->filter(function(InterfacMatch $match) {
             return $match->isScheduled();
         });
 
@@ -233,7 +243,7 @@ class Player implements EntityInterface
      */
     public function getNonScheduledMatchs(): Collection
     {
-        $filtered = $this->matchs->filter(function(InterfacMatch $match) {
+        $filtered = $this->getMatchs()->filter(function(InterfacMatch $match) {
             return $match->isScheduled() == false;
         });
 
@@ -244,25 +254,6 @@ class Player implements EntityInterface
         });
 
         return new ArrayCollection($sorted);
-    }
-
-    public function addMatch(InterfacMatch $match): static
-    {
-        if (!$this->matchs->contains($match)) {
-            $this->matchs->add($match);
-            $match->addPlayer($this);
-        }
-
-        return $this;
-    }
-
-    public function removeMatch(InterfacMatch $match): static
-    {
-        if ($this->matchs->removeElement($match)) {
-            $match->removePlayer($this);
-        }
-
-        return $this;
     }
 
     public function isInterfacs(): ?bool

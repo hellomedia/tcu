@@ -49,10 +49,6 @@ class MatchFactory
                 // 1. Create the first match entity.
                 $match = new InterfacMatch();
                 $group->addMatch($match);
-                // Note: The Match entity's ManyToMany relationship with Player is crucial here.
-                // The provided code assumes this has been corrected.
-                $match->addPlayer($player1);
-                $match->addPlayer($player2);
 
                 $participant1 = $this->_createParticipant($match, $player1, Side::A);
                 $match->addParticipant($participant1);
@@ -69,9 +65,6 @@ class MatchFactory
                     $group->addMatch($matchReturn);
                     // Add players again for the second match. The order doesn't matter
                     // unless you plan on tracking home/away status, for example.
-                    $matchReturn->addPlayer($player1);
-                    $matchReturn->addPlayer($player2);
-
                     $matchReturn->addParticipant($participant1);
                     $matchReturn->addParticipant($participant2);
 
