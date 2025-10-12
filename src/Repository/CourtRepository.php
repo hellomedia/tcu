@@ -16,6 +16,13 @@ class CourtRepository extends ServiceEntityRepository
         parent::__construct($registry, Court::class);
     }
 
+    public function findAll(): array
+    {
+        return parent::findBy(criteria: [], orderBy: [
+            'name' => 'ASC',
+        ]);
+    } 
+
     //    /**
     //     * @return Court[] Returns an array of Court objects
     //     */
