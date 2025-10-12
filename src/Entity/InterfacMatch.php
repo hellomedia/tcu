@@ -30,9 +30,16 @@ class InterfacMatch implements EntityInterface
     #[ORM\OneToOne(mappedBy: 'match', cascade: ['remove'])]
     private ?Booking $booking = null;
 
+    /**
+     * @var Collection<int, MatchParticipant>
+     */
+    #[ORM\OneToMany(targetEntity: MatchParticipant::class, mappedBy: 'match')]
+    private Collection $participants;
+
     public function __construct()
     {
         $this->players = new ArrayCollection();
+        $this->participants = new ArrayCollection();
     }
 
     public function __toString()
@@ -135,5 +142,35 @@ class InterfacMatch implements EntityInterface
     public function getDateEntityDate(): ?DateTimeInterface
     {
         return $this->getDate()?->getDate();
+    }
+
+    /**
+     * @return Collection<int, MatchParticipant>
+     */
+    public function getParticipants(): Collection
+    {
+        return $this->participants;
+    }
+
+    public function addParticipant(MatchParticipant $participant): static
+    {
+        if (!$this->participants->contains($participant)) {
+            $this->participants->add($participant);
+            $participant->setMatch($this);
+        }
+
+        return $this;
+    }
+
+    public function removeParticipant(MatchParticipant $participant): static
+    {
+        if ($this->participants->removeElement($participant)) {
+            // set the owning side to null (unless already changed)
+            if ($participant->getMatch() === $this) {
+                $participant->setMatch(null);
+            }
+        }
+
+        return $this;
     }
 }
