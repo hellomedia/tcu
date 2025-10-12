@@ -4,6 +4,9 @@ namespace Admin\Factory;
 
 use App\Entity\Group;
 use App\Entity\InterfacMatch;
+use App\Entity\MatchParticipant;
+use App\Entity\Player;
+use App\Enum\Side;
 use Doctrine\ORM\EntityManager;
 
 /**
@@ -51,6 +54,12 @@ class MatchFactory
                 $match->addPlayer($player1);
                 $match->addPlayer($player2);
 
+                $participant1 = $this->_createParticipant($match, $player1, Side::A);
+                $match->addParticipant($participant1);
+                
+                $participant2 = $this->_createParticipant($match, $player2, Side::B);
+                $match->addParticipant($participant2);
+
                 // Persist the match entity to be saved to the database.
                 $this->entityManager->persist($match);
 
@@ -62,6 +71,10 @@ class MatchFactory
                     // unless you plan on tracking home/away status, for example.
                     $matchReturn->addPlayer($player1);
                     $matchReturn->addPlayer($player2);
+
+                    $matchReturn->addParticipant($participant1);
+                    $matchReturn->addParticipant($participant2);
+
                     $this->entityManager->persist($matchReturn);
                 }
             }
@@ -106,8 +119,25 @@ class MatchFactory
             $this->entityManager->remove($booking);
         }
 
+        foreach ($match->getParticipants() as $participant) {
+            $this->entityManager->remove($participant);
+        }
+
         $this->entityManager->remove($match);
 
         $this->entityManager->flush();
+    }
+
+    private function _createParticipant(InterfacMatch $match, Player $player, Side $side): MatchParticipant
+    {
+        $participant = new MatchParticipant();
+
+        $participant->setPlayer($player);
+        $participant->setMatch($match);
+        $participant->setSide($side);
+
+        $this->entityManager->persist($participant);
+
+        return $participant;
     }
 }
