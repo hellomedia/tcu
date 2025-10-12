@@ -6,8 +6,10 @@ use Admin\Controller\DashboardController;
 use App\Controller\BaseController;
 use App\Entity\Booking;
 use App\Entity\InterfacMatch;
+use App\Entity\MatchResult;
 use App\Enum\BookingType;
 use App\Form\BookingForMatchForm;
+use App\Form\MatchResultForm;
 use Doctrine\ORM\EntityManager;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use Symfony\Component\Form\ClickableInterface;
@@ -63,6 +65,34 @@ class MatchController extends BaseController
         }
 
         return $this->render('@admin/match/add_booking.html.twig', [
+            'match' => $match,
+            'form' => $form,
+        ]);
+    }
+
+
+    #[Route('/match/{id:match}/add-result', name: 'admin_match_add_result', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
+    public function addResult(InterfacMatch $match, Request $request): Response
+    {
+        $result = $match->getResult() ?? new MatchResult();
+
+        $result->setMatch($match);
+
+        $form = $this->createForm(MatchResultForm::class, $result);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $this->entityManager->persist($result);
+            $this->entityManager->flush();
+
+            $this->addFlash('success', 'Résultat encodé');
+
+            return $this->redirectToRoute('admin_planning_groups');
+        }
+
+        return $this->render('@admin/match/add_result.html.twig', [
             'match' => $match,
             'form' => $form,
         ]);

@@ -1,0 +1,76 @@
+{# Important: Note the syntax with [] and only #}
+{# Ignore global themes; use only EasyAdmin #}
+{# important to avoid theme conflicts #}
+{% form_theme form with ['@admin/form/form_theme.html.twig'] only %}
+
+{% extends '@EasyAdmin/page/content.html.twig' %}
+
+{% block head_stylesheets %}
+    {{ parent() }}
+    <style>
+        th {
+            text-align: center;
+        }
+        td {
+            padding: 5px 10px;
+        }
+    </style>
+{% endblock %}
+
+{% block content_title %}Encoder le résultat du match {{ match }}{% endblock %}
+
+{% block page_actions %}
+
+    <a class="btn btn-default" href="{{ path('admin_planning_groups')}}">
+        Retour
+    </a>
+
+{% endblock %}
+
+{% block main %}
+
+
+    {{ form_start(form) }}
+
+        <table>
+            <tr>
+                <th>Joueur</th>
+                <th></th>
+                <th>Set 1</th>
+                <th>Set 2</th>
+                <th>Set 3</th>
+                <th>Points</th>
+            </tr>
+            <tr>
+                <td>A</td>
+                <td>
+                    {% for player in match.playersForSide(enum('App\\Enum\\Side').A) %}
+                        {{ player }}
+                    {% endfor %}
+                </td>
+                <td>{{ form_widget(form.set1A) }}</td>
+                <td>{{ form_widget(form.set2A) }}</td>
+                <td>{{ form_widget(form.set3A) }}</td>
+                <td>{{ form_widget(form.pointsA) }}</td>
+            </tr>
+            <tr>
+                <td>B</td>
+                <td>
+                    {% for player in match.playersForSide(enum('App\\Enum\\Side').B) %}
+                        {{ player }}
+                    {% endfor %}
+                </td>
+                <td>{{ form_widget(form.set1B) }}</td>
+                <td>{{ form_widget(form.set2B) }}</td>
+                <td>{{ form_widget(form.set3B) }}</td>
+                <td>{{ form_widget(form.pointsB) }}</td>
+            </tr>
+        </table>
+
+        {{ form_rest(form) }}
+        
+        {% include '@admin/form/_ajax_button.html.twig' %}
+
+    </form>
+
+{% endblock %}

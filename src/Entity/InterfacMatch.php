@@ -35,6 +35,9 @@ class InterfacMatch implements EntityInterface
     #[ORM\OneToMany(targetEntity: MatchParticipant::class, mappedBy: 'match',  cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $participants;
 
+    #[ORM\OneToOne(mappedBy: 'match', cascade: ['persist', 'remove'])]
+    private ?MatchResult $result = null;
+
     public function __construct()
     {
         $this->participants = new ArrayCollection();
@@ -198,5 +201,22 @@ class InterfacMatch implements EntityInterface
         });
 
         return $sorted;
+    }
+
+    public function getResult(): ?MatchResult
+    {
+        return $this->result;
+    }
+
+    public function setResult(MatchResult $result): static
+    {
+        // set the owning side of the relation if necessary
+        if ($result->getMatch() !== $this) {
+            $result->setMatch($this);
+        }
+
+        $this->result = $result;
+
+        return $this;
     }
 }

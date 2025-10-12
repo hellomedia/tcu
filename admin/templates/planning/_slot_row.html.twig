@@ -7,12 +7,41 @@
 			{# <div class="placeholder"></div> #}
 			{% for player in slot.players %}
 				<span class="player">{{ player }}</span>
-			{% else %}
+			{% endfor %}
+            {% if slot.players is not empty %}
+                <div class="results">
+                    {% if slot.match.result is not empty %}
+                        {% set result = slot.match.result %}
+                        <table>
+                            <tr>
+                                <td>{{ result.set1A }}</td>
+                                <td>{{ result.set2A }}</td>
+                                <td>{{ result.set3A }}</td>
+                            </tr>
+                            <tr>
+                                <td>{{ result.set1B }}</td>
+                                <td>{{ result.set2B }}</td>
+                                <td>{{ result.set3B }}</td>
+                            </tr>
+                        </table>
+                        <a class="btn btn-default" href="{{ path('admin_match_add_result', {'id': slot.match.id}) }}">
+                            <twig:ux:icon name="edit"/>
+                            Résultat
+                        </a>
+                    {% else %}
+                        <a class="btn btn-default" href="{{ path('admin_match_add_result', {'id': slot.match.id}) }}">
+                            <twig:ux:icon name="add"/>
+                            Résultat
+                        </a>
+                    {% endif %}
+                </div>
+            {% else %}
 				<a class="btn btn-default" href="{{ path('admin_planning_slot_add_booking', {'id': slot.id}) }}">
 					<twig:ux:icon name="add"/>
 					Match
 				</a>
-			{% endfor %}
+			{% endif %}
+
 		</div>
 	</div>
 	<div class="slot-actions">

@@ -64,4 +64,8 @@
         margin-top: 0;
     }
 
+    input[type="number"] {
+        width: 3em;
+    }
+
 }
