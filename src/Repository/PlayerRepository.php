@@ -2,9 +2,12 @@
 
 namespace App\Repository;
 
+use App\Entity\Group;
 use App\Entity\Player;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+
+use Doctrine\ORM\Query\Expr\CaseExpression;
 
 /**
  * @extends ServiceEntityRepository<Player>
@@ -40,4 +43,32 @@ class PlayerRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+    public function groupStandings(Group $group): array
+    {
+        $qb = $this->createQueryBuilder('p') // FROM Player p
+            ->select([
+                'p AS player',
+                // total points per player in this group (0 if none)
+                "COALESCE(SUM(CASE WHEN mp.side = 'A' THEN r.pointsA WHEN mp.side = 'B' THEN r.pointsB ELSE 0 END), 0) AS points",
+                // number of matches played = number of matches where a result exists
+                "COALESCE(COUNT(r.id), 0) AS matchsPlayed",
+            ])
+            // restrict players to the group membership
+            ->join('p.groups', 'g')
+            ->andWhere('g = :group')
+            // LEFT JOIN into participants/matches/results so players with 0 still show
+            ->leftJoin('p.matchParticipations', 'mp')     // if you don’t have this inverse, leftJoin MatchParticipant on player explicitly
+            ->leftJoin('mp.match', 'm')
+            ->leftJoin('m.result', 'r')
+            ->andWhere('m.group = :group')              // count only matches in this group
+            ->setParameter('group', $group)
+            ->groupBy('p.id')
+            ->orderBy('points', 'DESC')
+            ->addOrderBy('matchsPlayed', 'DESC')
+            ->addOrderBy('p.ranking', 'DESC')
+            ->addOrderBy('p.lastname', 'ASC');
+
+        return $qb->getQuery()->getResult(); // returns arrays [player, points, matchesPlayed]
+    }
 }

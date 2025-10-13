@@ -6,6 +6,7 @@ use App\Form\PlayerPickerForm;
 use App\Repository\CourtRepository;
 use App\Repository\DateRepository;
 use App\Repository\GroupRepository;
+use App\Repository\PlayerRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -41,12 +42,13 @@ class InterfacsController extends BaseController
     }
 
     #[Route('/interfacs/poules', name: 'interfacs_groups')]
-    public function groups(GroupRepository $repository, DateRepository $dateRepository): Response
+    public function groups(GroupRepository $repository, DateRepository $dateRepository, PlayerRepository $playerRepository): Response
     {
         $groups = $repository->findAll();
 
         foreach ($groups as $group) {
             $dates[$group->getId()] = $dateRepository->findDatesByGroup($group);
+            $standings[$group->getId()] = $playerRepository->groupStandings($group);
         }
 
         $this->addBreadcrumb('Homepage', 'homepage');
@@ -55,6 +57,7 @@ class InterfacsController extends BaseController
 
         return $this->render('interfacs/groups.html.twig', [
             'groups' => $groups,
+            'standings' => $standings,
             'dates' => $dates,
         ]);
     }

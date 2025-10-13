@@ -22,10 +22,16 @@
         font-weight: bold;
 	}
     .players {
-        display: flex;
-        flex-direction: column;
-        gap: 5px;
+        width: 100%;
         margin-bottom: 10px;
+        td, th {
+            padding: 3px;
+        }
+        .ranking,
+        .points,
+        .matchs-played {
+            text-align: center;
+        }
     }
     .dates {
         display: grid;
@@ -69,7 +75,7 @@
         display: grid;
         gap: 30px;
     }
-    @media (min-width: 768px) {
+    @media (min-width: 900px) {
         .groups {
             grid-template-columns: 1fr 1fr;
         }
@@ -83,11 +89,22 @@
                 <div class="group-header">
                     <h4>{{ group }}</h4>
                 </div>
-                <div class="players">
-                    {% for player in group.players %}
-                        <div class="player">{{ loop.index }}. {{ player.nameWithRanking }} </div>
+                <table class="players">
+                    <tr>
+                        <th></th>
+                        <th>Classement</th>
+                        <th>Matchs joués</th>
+                        <th>Points</th>
+                    </tr>
+                    {% for row in standings[group.id] %}
+                        <tr>
+                            <td class="player">{{ loop.index }}. {{ row.player }}</td>
+                            <td class="ranking">{{ row.player.ranking.value }}</td>
+                            <td class="matchs-played">{{ row.matchsPlayed}}</td>
+                            <td class="points">{{ row.points }}</td>
+                        </tr>
                     {% endfor %}
-                </div>
+                </table>
                 <div class="dates">
                     {% for date in dates[group.id] %}
                         <h5 class="date">{{ date }}</h5>
