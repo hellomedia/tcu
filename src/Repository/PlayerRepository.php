@@ -66,7 +66,7 @@ class PlayerRepository extends ServiceEntityRepository
             ->groupBy('p.id')
             ->orderBy('points', 'DESC')
             ->addOrderBy('matchsPlayed', 'DESC')
-            ->addOrderBy('p.ranking', 'DESC')
+            ->addOrderBy('p.rankingOrder', 'DESC')
             ->addOrderBy('p.lastname', 'ASC');
 
         return $qb->getQuery()->getResult(); // returns arrays [player, points, matchesPlayed]
