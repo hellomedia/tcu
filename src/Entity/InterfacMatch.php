@@ -190,17 +190,19 @@ class InterfacMatch implements EntityInterface
 
     public function getPlayersForSide(Side $side): ?array
     {
-        $filtered = $this->participants->filter(function (MatchParticipant $participant) use ($side) {
+        $sideParticipants = $this->participants->filter(function (MatchParticipant $participant) use ($side) {
             return $participant->getSide() === $side;
         });
 
-        $sorted = $filtered->toArray();
+        $sidePlayers = $sideParticipants->map(function(MatchParticipant $participant) {
+            return $participant->getPlayer();
+        })->toArray();
 
-        usort($sorted, function (MatchParticipant $a, MatchParticipant $b) {
-            return $a->getPlayer()->getLastname() <=> $b->getPlayer()->getLastname();
+        usort($sidePlayers, function (Player $player1, Player $player2) {
+            return $player1->getLastname() <=> $player2->getLastname();
         });
 
-        return $sorted;
+        return $sidePlayers;
     }
 
     public function getResult(): ?MatchResult
