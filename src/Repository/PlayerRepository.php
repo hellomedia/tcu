@@ -7,8 +7,6 @@ use App\Entity\Player;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
-use Doctrine\ORM\Query\Expr\CaseExpression;
-
 /**
  * @extends ServiceEntityRepository<Player>
  */
@@ -69,6 +67,6 @@ class PlayerRepository extends ServiceEntityRepository
             ->addOrderBy('p.rankingOrder', 'DESC')
             ->addOrderBy('p.lastname', 'ASC');
 
-        return $qb->getQuery()->getResult(); // returns arrays [player, points, matchesPlayed]
+        return $qb->getQuery()->getResult(); // returns arrays [player, points, matchsPlayed]
     }
 }
