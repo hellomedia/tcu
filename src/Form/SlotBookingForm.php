@@ -5,6 +5,7 @@ namespace App\Form;
 use App\Entity\InterfacMatch;
 use App\Entity\Booking;
 use App\Entity\Group;
+use App\Enum\Side;
 use App\Form\Type\AjaxSubmitType;
 use App\Repository\GroupRepository;
 use App\Repository\InterfacMatchRepository;
@@ -53,8 +54,19 @@ final class SlotBookingForm extends AbstractType
                 },
                 'multiple' => false,
                 'expanded' => true,
-                'autocomplete' => true,
-                'placeholder' => 'Choisir un match'
+                'choice_attr' => function (InterfacMatch $match) {
+                    $playerA = $match->getPlayersForSide(Side::A)[0];
+                    $disposA = $playerA->getAvailabilities();
+                    $playerB = $match->getPlayersForSide(Side::B)[0];
+                    $disposB = $playerB->getAvailabilities();
+
+                    return [
+                        'data-side-a-name' => $playerA,
+                        'data-side-a-dispos' => $disposA ?? '',
+                        'data-side-b-name' => $playerB,
+                        'data-side-b-dispos' => $disposB ?? '',
+                    ];
+                },
             ]);
         });
 

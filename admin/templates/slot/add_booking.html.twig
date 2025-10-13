@@ -1,7 +1,31 @@
 {# Important: Note the syntax with [] and only #}
 {# Ignore global themes; use only EasyAdmin #}
 {# important to avoid theme conflicts #}
-{% form_theme form with ['@admin/form/form_theme.html.twig'] only %}
+{% form_theme form with ['@admin/form/form_theme.html.twig', _self] only %}
+
+{# This override applies only to form.match thanks to the scoping above #}
+{% block _slot_booking_form_match_widget %}
+	<div {{ block('widget_container_attributes') }}>
+		{% for child in form %}
+			<div class="match-choice">
+				{{ form_widget(child) }}
+				{{ form_label(child) }}
+
+				{# Extra info under each radio #}
+				<div class="match-extra" style="margin-bottom:10px;">
+					<div class="match-extra-line">
+                        {{ child.vars.attr['data-side-a-name'] }} :
+                        {{ child.vars.attr['data-side-a-dispos'] is not empty ? child.vars.attr['data-side-a-dispos'] : '—' }}
+					</div>
+					<div class="match-extra-line">
+                        {{ child.vars.attr['data-side-b-name'] }} :
+                        {{ child.vars.attr['data-side-b-dispos'] is not empty ? child.vars.attr['data-side-b-dispos'] : '—' }}
+					</div>
+				</div>
+			</div>
+		{% endfor %}
+	</div>
+{% endblock %}
 
 {% extends '@EasyAdmin/page/content.html.twig' %}
 
