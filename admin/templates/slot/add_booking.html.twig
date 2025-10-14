@@ -12,15 +12,30 @@
 				{{ form_label(child) }}
 
 				{# Extra info under each radio #}
-				<div class="match-extra" style="margin-bottom:10px;">
-					<div class="match-extra-line">
-                        {{ child.vars.attr['data-side-a-name'] }} :
-                        {{ child.vars.attr['data-side-a-dispos'] is not empty ? child.vars.attr['data-side-a-dispos'] : '—' }}
+				<div class="match-extra">
+					<div class="match-extra-side">
+                        {% set sideA = child.vars.extra.sideA %}
+                        <h5>{{ sideA.name }}</h5>
+                        <div class="match-extra-line">
+                            Dispos:
+                            {{ sideA.dispos is not empty ? sideA.dispos : '—' }}
+                        </div>
+                        <div class="match-extra-line">
+                            Matchs programmés: {{ sideA.dates|join(', ') }}
+                        </div>
 					</div>
-					<div class="match-extra-line">
-                        {{ child.vars.attr['data-side-b-name'] }} :
-                        {{ child.vars.attr['data-side-b-dispos'] is not empty ? child.vars.attr['data-side-b-dispos'] : '—' }}
-					</div>
+					<div class="match-extra-side">
+                        {% set sideB = child.vars.extra.sideB %}
+                        <h5>{{ sideB.name }}</h5>
+                        <div class="match-extra-line">
+                            Dispos:
+                            {{ sideB.dispos is not empty ? sideB.dispos : '—' }}
+                        </div>
+                        <div class="match-extra-line">
+                            Matchs programmés:
+                            {{ sideB.dates|join(', ') }}
+                        </div>
+                    </div>
 				</div>
 			</div>
 		{% endfor %}
@@ -35,6 +50,21 @@
         @media (min-width: 768px) {
             .form-wrapper {
                 max-width: 300px;
+            }
+        }
+        .match-extra {
+            margin-top: 5px;
+            margin-bottom: 25px;
+            margin-left: 25px;
+            h5 {
+                font-size: medium;
+                margin-bottom: 3px;
+            }
+            .match-extra-side {
+                margin-bottom: 5px;
+            }
+            .match-extra-line {
+                margin-left: 15px;
             }
         }
     </style>

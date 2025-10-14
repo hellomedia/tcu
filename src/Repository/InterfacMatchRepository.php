@@ -49,7 +49,15 @@ class InterfacMatchRepository extends ServiceEntityRepository
             ->leftJoin('m.booking', 'b')->addSelect('b')
             ->andWhere('b.id IS NULL')
             ->andWhere('m.group = :group')
-            ->setParameter('group', $group);
+            ->setParameter('group', $group)
+            // Add joins and selects to avoid extra queries
+            ->join('m.participants', 'part')->addSelect('part')
+            ->join('part.player', 'player')->addSelect('player')
+            ->leftJoin('player.matchParticipations', 'playermatchpart')->addSelect('playermatchpart')
+            ->leftJoin('playermatchpart.match', 'matches')->addSelect('matches')
+            ->leftJoin('matches.booking', 'booking')->addSelect('booking')
+            ->leftJoin('booking.slot', 'slot')->addSelect('slot')
+            ->leftJoin('slot.date', 'date')->addSelect('date')
         ;
     }
 }

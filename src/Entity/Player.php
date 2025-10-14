@@ -239,6 +239,20 @@ class Player implements EntityInterface
     }
 
     /**
+     * @return Collection<int, Date>
+     */
+    public function getScheduledMatchsDates(): Collection
+    {
+        $scheduledMatchs = $this->getScheduledMatchs();
+
+        $dates = $scheduledMatchs->map(function(InterfacMatch $match): Date {
+            return $match->getDate();
+        });
+
+        return $dates;
+    }
+
+    /**
      * @return Collection<int, InterfacMatch>
      */
     public function getNonScheduledMatchs(): Collection

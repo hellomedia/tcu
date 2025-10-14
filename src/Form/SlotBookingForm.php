@@ -54,17 +54,22 @@ final class SlotBookingForm extends AbstractType
                 },
                 'multiple' => false,
                 'expanded' => true,
-                'choice_attr' => function (InterfacMatch $match) {
+                // ChoiceExtraExtension
+                'choice_extra' => function (InterfacMatch $match) {
                     $playerA = $match->getPlayersForSide(Side::A)[0];
-                    $disposA = $playerA->getAvailabilities();
                     $playerB = $match->getPlayersForSide(Side::B)[0];
-                    $disposB = $playerB->getAvailabilities();
 
                     return [
-                        'data-side-a-name' => $playerA,
-                        'data-side-a-dispos' => $disposA ?? '',
-                        'data-side-b-name' => $playerB,
-                        'data-side-b-dispos' => $disposB ?? '',
+                        'sideA' => [
+                            'name' => $playerA->getFullName(),
+                            'dispos' => $playerA->getAvailabilities() ?? '',
+                            'dates' => $playerA->getScheduledMatchsDates(),
+                        ],
+                        'sideB' => [
+                            'name' => $playerB->getFullName(),
+                            'dispos' => $playerB->getAvailabilities() ?? '',
+                            'dates' => $playerB->getScheduledMatchsDates(),
+                        ],
                     ];
                 },
             ]);

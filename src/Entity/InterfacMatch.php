@@ -188,6 +188,9 @@ class InterfacMatch implements EntityInterface
         }
     }
 
+    /**
+     * @return array<Player>
+     */
     public function getPlayersForSide(Side $side): ?array
     {
         $sideParticipants = $this->participants->filter(function (MatchParticipant $participant) use ($side) {
