@@ -12,12 +12,23 @@
         margin-inline: calc(var(--spacing) * (-6)); /* inverse of default-container-x-padding */
         .group {
             border-radius: 0;
+            padding: 30px 25px;
+        }
+        .long {
+            display: none;
         }
         @media (min-width: 600px) {
             /* end of edge-to-edge */
             margin-inline: 0;
             .group {
                 border-radius: 3px;
+                padding: 30px;
+            }
+            .short {
+                display: none;
+            }
+            .long {
+                display: inline;
             }
         }
         @media (min-width: 1000px) {
@@ -28,7 +39,6 @@
 	.group {
 		border: 0px solid #ddd;
         background-color: #fff;
-		padding: 30px;
 	}
 	.group-header {
 		display: flex;
@@ -104,8 +114,8 @@
                     <tr>
                         <th></th>
                         <th></th>
-                        <th>Matchs joués</th>
-                        <th>Points</th>
+                        <th><span class="short">Joués</span><span class="long">Matchs joués</span></th>
+                        <th><span class="short">Pts</span><span class="long">Points</span></th>
                     </tr>
                     {% for row in standings[group.id] %}
                         <tr>
