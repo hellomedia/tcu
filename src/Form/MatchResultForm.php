@@ -37,11 +37,9 @@ final class MatchResultForm extends AbstractType
         ]);
         $builder->add('pointsA', IntegerType::class, [
             'label' => 'Points',
-            'required' => false,
         ]);
         $builder->add('pointsB', IntegerType::class, [
             'label' => 'Points',
-            'required' => false,
         ]);
     }
 
