@@ -91,6 +91,20 @@
         display: contents;
     }
 
+    .match-player {
+        display: block;
+        @media (min-width: 600px) {
+            display: inline;
+        }
+    }
+
+    .match-player-separator {
+        display: none;
+        @media (min-width: 600px) {
+            display: inline;
+        }
+    }
+
     .nowrap {
         white-space: nowrap;
     }
@@ -101,11 +115,12 @@
 
     .booking {
     /* second column */
-    text-align: right;
+        text-align: right;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 5px;
     }
-
-
-    /* LAYOUT */
 
 </style>
 
@@ -142,8 +157,8 @@
                                 <div class="match">
                                     <div class="match-label">
                                         {% for player in match.players %}
-                                            <span class="nowrap">{{ player }}</span>
-                                            {{ not loop.last ? ' - ' }}
+                                            <span class="match-player">{{ player }}</span>
+                                            <span class="match-player-separator">{{ not loop.last ? ' - ' }}</span>
                                         {% endfor %}
                                     </div>
                                     <div class="booking">
