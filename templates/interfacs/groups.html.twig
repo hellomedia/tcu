@@ -62,6 +62,9 @@
         td:last-child, th:last-child {
             padding-right: 0;
         }
+        .rank {
+            width: 18px;
+        }
         .ranking,
         .points,
         .matchs-played {
@@ -135,13 +138,16 @@
                     <tr>
                         <th></th>
                         <th></th>
+                        <th></th>
                         <th><span class="short">Joués</span><span class="long">Matchs joués</span></th>
                         <th><span class="short">Pts</span><span class="long">Points</span></th>
                     </tr>
                     {% for row in standings[group.id] %}
                         <tr>
-                            <td class="player"><span class="nowrap">{{ loop.index }}. {{ row.player.firstname }}</span>
-                                {{ row.player.lastname }}
+                            <td class="rank">{{ loop.index }}.</td>
+                            <td class="player">
+                                <span class="nowrap">{{ row.player.firstname }}</span>
+                                <span class="nowrap">{{ row.player.lastname }}</span>
                             </td>
                             <td class="ranking">{{ row.player.ranking.value }}</td>
                             <td class="matchs-played">{{ row.matchsPlayed}}</td>
