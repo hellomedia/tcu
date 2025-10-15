@@ -5,10 +5,29 @@
 {% block content %}
 
 <style>
+    .groups {
+        display: grid;
+        gap: 30px;
+        /* edge-to-edge */
+        margin-inline: calc(var(--spacing) * (-6)); /* inverse of default-container-x-padding */
+        .group {
+            border-radius: 0;
+        }
+        @media (min-width: 600px) {
+            /* end of edge-to-edge */
+            margin-inline: 0;
+            .group {
+                border-radius: 3px;
+            }
+        }
+        @media (min-width: 1000px) {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
 	.group {
 		border: 0px solid #ddd;
         background-color: #fff;
-		border-radius: 3px;
 		padding: 30px;
 	}
 	.group-header {
@@ -71,15 +90,7 @@
 
 
     /* LAYOUT */
-    .groups {
-        display: grid;
-        gap: 30px;
-    }
-    @media (min-width: 900px) {
-        .groups {
-            grid-template-columns: 1fr 1fr;
-        }
-    }
+
 </style>
 
     <div class="groups">
@@ -92,13 +103,15 @@
                 <table class="players">
                     <tr>
                         <th></th>
-                        <th>Classement</th>
+                        <th></th>
                         <th>Matchs joués</th>
                         <th>Points</th>
                     </tr>
                     {% for row in standings[group.id] %}
                         <tr>
-                            <td class="player">{{ loop.index }}. {{ row.player }}</td>
+                            <td class="player"><span class="nowrap">{{ loop.index }}. {{ row.player.firstname }}</span>
+                                {{ row.player.lastname }}
+                            </td>
                             <td class="ranking">{{ row.player.ranking.value }}</td>
                             <td class="matchs-played">{{ row.matchsPlayed}}</td>
                             <td class="points">{{ row.points }}</td>
