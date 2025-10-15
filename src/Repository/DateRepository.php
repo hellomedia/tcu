@@ -27,8 +27,8 @@ class DateRepository extends ServiceEntityRepository
     public function findFutureDates(): array
     {
         return $this->createQueryBuilder('d')
-            ->leftJoin('d.slots', 's')
-            ->addSelect('s')
+            ->leftJoin('d.slots', 's')->addSelect('s')
+            ->leftJoin('s.booking', 'b')->addSelect('b')
             ->andWhere('d.date >= CURRENT_DATE()')
             ->orderBy('d.date', 'ASC')
             ->getQuery()
@@ -42,8 +42,8 @@ class DateRepository extends ServiceEntityRepository
     public function findPastDates(): array
     {
         return $this->createQueryBuilder('d')
-            ->leftJoin('d.slots', 's')
-            ->addSelect('s')
+            ->leftJoin('d.slots', 's')->addSelect('s')
+            ->leftJoin('s.booking', 'b')->addSelect('b')
             ->andWhere('d.date < CURRENT_DATE()')
             ->orderBy('d.date', 'DESC')
             ->getQuery()
