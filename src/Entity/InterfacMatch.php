@@ -101,6 +101,11 @@ class InterfacMatch implements EntityInterface
         return $this->booking;
     }
 
+    public function getSlot(): ?Slot
+    {
+        return $this->booking?->getSlot();
+    }
+
     public function isScheduled(): bool
     {
         return $this->booking != null;
