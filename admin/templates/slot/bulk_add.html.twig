@@ -3,7 +3,7 @@
 {# important to avoid theme conflicts #}
 {% form_theme form with ['@admin/form/form_theme.html.twig'] only %}
 
-{% extends '@EasyAdmin/page/content.html.twig' %}
+{% extends '@admin/base.html.twig' %}
 
 {% block head_stylesheets %}
     {{ parent() }}
