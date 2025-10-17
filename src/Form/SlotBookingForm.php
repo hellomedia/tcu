@@ -34,7 +34,6 @@ final class SlotBookingForm extends AbstractType
             },
             'multiple' => false,
             'expanded' => true,
-            'autocomplete' => true,
             'mapped' => false,
             'placeholder' => 'Choisir une poule',
             'attr' => [

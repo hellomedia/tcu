@@ -33,7 +33,6 @@ final class BookingForMatchForm extends AbstractType
             },
             'multiple' => false,
             'expanded' => true,
-            'autocomplete' => true,
             'mapped' => false,
             'placeholder' => 'choisir une date',
             'attr' => [
