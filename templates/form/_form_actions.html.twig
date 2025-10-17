@@ -1,17 +1,4 @@
-{# <div class="form-actions">
-    {% block cancel %}<a class="btn btn-default btn-cancel" href="{% block cancel_url '' %}">{{ 'cancel'|trans }}</a>{% endblock %}
-    <div class="btn-wrapper">
-        {% block submit_button %}
-            <button type="submit" class="btn btn-primary {% block submit_class '' %}">
-                {% block submit_label 'save'|trans %}
-            </button>
-        {% endblock %}
-        <div class="btn-loading">
-            <img src="{{ asset('images/etc/ajax-loader.gif') }}" />
-        </div>
-    </div>
-</div> #}
-<div class="form-actions">
+<div class="form-actions {% block form_actions_classes '' %}">
     {% block cancel %}
         <a class="btn btn-default" 
             href="{% block cancel_url '' %}"
@@ -23,7 +10,7 @@
     {% block submit_button %}
         <button
             type="submit"
-            class="btn btn-primary loading-btn {% block submit_class '' %}"
+            class="btn btn-primary {% block submit_class '' %}"
             data-controller="loading"
             data-loading-target="button"
             {% block submit_attributes '' %}
@@ -34,4 +21,3 @@
     {% endblock %}
     {% block extra_buttons '' %}
 </div>
-

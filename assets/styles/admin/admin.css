@@ -1,33 +1,67 @@
 /* DO NOT IMPMORT CSS FILES FROM HERE
 unless we fix tailwind build for admin.css */
 
+.hk-admin {
 
-.custom-actions {
-    border: 1px solid var(--border-color);
-    margin: 15px 0;
-    padding: 20px;
-    background-color: var(--bg-gray);
-    button {
-        padding-inline: 20px;
-        margin-right: 10px;
+    h1 {
+        margin-bottom: 20px;
     }
-}
+    h2 {
+        margin-bottom: 20px;
+    }
+    h3 {
+        margin-bottom: 15px;
+    }
+    h4 {
+        margin-bottom: 15px;
+    }
+    .content-header-title .title {
+        margin-bottom: 15px;
+    }
 
-.btn-lg {
-    --bs-btn-font-size: 1.25rem;
-    --bs-btn-border-radius: var(--bs-border-radius-lg);
-    padding: 7px 25px;
-}
-
-.btn-sm {
-    --bs-btn-font-size: 0.8rem;
-    --bs-btn-border-radius: var(--bs-border-radius);
-    padding: 3px 7px;
-}
-.btn-danger:focus {
-    color: #fff !important;
-}
-
-form input[type="number"] {
-    width: 4em;
+    .custom-actions {
+        border: 1px solid var(--border-color);
+        margin: 15px 0;
+        padding: 20px;
+        background-color: var(--bg-gray);
+        button {
+            padding-inline: 20px;
+            margin-right: 10px;
+        }
+    }
+    
+    .form-actions {
+        display: flex;
+        justify-content: flex-start;
+        margin-top: 15px;
+        &.modal-actions {
+            justify-content: center;
+        }
+    }
+    
+    .form-actions .btn,
+    .modal-actions .btn {
+        font-size: 16px;
+        padding-inline: 30px;
+        padding-block: 10px;
+    }
+    
+    .btn-lg {
+        --bs-btn-font-size: 1.25rem;
+        --bs-btn-border-radius: var(--bs-border-radius-lg);
+        padding: 7px 25px;
+    }
+    
+    .btn-sm {
+        --bs-btn-font-size: 0.8rem;
+        --bs-btn-border-radius: var(--bs-border-radius);
+        padding: 3px 7px;
+    }
+    .btn-danger:focus {
+        color: #fff !important;
+    }
+    
+    form input[type="number"] {
+        width: 4em;
+    }
 }

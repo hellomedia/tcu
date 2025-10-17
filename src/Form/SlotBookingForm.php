@@ -6,12 +6,12 @@ use App\Entity\InterfacMatch;
 use App\Entity\Booking;
 use App\Entity\Group;
 use App\Enum\Side;
-use App\Form\Type\AjaxSubmitType;
 use App\Repository\GroupRepository;
 use App\Repository\InterfacMatchRepository;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfonycasts\DynamicForms\DependentField;
@@ -75,7 +75,7 @@ final class SlotBookingForm extends AbstractType
             ]);
         });
 
-        $builder->add('save', AjaxSubmitType::class);
+        $builder->add('save', SubmitType::class);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

@@ -1,6 +1,6 @@
 @layer components {
 
-    .loading-btn {
+    .btn:has(> .loader) {
         position: relative;
     }
 
@@ -12,25 +12,18 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: var(--color-button-primary);
             top: 0;
             right: 0;
             left: 0;
             bottom: 0;
-        }
-    }
 
-    .btn-default .loader.active {
-        background-color: var(--color-button-default);
-    }
-    .btn-primary .loader.active {
-        background-color: var(--color-button-primary);
-    }
-    .btn-warning .loader.active {
-        background-color: var(--color-button-warning);
-    }
-    .btn-danger .loader.active {
-        background-color: var(--color-button-danger);
+            /* For preventing double click and visual feedback,
+                setting 'disabled' attribute on btn works well for turbo-submit event
+                but in a regular full page submit, it blocks form submission. :/
+                So instead, we use the loader div to block access to the button 
+                and give it a background opacity for visual feedbback */
+            background-color: #fff5;
+        }
     }
 
     .spinner {

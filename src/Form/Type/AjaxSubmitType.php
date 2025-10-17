@@ -6,6 +6,9 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
+ * UNUSED at the moment, but kept as an example on how to create a custom button type.
+ * (a bit tricky)
+ * 
  * Normally, for a custom form type, we are supposed to extend AbstractType
  * and set the parent to what we want to extendw ith getParent()
  * 
@@ -23,9 +26,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  * If we extend SubmitType, we get the correct behaviour !
  * 
  * ---------------------------------
- * This field goes together with
- *  form theme {% block ajax_submit_widget %}
- *  ajax_submit.css
+ * For loader behaviour, this field builds on top of
+ *  - form theme {% block button_widget %}
+ *  - loading_controller.js
+ *  - loading-btn.css
  */
 final class AjaxSubmitType extends SubmitType
 {
@@ -36,7 +40,7 @@ final class AjaxSubmitType extends SubmitType
 
     public function getBlockPrefix(): string
     {
-        // this defines the Twig block name: save_button_widget
+        // Defines the Twig block name for custom theming: ajax_submit_widget
         return 'ajax_submit';
     }
 
@@ -45,8 +49,7 @@ final class AjaxSubmitType extends SubmitType
         $resolver->setDefaults([
             'label' => 'Sauver',
             'attr' => [
-                'class' => 'btn btn-primary btn-lg',
-                'data-ajax-target' => 'submitBtn',
+                'data-foo-target' => 'bar', // unused at the moment
             ],
         ]);
     }

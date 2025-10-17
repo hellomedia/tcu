@@ -50,28 +50,21 @@
     {%- endif -%}
 {%- endblock form_errors -%}
 
-{# Add loader #}
+{# Button: Add loader #}
+{# see loading-button_controller.js and loading-btn.css #}
 {% block button_widget %}
 	{% set attr = attr|merge({'data-controller': 'loading', 
                               'data-loading-target': 'button', 
-                              'class': (attr.class|default('') ~ ' loading-btn')|trim }) %}
-	<button {{ block('button_attributes') }}>
+                              'class': (attr.class|default('') ~ ' ' ~ 'btn')|trim }) %}
+
+	<button {{ block('button_attributes') }} type="{{ type|default('submit') }}">
 		<span>{{ label|default('Save') }}</span>
-		<div class="loader" data-loading-target="loader"><div class="spinner"></div></div>
+		<div class="loader" data-loading-target="loader">
+			<div class="spinner"></div>
+		</div>
 	</button>
 {% endblock %}
 
-{# AjaxSubmitType #}
-{% block ajax_submit_widget %}
-	<div class="ajax-submit">
-		<button {{ block('button_attributes') }} type="{{ type|default('submit') }}">
-			{{ label|trans }}
-		</button>
-		<div data-ajax-target="spinner" class="spinner-wrapper hidden">
-			<div class="spinner" aria-hidden="true"></div>
-		</div>
-	</div>
-{% endblock %}
 
 
 

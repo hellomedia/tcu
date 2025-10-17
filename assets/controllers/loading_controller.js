@@ -7,7 +7,7 @@ import '../styles/component/loading-btn.css';
  * Usage:
  *      <button
             type="submit"
-            class="btn btn-primary loading-btn"
+            class="btn btn-primary"
             data-controller="loading"
             data-loading-target="button"  
         >
@@ -17,10 +17,10 @@ import '../styles/component/loading-btn.css';
  * 
  * Also in form_theme, button_widget:
  * 
- * {% block button_widget %}
+    {% block button_widget %}
         {% set attr = attr|merge({'data-controller': 'loading', 
                                 'data-loading-target': 'button', 
-                                'class': (attr.class|default('') ~ ' loading-btn')|trim }) %}
+                                'class': (attr.class|default('') ~ ' btn')|trim }) %}
         <button {{ block('button_attributes') }}>
             <span>{{ label|default('Save') }}</span>
             <div class="loader" data-loading-target="loader"><div class="spinner"></div></div>
@@ -43,6 +43,14 @@ export default class extends Controller {
         // https://chatgpt.com/share/67dfc927-0268-8012-8e95-d22ec7399be4
         document.addEventListener('turbo:submit-start', this.boundStart);
         document.addEventListener('turbo:submit-end', this.boundStop);
+
+        // Non-turbo submit
+        document.addEventListener('submit', (e) => {
+            // If Turbo intercepted the submit, it will have prevented default.
+            if (e.defaultPrevented) return;
+            // non-Turbo form
+            this.boundStart();
+        });
     }
 
     disconnect() {
@@ -53,14 +61,35 @@ export default class extends Controller {
 
     start(event) {
 
-        const form = event.target;
-
-        if (form !== this.form) return; // Skip unrelated forms
+        // if called from outside (ajax_controller), no event is passed
+        if (event) {
+            const form = event.target;
+            if (form !== this.form) return; // Skip unrelated forms
+        }
 
         this.loaderTarget.classList.add("active");
+
+        if (this.hasButtonTarget) {
+            // DO NOT set disabled attribute on button
+            // It prevents form submission for non-turbo full page submit
+            // this.buttonTarget.setAttribute("disabled", "disabled");
+            // Instead, we prevent double click and give visual feedback with CSS
+            this.buttonTarget.setAttribute("aria-busy", "true");
+        }
     }
 
     stop() {
         this.loaderTarget.classList.remove("active");
+
+        if (this.hasButtonTarget) {
+            // see above
+            // this.buttonTarget.removeAttribute("disabled");
+            this.buttonTarget.removeAttribute("aria-busy");
+        }
     }
+
+
+
+
+
 }

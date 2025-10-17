@@ -20,20 +20,59 @@
 	{{ parent() }}
 {% endblock %}
 
-{# AjaxSubmitType #}
-{% block ajax_submit_widget %}
-	<div class="ajax-submit">
-		<button {{ block('button_attributes') }}
-            type="{{ type|default('submit') }}"
-        >
-            {{ label|trans }}
-        </button>
-		<div data-ajax-target="spinner"
-            class="spinner-wrapper hidden"
-        >
-			<div class="spinner" aria-hidden="true"></div>
+{# Button: Add loader #}
+{# see loading-button_controller.js and loading-btn.css #}
+{% block button_widget %}
+	{% set attr = attr|merge({'data-controller': 'loading', 
+                              'data-loading-target': 'button', 
+                              'class': (attr.class|default('') ~ ' ' ~ 'btn')|trim }) %}
+
+	<button {{ block('button_attributes') }} type="{{ type|default('submit') }}">
+		<span>{{ label|default('Save') }}</span>
+		<div class="loader" data-loading-target="loader">
+			<div class="spinner"></div>
 		</div>
+	</button>
+{% endblock %}
+
+{% block _slot_booking_form_match_widget %}
+	<div>
+		{% for child in form %}
+			<div class="match-choice">
+				{{ form_widget(child) }}
+				{{ form_label(child) }}
+
+				{# Extra info under each radio #}
+				<div class="match-extra">
+					<div class="match-extra-side">
+						{% set sideA = child.vars.extra.sideA %}
+						<h5>{{ sideA.name }}</h5>
+						<div class="match-extra-line">
+							Dispos:
+							{{ sideA.dispos is not empty ? sideA.dispos : '—' }}
+						</div>
+						<div class="match-extra-line">
+							Matchs programmés:
+							{{ sideA.dates|join(', ') }}
+						</div>
+					</div>
+					<div class="match-extra-side">
+						{% set sideB = child.vars.extra.sideB %}
+						<h5>{{ sideB.name }}</h5>
+						<div class="match-extra-line">
+							Dispos:
+							{{ sideB.dispos is not empty ? sideB.dispos : '—' }}
+						</div>
+						<div class="match-extra-line">
+							Matchs programmés:
+							{{ sideB.dates|join(', ') }}
+						</div>
+					</div>
+				</div>
+			</div>
+		{% endfor %}
 	</div>
 {% endblock %}
+
 
 

@@ -23,7 +23,6 @@ import './styles/admin/admin.css';
 import './styles/admin/grid.css';
 import './styles/admin/card.css';
 import './styles/admin/chart.css';
-import './styles/admin/ajax-submit.css';
 
 import "./styles/admin/modal-variables.css";
 import "./styles/component/dropdown.css";
