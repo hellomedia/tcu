@@ -4,70 +4,88 @@ import { Controller } from "@hotwired/stimulus";
 
 USAGE SUMMARY
 =============
-- Use data-action="submit->ajax#submit" on form for ajax on submit button click
-- Use data-action="change->ajax#submitOnChange" on form for ajax on any select/checkbox of the form
-- Use data-action="change->ajax#submitOnChange" on field for ajax on that field (useful for trigger/dependent fields)
-- Combine as necessary 
+
+    Especially useful for forms with dependent fields, but can be used in all cases.
+
+    - Use data-action="submit->ajax#submit" on form for ajax on submit button click
+    - Use data-action="change->ajax#submitOnChange" on form for ajax on any select/checkbox of the form
+    - Use data-action="change->ajax#submitOnChange" on field for ajax on that field (useful for trigger/dependent fields)
+    - Combine as necessary 
+
+    All this could probably be done with turbo and turbo frames.
+    Main difference with turboframe:
+        - only 'container' div is replaced (but that could be done with a turbo-frame instead of container div)
+        - a bit more flexbility for handling of loading indicator (but that could be done with turbo events)
+        - actions are a bit more explicit:
+                - submit->ajax#submit
+                - change->ajax#submitOnChange
+            but again, we could keep those and use requestSubmit() to hook into turbo handling.
+
 
 1) Ajax on full form submit
 ===========================
 
-    <div class="form-wrapper" data-controller="ajax">
-        {{ form_start(form, {
-            'attr': {
-                'data-ajax-target': 'form',
-                'data-action': 'submit->ajax#submit'
-            }
-        }) }}
-            <div data-ajax-target="container">
-                {{ form_rest(form) }}
-            </div>
-            {% include '@admin/form/_ajax_button.html.twig' %}
-        </form>
-    </div>
+    {{ form_start(form, {
+        'attr': {
+            'data-controller': 'ajax',
+            'data-action': 'submit->ajax#submit'
+        }
+    }) }}
+        <div data-ajax-target="container">
+            {{ form_rest(form) }}
+        </div>
+        
+        {% include 'component/modal/_actions.html.twig' %}
+        OR {% include 'form/_form_actions.html.twig' %}
     
-2) Ajax on full form submit + onChange for all select/checkbox
-==============================================================
+    </form>
+    
+2) Ajax on full form submit + onChange for all select/checkbox (Guabao)
+=======================================================================
 
-    <div class="form-wrapper" data-controller="ajax">
-        {{ form_start(form, {
-            'attr': {
-                'data-ajax-target': 'form',
-                'data-action': 'submit->ajax#submit change->ajax#submitOnChange'
-            }
-        }) }}
-            <div data-ajax-target="container">
-                {{ form_rest(form) }}
-            </div>
-            {% include '@admin/form/_ajax_button.html.twig' %}
-        </form>
-    </div>
-
-3) Ajax only on change of dependent fields (no form submit btn, no other fields)
-==========================================================================
-
-        <div class="form-wrapper" data-controller="ajax">
-            {{ form_start(form, { 'attr': {'data-ajax-target': 'form'} }) }}
-
-                <div data-ajax-target="container">
-                    {{ form_row(form.trigggerField) }}
-                    
-                    {% if form.dependentField is defined %}
-                        {{ form_row(form.dependentField) }}
-                    {% endif %}
-
-                    {% set submitBtn = form_row(form.save) %}
-
-                    {{ form_rest(form) }}
-                </div>
-                
-                {{ submitBtn|raw }}
-            </form>
+    {{ form_start(form, {
+        'attr': {
+            'data-controller': 'ajax',
+            'data-action': 'submit->ajax#submit change->ajax#submitOnChange'
+        }
+    }) }}
+        <div data-ajax-target="container">
+            {{ form_rest(form) }}
         </div>
 
-        == FORM ==
+        {% include 'component/modal/_actions.html.twig' %}
+        OR {% include 'form/_form_actions.html.twig' %}
+        
+    </form>
 
-        In form type, add action to trigger fields
+3) Ajax only on change of dependent fields (no form submit btn, no other fields)
+================================================================================
+
+        {{ form_start(form, { 'attr': {'data-controller': 'ajax'} }) }}
+
+            <div data-ajax-target="container">
+                {{ form_row(form.trigggerField) }}
+                
+                {% if form.dependentField is defined %}
+                    {{ form_row(form.dependentField) }}
+                {% endif %}
+
+                {% set submitBtn = form_row(form.save) %}
+
+                {{ form_rest(form) }}
+            </div>
+            
+            {% embed 'component/modal/_actions.html.twig' %}
+                {% block submit_button %}
+                    {{ submitBtn|raw }}
+                {% endblock %}
+            {% endembed %}
+
+        </form>
+
+    == FORM ==
+
+        In form type, add action on trigger fields
 
         $builder->add('triggerProperty', FormFieldType::class, [
             'attr' => [
@@ -77,9 +95,9 @@ USAGE SUMMARY
 
         and add submit button so we can check if it's clicked
 
-        $builder->add('save', AjaxSubmitType::class);
+        $builder->add('save', SubmitType::class);
 
-        == CONTROLLER ==
+    == CONTROLLER ==
 
         $form = $this->createForm(FooForm::class, $foo);
         
@@ -94,9 +112,24 @@ USAGE SUMMARY
             $this->entityManager->persist($foo);
             $this->entityManager->flush();
 
-            $this->addFlash('success', 'message');
+            $feedback = 'Success!';
 
-            return $this->redirectToRoute('route');
+            if ($request->query->get('modal')) {
+                return $this->render('@admin/slot/modal/add_booking_success.html.twig', [
+                    'feedback' => $feedback,
+                    'element_to_update' => $elementToUpdate, // element to update on page with turbo stream
+                ]);
+            }
+
+            $this->addFlash('success', $feedback);
+
+            return $this->redirectToRoute('another_route');
+        }
+
+        if ($request->query->get('modal')) {
+            return $this->render('foo/modal/bar.html.twig', [
+                'form' => $form,
+            ]);
         }
 
         return $this->render('foo.html.twig', [
@@ -106,24 +139,27 @@ USAGE SUMMARY
 4) Ajax on change of dependent fields + full form submit
 ========================================================
 
-Same as 2) and add on form:
+    Same as 2) and add on form:
     
         'data-action': 'submit->ajax#submit'
 
  */
 
 export default class extends Controller {
-    static targets = ["form", "container", "spinner", "submitBtn"];
+    static targets = ["container"];
     static values = {
         debounce: { type: Number, default: 250 },
     };
 
     connect() {
+        this.form = this.element;
+        this.submitBtn = this.form.querySelector('[type="submit"]');
         this._submitTimer = null;
         this._isSubmitting = false;
     }
 
-    // Attach when you want full-submit to be AJAX
+    // Attach when you want full-submit to be manual AJAX,
+    // not handled by turbo
     async submit(event) {
         event.preventDefault();
 
@@ -146,6 +182,21 @@ export default class extends Controller {
         }, this.debounceValue);
     }
 
+    /**
+     * UNUSED
+     * Instead of using _submitAjax, which replicates Turbo behaviour,
+     * we could use this and tap into vanilla Turbo.
+     */
+    _requestSubmit() {
+        this.form.requestSubmit();
+    }
+
+    /**
+     * Replicates turbo ajax call with custom behaviours
+     * useful for forms with dependent fields:
+     *    - only replaces the 'container' element
+     *    - fades 'container' element on loading
+     */
     async _submitAjax() {
         if (this._isSubmitting) return;
         this._isSubmitting = true;
@@ -157,9 +208,9 @@ export default class extends Controller {
         this.showLoading();
 
         try {
-            const response = await fetch(this.formTarget.action, {
+            const response = await fetch(this.form.action, {
                 method: "POST",
-                body: new FormData(this.formTarget),
+                body: new FormData(this.form),
                 headers: {
                     "X-Requested-With": "XMLHttpRequest",
                     "Accept": "text/vnd.turbo-stream.html, text/html"
@@ -200,22 +251,23 @@ export default class extends Controller {
         }
     }
 
-
     showLoading() {
+        // custom fading we wouldn't get with Vanilla turbo
+        // (unless we attach a turbo:start listener like in loading_controller.js)
         this.containerTarget.style.opacity = 0.3;
-        this.hasSpinnerTarget && this.spinnerTarget.classList.remove("hidden");
-        if (this.hasSubmitBtnTarget) {
-            this.submitBtnTarget.setAttribute("disabled", "disabled");
-            this.submitBtnTarget.setAttribute("aria-busy", "true");
-        }
+        
+        // tap into global loading button behaviour
+        const loadingController = this.application.getControllerForElementAndIdentifier(this.submitBtn, 'loading');
+        loadingController.start();
     }
 
     hideLoading() {
+        // custom fading we wouldn't get with Vanilla turbo
+        // (unless we attach a turbo:start listener like in loading_controller.js)
         this.containerTarget.style.opacity = 1;
-        this.hasSpinnerTarget && this.spinnerTarget.classList.add("hidden");
-        if (this.hasSubmitBtnTarget) {
-            this.submitBtnTarget.removeAttribute("disabled");
-            this.submitBtnTarget.removeAttribute("aria-busy");
-        }
+        
+        // tap into global loading button behaviour
+        const loadingController = this.application.getControllerForElementAndIdentifier(this.submitBtn, 'loading');
+        loadingController.stop();
     }
 }

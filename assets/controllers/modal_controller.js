@@ -1,47 +1,17 @@
-import { Controller } from '@hotwired/stimulus';
+import { Controller } from "@hotwired/stimulus";
 
 /**
- * ========================================
- *               SUMMARY
- * ========================================
+ * Provides BASE MODAL BEHAVIOUR:
+ *  - opening / closing
+ *  - scroll handling
+ *  - accessibility
  * 
- * No need for a form in the page.
- * Form lives inside modal template.
- *                 
-    <button type="button"
-        formaction="{{ path('route') }}"
-        data-action="modal#open"
-        data-title="Supprimer les matchs"
-        data-html="<p>Attention, les matchs existants seront supprimés!</p>"
-        data-button-label="Supprimer les matchs"
-        data-variant="warning"
-    >
-        <twig:ux:icon name="delete" />
-        Supprimer les matchs
-    </button>
-
+ * Use together with:
+ *  - modal_confirm_controller.js 
+ *  - modal_remote_form_controller.js
+ *  - ajax_controller.js (probably only if form with dependent fields)
  * 
- * button click ------> open confirmation modal
- * 
- * inside confirmation modal:
- *      - turbo-frame
- *      - form 
- * 
- * confirm button click ----> 
- *      A) Turbo submit ----> response includes turbo frame, replaces existing turbo frame
- *      B) No turbo (easy admin) ----> submitForm() replicates turbo submit
- * 
- * In server reponse, we can include a turbo stream to replace page elements
- * by simply targetting them with their id. It fires automatically.
- * 
- * ==========================================
- * 
- * For confirm modals:
- * Modal controller must be attached to parent element wrapping:
- *  - trigger buttons
- *  - #modal-template element
- * knowing that #modal-template must be outside of the items with trigger buttons
- * in order to not conflict with item updates with turbo-streams
+ * ---------------------
  * 
  *  SECURITY:
  * - POST request for modifying state
@@ -50,12 +20,9 @@ import { Controller } from '@hotwired/stimulus';
  *  https://simonwillison.net/2021/Aug/3/samesite/
  *
  */
-export default class extends Controller {
-    static targets = ['dialog', 'modal', 'icon', 'title', 'details', 'confirmButton', 'confirmButtonLabel'];
 
-    static values = {
-        type: String, // see this.type
-    }
+export default class extends Controller {
+    static targets = ["dialog", "modal"];
 
     // Modal / Dialog element
     // =======================
@@ -72,91 +39,63 @@ export default class extends Controller {
     // On every trigger button click, a new instance is created
     uniqueId;
 
-    // Modal Type
-    // ==========
-    // 'confirm': confirmation modal for an action button (publish, unpublish, archive, delete...)
-    // 'form': modal hosting a form (report, edit, ...)
-    // Type can be defined globally as a value on the controller root element (data-modal-type-value)
-    // and can be overriden per button as a button data attribute (data-type)
-    type;
-
-    // Clicked modal trigger button
-    // A controller can host multiple buttons
-    button;
-
-    // Clicked modal trigger button dataset
-    dataset;
-
-    // Focussable elements inside opened modal
-    focusableElements;
-
     connect() {
 
         this.uniqueId = 0;
 
         this.keydownHandler = this._handleKeydown.bind(this);
         this.boundTrapFocus = this._trapFocus.bind(this);
-        
+        this.boundFrameLoad = this._addModalQueryParam.bind(this);
+
         document.addEventListener("keydown", this.keydownHandler);
+
+        document.addEventListener('turbo:frame-load', this.boundFrameLoad);
     }
 
     disconnect() {
         document.removeEventListener("keydown", this.keydownHandler);
-        
+        document.removeEventListener("turbo:frame-load", this.boundFrameLoad);
+
         // not necessary when this.modal lives inside element being disconnected
         // which is the case : this.element.appendChild(this.modal);
         this.modal?.remove();
     }
 
-    open(event) {
+    /**
+     * =====================
+     *    template cloning
+     * =====================
+     */
+    createFromTemplate() {
 
-        event.preventDefault();
+        this.uniqueId++;
 
-        this.uniqueId ++;
+        const dialogTemplate = document.getElementById("dialog-template");
+        this.modal = dialogTemplate.content.firstElementChild.cloneNode(true);
 
-        // A controller can host multiple buttons
-        // For this event, the one of interest is currentTarget
-        this.button = event.currentTarget;
-        this.dataset = this.button.dataset;
-        
-        // type = global value unless overriden per button
-        this.type = this.dataset.type ?? this.typeValue;
+        // Mark as dynamic so we can safely remove it on close
+        this.modal.dataset.dynamic = "1";
+        this.element.appendChild(this.modal);
 
-        if (this.type == 'confirm') {
-            this._createConfirmationModal(event);
-        }
-
-        this._generateAccessibilityTags();
-
-        // type 'confirm': dialogTarget is created above in createConfirmationModal()
-        // type 'form': dialogTarget exists in the dom at page load
-        this.dialogTarget.showModal();
-
-        // animations
-        this.dialogTarget.classList.remove('modal-hide');
-        this.dialogTarget.classList.add('modal-show');
-
-        this._hideScrollbar();
-
-        // We could use the inert attribute to disable the rest of the page (except dialog)
-        // It makes things no-selectable, non-tabbable, etc
-        // https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/inert
-        // but it behaves strangely when added to body element
-        // so it needs a wrapper div around the full page.
-        // We don't use that in our layout so I will use the "trap focus" bits below
-        // document.getElementById('page-wrapper').inert = true;
-
-        if (this.type == 'confirm') {
-            this.confirmButtonTarget.focus();
-        }
-        
-        // Trap focus
-        // Could be replaced by 'inert' attribute on page-wrapper (see above)
-        this._setFocusableElements();
-        this.modalTarget.addEventListener('keydown', this.boundTrapFocus);
+        return this.modal;
     }
 
-    close(event) {
+    /**
+     * =======================================
+     *  public API used by child controllers
+     * =======================================
+     */
+    open() {
+        this.dialogTarget.showModal();
+        this.dialogTarget.classList.remove("modal-hide");
+        this.dialogTarget.classList.add("modal-show");
+        this._hideScrollbar();
+        this._setFocusableElements();
+        this.modalTarget.addEventListener("keydown", this.boundTrapFocus);
+        this.dispatch("opened");
+    }
+
+    close() {
 
         if (this.hasDialogTarget == false) return;
 
@@ -176,102 +115,40 @@ export default class extends Controller {
     _doClose() {
         this.dialogTarget.close();
 
-        // remove dynamically created modal
-        // if modal present in dom at page load (type 'form'), do not remove
-        if (this.modal) this.modal.remove();
+        // If this.modal cloned from template, remove
+        if (this.modal?.dataset.dynamic === "1") {
+            this.modal.remove();
+        }
+
+        this.dispatch("closed");
     }
 
-    clickOutside(event) {
-        if (event.target === this.dialogTarget) {
-            this.close();
-        }
+    clickOutside(e) {
+        if (e.target === this.dialogTarget) this.close();
     }
 
-    // OPTION 1: TURBO FORM SUBMIT
-    // ===========================
-    // Nothing to do
-    // Let turbo handle modal form submission and server response
-    // Server responds with turboframe (optionally including turbostreams)
-    // to replace modal turboframe
 
-    // OPTION 2: REGULAR NON-TURBO FORM SUBMIT
-    // =======================================
-    // Handle form submission and server response
-    // In our easyadmin setup, we do this
-    async submitForm(event) {
-        event.preventDefault();
-
-        const form = this.dialogTarget.querySelector('form');
-        const button = event.currentTarget;
-
-        if (!form) {
-            return;
-        }
-
-        try {
-            const response = await fetch(button.getAttribute('formaction'), {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'Accept': 'text/html', // expecting HTML fragment maybe
-                },
-                body: new URLSearchParams(new FormData(form)),
-            });
-
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-
-            const html = await response.text();
-
-            // REPLACE the form inside the modal
-            form.outerHTML = html;
-
-        } catch (error) {
-            throw new Error('Error sending the report');
-        }
+    /**
+     * =======================
+     *  ADD MODAL QUERY PARAM
+     * =======================
+     * Add 'modal' query param to 'action' attribute on forms loaded via turbo-frame
+     */
+    _addModalQueryParam(event) {
+        const frame = event.target;
+        frame.querySelectorAll('form').forEach((form) => {
+            const u = new URL(form.getAttribute('action') || window.location.href, window.location.href);
+            u.searchParams.set('modal', '1');
+            form.action = u.toString();
+        });
     }
 
-    _createConfirmationModal(event) {
-        
-        // creating a new dialog will register targets inside it
-        this._createNewDialogFromTemplate();
-
-        const variant = this.dataset.variant ?? 'question';
-
-        this.titleTarget.textContent = this.dataset.title;
-        this.confirmButtonLabelTarget.textContent = this.dataset.buttonLabel;
-
-        if ('html' in this.dataset) {
-            this.detailsTarget.innerHTML = this.dataset.html;
-        } else {
-            this.detailsTarget.style.display = 'none';
-        }
-
-        if (variant == 'warning') {
-            this.confirmButtonTarget.classList.remove('btn-primary');
-            this.confirmButtonTarget.classList.add('btn-danger');
-        }
-
-        // add formaction to modal submit button
-        // The form we submit must live inside a turbo-frame
-        // to avoid turbo error "form submit must redirect" when submitting a form outside a turbo-frame
-        this.confirmButtonTarget.setAttribute('formaction', this.button.getAttribute('formaction'));
-
-        // Inject icon from template based on type
-        const iconTemplate = document.getElementById(`modal-icon-${variant}`);
-        this.iconTarget.innerHTML = '';
-        if (iconTemplate?.content) {
-            this.iconTarget.appendChild(iconTemplate.content.cloneNode(true));
-        }
-    }
-
-    _createNewDialogFromTemplate() {
-        const dialogTemplate = document.getElementById('dialog-template');
-        this.modal = dialogTemplate.content.firstElementChild.cloneNode(true);
-        this.element.appendChild(this.modal);
-    }
-
+    /**
+     * ===============
+     *  SCROLL HELPERS
+     * ===============
+     */
+    
     _hideScrollbar() {
         document.documentElement.style.overflow = 'hidden'; // html
         document.body.style.overflow = 'hidden'; // body
@@ -309,6 +186,7 @@ export default class extends Controller {
         return scrollbarWidth;
     }
 
+
     /**
      * =============
      * ACCESSIBILITY
@@ -322,13 +200,13 @@ export default class extends Controller {
         }
     }
 
-    _generateAccessibilityTags() {
+    _generateAccessibilityTags(titleElement) {
 
-        if (this.hasTitleTarget == false) return;
+        if (!titleElement) return;
 
         const titleId = 'modal-' + this.uniqueId + '-title';
 
-        this.titleTarget.id = titleId;
+        titleElement.id = titleId;
         this.modalTarget.setAttribute('aria-labelledby', titleId);
     }
 
@@ -376,4 +254,5 @@ export default class extends Controller {
       [contenteditable]
     `;
     }
+
 }

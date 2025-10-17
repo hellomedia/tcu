@@ -1,4 +1,7 @@
-{% if app.request.headers.has('turbo-frame') %}<turbo-frame id="{{ frameId }}">{% endif %}
+{% if app.request.headers.has('turbo-frame') %}
+    <turbo-frame id="{{ frameId ?? 'modal-frame' }}">
+{% endif %}
+
     <div class="modal-inner-layout">
         
         {% include 'component/modal/_icon_success.html.twig' %}
@@ -19,4 +22,7 @@
         </div>
     </div>
     {% block streams '' %} {# optional streams inside the turbo-frame to update other page elements #}
-{% if app.request.headers.has('turbo-frame') %}</turbo-frame>{% endif %}
+
+{% if app.request.headers.has('turbo-frame') %}
+    </turbo-frame>
+{% endif %}

@@ -19,6 +19,7 @@
     background: transparent;
     border: none;
     margin: 0;
+    overflow: hidden;
 }
 
 .modal-container[open] {
@@ -41,6 +42,8 @@
     padding: 2rem;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
     width: 90%;
+    max-height: 80%;
+    overflow-y: auto;
 
     /* breakpoint-md without tailwind theme -- for portability */
     @media (width >=48rem) {
