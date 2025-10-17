@@ -102,16 +102,15 @@
 
 {% block main %}
 
-    <div class="planning"
-        data-controller="modal"
-        data-modal-type-value="confirm"
+    <div class="planning" 
+        data-controller="modal modal-confirm"
         data-court-count="{{ courts|length }}"
     >
         {% for date in dates %}
             {% include '@admin/slot/_date.html.twig' %}
         {% endfor %}
 
-        {% include '@admin/modal/_confirm_modal.html.twig' %}
+        {% include 'component/modal/_modal.html.twig' %}
         {% include 'component/modal/_icons_templates.html.twig' %}
 
     </div>

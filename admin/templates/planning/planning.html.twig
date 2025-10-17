@@ -53,12 +53,37 @@
         .slot-actions-inner {
             height: 100%;
             display: flex;
-            flex-direction: column;
+            flex-direction: row;
             align-items: center;
+        }
+        .slot-content-inner {
             justify-content: center;
+            &.with-result {
+                justify-content: space-between;
+                padding-inline: 20px;
+            }
+        }
+        .slot-actions-inner {
+            justify-content: start;
+        }
+        .sides {
+            display: flex;
+            flex-direction: column;
+        }
+        .results {
+            td {
+                padding-inline: 4px;
+            }
+            td:first-child {
+                padding-left: 0;
+            }
+            td:last-child {
+                padding-right: 0;
+            }
         }
         .slot-actions {
             .btn {
+                padding-inline: 3px;
                 box-shadow: none;
                 svg {
                     width: 24px;
@@ -85,9 +110,9 @@
         .slot-row {
             display: grid;
             gap: 5px;
-            grid-template-columns: 50px minmax(160px, 1fr) 40px;
+            grid-template-columns: 50px minmax(280px, 1fr) 50px;
             &.slot-row-placeholder {
-                grid-template-columns: minmax(160px, 1fr);
+                grid-template-columns: minmax(280px, 1fr);
             }
         }
         @media (min-width: 768px) {
@@ -105,9 +130,9 @@
                 margin-bottom: 0;
             }
             .slot-row {
-                grid-template-columns: 50px minmax(160px, 1fr) 40px;
+                grid-template-columns: 50px minmax(280px, 1fr) 50px;
                 &.slot-row-placeholder {
-                    grid-template-columns: minmax(160px, 1fr);
+                    grid-template-columns: minmax(280px, 1fr);
                 }
                 .btn {
                     visibility: hidden;
@@ -119,25 +144,6 @@
                 }
                 .slot-content-inner {
                     position: relative;
-                }
-                .results {
-                    display: none;
-                }
-                &:hover {
-                    .results {
-                        display: block;
-                        position: absolute;
-                        top: 3px;
-                        bottom: 3px;
-                        right: 3px;
-                        left: 3px;
-                        z-index: 100;
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        gap: 4px;
-                        background: rgb(from var(--body-bg) r g b / 1);
-                    }
                 }
             }
         }
@@ -154,23 +160,17 @@
 {% block content_title %}Planning{% endblock %}
 
 {% block page_actions %}
-
 {% endblock %}
-
 
 {% block main %}
 
-    <div class="planning"
-        data-controller="modal"
-        data-modal-type-value="confirm"
-    >
+    <div class="planning" data-controller="modal modal-confirm modal-remote-form">
         {% for date in dates %}
             {% include '@admin/planning/_date.html.twig' %}
         {% endfor %}
 
-        {% include '@admin/modal/_confirm_modal.html.twig' %}
+        {% include 'component/modal/_modal.html.twig' %}
         {% include 'component/modal/_icons_templates.html.twig' %}
-
     </div>
 
 {% endblock %}

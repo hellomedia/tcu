@@ -70,7 +70,6 @@ class MatchController extends BaseController
         ]);
     }
 
-
     #[Route('/match/{id:match}/add-result', name: 'admin_match_add_result', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
     public function addResult(InterfacMatch $match, Request $request): Response
     {
@@ -87,9 +86,27 @@ class MatchController extends BaseController
             $this->entityManager->persist($result);
             $this->entityManager->flush();
 
-            $this->addFlash('success', 'Résultat encodé');
+            $feedback = 'Résultat encodé';
 
+            if ($request->query->get('modal')) {
+                // sync reverse side
+                $match->setResult($result);
+                return $this->render('@admin/match/modal/add_result_success.html.twig', [
+                    'feedback' => $feedback,
+                    'slot' => $match->getSlot(),
+                ]);
+            }
+            
+            $this->addFlash('success', $feedback);
+        
             return $this->redirectToRoute('admin_planning_groups');
+        }
+
+        if ($request->query->get('modal')) {
+            return $this->render('@admin/match/modal/_add_result.html.twig', [
+                'match' => $match,
+                'form' => $form,
+            ]);
         }
 
         return $this->render('@admin/match/add_result.html.twig', [

@@ -57,15 +57,12 @@
 
 {% block main %}
 
-    <div class="groups"
-        data-controller="modal"
-        data-modal-type-value="confirm"
-    >
+    <div class="groups" data-controller="modal modal-confirm">
         {% for group in groups %}
             {% include '@admin/group/_group.html.twig' %}
         {% endfor %}
 
-        {% include '@admin/modal/_confirm_modal.html.twig' %}
+        {% include 'component/modal/_modal.html.twig' %}
         {% include 'component/modal/_icons_templates.html.twig' %}
 
     </div>

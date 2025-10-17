@@ -3,21 +3,18 @@
 {% block content_title %}Matchs passés{% endblock %}
 
 {% block page_actions %}
-
 {% endblock %}
 
 {% block main %}
 
-    <div class="planning"
-        data-controller="modal"
-        data-modal-type-value="confirm"
-    >
-        {% for date in dates %}
-            {% include '@admin/planning/_date.html.twig' %}
-        {% endfor %}
+    <div class="planning" data-controller="modal modal-confirm modal-remote-form">
 
-        {% include '@admin/modal/_confirm_modal.html.twig' %}
-        {% include 'component/modal/_icons_templates.html.twig' %}
+            {% for date in dates %}
+                {% include '@admin/planning/_date.html.twig' %}
+            {% endfor %}
+
+            {% include 'component/modal/_modal.html.twig' %}
+            {% include 'component/modal/_icons_templates.html.twig' %}
 
     </div>
 

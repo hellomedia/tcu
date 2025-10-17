@@ -58,27 +58,27 @@
         </div>
     {% endfor %}
 
-    <div data-controller="ajax">
+    {{ form_start(form, { 'attr': {'data-controller': 'ajax'} }) }}
 
-        {{ form_start(form, { 'attr': {'data-ajax-target': 'form'} }) }}
-
-            <div data-ajax-target="container">
-                {{ form_row(form.date) }}
-                
-                {% if form.slot is defined %}
-                    {{ form_row(form.slot) }}
-                {% endif %}
-
-                {% set saveBtn = form_row(form.save) %}
-
-                {{ form_rest(form) }}
-            </div>
+        <div data-ajax-target="container">
+            {{ form_row(form.date) }}
             
-            {{ saveBtn|raw }}
-    
-        </form>
+            {% if form.slot is defined %}
+                {{ form_row(form.slot) }}
+            {% endif %}
 
-    </div>
+            {% set submitBtn = form_widget(form.save) %}
 
+            {{ form_rest(form) }}
+        </div>
+        
+        {% embed 'form/_form_actions.html.twig' %}
+            {% block cancel_url path('admin_planning_groups') %}
+            {% block submit_button %}
+                {{ submitBtn|raw }}
+            {% endblock %}
+        {% endembed %}
+
+    </form>
 
 {% endblock %}

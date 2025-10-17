@@ -100,7 +100,15 @@ class SlotController extends BaseController
         if ($submitBtn->isClicked() && $form->isSubmitted() && $form->isValid()) {
 
             if ($form->get('match')->getData() == null) {
+
                 $form->get('match')->addError(new FormError('Veuillez sélectionner un match'));
+
+                if ($request->query->get('modal')) {
+                    return $this->render('@admin/slot/modal/_add_booking.html.twig', [
+                        'slot' => $slot,
+                        'form' => $form,
+                    ]);
+                }
 
                 return $this->render('@admin/slot/add_booking.html.twig', [
                     'slot' => $slot,
@@ -110,10 +118,26 @@ class SlotController extends BaseController
 
             $this->entityManager->persist($booking);
             $this->entityManager->flush();
-            
-            $this->addFlash('success', 'Match programmé');
+
+            $feedback = 'Match programmé';
+
+            if ($request->query->get('modal')) {
+                return $this->render('@admin/slot/modal/add_booking_success.html.twig', [
+                    'feedback' => $feedback,
+                    'slot' => $slot,
+                ]);
+            }
+
+            $this->addFlash('success', $feedback);
 
             return $this->redirectToRoute('admin_planning');
+        }
+
+        if ($request->query->get('modal')) {
+            return $this->render('@admin/slot/modal/_add_booking.html.twig', [
+                'slot' => $slot,
+                'form' => $form,
+            ]);
         }
 
         return $this->render('@admin/slot/add_booking.html.twig', [
@@ -124,7 +148,7 @@ class SlotController extends BaseController
 
     #[Route('/planning/slot/{id:slot}/remove-booking', name: 'admin_planning_slot_remove_booking')]
     public function removeBooking(Slot $slot, Request $request): Response
-    {
+    {        
         $booking = $slot->getBooking();
 
         $this->entityManager->remove($booking);

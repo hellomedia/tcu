@@ -3,10 +3,8 @@
 {# important to avoid theme conflicts #}
 {% form_theme form with ['@admin/form/form_theme.html.twig'] only %}
 
-{% extends '@admin/base.html.twig' %}
+<turbo-frame id="modal-frame">
 
-{% block head_stylesheets %}
-    {{ parent() }}
     <style>
         @media (min-width: 768px) {
             .form-wrapper {
@@ -29,24 +27,26 @@
             }
         }
     </style>
-{% endblock %}
 
-{% block content_title %}Progammer un match - {{ slot }}{% endblock %}
+    <h3 style="margin-bottom: 30px">Ajouter un match - {{ slot }}</h3>
 
-{% block page_actions %}
+    {# 1. Dependent Fields ==> 'ajax' controller #}
+    {# Dependent fields is handled by 'ajax' controller (data-action="change->ajax#submitOnChange"on trigger field) #}
+    
+    {# 1. Full form submit ==> turbo frame #}
+    {# Final form submit NOT handled by 'ajax' controller ( NO data-action="submit->ajax#submit" on form ) #}
+    {# Final submit is handled by regular form submit with turbo-frame --thanks to data-turbo-frame attribute #}
+    {# NB: if turbo was active on the page, we would not need 'data-turbo-frame' but in easyadmin (data-turbo=fase on body), we do #}
 
-    <a class="btn btn-default" href="{{ path('admin_planning')}}">
-        Retour
-    </a>
-
-{% endblock %}
-
-
-{% block main %}
-
-    {{ form_start(form, {'attr': {'data-controller': 'ajax'}}) }}
+    {{ form_start(form, {'attr': {
+        'action': path('admin_planning_slot_add_booking', {'id': slot.id, 'modal': 1}),
+        'data-controller': 'ajax',
+        'data-turbo-frame': "modal-frame"
+        }}) 
+    }}
 
         <div data-ajax-target="container">
+
             {{ form_row(form.group) }}
             
             {% if form.match is defined %}
@@ -58,12 +58,12 @@
             {{ form_rest(form) }}
         </div>
         
-        {% embed 'form/_form_actions.html.twig' %}
+        {% embed 'component/modal/_actions.html.twig' %}
             {% block submit_button %}
                 {{ submitBtn|raw }}
             {% endblock %}
         {% endembed %}
 
-    </form>
-                
-{% endblock %}
+    </form>   
+
+</turbo-frame>

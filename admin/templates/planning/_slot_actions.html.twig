@@ -1,0 +1,50 @@
+<div class="planning-slot-actions hk-dropdown-container"
+	data-controller="dropdown"
+>
+	<button type="button"
+		class="btn hk-dropdown-button"
+		data-action="dropdown#toggle"
+	>
+		<twig:ux:icon name="dots"/>
+	</button>
+
+	<div data-dropdown-target="menu"
+        class="hk-dropdown-menu"
+        style="right: 35px;top:-18px">
+		
+            <div class="hk-dropdown-inner">
+
+                {% if slot.match.result is empty %}
+                    <a class="hk-dropdown-link"
+                        href="{{ path('admin_match_add_result', {'id': slot.match.id}) }}"
+                        data-action="modal-remote-form#open"
+                    >
+                        <twig:ux:icon name="add"/>
+                        Ajouter résultat
+                    </a>
+                {% else %}
+                    <a class="hk-dropdown-link"
+                        href="{{ path('admin_match_add_result', {'id': slot.match.id}) }}"
+                        data-action="modal-remote-form#open"
+                    >
+                        <twig:ux:icon name="edit"/>
+                        Modifier résultat
+                    </a>
+                {% endif %}
+
+				<button type="button"
+                    class="hk-dropdown-link"
+                    formaction="{{ path('admin_planning_slot_remove_booking', {'id': slot.id}) }}"
+                    data-action="modal-confirm#open"
+                    data-title="Supprimer la réservation"
+                    data-html="<p>Le match devra être re-programmé</p>"
+                    data-button-label="Supprimer la réservation"
+                    data-variant="warning"
+                >
+                    <twig:ux:icon name="delete" />
+                    Supprimer
+                </button>
+
+            </div>
+	</div>
+</div>
