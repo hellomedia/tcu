@@ -58,6 +58,7 @@ class GroupRepository extends ServiceEntityRepository
             // because single-valued association path expression to an inverse side is not supported in DQL queries
             ->leftJoin('m.booking', 'b')->addSelect('b')
             ->andWhere('b.id IS NULL')
+            ->addOrderBy('g.name', 'ASC')
         ;
     }
 
