@@ -57,11 +57,8 @@
             align-items: center;
         }
         .slot-content-inner {
-            justify-content: center;
-            &.with-result {
-                justify-content: space-between;
-                padding-inline: 20px;
-            }
+            justify-content: space-between;
+            padding-inline: 20px;
         }
         .slot-actions-inner {
             justify-content: start;
@@ -110,9 +107,9 @@
         .slot-row {
             display: grid;
             gap: 5px;
-            grid-template-columns: 50px minmax(280px, 1fr) 50px;
+            grid-template-columns: 50px minmax(230px, 1fr) 30px;
             &.slot-row-placeholder {
-                grid-template-columns: minmax(280px, 1fr);
+                grid-template-columns: minmax(230px, 1fr);
             }
         }
         @media (min-width: 768px) {
@@ -130,9 +127,9 @@
                 margin-bottom: 0;
             }
             .slot-row {
-                grid-template-columns: 50px minmax(280px, 1fr) 50px;
+                grid-template-columns: 50px minmax(230px, 1fr) 50px;
                 &.slot-row-placeholder {
-                    grid-template-columns: minmax(280px, 1fr);
+                    grid-template-columns: minmax(230px, 1fr);
                 }
                 .btn {
                     visibility: hidden;

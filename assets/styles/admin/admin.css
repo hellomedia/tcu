@@ -62,6 +62,9 @@ unless we fix tailwind build for admin.css */
     }
     
     form input[type="number"] {
-        width: 4em;
+        width: 3em;
+        @media (width > 800px) {
+            width: 4em;
+        }
     }
 }

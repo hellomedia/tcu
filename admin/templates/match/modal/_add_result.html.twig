@@ -10,7 +10,7 @@
             text-align: center;
         }
         td {
-            padding: 5px 10px;
+            padding: 5px 5px;
         }
     </style>
 
@@ -24,7 +24,6 @@
 
         <table>
             <tr>
-                <th>Joueur</th>
                 <th></th>
                 <th>Set 1</th>
                 <th>Set 2</th>
@@ -32,7 +31,6 @@
                 <th>Points</th>
             </tr>
             <tr>
-                <td>A</td>
                 <td>
                     {% for player in match.playersForSide(enum('App\\Enum\\Side').A) %}
                         {{ player }}
@@ -44,7 +42,6 @@
                 <td>{{ form_widget(form.pointsA) }}</td>
             </tr>
             <tr>
-                <td>B</td>
                 <td>
                     {% for player in match.playersForSide(enum('App\\Enum\\Side').B) %}
                         {{ player }}
