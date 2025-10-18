@@ -4,10 +4,11 @@
     </div>
 	<div class="courts">
 		{% for court in courts %}
-			<div class="court">
-				<h5>{{ court }}</h5>
+            {% set slots = date.slotsByCourt(court) %}
+			<div class="court {{ slots is empty ? 'without-slots' }}">
+				<h5 class="court">{{ court }}</h5>
 				<div class="slots">
-					{% for slot in date.slotsByCourt(court) %}
+					{% for slot in slots %}
                         {% include "@admin/planning/_slot_row.html.twig" %}
                     {% else %}
                         {# invisible -- only for layout purposes #}
