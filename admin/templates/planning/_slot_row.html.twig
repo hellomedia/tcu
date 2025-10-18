@@ -3,7 +3,7 @@
 		{{ slot.startsAt|date('H:i') }}
 	</div>
 	<div class="slot-content">
-		<div class="slot-content-inner {{ slot.match ? slot.match.result is not empty ? 'with-result' }}">
+		<div class="slot-content-inner {{ slot.match ? 'with-match' }}">
 			{# <div class="placeholder"></div> #}
             {% if slot.match is empty %}
 				<a class="btn btn-default"
