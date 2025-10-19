@@ -130,6 +130,8 @@ class MatchController extends BaseController
             if (!$info) {
                 $info = (new ParticipantConfirmationInfo())->setParticipant($participant);
                 $entityManager->persist($info);
+                // update inverse for turbo stream
+                $participant->setConfirmationInfo($info);
             }
             $confirmationInfos[] = $info;
 
@@ -172,6 +174,8 @@ class MatchController extends BaseController
                     $info->setAdmin(null);
                     $info->setConfirmedByAdminAt(null);
                 }
+
+    
             }
 
             $this->entityManager->flush();
@@ -179,6 +183,7 @@ class MatchController extends BaseController
             $feedback = '';
 
             if ($request->query->get('modal')) {
+
                 return $this->render('@admin/match/modal/confirmation_info_success.html.twig', [
                     'feedback' => $feedback,
                     'slot' => $match->getSlot(),
