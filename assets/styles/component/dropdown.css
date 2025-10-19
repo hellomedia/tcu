@@ -101,6 +101,13 @@
             color: var(--color-secondary-text);
             cursor: pointer;
         }
+
+        &[data-variant="warning"] {
+            color: var(--color-button-danger);
+            svg {
+                color: var(--color-button-danger);
+            }
+        }
     }
 }
 
@@ -119,5 +126,11 @@
     &:hover {
         color: var(--link-hover-color);
         cursor: pointer;
+    }
+    &[data-variant="warning"] {
+        color: var(--color-danger);
+        svg {
+            color: var(--color-danger);
+        }
     }
 }
