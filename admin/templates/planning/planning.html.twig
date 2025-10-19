@@ -60,7 +60,7 @@
             justify-content: center;
             &.with-match {
                 justify-content: space-between;
-                padding-inline: 20px;
+                padding-inline: 15px;
             }
         }
         .slot-actions-inner {
@@ -69,6 +69,21 @@
         .sides {
             display: flex;
             flex-direction: column;
+        }
+        .side {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .player-confirmation-indicator {
+            width: 10px;
+            height: 10px;
+            border-radius: 5px;
+            background-color: #bbb;
+            flex: 0 0 10px;
+            &.confirmed {
+                background-color: green;
+            }
         }
         .results {
             td {

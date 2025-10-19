@@ -76,15 +76,15 @@ class Player implements EntityInterface
 
     public function __toString()
     {
-        return $this->getFullName();
+        return $this->getName();
     }
 
     public function getNameWithRanking(): string
     {
-        return $this->getFullName() . ' - ' . $this->ranking->value;
+        return $this->getName() . ' - ' . $this->ranking->value;
     }
 
-    public function getFullName(): string
+    public function getName(): string
     {
         return $this->firstname . ' ' . ($this->lastname ?? '');
     }

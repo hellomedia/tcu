@@ -81,7 +81,7 @@ class InterfacMatch implements EntityInterface
             return '';
         }
     
-        return implode(' - ', $this->participants->map(fn(MatchParticipant $participant) => $participant->getPlayer()->getFullName())->toArray());
+        return implode(' - ', $this->participants->map(fn(MatchParticipant $participant) => $participant->getPlayer()->getName())->toArray());
     }
 
     public function getGroup(): ?Group
@@ -211,6 +211,22 @@ class InterfacMatch implements EntityInterface
         });
 
         return $sidePlayers;
+    }
+
+    /**
+     * @return array<MatchParticipant>
+     */
+    public function getParticipantsForSide(Side $side): ?array
+    {
+        $sideParticipants = $this->participants->filter(function (MatchParticipant $participant) use ($side) {
+            return $participant->getSide() === $side;
+        })->toArray();
+
+        usort($sideParticipants, function (MatchParticipant $participant1, MatchParticipant $participant2) {
+            return $participant1->getPlayer()->getLastname() <=> $participant2->getPlayer()->getLastname();
+        });
+
+        return $sideParticipants;
     }
 
     public function getResult(): ?MatchResult

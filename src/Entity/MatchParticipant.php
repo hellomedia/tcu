@@ -25,6 +25,9 @@ class MatchParticipant
     #[ORM\Column(enumType: Side::class)]
     private ?Side $side = null;
 
+    #[ORM\OneToOne(mappedBy: 'participant', cascade: ['persist', 'remove'])]
+    private ?ParticipantConfirmationInfo $confirmationInfo = null;
+
     public function __toString()
     {
         return $this->player;
@@ -69,5 +72,31 @@ class MatchParticipant
         $this->side = $side;
 
         return $this;
+    }
+
+    public function getConfirmationInfo(): ?ParticipantConfirmationInfo
+    {
+        return $this->confirmationInfo;
+    }
+
+    public function setConfirmationInfo(ParticipantConfirmationInfo $confirmationInfo): static
+    {
+        // set the owning side of the relation if necessary
+        if ($confirmationInfo->getParticipant() !== $this) {
+            $confirmationInfo->setParticipant($this);
+        }
+
+        $this->confirmationInfo = $confirmationInfo;
+
+        return $this;
+    }
+
+    public function isConfirmed(): bool
+    {
+        if ($this->getConfirmationInfo()) {
+            return $this->confirmationInfo->isConfirmed();
+        }
+
+        return false;
     }
 }

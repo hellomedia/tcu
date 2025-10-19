@@ -1,0 +1,88 @@
+{# Important: Note the syntax with [] and only #}
+{# Ignore global themes; use only EasyAdmin #}
+{# important to avoid theme conflicts #}
+{% form_theme form with ['@admin/form/form_theme.html.twig'] only %}
+
+<turbo-frame id="modal-frame">
+
+    <style>
+        table th, td {
+            text-align: center;
+            vertical-align: middle;
+        }
+        .form-group {
+            padding-bottom: 5px;
+        }
+
+    </style>
+
+    {# Add 'data-turbo-frame' for when Turbo is not loaded (ie: in easy-admin) #}
+    {{ form_start(form, {
+        'attr': {
+            'action': path('admin_match_confirmation_info', {'id': match.id}),
+            'data-turbo-frame': "modal-frame"
+        }
+    }) }}
+
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Notification Email</th>
+                    <th>Confirmé par le joueur</th>
+                    <th>Confirmé par admin</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in form.infos %}
+                    {% set data = row.vars.data %}
+                    {# ParticipantConfirmationInfo entity #}
+                    <tr>
+                        <td>
+                            <div style="height: 70px;display:flex;align-items:center;gap:10px;">
+                                <span class="player-confirmation-indicator {{ data.confirmed ? 'confirmed' }}"></span>
+                                {{ data.participant.player.name }}
+                            </div>
+                        </td>
+                        <td>
+                            {% if data.isEmailSent %}
+                                <twig:ux:icon name="check" width="24px" />
+                                <br>
+                                {{ data.emailSentAt ? data.emailSentAt|date('d/m/Y H:i') }}
+                            {% else %}
+                                <twig:ux:icon name="cross" width="24px" />
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if data.confirmedByPlayer %}
+                                <twig:ux:icon name="check" width="24px" />
+                                <br>
+                                {{ data.confirmedByPlayerAt ? data.confirmedByPlayerAt|date('d/m/Y H:i') }}
+                            {% else %}
+                                <twig:ux:icon name="cross" width="24px" />
+                            {% endif %}
+                        </td>
+                        <td>
+                            {{ form_row(row.isConfirmedByAdmin) }}
+
+                            {% if data.confirmedByAdmin %}
+                                Confirmé par {{ data.admin.name }}
+                                <br>
+                                le {{ data.confirmedByAdminAt ? data.confirmedByAdminAt|date('d/m/Y H:i') }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div style="visibility:hidden; height: 5px; overflow:hidden;">
+            {{ form_rest(form) }}
+        </div>
+
+        {% include 'component/modal/_actions.html.twig' %}
+    
+    </form>
+
+</turbo-frame>

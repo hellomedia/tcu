@@ -132,6 +132,6 @@ class Slot implements EntityInterface
 
     public function getPlayers(): ?Collection
     {
-        return $this->booking?->getMatch()?->getPlayers()?->map(fn ($player) => $player->getFullName());
+        return $this->booking?->getMatch()?->getPlayers()?->map(fn ($player) => $player->getName());
     }
 }

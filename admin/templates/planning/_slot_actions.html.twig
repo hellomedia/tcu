@@ -32,6 +32,14 @@
                     </a>
                 {% endif %}
 
+                <a class="hk-dropdown-link"
+                    href="{{ path('admin_match_confirmation_info', {'id': slot.match.id}) }}"
+                    data-action="modal-remote-form#open"
+                >
+                    <twig:ux:icon name="confirm-user"/>
+                    Infos de confirmation
+                </a>
+
 				<button type="button"
                     class="hk-dropdown-link"
                     formaction="{{ path('admin_planning_slot_remove_booking', {'id': slot.id}) }}"

@@ -36,3 +36,6 @@ ux_icons:
         interclubs: 'fluent:people-team-28-regular'
         lessons: 'mdi:tennis'
         practical-infos: 'mdi:information-outline'
+        confirm-user: 'streamline-block:basic-ui-confirm-user'
+        check: 'mingcute:check-fill'
+        cross: 'maki:cross'

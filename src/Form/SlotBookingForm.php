@@ -60,12 +60,12 @@ final class SlotBookingForm extends AbstractType
 
                     return [
                         'sideA' => [
-                            'name' => $playerA->getFullName(),
+                            'name' => $playerA->getName(),
                             'dispos' => $playerA->getAvailabilities() ?? '',
                             'dates' => $playerA->getScheduledMatchsDates(),
                         ],
                         'sideB' => [
-                            'name' => $playerB->getFullName(),
+                            'name' => $playerB->getName(),
                             'dispos' => $playerB->getAvailabilities() ?? '',
                             'dates' => $playerB->getScheduledMatchsDates(),
                         ],

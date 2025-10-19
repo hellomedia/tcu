@@ -16,15 +16,17 @@
             {% else %}
                 <div class="sides">
                     <div class="side">
-                        {% for player in slot.match.playersForSide(enum('App\\Enum\\Side').A) %}
+                        {% for participant in slot.match.participantsForSide(enum('App\\Enum\\Side').A) %}
                             {{ loop.index == 2 ? ' - ' }}
-                            <span class="player">{{ player }}</span>
+                            <span class="player-confirmation-indicator {{ participant.confirmed ? 'confirmed' }}"></span>
+                            <span class="player">{{ participant }}</span>
                         {% endfor %}
                     </div>
                     <div class="side">
-                        {% for player in slot.match.playersForSide(enum('App\\Enum\\Side').B) %}
+                        {% for participant in slot.match.participantsForSide(enum('App\\Enum\\Side').B) %}
                             {{ loop.index == 2 ? ' - ' }}
-                            <span class="player">{{ player }}</span>
+                            <span class="player-confirmation-indicator {{ participant.confirmed ? 'confirmed' }}"></span>
+                            <span class="player">{{ participant }}</span>
                         {% endfor %}
                     </div>
                 </div>
