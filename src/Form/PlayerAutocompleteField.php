@@ -19,7 +19,7 @@ class PlayerAutocompleteField extends AbstractType
             'label' => 'Mon nom',
             'class' => Player::class,
             'placeholder' => '🔍',
-            'choice_label' => 'fullName',
+            'choice_label' => 'name',
             // choose which fields to use in the search
             // if not passed, *all* fields are used
             'searchable_fields' => ['firstname', 'lastname'],
