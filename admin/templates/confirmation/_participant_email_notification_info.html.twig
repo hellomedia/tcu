@@ -1,0 +1,34 @@
+<turbo-frame data-turbo="true" {# activate turbo for this turbo frame -- since turbo disabled on <html> element #}
+    id="participant-{{ data.participant.id }}-email-notification-info"
+    class="inner-cell"
+>
+    <div class="place-holder"></div>
+    <div class="mid">
+        {% if data.isEmailSent %}
+            <twig:ux:icon name="check" style="color:green" width="24px" />
+        {% else %}
+            <twig:ux:icon name="cross" width="24px" />
+        {% endif %}
+    </div>
+    <div class="bottom {{ data.isEmailSent ? 'bottom-text' }}">
+        {% if data.isEmailSent %}
+            Envoyé le {{ data.emailSentAt ? data.emailSentAt|date('d/m/Y H:i') }}
+        {% elseif not data.confirmedByPlayer and not data.confirmedByAdmin %}
+            {# Use a Form, not a link:
+                - csrf protection
+                - perform action on POST
+                - avoid url pre-fetching which triggers multiple actions #}
+            {# BUT the form cannot be here because it would be nested inside the confirmation info form !!
+                Nested forms are not allowed
+                So we move the form outside (in _confirmation_info.html.twig) and reference it in the button #}
+            <button type="submit" class="btn btn-default"
+                form="send-email-form-{{ data.participant.id }}"
+                {# must be explicit about turbo-frame here because form lives outside #}
+                data-turbo-frame="participant-{{ data.participant.id }}-email-notification-info"
+            >
+                <twig:ux:icon name="send-email" width="1em" style="margin-right: 5px"/>
+                Envoyer email
+            </button>
+        {% endif %}
+    </div>
+</turbo-frame>

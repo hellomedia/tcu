@@ -7,6 +7,10 @@ services:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
         bind:
+            $siteName: '%site_name%'
+            $emailDomain: '%email_domain%'
+            $host: '%host%'
+            $hostAdmin: '%host_admin%'
 
     # makes classes in sites/admin/src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name

@@ -49,7 +49,7 @@ final class SlotBookingForm extends AbstractType
                 'label' => 'Match',
                 'class' => InterfacMatch::class,
                 'query_builder' => function (InterfacMatchRepository $repo) use ($selectedGroup): QueryBuilder {
-                    return $repo->getNonProgammedMatchsQueryBuilder($selectedGroup);
+                    return $repo->getNonScheduledMatchsQueryBuilder($selectedGroup);
                 },
                 'multiple' => false,
                 'expanded' => true,

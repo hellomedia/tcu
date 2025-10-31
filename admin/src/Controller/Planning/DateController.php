@@ -13,6 +13,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
 
 class DateController extends BaseController
 {
@@ -22,6 +23,7 @@ class DateController extends BaseController
     {
     }
 
+    #[IsCsrfTokenValid('delete-date', tokenKey: 'token')]
     #[Route('/planning/date/{id:date}/delete', name: 'admin_planning_date_delete', methods: ['POST'])]
     public function delete(Date $date, EntityManager $entityManager): Response
     {

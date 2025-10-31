@@ -34,6 +34,8 @@ class PlayerCrudController extends AbstractCrudController
         yield TextField::new('lastname', 'Nom');
         yield TextField::new('firstname', 'Prénom');
 
+        yield AssociationField::new('user')->setPermission('ROLE_SUPER_ADMIN');
+
         yield ChoiceField::new('ranking', 'Classement');
         yield ChoiceField::new('gender', 'H/F');
         yield ChoiceField::new('birthyear', 'Année de naissance');

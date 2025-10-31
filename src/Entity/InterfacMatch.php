@@ -245,4 +245,79 @@ class InterfacMatch implements EntityInterface
 
         return $this;
     }
+
+    public function getParticipant(User $user): ?MatchParticipant
+    {
+        foreach($this->participants as $participant) {
+            if ($participant->getUser() === $user) {
+                $found = $participant;
+                break;
+            }
+        }
+
+        return $found ?? null;
+    }
+
+    public function isParticipant(User $user): bool
+    {
+        return $this->getParticipant($user) !== null;
+    }
+
+    public function getConfirmationInfo(User $user): ?ParticipantConfirmationInfo
+    {
+        return $this->getParticipant($user)?->getConfirmationInfo();
+    }
+
+    /**
+     * @return Collection<int, ParticipantConfirmationInfo>
+     */
+    public function getConfirmationInfos(): Collection
+    {
+        return $this->participants
+            // filter out null values
+            ->filter(fn(MatchParticipant $participant) => $participant->getConfirmationInfo() !== null)
+            // fill collection with confirmation info
+            ->map(fn(MatchParticipant $participant) => $participant->getConfirmationInfo());
+    }
+
+    /**
+     * NB: When we are in user area, we tend to check the confirmation info
+     * from the match (user point of view) with user parameters.
+     * 
+     * When we are in admin are, we tend to check the confirmation info
+     * from the participant (admin point of view).
+     * ==> participant::isConfirmed()
+     */
+    public function isConfirmedByUser(User $user): ?bool
+    {
+        return $this->getConfirmationInfo($user)?->isConfirmedByPlayer();
+    }
+
+    public function isConfirmedByAdmin(User $user): ?bool
+    {
+        return $this->getConfirmationInfo($user)?->isConfirmedByAdmin();
+    }
+
+    public function isConfirmed(User $user): ?bool
+    {
+        return $this->getConfirmationInfo($user)?->isConfirmed();
+    }
+
+    public function isPast(): bool
+    {
+        if ($this->booking == null) {
+            return false;
+        }
+
+        return $this->booking->getDate()->isPast();
+    }
+
+    public function isScheduledInFuture(): bool
+    {
+        if ($this->booking == null) {
+            return false;
+        }
+
+        return $this->booking->getDate()->isFuture();
+    }
 }

@@ -71,6 +71,15 @@ security:
                 signature_properties: [password]
                 samesite: lax # 'lax' is OK for app. See commments in admin/config/packages/framework.yaml
 
+            # Magick link -- automatically logs in the user
+            # Destination url defined with 'goto' query parameter
+            login_link:
+                check_route: login_link_check  # route that the login link hits
+                signature_properties: ['id','email']  # include stable props from your User
+                lifetime: 600
+                max_uses: 5                 
+                success_handler: Pack\Security\LoginLinkSuccessHandler
+
     # First matching rule grants or denies access
     access_control:
         # User Admin (need to match both /my/ and /en/my/)

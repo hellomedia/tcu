@@ -29,9 +29,12 @@
                 </div>
             </div>
         {% else %}
-            <a class="btn btn-primary" href="{{ path('admin_planning_group_generate_matchs', {'id': group.id}) }}">
-                Générer les matchs
-            </a>
+            <form method="post" action="{{ path('admin_planning_group_generate_matchs', {'id': group.id}) }}">
+                <button type="submit" class="btn btn-primary">
+                    Générer les matchs
+                </button>
+                <input type="hidden" name="token" value="{{ csrf_token('generate-matchs') }}" />
+            </form>
         {% endfor %}
     </div>
 </div>

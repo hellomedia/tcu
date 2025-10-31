@@ -9,8 +9,9 @@ use App\Entity\InterfacMatch;
 use App\Entity\MatchResult;
 use App\Entity\ParticipantConfirmationInfo;
 use App\Enum\BookingType;
+use App\Enum\Side;
 use App\Form\BookingForMatchForm;
-use App\Form\MatchConfirmationForm;
+use App\Form\MatchAdminConfirmationForm;
 use App\Form\MatchResultForm;
 use App\Form\Model\MatchConfirmationInfo;
 use App\Repository\ParticipantConfirmationInfoRepository;
@@ -125,7 +126,25 @@ class MatchController extends BaseController
         // Ensure an info row exists for each participant
         $confirmationInfos = [];
         $wasConfirmedByAdmin = [];
-        foreach ($match->getParticipants() as $participant) {
+
+        foreach ($match->getParticipantsForSide(Side::A) as $participant) {
+            $info = $repository->findOneBy(['participant' => $participant]);
+            if (!$info) {
+                $info = (new ParticipantConfirmationInfo())->setParticipant($participant);
+                $entityManager->persist($info);
+                // update inverse for turbo stream
+                $participant->setConfirmationInfo($info);
+            }
+            $confirmationInfos[] = $info;
+
+            // keep track of initial value to check if it changed
+            // Key by php object id (works for new + existing entities)
+            // (new entities do not have a DB id yet bc not flushed yet)
+            $oid = spl_object_id($info);
+            $wasConfirmedByAdmin[$oid] = $info->isConfirmedByAdmin();
+        }
+
+        foreach ($match->getParticipantsForSide(Side::B) as $participant) {
             $info = $repository->findOneBy(['participant' => $participant]);
             if (!$info) {
                 $info = (new ParticipantConfirmationInfo())->setParticipant($participant);
@@ -144,7 +163,7 @@ class MatchController extends BaseController
 
         $dto = new MatchConfirmationInfo($confirmationInfos);
 
-        $form = $this->createForm(MatchConfirmationForm::class, $dto);
+        $form = $this->createForm(MatchAdminConfirmationForm::class, $dto);
 
         $form->handleRequest($request);
 

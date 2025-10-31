@@ -7,6 +7,7 @@ use App\Enum\AccountLanguage;
 use App\Repository\UserRepository;
 use Pack\Security\Entity\Trait\UserSecurityTrait;
 use DateTimeImmutable;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints;
@@ -41,6 +42,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Equatab
 
     #[ORM\Column(enumType: AccountLanguage::class, options: ['default' => 'fr'])]
     private ?AccountLanguage $accountLanguage = null;
+
+    #[ORM\OneToOne(inversedBy: 'user', cascade: ['persist', 'remove'])]
+    private ?Player $player = null;
 
     public function __construct()
     {
@@ -120,4 +124,42 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, Equatab
 
         return $this;
     }
+
+    public function getPlayer(): ?Player
+    {
+        return $this->player;
+    }
+
+    public function setPlayer(?Player $player): static
+    {
+        $this->player = $player;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, InterfacMatch>
+     */
+    public function getMatchs(): ?Collection
+    {
+        return $this->player?->getMatchs();
+    }
+
+    /**
+     * @return Collection<int, InterfacMatch>
+     */
+    public function getScheduledMatchs(): ?Collection
+    {
+        return $this->player?->getScheduledMatchs();
+    }
+
+    /**
+     * @return Collection<int, InterfacMatch>
+     */
+    public function getNonScheduledMatchs(): ?Collection
+    {
+        return $this->player?->getNonScheduledMatchs();
+    }
+
+
 }

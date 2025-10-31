@@ -45,9 +45,9 @@ class InterfacsController extends BaseController
     public function groups(GroupRepository $repository, DateRepository $dateRepository, PlayerRepository $playerRepository): Response
     {
         $groups = $repository->findAll();
+        $dates = $dateRepository->findDatesByGroups($groups);
 
         foreach ($groups as $group) {
-            $dates[$group->getId()] = $dateRepository->findDatesByGroup($group);
             $standings[$group->getId()] = $playerRepository->groupStandings($group);
         }
 

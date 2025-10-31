@@ -13,7 +13,7 @@ class ParticipantConfirmationInfo
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\OneToOne(inversedBy: 'confirmationInfo', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(inversedBy: 'confirmationInfo')]
     #[ORM\JoinColumn(nullable: false)]
     private ?MatchParticipant $participant = null;
 

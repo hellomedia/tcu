@@ -86,7 +86,7 @@ import { Controller } from "@hotwired/stimulus";
  */
 
 export default class extends Controller {
-    static targets = ["icon", "title", "details", "confirmButton", "confirmButtonLabel"];
+    static targets = ["icon", "title", "details", "token", "confirmButton", "confirmButtonLabel", "cancelButtonLabel"];
 
     open(event) {
         event.preventDefault();
@@ -128,11 +128,21 @@ export default class extends Controller {
             this.iconTarget.appendChild(iconTemplate.content.cloneNode(true));
         }
 
-        this.confirmButtonLabelTarget.textContent = btn.dataset.buttonLabel;
+        if ("buttonLabel" in btn.dataset) {
+            this.confirmButtonLabelTarget.textContent = btn.dataset.buttonLabel;
+        }
+
+        if ("cancelLabel" in btn.dataset) {
+            this.cancelButtonLabelTarget.textContent = btn.dataset.cancelLabel;
+        }
 
         if (variant == 'warning') {
             this.confirmButtonTarget.classList.remove('btn-primary');
             this.confirmButtonTarget.classList.add('btn-danger');
+        }
+
+        if ("csrf" in btn.dataset) {
+            this.tokenTarget.value = btn.dataset.csrf;
         }
 
         // add formaction to modal submit button

@@ -76,11 +76,11 @@
 
         </form>
         
-        {{ render(controller('App\\Pack\\Security\\Controller\\LoginController::showPasswordResetLink', {'email': email })) }}
+        {{ render(controller('Pack\\Security\\Controller\\LoginController::showPasswordResetLink', {'email': email })) }}
 
-        {% if not force_full_authentication %}
-            {{ render(controller('App\\Pack\\Security\\Controller\\LoginController::showRegistrationLink', {'email': email})) }}
-        {% endif %}
+        {# {% if not force_full_authentication %}
+            {{ render(controller('Pack\\Security\\Controller\\LoginController::showRegistrationLink', {'email': email})) }}
+        {% endif %} #}
 
     </div>
 

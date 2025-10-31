@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Entity\Interface\EntityInterface;
+use App\Helper\DateHelper;
 use App\Repository\DateRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -147,5 +148,20 @@ class Date implements EntityInterface
             ->map(static fn (Slot $slot) => $slot->getBooking()?->getMatch())
             ->filter(static fn($match) => $match !== null && $match->getGroup() === $group)
         ;
+    }
+
+    public function isPast(): bool
+    {
+        return DateHelper::isPast($this->date);
+    }
+
+    public function isFuture(): bool
+    {
+        return DateHelper::isFuture($this->date);
+    }
+
+    public function hasMatchFromGroup(Group $group): bool
+    {
+        return $this->getMatchsByGroup($group)->count() > 0;
     }
 }

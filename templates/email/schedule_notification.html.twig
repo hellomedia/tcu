@@ -1,0 +1,40 @@
+{% extends "email/layout/template.html.twig" %}
+
+{% block title %}
+
+    {% include "email/includes/_title.html.twig" with {
+        title: title
+    } %}
+
+{% endblock %}
+
+{% block paragraphs %}
+
+    {% for match in unconfirmed_matchs %}
+        {% include "email/includes/_match_schedule.html.twig" with {
+            date: match.date,
+            time: match.timeRange,
+        } %}
+    {% endfor %}
+
+{% endblock %}
+
+{% block button %}
+
+    {% include "email/includes/_button.html.twig" with {
+            url: confirmation_link,
+            label: confirmation_label
+        }
+    %}
+
+    {% include "email/includes/_spacer.html.twig" %}
+
+    {% embed "email/includes/_paragraph.html.twig" %}
+        {% block text %}
+            En cas de problème, contactez<br>
+            Léon (leon@tcuniversite.be ou 0495/53.98.34)<br>
+            ou Jeoffrey (jeoffrey.segura@gmail.com ou whatsapp).
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

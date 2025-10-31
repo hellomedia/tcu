@@ -25,7 +25,7 @@ class MatchParticipant
     #[ORM\Column(enumType: Side::class)]
     private ?Side $side = null;
 
-    #[ORM\OneToOne(mappedBy: 'participant', cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(mappedBy: 'participant', cascade: ['persist', 'remove'], fetch: 'EAGER')]
     private ?ParticipantConfirmationInfo $confirmationInfo = null;
 
     public function __toString()
@@ -60,6 +60,11 @@ class MatchParticipant
         $this->player = $player;
 
         return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->player->getUser();
     }
 
     public function getSide(): ?Side

@@ -7,8 +7,13 @@
                 <li class="hidden md:inline-flex">
                     <a href="{{ path(breadcrumb.route, breadcrumb.routeParams) }}"
                         class="inline-flex items-baseline breadcrumb-item breadcrumb-link-hover"
+                        style="gap: 5px;"
                     >
-                        <twig:ux:icon name="home" class="breadcrumb-home-svg" />
+                        {% if breadcrumb.route == 'dashboard' %}
+                            <twig:ux:icon name="chalet" class="breadcrumb-home-svg" />
+                        {% else %}
+                            <twig:ux:icon name="home" class="breadcrumb-home-svg" />
+                        {% endif %}
                     </a>
                 </li>
             {% endif %}

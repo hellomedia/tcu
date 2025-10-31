@@ -9,6 +9,8 @@ services:
         bind:
             $siteName: '%site_name%'
             $emailDomain: '%email_domain%'
+            $host: '%host%'
+            $hostAdmin: '%host_admin%'
             $environment: '%env(string:APP_ENV)%'
             $projectDir: '%kernel.project_dir%'
 
@@ -32,3 +34,9 @@ services:
     # *** This makes these services autowirable ***
     Doctrine\ORM\EntityManager: '@doctrine.orm.default_entity_manager'
     Symfony\Component\Asset\Context\RequestStackContext: '@assets.context'
+
+    # Use this service to force login link handler to be scoped to 'main' firewall,
+    # even when request stack originates from the 'admin' firewall
+    App\Security\MainLoginLinkHandler:
+        alias: 'security.authenticator.login_link_handler.main' # or security.login_link_handler.main
+        public: false

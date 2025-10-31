@@ -76,26 +76,59 @@ class DateRepository extends ServiceEntityRepository
 
 
     /**
-     * @return Date[] Returns an array of Date objects
+     * @return Date[] Returns an array of Date objects*
+     * 
+     * UNUSED BECAUSE OF HEAVY LIMITATIONS
+     * Using this results in a large number of extra queries (100+)
+     * SEE COMMENTS below.
+     * Solution is use a different approach: see FindDatesByGroups() below
      */
     public function findDatesByGroup(Group $group): array
     {
-        // IMPORTANT: DO NOT SELECT slots, bookings and matches
+        // ******** IMPORTANT LIMITATION ********* 
+        // DO NOT SELECT slots, bookings and matches
         // Or else, only the matches for the first group queried 
         // are hydrated in the date.
         // When the same date entity is seen by doctrine in another query,
-        // it reuses the cached entity, which only contains matches from the first query.
+        // it reuses the cached entity.
+        // In the date entity already loaded by doctrine, the collections for
+        // slots, bookings and matches will be the ones from the first query.
         // If we don't select the slots/bookings/matches in the query
         // date.matches is a proxy object.
         // date.matchsByGroup(group) triggers a query on matches, which returns **all the matchs**. 
         // Date::matches now contains all the matchs and date.matchsByGroup(group)
         // returns the expected matches for each group.
         return $this->createQueryBuilder('d')
-            ->innerJoin('d.slots', 's')
-            ->innerJoin('s.booking', 'b')
-            ->innerJoin('b.match', 'm')
+            ->innerJoin('d.slots', 's') // do not addSelect()
+            ->innerJoin('s.booking', 'b') // do not addSelect()
+            ->innerJoin('b.match', 'm') // do not addSelect()
             ->andWhere('m.group = :group')
             ->setParameter('group', $group)
+            ->orderBy('d.date', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    /**
+     * Fix for limitation above
+     * 
+     * 1) Use FindDatesByGroups(). It hydrates everything with full data.
+     * 2) Use Date::hasMatchFromGroup() and Date::getMatchsByGroup() to filter
+     */
+    public function findDatesByGroups(array $groups): array
+    {
+        return $this->createQueryBuilder('d')
+            ->innerJoin('d.slots', 's')->addSelect('s')
+            ->innerJoin('s.booking', 'b')->addSelect('b')
+            ->innerJoin('b.match', 'm')->addSelect('m')
+            ->andWhere('m.group IN (:groups)')
+            ->setParameter('groups', $groups)
+            ->innerJoin('m.participants', 'part')->addSelect('part')
+            ->innerJoin('part.player', 'player')->addSelect('player')
+            ->leftJoin('player.user', 'u')->addSelect('u')
+            ->leftJoin('m.result', 'res')->addSelect('res')
+            ->leftJoin('part.confirmationInfo', 'info')->addSelect('info')
             ->orderBy('d.date', 'ASC')
             ->getQuery()
             ->getResult()

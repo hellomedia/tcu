@@ -10,6 +10,7 @@ use App\Repository\GroupRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
 
 class GroupController extends BaseController
 {
@@ -23,7 +24,8 @@ class GroupController extends BaseController
         ]);
     }
 
-    #[Route('/planning/group/{id:group}/generate-matchs', name: 'admin_planning_group_generate_matchs', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
+    #[IsCsrfTokenValid('generate-matchs', tokenKey: 'token')]
+    #[Route('/planning/group/{id:group}/generate-matchs', name: 'admin_planning_group_generate_matchs', methods: ['POST'])]
     public function generateMatchs(Group $group, MatchFactory $matchFactory): Response
     {
         $matchFactory->generateGroupMatchs($group);
@@ -34,6 +36,7 @@ class GroupController extends BaseController
     /**
      * Add a series of matchs to a group with existing matchs
      */
+    #[IsCsrfTokenValid('add-matchs', tokenKey: 'token')]
     #[Route('/planning/group/{id:group}/add-matchs', name: 'admin_planning_group_add_matchs', methods: ['POST'])]
     public function addMatchs(Group $group, MatchFactory $matchFactory): Response
     {
@@ -47,6 +50,7 @@ class GroupController extends BaseController
         ]);
     }
 
+    #[IsCsrfTokenValid('regenerate-matchs', tokenKey: 'token')]
     #[Route('/planning/group/{id:group}/regenerate-matchs', name: 'admin_planning_group_regenerate_matchs', methods: ['POST'])]
     public function regenerateMatchs(Group $group, MatchFactory $matchFactory): Response
     {
@@ -60,6 +64,7 @@ class GroupController extends BaseController
         ]);
     }
 
+    #[IsCsrfTokenValid('delete-matchs', tokenKey: 'token')]
     #[Route('/planning/group/{id:group}/delete-matchs', name: 'admin_planning_group_delete_matchs', methods: ['POST'])]
     public function deleteMatchs(Group $group, MatchFactory $matchFactory): Response
     {

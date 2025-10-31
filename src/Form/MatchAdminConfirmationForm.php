@@ -3,19 +3,19 @@
 namespace App\Form;
 
 use App\Form\Model\MatchConfirmationInfo;
-use App\Form\Type\ParticipantConfirmationType;
+use App\Form\Type\ParticipantAdminConfirmationType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class MatchConfirmationForm extends AbstractType
+class MatchAdminConfirmationForm extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('infos', CollectionType::class, [
             'required' => false,
-            'entry_type' => ParticipantConfirmationType::class,
+            'entry_type' => ParticipantAdminConfirmationType::class,
             'entry_options' => ['label' => false],
             'allow_add' => false,
             'allow_delete' => false,

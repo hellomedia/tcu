@@ -50,6 +50,7 @@
                     data-html="<p>Le match devra être re-programmé</p>"
                     data-button-label="Supprimer la réservation"
                     data-variant="warning"
+                    data-csrf="{{ csrf_token('delete-booking') }}"
                 >
                     <twig:ux:icon name="delete" />
                     Supprimer

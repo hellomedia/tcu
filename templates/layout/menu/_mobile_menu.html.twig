@@ -10,15 +10,25 @@
 
 		<div class="pt-1 pb-2">
 
-			{# <a href="{{ path('admin_dashboard') }}" class="mobile-menu-item {{ is_current_page('admin_dashboard') ? 'active' }}" data-action="mobile-menu#toggle">
+			<a href="{{ path('dashboard') }}" class="mobile-menu-item {{ is_current_page('dashboard') ? 'active' }}" data-action="mobile-menu#toggle">
 				<twig:ux:icon name="account" class="mobile-menu-item-icon"/>
 				{{ 'Dashboard'|trans }}
-			</a> #}
+			</a>
 
-			{# <a href="/logout" class="mobile-menu-item" data-action="mobile-menu#toggle">
+			<a href="{{ path('my_matchs') }}" class="mobile-menu-item {{ is_current_page('my_matchs') ? 'active' }}" data-action="mobile-menu#toggle">
+				<twig:ux:icon name="account" class="mobile-menu-item-icon"/>
+				Mes matchs
+			</a>
+    
+			<a href="{{ path('my_group') }}" class="mobile-menu-item {{ is_current_page('my_group') ? 'active' }}" data-action="mobile-menu#toggle">
+				<twig:ux:icon name="account" class="mobile-menu-item-icon"/>
+				Ma poule
+			</a>
+
+			<a href="/logout" class="mobile-menu-item" data-action="mobile-menu#toggle">
 				<twig:ux:icon name="logout" class="mobile-menu-item-icon"/>
 				{{ 'Logout'|trans }}
-			</a> #}
+			</a>
 
 		</div>
 

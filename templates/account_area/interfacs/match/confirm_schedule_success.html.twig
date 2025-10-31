@@ -1,0 +1,9 @@
+{% embed 'component/modal/success.html.twig' %}
+	{% block streams %}
+		<turbo-stream action="replace" target="match-{{ match.id }}-confirmation-status">
+			<template>
+				{% include 'account_area/interfacs/match/_confirmation_status.html.twig' %}
+			</template>
+		</turbo-stream>
+	{% endblock %}
+{% endembed %}

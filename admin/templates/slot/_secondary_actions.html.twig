@@ -27,6 +27,7 @@
                 data-html="<p>Les plages horaires de cette date et les réservations associées seront supprimées</p>"
                 data-button-label="Supprimer la date"
                 data-variant="warning"
+                data-csrf="{{ csrf_token('delete-date') }}"
             >
                 <twig:ux:icon name="delete" />
                 Supprimer la date

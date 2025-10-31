@@ -1,0 +1,19 @@
+<div class="match-confirmation-status" id="match-{{ match.id }}-confirmation-status">
+    {% if match.isConfirmed(app.user) %}
+    {# Confirmed by user or by admin  #}
+        <span class="confirmed">
+            <twig:ux:icon name="check" width="20px" /> CONFIRMÉ
+        </span>
+    {% else %}
+        <button type="button" 
+            class="btn btn-primary"
+            formaction="{{ path('my_matchs_confirm_schedule', {id: match.id}) }}"
+            data-action="modal-confirm#open"
+            data-title="Confirmer l'horaire"
+            data-button-label="Confirmer"
+            data-csrf="{{ csrf_token('confirm-schedule') }}"
+        >
+            Confirmer l'horaire
+        </button>
+    {% endif %}
+</div>

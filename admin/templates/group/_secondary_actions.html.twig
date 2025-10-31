@@ -28,6 +28,7 @@
                         data-title="Ajouter 1 série de matchs"
                         data-html="<p>Chaque joueur joue 1x de plus contre les autres joueurs de la poule</p>"
                         data-button-label="Ajouter 1 série de matchs"
+                        data-csrf="{{ csrf_token('add-matchs') }}"
                     >
                         <twig:ux:icon name="add" />
                         Ajouter 1 série de matchs
@@ -41,6 +42,7 @@
                         data-html="<p>Attention, les matchs existants seront supprimés!</p>"
                         data-button-label="Regénérer les matchs"
                         data-variant="warning"
+                        data-csrf="{{ csrf_token('regenerate-matchs') }}"
                     >
                         <twig:ux:icon name="refresh" />
                         Regénérer les matchs
@@ -54,6 +56,7 @@
                         data-html="<p>Les matchs et les réservations associées seront supprimés.</p>"
                         data-button-label="Supprimer les matchs"
                         data-variant="warning"
+                        data-csrf="{{ csrf_token('delete-match') }}"
                     >
                         <twig:ux:icon name="delete" />
                         Supprimer les matchs

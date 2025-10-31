@@ -28,7 +28,7 @@
                 {% block header_logo %}
                     {% if page_title %}
                         {% if ea is defined %}
-                            <a class="logo {{ page_title|length > 14 ? 'logo-long' }}" title="{{ page_title|striptags }}" href="/" }}">
+                            <a class="logo {{ page_title|length > 14 ? 'logo-long' }}" title="{{ page_title|striptags }}" href="/">
                                 {{ page_title|raw }}
                             </a>
                         {% else %}

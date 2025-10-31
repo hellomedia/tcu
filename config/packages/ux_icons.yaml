@@ -2,6 +2,7 @@ ux_icons:
     aliases:
         theme: 'ix:light-dark'
         home: 'ph:house'
+        chalet: 'pajamas:home'
         back: 'ic:round-arrow-back-ios'
         forward: 'ic:round-arrow-forward-ios'
         trash: 'lucide:trash-2'
@@ -39,3 +40,4 @@ ux_icons:
         confirm-user: 'streamline-block:basic-ui-confirm-user'
         check: 'mingcute:check-fill'
         cross: 'maki:cross'
+        send-email: 'streamline:send-email'

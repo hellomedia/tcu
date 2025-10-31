@@ -53,18 +53,11 @@
     .players {
         width: 100%;
         margin-bottom: 10px;
-        td, th {
-            padding: 3px;
-        }
-        td:first-child, th:first-child {
-            padding-left: 0;
-        }
-        td:last-child, th:last-child {
-            padding-right: 0;
-        }
         .rank {
             width: 18px;
+            padding-right: 0;
         }
+        th,
         .ranking,
         .points,
         .matchs-played {
@@ -74,7 +67,6 @@
     .dates {
         display: grid;
         grid-template-columns: 1fr auto; /* sides | time or score */
-        gap: 10px;
     }
     .date {
         margin-top: 20px;
@@ -101,13 +93,6 @@
         }
     }
 
-    .side-separator {
-        display: none;
-        @media (min-width: 600px) {
-            display: inline;
-        }
-    }
-
     .nowrap {
         white-space: nowrap;
     }
@@ -116,9 +101,29 @@
         /* first column */
         display: flex;
         flex-direction: column;
+        border-left: 1px solid #f1f3f5;
     }
+
+    .sides,
+    .score,
+    .time {
+        padding: 10px 16px;
+        background: #f9fafb;
+        border-top: 1px solid #f1f3f5;
+        border-bottom: 1px solid #f1f3f5;
+        margin-top: 15px;
+        margin-bottom: 15px;
+    }
+
+    .score, .time {
+        border-right: 1px solid #f1f3f5;
+    }
+
     .score {
         /* second column */
+        display: flex;
+        flex-direction: row;
+        align-items: center;
         td {
             padding-inline: 4px;
         }
@@ -135,7 +140,6 @@
         display: flex;
         flex-direction: row;
         align-items: center;
-        gap: 5px;
     }
 
 </style>
@@ -147,7 +151,7 @@
                 <div class="group-header">
                     <h4>{{ group }}</h4>
                 </div>
-                <table class="players">
+                <table class="table players">
                     <tr>
                         <th></th>
                         <th></th>
@@ -169,60 +173,62 @@
                     {% endfor %}
                 </table>
                 <div class="dates">
-                    {% for date in dates[group.id] %}
-                        <h5 class="date">{{ date }}</h5>
-                        <div class="matchs">
-                            {% for match in date.matchsByGroup(group) %}
-                                <div class="match {{ match.result ? 'with-result' }}">
-                                    <div class="sides">
-                                        <div class="side">
-                                            {% for player in match.playersForSide(enum('App\\Enum\\Side').A) %}
-                                                {{ loop.index == 2 ? ' - ' }}
-                                                <span class="player">{{ player }}</span>
-                                            {% endfor %}
+                    {% for date in dates %}
+                        {% if date.hasMatchFromGroup(group) %}
+                            <h5 class="date">{{ date }}</h5>
+                            <div class="matchs">
+                                {% for match in date.matchsByGroup(group) %}
+                                    <div class="match {{ match.result ? 'with-result' }}">
+                                        <div class="sides">
+                                            <div class="side">
+                                                {% for player in match.playersForSide(enum('App\\Enum\\Side').A) %}
+                                                    {{ loop.index == 2 ? ' - ' }}
+                                                    <span class="player">{{ player }}</span>
+                                                {% endfor %}
+                                            </div>
+                                            <div class="side">
+                                                {% for player in match.playersForSide(enum('App\\Enum\\Side').B) %}
+                                                    {{ loop.index == 2 ? ' - ' }}
+                                                    <span class="player">{{ player }}</span>
+                                                {% endfor %}
+                                            </div>
                                         </div>
-                                        <div class="side">
-                                            {% for player in match.playersForSide(enum('App\\Enum\\Side').B) %}
-                                                {{ loop.index == 2 ? ' - ' }}
-                                                <span class="player">{{ player }}</span>
-                                            {% endfor %}
-                                        </div>
+                                        
+                                        {% set result = match.result %}
+                                        {% if result %}
+                                            <div class="score">
+                                                <table>
+                                                    <tr>
+                                                        <td>{{ result.set1A }}</td>
+                                                        {% if result.set2A or result.set2B %}
+                                                            <td>{{ result.set2A }}</td>
+                                                        {% endif %}
+                                                        {% if result.set3A or result.set3B %}
+                                                            <td>{{ result.set3A }}</td>
+                                                        {% endif %}
+                                                    </tr>
+                                                    <tr>
+                                                        <td>{{ result.set1B }}</td>
+                                                        {% if result.set2A or result.set2B %}
+                                                            <td>{{ result.set2B }}</td>
+                                                        {% endif %}
+                                                        {% if result.set3A or result.set3B %}
+                                                            <td>{{ result.set3B }}</td>
+                                                        {% endif %}
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        {% elseif match.booking %}
+                                            <div class="time">
+                                                <span class="nowrap">{{ match.timeRange }}</span>
+                                            </div>
+                                        {% else %}
+                                            <div></div>
+                                        {% endif %}
                                     </div>
-                                    
-                                    {% set result = match.result %}
-                                    {% if result %}
-                                        <div class="score">
-                                            <table>
-                                                <tr>
-                                                    <td>{{ result.set1A }}</td>
-                                                    {% if result.set2A or result.set2B %}
-                                                        <td>{{ result.set2A }}</td>
-                                                    {% endif %}
-                                                    {% if result.set3A or result.set3B %}
-                                                        <td>{{ result.set3A }}</td>
-                                                    {% endif %}
-                                                </tr>
-                                                <tr>
-                                                    <td>{{ result.set1B }}</td>
-                                                    {% if result.set2A or result.set2B %}
-                                                        <td>{{ result.set2B }}</td>
-                                                    {% endif %}
-                                                    {% if result.set3A or result.set3B %}
-                                                        <td>{{ result.set3B }}</td>
-                                                    {% endif %}
-                                                </tr>
-                                            </table>
-                                        </div>
-                                    {% elseif match.booking %}
-                                        <div class="time">
-                                            <span class="nowrap">{{ match.timeRange }}</span>
-                                        </div>
-                                    {% else %}
-                                        <div></div>
-                                    {% endif %}
-                                </div>
-                            {% endfor %}
-                        </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
                     {% endfor %}
                 </div>
             </div>

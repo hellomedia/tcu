@@ -4,10 +4,12 @@ namespace App\Mailer;
 
 use Doctrine\ORM\EntityManager;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\BodyRendererInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Http\LoginLink\LoginLinkHandlerInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class BaseMailer
@@ -15,11 +17,18 @@ abstract class BaseMailer
     public function __construct(
         protected string $siteName,
         protected string $emailDomain,
+        protected string $host,
+        protected string $hostAdmin,
         protected MailerInterface $mailer,
         protected UrlGeneratorInterface $router,
         protected TranslatorInterface $translator,
         protected EntityManager $entityManager,
         private BodyRendererInterface $bodyRenderer,
+        // be specific about the loginlink we inject because it is scoped to the firewall
+        // and the request might come from the 'admin' firewall
+        // App\Security\MainLoginLinkHandler is an alias defined in services.yaml
+        #[Autowire(service: 'App\Security\MainLoginLinkHandler')]
+        protected LoginLinkHandlerInterface $loginLinkHandler,
     ) {
     }
 
@@ -71,6 +80,42 @@ abstract class BaseMailer
             name: $route,
             parameters: $parameters,
             referenceType: UrlGeneratorInterface::ABSOLUTE_URL,
+        );
+    }
+
+    /**
+     * Useful when generating absolute urls from admin
+     * if admin on different domain (controlroom) or subdomain (admin.tcuniversite.be)
+     */
+    protected function generatePublicSiteAbsoluteUrl(string $route, array $parameters = []): string
+    {
+        $routercontext = $this->router->getContext();
+        $originalHost = $routercontext->getHost();
+        $publicSiteHost = $this->host;
+
+        $routercontext->setHost($publicSiteHost);
+
+        $url = $this->router->generate(
+            name: $route,
+            parameters: $parameters,
+            referenceType: UrlGeneratorInterface::ABSOLUTE_URL,
+        );
+
+        $routercontext->setHost($originalHost);
+
+        return $url;
+    }
+
+    /**
+     * Login link can be created inside admin, thus with admin host request context.
+     * In that case, we need to manually replace the admin host by public site host
+     */
+    protected function fixLoginLinkHost(string $url): string
+    {
+        return \str_replace(
+            search: $this->hostAdmin,
+            replace: $this->host,
+            subject: $url
         );
     }
 }

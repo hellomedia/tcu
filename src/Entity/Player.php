@@ -68,6 +68,9 @@ class Player implements EntityInterface
     #[ORM\OneToMany(targetEntity: MatchParticipant::class, mappedBy: 'player')]
     private Collection $matchParticipations;
 
+    #[ORM\OneToOne(mappedBy: 'player', cascade: ['persist', 'remove'])]
+    private ?User $user = null;
+
     public function __construct()
     {
         $this->groups = new ArrayCollection();
@@ -257,8 +260,36 @@ class Player implements EntityInterface
      */
     public function getNonScheduledMatchs(): Collection
     {
-        $filtered = $this->getMatchs()->filter(function(InterfacMatch $match) {
+        return $this->getMatchs()->filter(function(InterfacMatch $match) {
             return $match->isScheduled() == false;
+        });
+    }
+
+    /**
+     * @return Collection<int, InterfacMatch>
+     */
+    public function getUnconfirmedScheduledMatchs(): Collection
+    {
+        $filtered = $this->getScheduledMatchs()->filter(function (InterfacMatch $match) {
+            return $match->isConfirmedByUser($this->user) === false;
+        });
+
+        $sorted = $filtered->toArray();
+
+        usort($sorted, function (InterfacMatch $a, InterfacMatch $b) {
+            return $a->getDateEntityDate() <=> $b->getDateEntityDate();
+        });
+
+        return new ArrayCollection($sorted);
+    }
+
+    /**
+     * @return Collection<int, InterfacMatch>
+     */
+    public function getConfirmedScheduledMatchs(): Collection
+    {
+        $filtered = $this->getScheduledMatchs()->filter(function (InterfacMatch $match) {
+            return $match->isConfirmedByUser($this->user) === true;
         });
 
         $sorted = $filtered->toArray();
@@ -326,6 +357,28 @@ class Player implements EntityInterface
     public function setPhone(?string $phone): static
     {
         $this->phone = $phone;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        // unset the owning side of the relation if necessary
+        if ($user === null && $this->user !== null) {
+            $this->user->setPlayer(null);
+        }
+
+        // set the owning side of the relation if necessary
+        if ($user !== null && $user->getPlayer() !== $this) {
+            $user->setPlayer($this);
+        }
+
+        $this->user = $user;
 
         return $this;
     }

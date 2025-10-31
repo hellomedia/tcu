@@ -42,7 +42,7 @@
 
 			<div class="flex">
 
-				{# {% if is_granted('ROLE_USER') %}
+				{% if is_granted('ROLE_USER') %}
 					<div class="hidden lg:flex lg:mr-0 md:items-center">
 						{% include "layout/menu/_account_menu.html.twig" %}
 					</div>
@@ -52,7 +52,7 @@
 					<div class="hidden md:flex items-center md:mr-5">
 						<a href="{{ path('login') }}" />{{ 'Login'|trans }}</a>
 					</div>
-				{% endif %} #}
+				{% endif %}
 
 				<div
 					class="-mr-2 flex items-center lg:hidden"

@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Group;
 use App\Entity\InterfacMatch;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -43,7 +44,7 @@ class InterfacMatchRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    public function getNonProgammedMatchsQueryBuilder(Group $group): QueryBuilder
+    public function getNonScheduledMatchsQueryBuilder(Group $group): QueryBuilder
     {
         return $this->createQueryBuilder('m')
             ->leftJoin('m.booking', 'b')->addSelect('b')
@@ -59,5 +60,52 @@ class InterfacMatchRepository extends ServiceEntityRepository
             ->leftJoin('booking.slot', 'slot')->addSelect('slot')
             ->leftJoin('slot.date', 'date')->addSelect('date')
         ;
+    }
+
+    /**
+     * Upcoming matchs = scheduled in future
+     */
+    public function findUpcomingMatchs(User $user): array
+    {
+        $qb = $this->createQueryBuilder('m')
+            ->join('m.booking', 'b')->addSelect('b') // INNER JOIN
+            ->join('m.participants', 'part')->addSelect('part')
+            ->join('part.player', 'player')->addSelect('player')
+            ->join('player.user', 'u')->addSelect('u')
+            ->andWhere('u = :user')
+            ->setParameter('user', $user)
+            ->leftJoin('m.result', 'result')->addSelect('result') // don't understand why but avoids extra queries
+            ->join('b.slot', 'slot')->addSelect('slot')
+            ->join('slot.date', 'date')->addSelect('date')
+            ->andWhere('date.date >= CURRENT_DATE()')
+            ->join('part.confirmationInfo', 'info')->addSelect('info')
+            ->addOrderBy('date.date', 'ASC')
+            // add other participants
+            ->join('m.participants', 'otherparticipants')->addSelect('otherparticipants')
+            ->leftJoin('otherparticipants.confirmationInfo', 'otherinfos')->addSelect('otherinfos') // leftJoin. might not exist.
+            ->join('otherparticipants.player', 'otherplayers')->addSelect('otherplayers')
+        ;
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function findNonScheduledMatchs(User $user): array
+    {
+        $qb = $this->createQueryBuilder('m')
+            ->leftJoin('m.booking', 'b')->addSelect('b')
+            ->andWhere('b.id IS NULL')
+            ->join('m.participants', 'part')->addSelect('part')
+            ->join('part.player', 'player')->addSelect('player')
+            ->join('player.user', 'u')->addSelect('u')
+            ->andWhere('u = :user')
+            ->setParameter('user', $user)
+            ->leftJoin('m.result', 'result')->addSelect('result') // don't understand why but avoids extra queries
+            // add other participants
+            ->join('m.participants', 'otherparticipants')->addSelect('otherparticipants')
+            ->leftJoin('otherparticipants.confirmationInfo', 'otherinfos')->addSelect('otherinfos') // leftJoin. might not exist
+            ->join('otherparticipants.player', 'otherplayers')->addSelect('otherplayers')
+        ;
+
+        return $qb->getQuery()->getResult();
     }
 }

@@ -10,17 +10,14 @@
 			data-modal-target="modal"
 			role="dialog" aria-modal="true"
 		>
-			<turbo-frame id="modal-frame">
+            {# In Easydamin, Turbo is disabled on <html> element 
+                ==> add data-turbo="true" to activate turbo for this turbo-frame #}
+			<turbo-frame id="modal-frame" data-turbo="true">
 
-				{# 1. Turbo expects a form submission to return a redirect unless it is inside a turbo-frame #}
+				{# Turbo expects a form submission to return a redirect unless it is inside a turbo-frame #}
 				{# so submitting the original form in the page throws a js error #}
 				{# so add a form here and submit this one when the submit button is clicked #}
-                {# ------------------------------------------ #}
-                {# 2. When used inside Easydamin, Turbo is not active and we must add  'data-turbo-frame'
-                    for the turbo frame behaviour to be picked up.
-                    It is not necessary outside of easyadmin, but it does not hurt to always have it there
-                  #}
-				<form class="modal-inner-layout" method="POST" data-turbo-frame="modal-frame">
+				<form class="modal-inner-layout" method="POST">
 
 					<div data-modal-confirm-target="icon" class="modal-icon-container"></div>
 
@@ -29,6 +26,7 @@
 					<div data-modal-confirm-target="details" class="modal-details"></div>
 
 					<input type="hidden" name="from_route" value="{{ app.current_route }}" />
+					<input data-modal-confirm-target="token" type="hidden" name="token" value="" />
 
 					{% embed "component/modal/_actions.html.twig" %}
 						{% block submit_attributes %}

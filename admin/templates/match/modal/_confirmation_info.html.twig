@@ -3,15 +3,58 @@
 {# important to avoid theme conflicts #}
 {% form_theme form with ['@admin/form/form_theme.html.twig'] only %}
 
-<turbo-frame id="modal-frame">
+<turbo-frame id="modal-frame" data-turbo="true">
 
     <style>
         table th, td {
             text-align: center;
             vertical-align: middle;
         }
+        .player-wrapper {
+            height: 70px;
+            display:flex;
+            align-items:center;
+            gap:10px;
+        }
         .form-group {
             padding-bottom: 5px;
+        }
+        .inner-cell {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .place-holder {
+            content: " ";
+            height: 50px;
+        }
+        .mid {
+            height: 30px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            .form-switch {
+                padding: 0;
+                .form-check {
+                    min-height: auto;
+                }
+                label {
+                    display: none;
+                }
+            }
+            .flex-fill {
+                /* added by easyadmin form theme */
+                display: none;
+            }
+        }
+        .bottom {
+            height: 50px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .bottom-text {
+            font-size: 12px;
         }
 
     </style>
@@ -40,37 +83,48 @@
                     {# ParticipantConfirmationInfo entity #}
                     <tr>
                         <td>
-                            <div style="height: 70px;display:flex;align-items:center;gap:10px;">
-                                <span class="player-confirmation-indicator {{ data.confirmed ? 'confirmed' }}"></span>
+                            <div class="player-wrapper">
+                                <span id="confirmation-indicator-{{ data.participant.id }}"
+                                    class="player-confirmation-indicator {{ data.confirmed ? 'confirmed' }}">
+                                </span>
                                 {{ data.participant.player.name }}
                             </div>
                         </td>
                         <td>
-                            {% if data.isEmailSent %}
-                                <twig:ux:icon name="check" width="24px" />
-                                <br>
-                                {{ data.emailSentAt ? data.emailSentAt|date('d/m/Y H:i') }}
-                            {% else %}
-                                <twig:ux:icon name="cross" width="24px" />
-                            {% endif %}
+                            {# NB: includes 'send email' button linked to form living outside of (after) this form #}
+                            {% include '@admin/confirmation/_participant_email_notification_info.html.twig' %}
                         </td>
                         <td>
-                            {% if data.confirmedByPlayer %}
-                                <twig:ux:icon name="check" width="24px" />
-                                <br>
-                                {{ data.confirmedByPlayerAt ? data.confirmedByPlayerAt|date('d/m/Y H:i') }}
-                            {% else %}
-                                <twig:ux:icon name="cross" width="24px" />
-                            {% endif %}
+                            <div class="inner-cell">
+                                <div class="place-holder"></div>
+                                <div class="mid">
+                                    {% if data.confirmedByPlayer %}
+                                        <twig:ux:icon name="check" style="color:green" width="24px" />
+                                    {% else %}
+                                        <twig:ux:icon name="cross" width="24px" />
+                                    {% endif %}
+                                </div>
+                                <div class="bottom bottom-text">
+                                    {% if data.confirmedByPlayer %}
+                                        Confirmé le {{ data.confirmedByPlayerAt ? data.confirmedByPlayerAt|date('d/m/Y H:i') }}
+                                    {% endif %}
+                                </div>
+                            </div>
                         </td>
                         <td>
-                            {{ form_row(row.isConfirmedByAdmin) }}
-
-                            {% if data.confirmedByAdmin %}
-                                Confirmé par {{ data.admin.name }}
-                                <br>
-                                le {{ data.confirmedByAdminAt ? data.confirmedByAdminAt|date('d/m/Y H:i') }}
-                            {% endif %}
+                            <div class="inner-cell">
+                                <div class="place-holder"></div>
+                                <div class="mid">
+                                    {{ form_row(row.isConfirmedByAdmin) }}
+                                </div>
+                                <div class="bottom bottom-text">
+                                    {% if data.confirmedByAdmin %}
+                                        Confirmé par {{ data.admin.name }}
+                                        <br>
+                                        le {{ data.confirmedByAdminAt ? data.confirmedByAdminAt|date('d/m/Y H:i') }}
+                                    {% endif %}
+                                </div>
+                            </div>
                         </td>
                     </tr>
                 {% endfor %}
@@ -81,8 +135,21 @@
             {{ form_rest(form) }}
         </div>
 
-        {% include 'component/modal/_actions.html.twig' %}
+        {% embed 'component/modal/_actions.html.twig' %}
+            {% block cancel_label %}Fermer{% endblock %}
+        {% endembed %}
     
     </form>
+
+    {% for row in form.infos %}
+        {% set data = row.vars.data %}
+        {# Nested forms are not allowed ==> the forms for 'send email' buttons live here
+          -- outside of main form -- Buttons has a "form" attribute set to this form id #}
+        <form method="post" id="send-email-form-{{ data.participant.id }}"
+            action="{{ path('confirmation_send_email', {'id': data.participant.id }) }}"
+        >
+            <input type="hidden" name="token" value="{{ csrf_token('send-email') }}" />
+        </form>
+    {% endfor %}
 
 </turbo-frame>

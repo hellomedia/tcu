@@ -5,7 +5,7 @@
             class="btn btn-default"
             data-action="modal#close"
         >
-            {{ 'Cancel'|trans }}
+            <span data-modal-confirm-target="cancelButtonLabel">{% block cancel_label 'Cancel'|trans %}</span>
         </button>
     {% endblock %}
     {% block submit_button %}

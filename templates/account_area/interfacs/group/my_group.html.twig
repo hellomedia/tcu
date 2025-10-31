@@ -1,0 +1,249 @@
+{% extends 'layout/account_area.html.twig' %}
+
+{% block content %}
+
+	<style>
+		.groups {
+			display: grid;
+			gap: 30px;
+			/* edge-to-edge */
+			margin-inline: calc(var(--spacing) *(-6)); /* inverse of default-container-x-padding */
+			.group {
+				border-radius: 0;
+				padding: 0 25px;
+			}
+			.long {
+				display: none;
+			}
+			@media(min-width: 600px) {
+				/* end of edge-to-edge */
+				margin-inline: 0;
+				.group {
+					border-radius: 3px;
+                    padding: 0;
+                    .table {
+                        margin-inline: 0;
+                        width: 100%;
+                    }
+				}
+				.short {
+					display: none;
+				}
+				.long {
+					display: inline;
+				}
+			}
+			@media(min-width: 1000px) {
+				grid-template-columns: 1fr 1fr;
+			}
+		}
+
+		.group {
+			border: 0 solid #ddd;
+			background-color: #fff;
+		}
+		.group-header {
+			display: flex;
+			justify-content: space-between;
+			gap: 10px;
+			margin-bottom: 0;
+		}
+		h4 {
+			margin-bottom: 20px;
+			font-weight: bold;
+		}
+		.players {
+			width: 100%;
+			margin-bottom: 10px;
+			.rank {
+				width: 18px;
+                padding-right: 0;
+			}
+			th, 
+            .ranking,
+			.points,
+			.matchs-played {
+				text-align: center;
+			}
+		}
+		.dates {
+            margin-top: 50px;
+			display: grid;
+			grid-template-columns: 1fr auto; /* sides | time or score */
+			gap: 0;
+		}
+		.date {
+			margin-top: 20px;
+			grid-column: span 2;
+			font-weight: bold;
+		}
+
+		.matchs {
+			/* prentend div does not exist for grid and exposes children to the grid ! */
+			/* allows to keep div for semantic markup without getting in the way of the grid ! */
+			display: contents;
+		}
+
+		.match {
+			/* prentend div does not exist for grid and exposes children to the grid ! */
+			/* allows to keep div for semantic markup without getting in the way of the grid ! */
+			display: contents;
+		}
+
+		.side {
+			display: block;
+            
+			@media(min-width: 600px) {
+				display: inline;
+			}
+		}
+
+		.nowrap {
+			white-space: nowrap;
+		}
+
+		.sides {
+			/* first column */
+			display: flex;
+			flex-direction: column;
+            border-left: 1px solid #f1f3f5;
+		}
+
+        .sides,
+        .score,
+        .time {
+            padding: 10px 16px;
+            background: #f9fafb;
+            border-top: 1px solid #f1f3f5;
+            border-bottom: 1px solid #f1f3f5;
+            margin-top: 15px;
+            margin-bottom: 15px;
+        }
+
+        .score, .time {
+            border-right: 1px solid #f1f3f5;
+        }
+
+		.score {
+            display: flex;
+			flex-direction: row;
+			align-items: center;
+			/* second column */
+			td {
+				padding-inline: 4px;
+			}
+			td:first-child {
+				padding-left: 0;
+			}
+			td:last-child {
+				padding-right: 0;
+			}
+		}
+		.time {
+			/* second column */
+			text-align: right;
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+		}
+	</style>
+
+	<div class="groups">
+
+		{% for group in groups %}
+			<div class="group">
+				<div class="group-header">
+					<h4>{{ group }}</h4>
+				</div>
+				<table class="table players">
+					<tr>
+						<th></th>
+						<th></th>
+						<th></th>
+						<th>
+							<span class="short">Joués</span>
+							<span class="long">Matchs joués</span>
+						</th>
+						<th>
+							<span class="short">Pts</span>
+							<span class="long">Points</span>
+						</th>
+					</tr>
+					{% for row in standings[group.id] %}
+						<tr>
+							<td class="rank">{{ loop.index }}.</td>
+							<td class="player">
+								<span class="nowrap">{{ row.player.firstname }}</span>
+								<span class="nowrap">{{ row.player.lastname }}</span>
+							</td>
+							<td class="ranking">{{ row.player.ranking.value }}</td>
+							<td class="matchs-played">{{ row.matchsPlayed}}</td>
+							<td class="points">{{ row.points }}</td>
+						</tr>
+					{% endfor %}
+				</table>
+				<div class="dates">
+                    {% for date in dates %}
+                        {% if date.hasMatchFromGroup(group) %}
+                            <h5 class="date">{{ date }}</h5>
+                            <div class="matchs">
+                                {% for match in date.matchsByGroup(group) %}
+                                    <div class="match {{ match.result ? 'with-result' }}">
+                                        <div class="sides">
+                                            <div class="side sideA">
+                                                {% for player in match.playersForSide(enum('App\\Enum\\Side').A) %}
+                                                    {{ loop.index == 2 ? ' - ' }}
+                                                    <span class="player">{{ player }}</span>
+                                                {% endfor %}
+                                            </div>
+                                            <div class="side sideB">
+                                                {% for player in match.playersForSide(enum('App\\Enum\\Side').B) %}
+                                                    {{ loop.index == 2 ? ' - ' }}
+                                                    <span class="player">{{ player }}</span>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+
+                                        {% set result = match.result %}
+                                        {% if result %}
+                                            <div class="score">
+                                                <table>
+                                                    <tr>
+                                                        <td>{{ result.set1A }}</td>
+                                                        {% if result.set2A or result.set2B %}
+                                                            <td>{{ result.set2A }}</td>
+                                                        {% endif %}
+                                                        {% if result.set3A or result.set3B %}
+                                                            <td>{{ result.set3A }}</td>
+                                                        {% endif %}
+                                                    </tr>
+                                                    <tr>
+                                                        <td>{{ result.set1B }}</td>
+                                                        {% if result.set2A or result.set2B %}
+                                                            <td>{{ result.set2B }}</td>
+                                                        {% endif %}
+                                                        {% if result.set3A or result.set3B %}
+                                                            <td>{{ result.set3B }}</td>
+                                                        {% endif %}
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        {% elseif match.booking %}
+                                            <div class="time">
+                                                <span class="nowrap">{{ match.timeRange }}</span>
+                                            </div>
+                                        {% else %}
+                                            <div></div>
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+					{% endfor %}
+				</div>
+			</div>
+		{% endfor %}
+
+	</div>
+
+{% endblock %}

@@ -20,6 +20,7 @@ use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
 
 class SlotController extends BaseController
 {
@@ -146,10 +147,17 @@ class SlotController extends BaseController
         ]);
     }
 
-    #[Route('/planning/slot/{id:slot}/remove-booking', name: 'admin_planning_slot_remove_booking')]
+    #[IsCsrfTokenValid('delete-booking', tokenKey: 'token')]
+    #[Route('/planning/slot/{id:slot}/remove-booking', name: 'admin_planning_slot_remove_booking', methods: ['POST'])]
     public function removeBooking(Slot $slot, Request $request): Response
     {        
         $booking = $slot->getBooking();
+
+        $confirmationInfos = $booking->getMatch()->getConfirmationInfos();
+
+        foreach ($confirmationInfos as $info) {
+            $this->entityManager->remove($info);
+        }
 
         $this->entityManager->remove($booking);
 

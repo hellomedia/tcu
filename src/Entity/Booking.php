@@ -81,4 +81,9 @@ class Booking implements EntityInterface
     {
         return $this->slot->getCourt();
     }
+
+    public function getDate(): Date
+    {
+        return $this->slot->getDate();
+    }
 }
