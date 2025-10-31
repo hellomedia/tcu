@@ -3,12 +3,17 @@
 namespace Admin\Controller;
 
 use App\Entity\User;
-use App\Enum\AccountLanguage;
+use Doctrine\DBAL\Types\Types;
+use Doctrine\ORM\QueryBuilder;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
@@ -16,19 +21,11 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\TextFilter;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[IsGranted('ROLE_MANAGER')]
-class UserCrudController extends AbstractCrudController
+class AdminCrudController extends AbstractCrudController
 {
-
-    public function __construct(
-        private UserPasswordHasherInterface $passwordHasher)
-    {
-        
-    }
-
     public static function getEntityFqcn(): string
     {
         return User::class;
@@ -37,8 +34,8 @@ class UserCrudController extends AbstractCrudController
     public function configureCrud(Crud $crud): Crud
     {
         return $crud
-            ->setEntityLabelInSingular('User')
-            ->setEntityLabelInPlural('Users')
+            ->setEntityLabelInSingular('Admin')
+            ->setEntityLabelInPlural('Admins')
         ;
     }
 
@@ -78,24 +75,20 @@ class UserCrudController extends AbstractCrudController
         ;
     }
 
-    // When we create a user from the admin interface, generate a random password
-    public function createEntity(string $entityFqcn)
+    public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
     {
-        $user = new User();
+        $queryBuilder = parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters);
 
-        $randomString = bin2hex(random_bytes(10)); // 20 chars
+        // roles is a json datatype in DB
+        // We cast it to text to be able to search with LIKE
+        // CAST() function is defined in Doctrine/Functions/Cast.php
+        $queryBuilder
+            ->andWhere("CAST(entity.roles, 'TEXT') LIKE '%ROLE_ADMIN%'")
+            ->orWhere("CAST(entity.roles, 'TEXT') LIKE '%ROLE_EDITOR%'")
+            ->orWhere("CAST(entity.roles, 'TEXT') LIKE '%ROLE_MANAGER%'")
+            ->orWhere("CAST(entity.roles, 'TEXT') LIKE '%ROLE_SUPER_ADMIN%'")
+        ;
 
-        $user->setPassword(
-            $this->passwordHasher->hashPassword(
-                $user,
-                $randomString,
-            )
-        );
-
-        $user->setAccountLanguage(AccountLanguage::FRENCH);
-
-        return $user;
+        return $queryBuilder;
     }
-
-
 }

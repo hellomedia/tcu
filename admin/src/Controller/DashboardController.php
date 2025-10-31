@@ -118,6 +118,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Terrains', 'fa fa-calendar-day', Court::class)
             ->setPermission('ROLE_MANAGER');
         yield MenuItem::linkToCrud('Admins', 'fa fa-user', User::class)
+            ->setController(AdminCrudController::class)
             ->setPermission('ROLE_MANAGER');
         
         yield MenuItem::section('Dev Admin')
@@ -127,6 +128,9 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Réservations', 'fa fa-calendar', Booking::class)
             ->setPermission('ROLE_SUPER_ADMIN');
         yield MenuItem::linkToCrud('Créneaux', 'fa fa-calendar', Slot::class)
+            ->setPermission('ROLE_SUPER_ADMIN');
+        yield MenuItem::linkToCrud('Users', 'fa fa-user', User::class)
+            ->setController(UserCrudController::class)
             ->setPermission('ROLE_SUPER_ADMIN');
     }
 

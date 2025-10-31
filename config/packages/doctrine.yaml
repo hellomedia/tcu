@@ -45,6 +45,9 @@ doctrine:
                 dir: '%kernel.project_dir%/packs/Security/Entity'
                 prefix: 'Pack\Security\Entity'
                 alias: App # simpler to just re-use App which does not have to be unique
+        dql:
+            string_functions:
+                cast: App\Doctrine\Functions\Cast
         controller_resolver:
             auto_mapping: false
 
