@@ -1,15 +1,12 @@
 # SYMFONY INTERNALS OVERRIDE
 # key from symfony security component (with final dot)
 Username could not be found.: >
-    <b>Cet email ne correspond pas à un compte existant</b>.
-    <br/><br/>
-    Le compte est-il lié à un autre email ?
+    <b>Cet email ne correspond pas à un compte existant</b>
 # key from symfony security component (with final dot)
 Invalid credentials.: >
     <b>Le mot de passe ne correspond pas.</b>
     <br/><br/>
-    Si tu as oublié le mot de passe,
-    tu peux le réinitialiser via le lien ci-dessous.
+    Tu peux réinitialiser le mot de passe via le lien ci-dessous.
 # HELLO KOT
 # Unconfirmed Accounts
 unconfirmed:

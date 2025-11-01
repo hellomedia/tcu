@@ -11,19 +11,19 @@
 			<span class="bottom-menu-label">Interfacs</span>
 		</a>
 
-		{# {% if is_granted('ROLE_USER') %}
+		{% if is_granted('ROLE_USER') %}
 			<a href="{{ path('admin_dashboard') }}" class="bottom-menu-link">
 				<twig:ux:icon name="account" style="height: 28px"/>
-				<span class="bottom-menu-label">Account</span>
+				<span class="bottom-menu-label">Mon TCU</span>
 			</a>
-		{% endif %} #}
+		{% endif %}
 
-		{# {% if not is_granted('ROLE_USER') %}
+		{% if not is_granted('ROLE_USER') %}
 			<a href="{{ path('login') }}" class="bottom-menu-link">
 				<twig:ux:icon name="login" />
 				<span class="bottom-menu-label">Login</span>
 			</a>
-		{% endif %} #}
+		{% endif %}
 
 		{% embed "layout/menu/_mobile_menu_button.html.twig" with {
 				mobile_menu_button_extra_classes: 'bottom-menu-link',
