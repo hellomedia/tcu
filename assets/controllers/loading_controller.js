@@ -87,9 +87,4 @@ export default class extends Controller {
             this.buttonTarget.removeAttribute("aria-busy");
         }
     }
-
-
-
-
-
 }

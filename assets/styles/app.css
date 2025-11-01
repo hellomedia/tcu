@@ -25,6 +25,7 @@
 @import "./form/radio.css";
 @import "./form/select.css";
 @import "./form/textarea.css";
+@import "./form/switch.css";
 
 @import "./component/header.css";
 @import "./component/menu.css";

@@ -21,15 +21,41 @@
 
 {%- block checkbox_row -%}
     {%- set row_attr = row_attr|merge({'class': ('form-row' ~ ' ' ~ row_attr.class|default(''))|trim}) -%}
-    <div {% with {attr: row_attr} %}{{ block('attributes') }}{% endwith %}>
-        <label class="checkbox {{ checked ? 'checked' }}">
-            {{ form_widget(form) }}
-            <span class="custom-checkbox"></span>
-            <span class="label">{{- label|trans -}}</span>
-        </label>
-    </div>
+    {% if attr['data-switch'] is defined and attr['data-switch'] %}
+        <div {% with {attr: row_attr} %}{{ block('attributes') }}{% endwith %}>
+            {{- block('checkbox_widget_switch') -}}
+            {{- form_errors(form) -}}
+            {# help text #}
+            {% if help is not empty %}
+                <div class="form-help">{{ help|trans }}</div>
+            {% endif %}
+        </div>
+    {% else %}
+        <div {% with {attr: row_attr} %}{{ block('attributes') }}{% endwith %}>
+            <label class="checkbox {{ checked ? 'checked' }}">
+                {{ form_widget(form) }}
+                <span class="custom-checkbox"></span>
+                <span class="label">{{- label|trans -}}</span>
+            </label>
+        </div>
+    {% endif %}
 {%- endblock checkbox_row -%}
 
+{# Custom widget for the switch: input immediately followed by its label #}
+{% block checkbox_widget_switch %}
+    {# Keep native checkbox for a11y; we'll hide it visually #}
+    <input type="checkbox"
+           {{ block('widget_attributes') }}
+           {% if value is not same as(false) %} value="{{ value }}"{% endif %}
+           {% if checked %} checked="checked"{% endif %}
+    />
+    <label for="{{ id }}" class="switch-label">
+        <span class="switch-track" aria-hidden="true">
+            <span class="switch-thumb"></span>
+        </span>
+        <span class="switch-text">{{ label is same as(false) ? '' : (label|trans(label_translation_parameters, translation_domain)) }}</span>
+    </label>
+{% endblock %}
 
 {% block textarea_widget %}
     {%- set attr = attr|merge({

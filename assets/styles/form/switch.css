@@ -1,0 +1,63 @@
+@layer base {
+    /* hide the native box but keep it focusable/screen-reader accessible */
+    input[type="checkbox"][data-switch] {
+        position: absolute;
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    /* container alignment */
+    .switch-label {
+        display: inline-flex;
+        align-items: center;
+        gap: .6rem;
+        cursor: pointer;
+        user-select: none;
+    }
+
+    /* the track */
+    .switch-track {
+        position: relative;
+        width: 42px;
+        height: 24px;
+        border-radius: 999px;
+        background: #c7c7c7;
+        transition: background .2s ease;
+    }
+
+    /* the thumb */
+    .switch-thumb {
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: #fff;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, .25);
+        transition: transform .2s ease;
+    }
+
+    /* checked state: move thumb and color track */
+    input[type="checkbox"][data-switch]:checked+.switch-label .switch-track {
+        background: #4caf50;
+        /* adapt to your theme */
+    }
+
+    input[type="checkbox"][data-switch]:checked+.switch-label .switch-thumb {
+        transform: translateX(18px);
+    }
+
+    /* focus ring (when tabbing to the hidden checkbox) */
+    input[type="checkbox"][data-switch]:focus-visible+.switch-label .switch-track {
+        outline: 2px solid #222;
+        outline-offset: 2px;
+    }
+
+    /* disabled */
+    input[type="checkbox"][data-switch]:disabled+.switch-label {
+        opacity: .6;
+        cursor: not-allowed;
+    }
+}
