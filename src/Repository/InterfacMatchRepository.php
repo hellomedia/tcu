@@ -68,7 +68,7 @@ class InterfacMatchRepository extends ServiceEntityRepository
     public function findUpcomingMatchs(User $user): array
     {
         $qb = $this->createQueryBuilder('m')
-            ->join('m.booking', 'b')->addSelect('b') // INNER JOIN
+            ->join('m.booking', 'b')->addSelect('b') // join = INNER JOIN
             ->join('m.participants', 'part')->addSelect('part')
             ->join('part.player', 'player')->addSelect('player')
             ->join('player.user', 'u')->addSelect('u')
@@ -78,7 +78,7 @@ class InterfacMatchRepository extends ServiceEntityRepository
             ->join('b.slot', 'slot')->addSelect('slot')
             ->join('slot.date', 'date')->addSelect('date')
             ->andWhere('date.date >= CURRENT_DATE()')
-            ->join('part.confirmationInfo', 'info')->addSelect('info')
+            ->leftJoin('part.confirmationInfo', 'info')->addSelect('info') // important: left join bc info can be null
             ->addOrderBy('date.date', 'ASC')
             // add other participants
             ->join('m.participants', 'otherparticipants')->addSelect('otherparticipants')
