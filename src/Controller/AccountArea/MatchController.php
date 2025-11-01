@@ -22,11 +22,11 @@ class MatchController extends BaseController
         $this->addBreadcrumb('Dashboard', 'dashboard');
         $this->addBreadcrumb('Mes matchs à venir');
 
-        $scheduledMatchs = $matchRepository->findUpcomingMatchs($this->getUser());
+        $upcomingMatchs = $matchRepository->findUpcomingMatchs($this->getUser());
         $nonScheduledMatchs = $matchRepository->findNonScheduledMatchs($this->getUser());
 
         return $this->render('account_area/interfacs/match/my_matchs.html.twig', [
-            'scheduled_matchs' => $scheduledMatchs,
+            'upcoming_matchs' => $upcomingMatchs,
             'non_scheduled_matchs' => $nonScheduledMatchs,
         ]);
     }

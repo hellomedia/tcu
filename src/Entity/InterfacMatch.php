@@ -111,6 +111,25 @@ class InterfacMatch implements EntityInterface
         return $this->booking != null;
     }
 
+    public function isUpcoming(): bool
+    {
+        if ($this->booking == null) {
+            return false;
+        }
+
+        return $this->booking->getDate()->isFuture();
+    }
+
+    public function isPast(): bool
+    {
+        if ($this->booking == null) {
+            return false;
+        }
+
+        return $this->booking->getDate()->isPast();
+    }
+
+
     public function setBooking(?Booking $booking): static
     {
         // unset the owning side of the relation if necessary
@@ -301,23 +320,5 @@ class InterfacMatch implements EntityInterface
     public function isConfirmed(User $user): ?bool
     {
         return $this->getConfirmationInfo($user)?->isConfirmed();
-    }
-
-    public function isPast(): bool
-    {
-        if ($this->booking == null) {
-            return false;
-        }
-
-        return $this->booking->getDate()->isPast();
-    }
-
-    public function isScheduledInFuture(): bool
-    {
-        if ($this->booking == null) {
-            return false;
-        }
-
-        return $this->booking->getDate()->isFuture();
     }
 }

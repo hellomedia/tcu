@@ -224,12 +224,35 @@ class Player implements EntityInterface
     }
 
     /**
+     * Scheduled matchs
+     * all: past and future
+     * 
      * @return Collection<int, InterfacMatch>
      */
     public function getScheduledMatchs(): Collection
     {
         $filtered = $this->getMatchs()->filter(function(InterfacMatch $match) {
             return $match->isScheduled();
+        });
+
+        $sorted = $filtered->toArray();
+
+        usort($sorted, function (InterfacMatch $a, InterfacMatch $b) {
+            return $a->getDateEntityDate() <=> $b->getDateEntityDate();
+        });
+
+        return new ArrayCollection($sorted);
+    }
+
+    /**
+     * Upcoming = scheduled + in future
+     * 
+     * @return Collection<int, InterfacMatch>
+     */
+    public function getUpcomingMatchs(): Collection
+    {
+        $filtered = $this->getMatchs()->filter(function(InterfacMatch $match) {
+            return $match->isUpcoming();
         });
 
         $sorted = $filtered->toArray();
@@ -266,12 +289,14 @@ class Player implements EntityInterface
     }
 
     /**
+     * Not confirmed by user or admin
+     * 
      * @return Collection<int, InterfacMatch>
      */
-    public function getUnconfirmedScheduledMatchs(): Collection
+    public function getUnconfirmedUpcomingMatchs(): Collection
     {
-        $filtered = $this->getScheduledMatchs()->filter(function (InterfacMatch $match) {
-            return $match->isConfirmedByUser($this->user) === false;
+        $filtered = $this->getUpcomingMatchs()->filter(function (InterfacMatch $match) {
+            return $match->isConfirmed($this->user) === false;
         });
 
         $sorted = $filtered->toArray();
@@ -284,12 +309,14 @@ class Player implements EntityInterface
     }
 
     /**
+     * Confirmed by user or by admin
+     * 
      * @return Collection<int, InterfacMatch>
      */
-    public function getConfirmedScheduledMatchs(): Collection
+    public function getConfirmedUpcomingMatchs(): Collection
     {
-        $filtered = $this->getScheduledMatchs()->filter(function (InterfacMatch $match) {
-            return $match->isConfirmedByUser($this->user) === true;
+        $filtered = $this->getUpcomingMatchs()->filter(function (InterfacMatch $match) {
+            return $match->isConfirmed($this->user) === true;
         });
 
         $sorted = $filtered->toArray();

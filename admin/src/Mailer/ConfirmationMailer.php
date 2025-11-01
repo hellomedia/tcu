@@ -25,21 +25,21 @@ class ConfirmationMailer extends BaseMailer
         $confirmationLink = $this->fixLoginLinkHost($confirmationLink);
 
         $player = $participant->getPlayer();
-        $unconfirmedScheduledMatchs = $player->getUnconfirmedScheduledMatchs();
+        $unconfirmedUpcomingMatchs = $player->getUnconfirmedUpcomingMatchs();
 
-        if ($unconfirmedScheduledMatchs->count() == 0) {
+        if ($unconfirmedUpcomingMatchs->count() == 0) {
             return false;
         }
 
-        $subject = match ($unconfirmedScheduledMatchs->count()) {
+        $subject = match ($unconfirmedUpcomingMatchs->count()) {
             1 => 'Match Interfacs programmé',
             default => 'Matchs Interfacs programmés',
         };
-        $title = match ($unconfirmedScheduledMatchs->count()) {
+        $title = match ($unconfirmedUpcomingMatchs->count()) {
             1 => 'Match programmé',
             default => 'Matchs programmés',
         };
-        $confirmationLabel = match ($unconfirmedScheduledMatchs->count()) {
+        $confirmationLabel = match ($unconfirmedUpcomingMatchs->count()) {
             1 => 'Confirmer mon horaire',
             default => 'Confirmer mes horaires',
         };
@@ -52,7 +52,7 @@ class ConfirmationMailer extends BaseMailer
             ->context([
                 'name' => $user->getName(),
                 'title' => $title,
-                'unconfirmed_matchs' => $unconfirmedScheduledMatchs,
+                'unconfirmed_matchs' => $unconfirmedUpcomingMatchs,
                 'confirmation_link' => $confirmationLink,
                 'confirmation_label' => $confirmationLabel,
             ]);

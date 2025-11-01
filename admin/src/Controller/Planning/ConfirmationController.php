@@ -31,11 +31,11 @@ class ConfirmationController extends BaseController
         if ($participant->getUser()) {
 
             $player = $participant->getPlayer();
-            $unconfirmedScheduledMatchs = $player->getUnconfirmedScheduledMatchs();
+            $unconfirmedUpcomingMatchs = $player->getUnconfirmedUpcomingMatchs();
 
             if ($mailer->sendScheduleNotification($participant)) {
 
-                foreach ($unconfirmedScheduledMatchs as $match) {
+                foreach ($unconfirmedUpcomingMatchs as $match) {
                     $participant = $match->getParticipant($player->getUser());
                     $confirmationInfo = $participant->getConfirmationInfo();
 
