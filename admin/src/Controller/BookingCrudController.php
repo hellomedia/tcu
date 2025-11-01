@@ -38,6 +38,7 @@ class BookingCrudController extends AbstractCrudController
         
         yield ChoiceField::new('type', 'Type');
         
-        yield AssociationField::new('match', 'Match');
+        yield AssociationField::new('match', 'Match')
+            ->hideOnForm();
     }
 }
