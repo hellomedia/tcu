@@ -12,7 +12,7 @@
 		</a>
 
 		{% if is_granted('ROLE_USER') %}
-			<a href="{{ path('admin_dashboard') }}" class="bottom-menu-link">
+			<a href="{{ path('dashboard') }}" class="bottom-menu-link">
 				<twig:ux:icon name="account" style="height: 28px"/>
 				<span class="bottom-menu-label">Mon TCU</span>
 			</a>
