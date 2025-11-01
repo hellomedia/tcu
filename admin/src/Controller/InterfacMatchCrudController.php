@@ -114,9 +114,11 @@ class InterfacMatchCrudController extends AbstractCrudController
                 'row_attr' => ['data-match-format-target' => 'doublesOnly'],
         ]);
 
-        yield FormField::addPanel('Programmation');
+        yield FormField::addPanel('Programmation')
+            ->hideOnForm();
 
-        yield AssociationField::new('booking', 'Créneau');
+        yield AssociationField::new('booking', 'Créneau')
+            ->hideOnForm(); // important: choices seem to be booked hours !! ==> avoid on form !!
     }
 
     public function createNewFormBuilder(EntityDto $entityDto, KeyValueStore $formOptions, AdminContext $context): FormBuilderInterface
