@@ -1,2 +1,18 @@
 {% embed '@admin/confirmation/_participant_email_notification_info.html.twig' %}
+    {% block streams %}
+        {# update participant confirmation indicator in modal #}
+        <turbo-stream action="replace" target="modal-participant-{{ data.participant.id }}-confirmation-indicator">
+            <template>
+                {% include "@admin/match/modal/_confirmation_indicator.html.twig" with { participant: data.participant } %}
+            </template>
+        </turbo-stream>
+        {# update other confirmation indicators in page (same player, other matchs) #}
+        {% for participant in updated_participants %}
+            <turbo-stream action="replace" target="participant-{{ participant.id }}-confirmation-indicator">
+                <template>
+                    {% include '@admin/confirmation/_confirmation_indicator.html.twig' %}
+                </template>
+            </turbo-stream>
+        {% endfor %}
+	{% endblock %}
 {% endembed %}

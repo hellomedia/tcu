@@ -82,9 +82,7 @@
                     <tr>
                         <td>
                             <div class="player-wrapper">
-                                <span id="confirmation-indicator-{{ data.participant.id }}"
-                                    class="player-confirmation-indicator {{ data.confirmed ? 'confirmed' }}">
-                                </span>
+                                {% include '@admin/match/modal/_confirmation_indicator.html.twig' with { participant: data.participant } %}
                                 {{ data.participant.player.name }}
                             </div>
                         </td>

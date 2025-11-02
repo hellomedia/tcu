@@ -18,23 +18,13 @@
                     <div class="side">
                         {% for participant in slot.match.participantsForSide(enum('App\\Enum\\Side').A) %}
                             {{ loop.index == 2 ? ' - ' }}
-                            <a href="{{ path('admin_match_confirmation_info', {'id': slot.match.id}) }}"
-                                data-action="modal-remote-form#open"
-                                class="player-confirmation-indicator-link"
-                            >
-                                <span class="player-confirmation-indicator {{ participant.confirmed ? 'confirmed' }}"></span>
-                            </a>
-                            <span class="player">{{ participant }}</span>
+                            {% include '@admin/planning/_slot_row_participant.html.twig' %}
                         {% endfor %}
                     </div>
                     <div class="side">
                         {% for participant in slot.match.participantsForSide(enum('App\\Enum\\Side').B) %}
                             {{ loop.index == 2 ? ' - ' }}
-                            <a href="{{ path('admin_match_confirmation_info', {'id': slot.match.id}) }}" data-action="modal-remote-form#open" class="player-confirmation-indicator-link">
-
-                                <span class="player-confirmation-indicator {{ participant.confirmed ? 'confirmed' }}"></span>
-                            </a>
-                            <span class="player">{{ participant }}</span>
+                             {% include '@admin/planning/_slot_row_participant.html.twig' %}
                         {% endfor %}
                     </div>
                 </div>

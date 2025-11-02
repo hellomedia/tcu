@@ -80,6 +80,7 @@ class InterfacMatchRepository extends ServiceEntityRepository
             ->andWhere('date.date >= CURRENT_DATE()')
             ->leftJoin('part.confirmationInfo', 'info')->addSelect('info') // important: left join bc info can be null
             ->addOrderBy('date.date', 'ASC')
+            ->addOrderBy('slot.startsAt', 'ASC')
             // add other participants
             ->join('m.participants', 'otherparticipants')->addSelect('otherparticipants')
             ->leftJoin('otherparticipants.confirmationInfo', 'otherinfos')->addSelect('otherinfos') // leftJoin. might not exist.

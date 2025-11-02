@@ -28,6 +28,8 @@ class ConfirmationController extends BaseController
 
         $currentConfirmationInfo = $confirmationInfo;
 
+        $updatedParticipants = [];
+
         if ($participant->getUser()) {
 
             $player = $participant->getPlayer();
@@ -47,6 +49,8 @@ class ConfirmationController extends BaseController
                     
                     $confirmationInfo->setIsEmailSent(true);
                     $confirmationInfo->setEmailSentAt(new DateTimeImmutable());
+
+                    $updatedParticipants[] = $participant;
                 }
             }
         }
@@ -55,6 +59,7 @@ class ConfirmationController extends BaseController
         
         return $this->render('@admin/confirmation/send_notification_email_success.html.twig', [
             'data' => $currentConfirmationInfo,
+            'updated_participants' => $updatedParticipants,
         ]);
     }
 }

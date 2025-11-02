@@ -1,0 +1,7 @@
+<a href="{{ path('admin_match_confirmation_info', {'id': slot.match.id}) }}"
+    data-action="modal-remote-form#open"
+    class="player-confirmation-indicator-link"
+>
+    {% include '@admin/confirmation/_confirmation_indicator.html.twig' %}
+</a>
+<span class="player">{{ participant }}</span>

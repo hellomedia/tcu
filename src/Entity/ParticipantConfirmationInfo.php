@@ -18,13 +18,13 @@ class ParticipantConfirmationInfo
     private ?MatchParticipant $participant = null;
 
     #[ORM\Column]
-    private ?bool $isEmailSent = false;
+    private bool $isEmailSent = false;
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $emailSentAt = null;
 
     #[ORM\Column]
-    private ?bool $isConfirmedByAdmin = false;
+    private bool $isConfirmedByAdmin = false;
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $confirmedByAdminAt = null;
@@ -33,7 +33,7 @@ class ParticipantConfirmationInfo
     private ?User $admin = null;
 
     #[ORM\Column]
-    private ?bool $isConfirmedByPlayer = false;
+    private bool $isConfirmedByPlayer = false;
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $confirmedByPlayerAt = null;
@@ -56,7 +56,7 @@ class ParticipantConfirmationInfo
         return $this;
     }
 
-    public function isEmailSent(): ?bool
+    public function isEmailSent(): bool
     {
         return $this->isEmailSent;
     }
@@ -80,7 +80,7 @@ class ParticipantConfirmationInfo
         return $this;
     }
 
-    public function isConfirmedByAdmin(): ?bool
+    public function isConfirmedByAdmin(): bool
     {
         return $this->isConfirmedByAdmin;
     }
@@ -116,7 +116,7 @@ class ParticipantConfirmationInfo
         return $this;
     }
 
-    public function isConfirmedByPlayer(): ?bool
+    public function isConfirmedByPlayer(): bool
     {
         return $this->isConfirmedByPlayer;
     }
@@ -143,5 +143,16 @@ class ParticipantConfirmationInfo
     public function isConfirmed(): bool
     {
         return $this->isConfirmedByAdmin || $this->isConfirmedByPlayer;
+    }
+
+    public function getStatus(): string
+    {
+        $status = match(true) {
+            $this->isConfirmed() => 'confirmed',
+            $this->isEmailSent() => 'notified',
+            default => 'default',
+        };
+
+        return $status;
     }
 }

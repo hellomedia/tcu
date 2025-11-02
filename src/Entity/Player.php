@@ -218,9 +218,22 @@ class Player implements EntityInterface
      */
     public function getMatchs(): Collection
     {
-        return $this->matchParticipations->map(function(MatchParticipant $participant) {
+        $matchs = $this->matchParticipations->map(function(MatchParticipant $participant) {
             return $participant->getMatch();
         });
+
+        $sorted = $matchs->toArray();
+
+        usort($sorted, function (InterfacMatch $a, InterfacMatch $b) {
+            $cmp = $a->getDateEntityDate() <=> $b->getDateEntityDate();
+            if ($cmp !== 0) {
+                return $cmp;
+            }
+            // if dates are equal, compare by time
+            return $a->startsAt() <=> $b->startsAt();
+        });
+
+        return new ArrayCollection($sorted);
     }
 
     /**
@@ -231,17 +244,19 @@ class Player implements EntityInterface
      */
     public function getScheduledMatchs(): Collection
     {
-        $filtered = $this->getMatchs()->filter(function(InterfacMatch $match) {
+        return $this->getMatchs()->filter(function(InterfacMatch $match) {
             return $match->isScheduled();
         });
+    }
 
-        $sorted = $filtered->toArray();
-
-        usort($sorted, function (InterfacMatch $a, InterfacMatch $b) {
-            return $a->getDateEntityDate() <=> $b->getDateEntityDate();
+    /**
+     * @return Collection<int, InterfacMatch>
+     */
+    public function getNonScheduledMatchs(): Collection
+    {
+        return $this->getMatchs()->filter(function (InterfacMatch $match) {
+            return $match->isScheduled() == false;
         });
-
-        return new ArrayCollection($sorted);
     }
 
     /**
@@ -251,17 +266,9 @@ class Player implements EntityInterface
      */
     public function getUpcomingMatchs(): Collection
     {
-        $filtered = $this->getMatchs()->filter(function(InterfacMatch $match) {
+        return $this->getMatchs()->filter(function(InterfacMatch $match) {
             return $match->isUpcoming();
         });
-
-        $sorted = $filtered->toArray();
-
-        usort($sorted, function (InterfacMatch $a, InterfacMatch $b) {
-            return $a->getDateEntityDate() <=> $b->getDateEntityDate();
-        });
-
-        return new ArrayCollection($sorted);
     }
 
     /**
@@ -269,22 +276,8 @@ class Player implements EntityInterface
      */
     public function getScheduledMatchsDates(): Collection
     {
-        $scheduledMatchs = $this->getScheduledMatchs();
-
-        $dates = $scheduledMatchs->map(function(InterfacMatch $match): Date {
+        return $this->getScheduledMatchs()->map(function(InterfacMatch $match): Date {
             return $match->getDate();
-        });
-
-        return $dates;
-    }
-
-    /**
-     * @return Collection<int, InterfacMatch>
-     */
-    public function getNonScheduledMatchs(): Collection
-    {
-        return $this->getMatchs()->filter(function(InterfacMatch $match) {
-            return $match->isScheduled() == false;
         });
     }
 
@@ -295,17 +288,9 @@ class Player implements EntityInterface
      */
     public function getUnconfirmedUpcomingMatchs(): Collection
     {
-        $filtered = $this->getUpcomingMatchs()->filter(function (InterfacMatch $match) {
+        return $this->getUpcomingMatchs()->filter(function (InterfacMatch $match) {
             return $match->isConfirmed($this->user) === false;
         });
-
-        $sorted = $filtered->toArray();
-
-        usort($sorted, function (InterfacMatch $a, InterfacMatch $b) {
-            return $a->getDateEntityDate() <=> $b->getDateEntityDate();
-        });
-
-        return new ArrayCollection($sorted);
     }
 
     /**
@@ -315,17 +300,9 @@ class Player implements EntityInterface
      */
     public function getConfirmedUpcomingMatchs(): Collection
     {
-        $filtered = $this->getUpcomingMatchs()->filter(function (InterfacMatch $match) {
+        return $this->getUpcomingMatchs()->filter(function (InterfacMatch $match) {
             return $match->isConfirmed($this->user) === true;
         });
-
-        $sorted = $filtered->toArray();
-
-        usort($sorted, function (InterfacMatch $a, InterfacMatch $b) {
-            return $a->getDateEntityDate() <=> $b->getDateEntityDate();
-        });
-
-        return new ArrayCollection($sorted);
     }
 
     public function isInterfacs(): ?bool

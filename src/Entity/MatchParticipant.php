@@ -104,4 +104,22 @@ class MatchParticipant
 
         return false;
     }
+
+    public function isNotified(): bool
+    {
+        if ($this->getConfirmationInfo()) {
+            return $this->confirmationInfo->isEmailSent();
+        }
+
+        return false;
+    }
+
+    public function getConfirmationStatus(): string
+    {
+        if ($this->getConfirmationInfo()) {
+            return $this->confirmationInfo->getStatus();
+        }
+
+        return 'default'; 
+    }
 }

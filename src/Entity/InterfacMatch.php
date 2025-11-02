@@ -6,6 +6,7 @@ use App\Entity\Interface\EntityInterface;
 use App\Enum\MatchFormat;
 use App\Enum\Side;
 use App\Repository\InterfacMatchRepository;
+use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -150,6 +151,11 @@ class InterfacMatch implements EntityInterface
     public function getTimeRange(): ?string
     {
         return $this->booking?->getTimeRange();
+    }
+
+    public function startsAt(): ?DateTimeImmutable
+    {
+        return $this->booking?->getSlot()->getStartsAt();
     }
 
     public function getCourt(): ?Court
@@ -307,18 +313,18 @@ class InterfacMatch implements EntityInterface
      * from the participant (admin point of view).
      * ==> participant::isConfirmed()
      */
-    public function isConfirmedByUser(User $user): ?bool
+    public function isConfirmedByUser(User $user): bool
     {
-        return $this->getConfirmationInfo($user)?->isConfirmedByPlayer();
+        return (bool) $this->getConfirmationInfo($user)?->isConfirmedByPlayer();
     }
 
-    public function isConfirmedByAdmin(User $user): ?bool
+    public function isConfirmedByAdmin(User $user): bool
     {
-        return $this->getConfirmationInfo($user)?->isConfirmedByAdmin();
+        return (bool) $this->getConfirmationInfo($user)?->isConfirmedByAdmin();
     }
 
-    public function isConfirmed(User $user): ?bool
+    public function isConfirmed(User $user): bool
     {
-        return $this->getConfirmationInfo($user)?->isConfirmed();
+        return (bool) $this->getConfirmationInfo($user)?->isConfirmed();
     }
 }
