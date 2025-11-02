@@ -14,7 +14,7 @@ import { Controller } from "@hotwired/stimulus";
             href="{{ path('admin_match_add_result', {'id': slot.match.id}) }}"
             data-action="modal-remote-form#open"
         >
-            <twig:ux:icon name="add"/>
+            <twig:ux:icon name="add" />
             Ajouter résultat
         </a>
 
