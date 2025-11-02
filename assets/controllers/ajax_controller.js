@@ -37,6 +37,7 @@ A) Ajax on full form submit
         
         {% include 'component/modal/_actions.html.twig' %}
         OR {% include 'form/_form_actions.html.twig' %}
+        OR {% include '@admin/form/_ajax_button.html.twig' %}
     
     </form>
     
@@ -55,6 +56,7 @@ B) Ajax on full form submit + onChange for all select/checkbox (Guabao)
 
         {% include 'component/modal/_actions.html.twig' %}
         OR {% include 'form/_form_actions.html.twig' %}
+        OR {% include '@admin/form/_ajax_button.html.twig' %}
         
     </form>
 
