@@ -15,15 +15,15 @@
             Envoyé le {{ data.emailSentAt ? data.emailSentAt|date('d/m/Y H:i') }}
         {% elseif not data.confirmedByPlayer and not data.confirmedByAdmin %}
             {# Use a Form, not a link:
-                - csrf protection
                 - perform action on POST
-                - avoid url pre-fetching which triggers multiple actions #}
-            {# BUT the form cannot be here because it would be nested inside the confirmation info form !!
+                - avoid url pre-fetching which triggers multiple actions
+                - csrf protection #}
+            {# BUT the form cannot live here because it would be nested inside the confirmation info form !!
                 Nested forms are not allowed
-                So we move the form outside (in _confirmation_info.html.twig) and reference it in the button #}
+                ==> move the form outside (in _confirmation_info.html.twig) and reference it in the button #}
             <button type="submit" class="btn btn-default"
                 form="send-email-form-{{ data.participant.id }}"
-                {# must be explicit about turbo-frame here because form lives outside #}
+                {# must be explicit about turbo-frame here because submitted form lives outside #}
                 data-turbo-frame="participant-{{ data.participant.id }}-email-notification-info"
             >
                 <twig:ux:icon name="send-email" width="1em" style="margin-right: 5px"/>

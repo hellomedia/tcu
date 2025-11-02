@@ -3,27 +3,32 @@ import { Controller } from "@hotwired/stimulus";
 
 /**
  * 
- * USAGE
- * =====
  * 
- 
-    <a class="hk-dropdown-link"
-        href="{{ path('admin_match_add_result', {'id': slot.match.id}) }}"
-        data-action="modal-remote-form#open"    <==================
-    >
-        <twig:ux:icon name="add"/>
-        Ajouter résultat
-    </a>
+    ==============================================
+            REMOTE FORM MODAL ---- USAGE
+    ==============================================
+     
+    In-page link to open modal:
+
+        <a class="hk-dropdown-link"
+            href="{{ path('admin_match_add_result', {'id': slot.match.id}) }}"
+            data-action="modal-remote-form#open"
+        >
+            <twig:ux:icon name="add"/>
+            Ajouter résultat
+        </a>
 
 
- * 
- * 2 use cases:
- *      - Regular forms: no need for ajax controller. Turbo frames works great.
- *      - Forms with dependent fields ==> use 'ajax' controller
- * 
+    2 use cases:
+
+      A) Regular forms: no need for ajax controller. Turbo frame works great.
+
+      B) Forms with dependent fields ==> use 'ajax' controller
  
-    Controller with remote form and Modal success message
-    ======================================================
+
+ 
+     Controller with remote form and Modal success message
+    =======================================================
     
     public function addResult(InterfacMatch $match, Request $request): Response
     {
@@ -69,6 +74,30 @@ import { Controller } from "@hotwired/stimulus";
         ]);
     }
 
+
+     Form partial
+    ==============
+
+    {# _add_results.html.twig #}
+
+    {% form_theme form with ['@admin/form/form_theme.html.twig'] only %}
+
+    <turbo-frame id="modal-frame" data-turbo="true">{# data-turbo="true" for easy-admin #}
+
+        {{ form_start(form, {
+            'attr': {
+                'action': path('admin_match_add_result', {'id': match.id}),
+            }
+        }) }}
+
+            {{ form_rest(form) }}
+
+            {% include 'component/modal/_actions.html.twig' %}
+        
+        </form>
+
+    </turbo-frame>
+
  */
 export default class extends Controller {
 
@@ -107,12 +136,9 @@ export default class extends Controller {
     // OPTION 1: TURBO FORM SUBMIT
     // ===========================
     //
-    // NOTHING TO DO. Works out of the box if:
-    //  - form is inside a turbo-frame
-    //  - reply includes same turboframe
-    //
-    // ATTN: In easyadmin (data-turbo=false on body),
-    // set 'data-turbo-frame' on the form to opt-in turbo handling
+    // Works out of the box if:
+    //  - form lives inside an active turbo-frame (data-turbo="true" necessary in easy-admin)
+    //  - reply includes same turbo-frame
 
 
     // =======================================

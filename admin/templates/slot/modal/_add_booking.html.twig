@@ -3,7 +3,7 @@
 {# important to avoid theme conflicts #}
 {% form_theme form with ['@admin/form/form_theme.html.twig'] only %}
 
-<turbo-frame id="modal-frame">
+<turbo-frame id="modal-frame" data-turbo="true">{# data-turbo=true for easy-admin #}
 
     <style>
         @media (min-width: 768px) {
@@ -35,13 +35,11 @@
     
     {# 1. Full form submit ==> turbo frame #}
     {# Final form submit NOT handled by 'ajax' controller ( NO data-action="submit->ajax#submit" on form ) #}
-    {# Final submit is handled by regular form submit with turbo-frame --thanks to data-turbo-frame attribute #}
-    {# NB: if turbo was active on the page, we would not need 'data-turbo-frame' but in easyadmin (data-turbo=fase on body), we do #}
+    {# Final submit is handled by regular form submit with turbo-frame #}
 
     {{ form_start(form, {'attr': {
         'action': path('admin_planning_slot_add_booking', {'id': slot.id, 'modal': 1}),
         'data-controller': 'ajax',
-        'data-turbo-frame': "modal-frame"
         }}) 
     }}
 

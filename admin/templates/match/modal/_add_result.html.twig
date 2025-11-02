@@ -3,7 +3,7 @@
 {# important to avoid theme conflicts #}
 {% form_theme form with ['@admin/form/form_theme.html.twig'] only %}
 
-<turbo-frame id="modal-frame">
+<turbo-frame id="modal-frame" data-turbo="true">{# data-turbo=true for easy-admin #}
 
     <style>
         th {
@@ -14,11 +14,9 @@
         }
     </style>
 
-    {# Add 'data-turbo-frame' for when Turbo is not loaded (ie: in easy-admin) #}
     {{ form_start(form, {
         'attr': {
             'action': path('admin_match_add_result', {'id': match.id}),
-            'data-turbo-frame': "modal-frame"
         }
     }) }}
 

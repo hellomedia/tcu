@@ -22,7 +22,7 @@ USAGE SUMMARY
             but again, we could keep those and use requestSubmit() to hook into turbo handling.
 
 
-1) Ajax on full form submit
+A) Ajax on full form submit
 ===========================
 
     {{ form_start(form, {
@@ -40,7 +40,7 @@ USAGE SUMMARY
     
     </form>
     
-2) Ajax on full form submit + onChange for all select/checkbox (Guabao)
+B) Ajax on full form submit + onChange for all select/checkbox (Guabao)
 =======================================================================
 
     {{ form_start(form, {
@@ -58,7 +58,7 @@ USAGE SUMMARY
         
     </form>
 
-3) Ajax only on change of dependent fields (no form submit btn, no other fields)
+C) Ajax only on change of dependent fields (no form submit btn, no other fields)
 ================================================================================
 
         {{ form_start(form, { 'attr': {'data-controller': 'ajax'} }) }}
@@ -136,7 +136,7 @@ USAGE SUMMARY
             'form' => $form,
         ]);
 
-4) Ajax on change of dependent fields + full form submit
+D) Ajax on change of dependent fields + full form submit
 ========================================================
 
     Same as 2) and add on form:

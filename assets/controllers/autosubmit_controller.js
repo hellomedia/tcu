@@ -2,7 +2,7 @@ import { Controller } from '@hotwired/stimulus';
 
 /* USAGE
 
-	{# The form targets the frame so only the list is swapped #}
+	{# The form targets the frame so only part of the form is swapped #}
 	{{ form_start(form, {
         attr: {
             'data-controller': 'autosubmit',
