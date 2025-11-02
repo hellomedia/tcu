@@ -35,8 +35,10 @@
 
             {{ form_rest(form) }}
 
-            {% include '@admin/form/_ajax_button.html.twig' %}
-        
+            {% embed 'form/_form_actions.html.twig' %}
+                {% block cancel_url path('admin_planning_slots') %}
+            {% endembed %}
+
         {{ form_end(form) }}
 
     </div>
