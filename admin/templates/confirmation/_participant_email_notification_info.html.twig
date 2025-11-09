@@ -13,14 +13,14 @@
     <div class="bottom {{ data.isEmailSent ? 'bottom-text' }}">
         {% if data.isEmailSent %}
             Envoyé le {{ data.emailSentAt ? data.emailSentAt|date('d/m/Y H:i') }}
-            {% if not data.confirmedByPlayer %}
+            {% if not data.confirmedByPlayer and is_granted('ROLE_SUPER_ADMIN') %}
                 <button type="submit" class="btn btn-default"
                     form="send-email-form-{{ data.participant.id }}"
                     {# must be explicit about turbo-frame here because submitted form lives outside #}
                     data-turbo-frame="participant-{{ data.participant.id }}-email-notification-info"
                 >
                     <twig:ux:icon name="send-email" width="1em" style="margin-right: 5px"/>
-                    Envoyer email
+                    [SA] Again
                 </button>
             {% endif %}
         {% elseif not data.confirmedByPlayer and not data.confirmedByAdmin %}
