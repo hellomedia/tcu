@@ -47,7 +47,8 @@ class UserCrudController extends AbstractCrudController
         yield DateTimeField::new('createdAt')->hideOnForm();
         yield TextField::new('name');
         yield EmailField::new('email');
-        yield BooleanField::new('verified')->renderAsSwitch(false);
+        yield BooleanField::new('verified')->renderAsSwitch(true);
+        yield BooleanField::new('enabled')->renderAsSwitch(true);
         yield DateTimeField::new('lastLogin')->hideOnForm();
         yield ChoiceField::new('roles')
             ->setChoices([
@@ -92,6 +93,8 @@ class UserCrudController extends AbstractCrudController
             )
         );
 
+        $user->setEnabled(true);
+        $user->setVerified(true);
         $user->setAccountLanguage(AccountLanguage::FRENCH);
 
         return $user;
