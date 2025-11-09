@@ -155,7 +155,7 @@ class InterfacMatch implements EntityInterface
 
     public function startsAt(): ?DateTimeImmutable
     {
-        return $this->booking?->getSlot()->getStartsAt();
+        return $this->booking?->getSlot()?->getStartsAt();
     }
 
     public function getCourt(): ?Court
