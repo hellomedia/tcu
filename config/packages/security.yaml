@@ -77,7 +77,7 @@ security:
                 check_route: login_link_check  # route that the login link hits
                 signature_properties: ['id','email']  # include stable props from your User
                 lifetime: 600
-                max_uses: 5                 
+                max_uses: 20                 
                 success_handler: Pack\Security\LoginLinkSuccessHandler
 
     # First matching rule grants or denies access
