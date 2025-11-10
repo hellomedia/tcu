@@ -67,6 +67,10 @@ class PlayerCrudController extends AbstractCrudController
             ->add(BooleanFilter::new('interfacs'))
             ->add(BooleanFilter::new('interclubs'))
             ->add(BooleanFilter::new('cours'))
+            // Does not work out of the box because it is the inverse side
+            // Would require to flip the association side, or a custom filter with an explicit join workaround,
+            // which is a bit much if we don't really need this filter.
+            // ->add(NullFilter::new('user')->setChoiceLabels('Not null', 'Null'))
         ;
     }
 
