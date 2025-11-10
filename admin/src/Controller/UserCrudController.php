@@ -47,12 +47,8 @@ class UserCrudController extends AbstractCrudController
         yield DateTimeField::new('createdAt')->hideOnForm();
         yield TextField::new('name');
         yield EmailField::new('email');
-        yield BooleanField::new('verified')
-            // ->renderAsSwitch(true)
-        ;
-        yield BooleanField::new('enabled')
-            // ->renderAsSwitch(true)
-        ;
+        yield BooleanField::new('verified')->renderAsSwitch(false);
+        yield BooleanField::new('enabled')->renderAsSwitch(false);
         yield DateTimeField::new('lastLogin')->hideOnForm();
         yield ChoiceField::new('roles')
             ->setChoices([
