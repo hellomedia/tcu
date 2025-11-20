@@ -16,7 +16,10 @@
             </button>
         </div>
     </div>
-    
+
+    {# Honeypot #}
+    {{ form_row(form.occupation) }}
+
     {{ form_row(form.terms, {'row_attr': {'style': 'margin-bottom:20px;margin-top:25px'}}) }}
 
     {{ form_rest(form) }}
