@@ -148,7 +148,7 @@ class BotDetector
         }
 
         // Required field
-        if ($form->get('plainPassword')->getData() === null) {
+        if ($form->get('plainPassword')->getData() == null) {
             $this->requestStack->getSession()->set('type', 'r');
 
             return true;
