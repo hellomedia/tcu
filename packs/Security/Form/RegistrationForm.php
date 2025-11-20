@@ -3,6 +3,7 @@
 namespace Pack\Security\Form;
 
 use App\Entity\User;
+use Pack\Security\Form\Field\HoneypotField;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
@@ -45,6 +46,7 @@ class RegistrationForm extends AbstractType
                     ]),
                 ],
             ])
+            ->add('occupation', HoneypotField::class)
             ->add('terms', CheckboxType::class, [
                 'label' => 'Accept the terms',
                 'required' => true,

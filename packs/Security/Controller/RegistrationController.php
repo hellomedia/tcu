@@ -75,9 +75,10 @@ class RegistrationController extends BaseController
         if ($form->isSubmitted() && $form->isValid()) {
 
             if ($botDetector->detectBotOnRegistrationForm($form, $request)) {
-                return $this->render('@security/registration/register.html.twig', [
-                    'form' => $form,
-                ]);
+                // Do not process but give same feedback as a regular registration
+                $session->set('unverified_email', $user->getEmail());
+
+                return $this->redirectToRoute('registration_check_your_email_for_bots');
             }
 
             // Temporarily set password to empty string to avoid error when persisting to DB.
@@ -159,6 +160,23 @@ class RegistrationController extends BaseController
         return $this->render('@security/registration/check_your_email.html.twig', [
             'email' => $email,
             'gmail_junk_warning' => $gmailJunkWarning ?? false,
+        ]);
+    }
+
+    /**
+     * After registration form, give same feedback for bots
+     * To avoid them detecting the bot detection
+     * 
+     * Here, we do not check if the email belongs to a unverified user
+     */
+    #[Route(path: '/check-your-email-b', name: 'registration_check_your_email_for_bots')]
+    public function checkYourEmailForBots(Request $request)
+    {
+        $email = $request->getSession()->get('unverified_email');
+
+        return $this->render('registration/check_your_email.html.twig', [
+            'email' => $email,
+            'gmail_junk_warning' => false,
         ]);
     }
 
