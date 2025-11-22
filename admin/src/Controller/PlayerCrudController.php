@@ -2,7 +2,9 @@
 
 namespace Admin\Controller;
 
+use Admin\Filter\RankingOrderFilter;
 use App\Entity\Player;
+use App\Enum\Gender;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
@@ -12,6 +14,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 
 class PlayerCrudController extends AbstractCrudController
 {
@@ -67,6 +70,11 @@ class PlayerCrudController extends AbstractCrudController
             ->add(BooleanFilter::new('interfacs'))
             ->add(BooleanFilter::new('interclubs'))
             ->add(BooleanFilter::new('cours'))
+            // custom filter
+            ->add(RankingOrderFilter::new(label: 'Classement'))
+            ->add(ChoiceFilter::new('gender')
+                ->setChoices(Gender::getTranslatableChoices())
+            )
             // Does not work out of the box because it is the inverse side
             // Would require to flip the association side, or a custom filter with an explicit join workaround,
             // which is a bit much if we don't really need this filter.
