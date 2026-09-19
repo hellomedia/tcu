@@ -9,8 +9,11 @@ use App\Entity\Group;
 use App\Entity\Interface\EntityInterface;
 use App\Entity\InterfacMatch;
 use App\Entity\Player;
+use App\Entity\PlayerSeason;
 use App\Entity\Slot;
 use App\Entity\User;
+use App\Repository\SeasonRepository;
+use App\Service\SeasonContext;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
@@ -31,6 +34,8 @@ class DashboardController extends AbstractDashboardController
 
     public function __construct(
         private UrlGeneratorInterface $urlGenerator,
+        private SeasonRepository $seasonRepository,
+        private SeasonContext $seasonContext,
     ) {
     }
 
@@ -93,9 +98,29 @@ class DashboardController extends AbstractDashboardController
                 MenuItem::linkToUrl('Php info', 'fa fa-info', $this->urlGenerator->generate('admin_status_phpinfo')),
             ]);
 
+        // Saison sur laquelle on travaille dans l'admin : poules, inscriptions, planning
+        $selected = $this->seasonContext->getSelected();
+        $seasonItems = [];
+        foreach ($this->seasonRepository->findAll() as $season) {
+            $seasonItems[] = MenuItem::linkToUrl(
+                $season . ($season->isCurrent() ? ' (courante)' : ''),
+                $season === $selected ? 'fa fa-check' : 'fa fa-angle-right',
+                $this->urlGenerator->generate('admin_season_select', ['id' => $season->getId()])
+            );
+        }
+        $seasonItems[] = MenuItem::linkToUrl('Gérer les saisons', 'fa fa-gear', $this->urlGenerator->generate('admin_seasons'));
+
+        yield MenuItem::section('Saison')
+            ->setPermission('ROLE_EDITOR');
+        yield MenuItem::subMenu($selected ? (string) $selected : 'Aucune saison', 'fa fa-sun')
+            ->setPermission('ROLE_EDITOR')
+            ->setSubItems($seasonItems);
+
         yield MenuItem::section('Joueurs')
             ->setPermission('ROLE_EDITOR');
         yield MenuItem::linkToCrud('Joueurs', 'fa fa-user', Player::class)
+            ->setPermission('ROLE_EDITOR');
+        yield MenuItem::linkToCrud('Inscriptions', 'fa fa-clipboard-list', PlayerSeason::class)
             ->setPermission('ROLE_EDITOR');
         yield MenuItem::linkToCrud('Poules', 'fa fa-group', Group::class)
             ->setPermission('ROLE_EDITOR');

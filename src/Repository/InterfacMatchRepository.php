@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Group;
 use App\Entity\InterfacMatch;
+use App\Entity\Season;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
@@ -90,7 +91,10 @@ class InterfacMatchRepository extends ServiceEntityRepository
         return $qb->getQuery()->getResult();
     }
 
-    public function findNonScheduledMatchs(User $user): array
+    /**
+     * Un match non programmé n'a pas de date : sans saison, les matchs jamais joués des saisons précédentes ressortent
+     */
+    public function findNonScheduledMatchs(User $user, ?Season $season = null): array
     {
         $qb = $this->createQueryBuilder('m')
             ->leftJoin('m.booking', 'b')->addSelect('b')
@@ -106,6 +110,12 @@ class InterfacMatchRepository extends ServiceEntityRepository
             ->leftJoin('otherparticipants.confirmationInfo', 'otherinfos')->addSelect('otherinfos') // leftJoin. might not exist
             ->join('otherparticipants.player', 'otherplayers')->addSelect('otherplayers')
         ;
+
+        if ($season !== null) {
+            $qb->join('m.group', 'g')
+                ->andWhere('g.season = :season')
+                ->setParameter('season', $season);
+        }
 
         return $qb->getQuery()->getResult();
     }

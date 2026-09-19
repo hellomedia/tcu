@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Group;
 use App\Entity\Player;
+use App\Entity\PlayerSeason;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -51,10 +52,13 @@ class PlayerRepository extends ServiceEntityRepository
                 "COALESCE(SUM(CASE WHEN mp.side = 'A' THEN r.pointsA WHEN mp.side = 'B' THEN r.pointsB ELSE 0 END), 0) AS points",
                 // number of matches played = number of matches where a result exists
                 "COALESCE(COUNT(r.id), 0) AS matchsPlayed",
+                // classement du joueur pour la saison de la poule (sans classement => à la fin)
+                'COALESCE(MAX(ps.rankingOrder), -1) AS HIDDEN rankingOrder',
             ])
             // restrict players to the group membership
             ->join('p.groups', 'g')
             ->andWhere('g = :group')
+            ->leftJoin(PlayerSeason::class, 'ps', 'WITH', 'ps.player = p AND ps.season = g.season')
             // LEFT JOIN into participants/matches/results so players with 0 still show
             ->leftJoin('p.matchParticipations', 'mp')     // if you don’t have this inverse, leftJoin MatchParticipant on player explicitly
             ->leftJoin('mp.match', 'm')
@@ -64,7 +68,7 @@ class PlayerRepository extends ServiceEntityRepository
             ->groupBy('p.id')
             ->orderBy('points', 'DESC')
             ->addOrderBy('matchsPlayed', 'DESC')
-            ->addOrderBy('p.rankingOrder', 'DESC')
+            ->addOrderBy('rankingOrder', 'DESC')
             ->addOrderBy('p.lastname', 'ASC');
 
         return $qb->getQuery()->getResult(); // returns arrays [player, points, matchsPlayed]

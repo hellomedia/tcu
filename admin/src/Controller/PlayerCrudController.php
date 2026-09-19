@@ -2,22 +2,26 @@
 
 namespace Admin\Controller;
 
-use Admin\Filter\RankingOrderFilter;
 use App\Entity\Player;
+use App\Service\SeasonContext;
 use App\Enum\Gender;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
-use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
-use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 
 class PlayerCrudController extends AbstractCrudController
 {
+    public function __construct(
+        private SeasonContext $seasonContext,
+    )
+    {
+    }
+
     public static function getEntityFqcn(): string
     {
         return Player::class;
@@ -39,23 +43,28 @@ class PlayerCrudController extends AbstractCrudController
         yield TextField::new('lastname', 'Nom');
         yield TextField::new('firstname', 'Prénom');
 
+        yield TextField::new('affiliationNumber', 'N° d\'affiliation')
+            ->setHelp('Numéro d\'affiliation à la fédération. Permet de récupérer le classement du joueur.');
+
         yield AssociationField::new('user')->setPermission('ROLE_SUPER_ADMIN');
 
-        yield ChoiceField::new('ranking', 'Classement');
         yield ChoiceField::new('gender', 'H/F');
         yield ChoiceField::new('birthyear', 'Année de naissance');
 
-        yield BooleanField::new('interfacs', 'Interfacs')
-            ->renderAsSwitch(true);
+        // Le classement et les activités (interfacs, cours, interclubs) changent à chaque saison :
+        // ils se gèrent dans les inscriptions (PlayerSeasonCrudController)
+        $season = $this->seasonContext->getSelected();
+
+        yield AssociationField::new('seasons', 'Inscription ' . $season)
+            ->setTemplatePath('@admin/field/registration.html.twig')
+            ->setCustomOption('season', $season)
+            ->setSortable(false)
+            ->hideOnForm();
 
         yield AssociationField::new('groups', 'Poule(s)')
             ->setTemplatePath('@admin/field/groups.html.twig')
-            ->setFormTypeOption('by_reference', false);
-
-        yield BooleanField::new('cours', 'Cours')
-            ->renderAsSwitch(true);
-        yield BooleanField::new('interclubs', 'Interclubs')
-            ->renderAsSwitch(true);
+            ->setCustomOption('season', $season)
+            ->hideOnForm();
 
         yield TextField::new('phone', 'Téléphone');
 
@@ -67,11 +76,7 @@ class PlayerCrudController extends AbstractCrudController
     public function configureFilters(Filters $filters): Filters
     {
         return $filters
-            ->add(BooleanFilter::new('interfacs'))
-            ->add(BooleanFilter::new('interclubs'))
-            ->add(BooleanFilter::new('cours'))
-            // custom filter
-            ->add(RankingOrderFilter::new(label: 'Classement'))
+            // filtres par classement / interfacs / interclubs / cours : voir les inscriptions (PlayerSeasonCrudController)
             ->add(ChoiceFilter::new('gender')
                 ->setChoices(Gender::getTranslatableChoices())
             )

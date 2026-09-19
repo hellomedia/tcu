@@ -56,14 +56,14 @@
 		
         {% if player %}
 
-            {% if player.scheduledMatchs is not empty %}
+            {% if player.scheduledMatchs(season) is not empty %}
                 <h2>{{ player.firstName }}, voilà tes matchs ✨</h2>
             {% else %}
                 <h2>{{ player.firstname }}, tes matchs ne sont pas encore programmés 😭</h2>
             {% endif %}
 
-            {% if player.scheduledMatchs is not empty %}
-                {% for match in player.scheduledMatchs %}
+            {% if player.scheduledMatchs(season) is not empty %}
+                {% for match in player.scheduledMatchs(season) %}
                     <div class="match">
                         <div>
                             <span class="date">{{ match.date }}</span> •
@@ -79,10 +79,10 @@
                     </div>
                 {% endfor %}
 
-                {% if player.nonScheduledMatchs is not empty %}
+                {% if player.nonScheduledMatchs(season) is not empty %}
                     <h2 style="margin-top: 40px;">Tu as aussi des matchs qui ne sont pas encore programmés...</h2>
 
-                    {% for match in player.nonScheduledMatchs %}
+                    {% for match in player.nonScheduledMatchs(season) %}
                         <div class="match">
                             <div class="label">
                                 {% for player in match.players %}

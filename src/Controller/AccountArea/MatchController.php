@@ -6,6 +6,7 @@ use App\Controller\BaseController;
 use App\Entity\InterfacMatch;
 use App\Entity\ParticipantConfirmationInfo;
 use App\Repository\InterfacMatchRepository;
+use App\Service\SeasonContext;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,13 +18,13 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class MatchController extends BaseController
 {
     #[Route('/mes/matchs', name: 'my_matchs')]
-    public function index(InterfacMatchRepository $matchRepository): Response
+    public function index(InterfacMatchRepository $matchRepository, SeasonContext $seasonContext): Response
     {
         $this->addBreadcrumb('Dashboard', 'dashboard');
         $this->addBreadcrumb('Mes matchs à venir');
 
         $upcomingMatchs = $matchRepository->findUpcomingMatchs($this->getUser());
-        $nonScheduledMatchs = $matchRepository->findNonScheduledMatchs($this->getUser());
+        $nonScheduledMatchs = $matchRepository->findNonScheduledMatchs($this->getUser(), $seasonContext->getInterfacsSeason());
 
         return $this->render('account_area/interfacs/match/my_matchs.html.twig', [
             'upcoming_matchs' => $upcomingMatchs,

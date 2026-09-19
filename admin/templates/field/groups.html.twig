@@ -1,6 +1,9 @@
+{# Poules du joueur pour la saison sélectionnée dans l'admin (toutes les poules si pas de saison) #}
+{% set season = field.customOptions.get('season') %}
+{% set groups = season ? entity.instance.groupsForSeason(season) : field.value %}
 <div class="entity-list">
-	{% if field.value|length > 0 %}
-        {% for item in field.value %}
+	{% if groups|length > 0 %}
+        {% for item in groups %}
             <a href="{{ path('admin_group_detail', {entityId: item.id}) }}">
                 {{ item }}
             </a>
@@ -9,4 +12,3 @@
         <span class="badge badge-outline">{{ 'label.null'|trans({}, 'EasyAdminBundle') }}</span>
     {% endif %}
 </div>
-

@@ -6,6 +6,7 @@ use Admin\Controller\DashboardController;
 use App\Controller\BaseController;
 use App\Repository\CourtRepository;
 use App\Repository\DateRepository;
+use App\Service\SeasonContext;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -25,9 +26,10 @@ class PlanningController extends BaseController
     }
 
     #[Route('/planning/past', name: 'admin_planning_past', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
-    public function planningPast(DateRepository $dateRepository, CourtRepository $courtRepository): Response
+    public function planningPast(DateRepository $dateRepository, CourtRepository $courtRepository, SeasonContext $seasonContext): Response
     {
-        $dates = $dateRepository->findPastDates();
+        $season = $seasonContext->getSelected();
+        $dates = $dateRepository->findPastDates($season);
         $courts = $courtRepository->findAll();
 
         return $this->render('@admin/planning/past.html.twig', [

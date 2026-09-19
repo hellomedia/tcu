@@ -1,0 +1,199 @@
+{% extends '@admin/base.html.twig' %}
+
+{% block head_stylesheets %}
+    {{ parent() }}
+    <style>
+        .rankings-help {
+            margin-bottom: 20px;
+        }
+        .rankings-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .rankings-progress {
+            color: var(--text-muted);
+        }
+        table.rankings td {
+            vertical-align: middle;
+        }
+        table.rankings tr.is-loading td {
+            opacity: .6;
+        }
+        table.rankings tr.is-change .fetched {
+            font-weight: 700;
+        }
+        table.rankings tr.is-problem .remark {
+            color: var(--bs-danger, #dc3545);
+        }
+    </style>
+{% endblock %}
+
+{% block content_title %}Classements {{ previsional ? 'prévisionnels' : 'officiels' }} - {{ season }}{% endblock %}
+
+{% block page_actions %}
+    <a class="btn btn-secondary" href="{{ path('admin_player_season_index') }}">Retour aux inscriptions</a>
+{% endblock %}
+
+{% block main %}
+
+    <div class="rankings-help">
+        <p>
+            Les classements sont récupérés sur <a href="https://mon-classement-tennis.be" target="_blank" rel="noopener">mon-classement-tennis.be</a>,
+            à partir du numéro d'affiliation des joueurs, un joueur à la fois.
+            {% if previsional %}
+                Le <strong>classement prévisionnel</strong> est une estimation du prochain classement : à utiliser tant que les nouveaux classements ne sont pas officiels.
+            {% else %}
+                Le <strong>classement officiel</strong> est le classement actuel du joueur : à utiliser quand les nouveaux classements sont publiés.
+            {% endif %}
+        </p>
+        <p>Rien n'est enregistré avant de cliquer sur « Appliquer ». En cas de doute (nom différent, classement inconnu...), rien n'est proposé.</p>
+    </div>
+
+    <form method="post" action="{{ path('admin_rankings_apply', {mode: mode}) }}" id="rankings"
+        data-token="{{ csrf_token('rankings-fetch') }}"
+        data-source="{{ source.label }}"
+    >
+        <input type="hidden" name="token" value="{{ csrf_token('rankings-apply') }}" />
+
+        <div class="rankings-toolbar">
+            <button type="button" class="btn btn-primary" data-role="start">Lancer la récupération</button>
+            <button type="button" class="btn btn-secondary" data-role="stop" hidden>Arrêter</button>
+            <button type="submit" class="btn btn-success" data-role="apply" disabled>Appliquer</button>
+            <span class="rankings-progress" data-role="progress"></span>
+        </div>
+
+        <table class="table rankings">
+            <thead>
+                <tr>
+                    <th><input type="checkbox" class="form-check-input" data-role="check-all" title="Tout cocher / décocher" disabled></th>
+                    <th>Joueur</th>
+                    <th>N° d'affiliation</th>
+                    <th>Nom sur le site</th>
+                    <th>Actuel</th>
+                    <th>Récupéré</th>
+                    <th>Remarque</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for registration in registrations %}
+                    {% set player = registration.player %}
+                    <tr data-url="{{ player.affiliationNumber ? path('admin_rankings_fetch', {mode: mode, id: registration.id}) }}"
+                        class="{{ player.affiliationNumber ? '' : 'is-problem' }}"
+                    >
+                        <td><input type="checkbox" class="form-check-input" name="registrations[]" value="{{ registration.id }}" disabled></td>
+                        <td><a href="{{ path('admin_player_edit', {entityId: player.id}) }}">{{ player.lastname }} {{ player.firstname }}</a></td>
+                        <td>
+                            {% if player.affiliationNumber %}
+                                <a href="https://mon-classement-tennis.be/joueur/{{ player.affiliationNumber }}" target="_blank" rel="noopener">{{ player.affiliationNumber }}</a>
+                            {% endif %}
+                        </td>
+                        <td class="site-name"></td>
+                        <td>
+                            {{ registration.ranking ? registration.ranking.value }}
+                            {% if registration.rankingSource %}<span class="badge badge-outline">{{ registration.rankingSource.label }}</span>{% endif %}
+                        </td>
+                        <td class="fetched"></td>
+                        <td class="remark">{{ player.affiliationNumber ? '' : 'Pas de numéro d\'affiliation' }}</td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="7">Aucune inscription pour cette saison.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </form>
+
+    <script>
+        (function () {
+            const form = document.getElementById('rankings');
+            const rows = Array.from(form.querySelectorAll('tbody tr[data-url]')).filter(row => row.dataset.url !== '');
+            const start = form.querySelector('[data-role="start"]');
+            const stop = form.querySelector('[data-role="stop"]');
+            const apply = form.querySelector('[data-role="apply"]');
+            const progress = form.querySelector('[data-role="progress"]');
+            const checkAll = form.querySelector('[data-role="check-all"]');
+            // pause entre deux joueurs : on reste discret vis-à-vis du site
+            const DELAY = 1500;
+            let running = false;
+            let done = 0;
+
+            const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+            const updateApply = () => {
+                const checked = form.querySelectorAll('tbody input[type="checkbox"]:checked').length;
+                apply.disabled = running || checked === 0;
+                apply.textContent = checked > 0 ? `Appliquer (${checked})` : 'Appliquer';
+            };
+
+            const show = (row, data) => {
+                const checkbox = row.querySelector('input[type="checkbox"]');
+                row.classList.remove('is-loading');
+                row.classList.add('is-' + data.status);
+                row.querySelector('.site-name').textContent = data.siteName ?? '';
+                row.querySelector('.fetched').textContent = data.ranking ?? '';
+                row.querySelector('.remark').textContent = {
+                    change: 'À modifier',
+                    confirm: 'Même classement, devient « ' + form.dataset.source + ' »',
+                    same: 'Inchangé',
+                }[data.status] ?? data.remark ?? '';
+
+                const applicable = data.status === 'change' || data.status === 'confirm';
+                checkbox.disabled = !applicable;
+                checkbox.checked = applicable;
+            };
+
+            const run = async () => {
+                running = true;
+                start.hidden = true;
+                stop.hidden = false;
+                updateApply();
+
+                for (const row of rows) {
+                    if (!running) break;
+                    if (row.dataset.done) continue;
+
+                    row.classList.add('is-loading');
+                    try {
+                        const body = new FormData();
+                        body.append('token', form.dataset.token);
+                        const response = await fetch(row.dataset.url, {method: 'POST', body, headers: {'X-Requested-With': 'XMLHttpRequest'}});
+                        const data = response.headers.get('content-type')?.includes('json')
+                            ? await response.json()
+                            : {status: 'problem', remark: `Erreur ${response.status} : recharger la page.`};
+                        show(row, data);
+                    } catch (e) {
+                        show(row, {status: 'problem', remark: 'Erreur réseau'});
+                    }
+                    row.dataset.done = '1';
+                    done++;
+                    progress.textContent = `${done} / ${rows.length}`;
+                    updateApply();
+
+                    if (running && done < rows.length) await sleep(DELAY);
+                }
+
+                running = false;
+                stop.hidden = true;
+                start.hidden = done >= rows.length;
+                start.textContent = 'Continuer';
+                checkAll.disabled = false;
+                updateApply();
+            };
+
+            start.addEventListener('click', run);
+            stop.addEventListener('click', () => { running = false; stop.disabled = true; setTimeout(() => stop.disabled = false, DELAY); });
+            form.addEventListener('change', event => {
+                if (event.target === checkAll) {
+                    form.querySelectorAll('tbody input[type="checkbox"]:not(:disabled)').forEach(checkbox => checkbox.checked = checkAll.checked);
+                }
+                updateApply();
+            });
+
+            progress.textContent = rows.length ? `0 / ${rows.length}` : 'Aucun joueur avec un numéro d\'affiliation.';
+            start.disabled = rows.length === 0;
+        })();
+    </script>
+
+{% endblock %}

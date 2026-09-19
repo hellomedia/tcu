@@ -3,6 +3,12 @@
 namespace Admin\Controller;
 
 use App\Entity\Group;
+use App\Service\SeasonContext;
+use Doctrine\ORM\QueryBuilder;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
+use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
+use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -19,7 +25,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class GroupCrudController extends AbstractCrudController
 {
     public function __construct(
-        private UrlGeneratorInterface $urlGenerator
+        private UrlGeneratorInterface $urlGenerator,
+        private SeasonContext $seasonContext,
     )
     {
 
@@ -35,6 +42,8 @@ class GroupCrudController extends AbstractCrudController
         return $crud
             ->setEntityLabelInSingular('Poule')
             ->setEntityLabelInPlural('Poules')
+            ->setPageTitle(Crud::PAGE_INDEX, 'Poules - ' . $this->seasonContext->getSelected())
+            ->setPageTitle(Crud::PAGE_NEW, 'Nouvelle poule - ' . $this->seasonContext->getSelected())
             ->setDefaultSort([
                 'name' => 'ASC'
             ])
@@ -47,6 +56,10 @@ class GroupCrudController extends AbstractCrudController
             ->hideOnForm();
 
         yield TextField::new('name');
+
+        // la saison d'une poule est définie à la création (saison sélectionnée) et ne change pas
+        yield AssociationField::new('season', 'Saison')
+            ->hideOnForm();
 
         yield AssociationField::new('players', 'Nombre de joueurs')
             ->onlyOnIndex()
@@ -67,6 +80,23 @@ class GroupCrudController extends AbstractCrudController
             ->onlyOnDetail()
             ->setTemplatePath('@admin/field/detail/matchs.html.twig')
         ;
+    }
+
+    /**
+     * Uniquement les poules de la saison sélectionnée
+     */
+    public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
+    {
+        return parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters)
+            ->andWhere('entity.season = :selectedSeason')
+            ->setParameter('selectedSeason', $this->seasonContext->getSelected())
+        ;
+    }
+
+    public function createEntity(string $entityFqcn): Group
+    {
+        return (new Group())
+            ->setSeason($this->seasonContext->getSelected());
     }
 
     protected function getRedirectResponseAfterSave(AdminContext $context, string $action): RedirectResponse

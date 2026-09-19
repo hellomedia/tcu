@@ -31,7 +31,7 @@ class MatchFactory
     {
         // Get the players from the group's collection.
         // It's best to convert the Doctrine Collection to a standard array for indexed access.
-        $players = $group->getPlayers()->toArray();
+        $players = $group->getPlayersByRanking()->toArray();
         $numberOfPlayers = count($players);
 
         // A round-robin schedule is typically represented as a complete graph.

@@ -1,0 +1,21 @@
+{# Inscription du joueur pour la saison sélectionnée dans l'admin #}
+{% set season = field.customOptions.get('season') %}
+{% set registration = entity.instance.registration(season) %}
+{% if registration %}
+    <a href="{{ path('admin_player_season_edit', {entityId: registration.id}) }}">
+        {% if registration.ranking %}
+            <span class="tag" {% if registration.rankingSource %}title="{{ registration.rankingSource.label }}"{% endif %}>
+                {{- registration.ranking.value }}{{ registration.rankingProvisional ? ' ?' -}}
+            </span>
+        {% endif %}
+        {% if registration.interfacs %}<span class="badge badge-outline">Interfacs</span>{% endif %}
+        {% if registration.cours %}<span class="badge badge-outline">Cours</span>{% endif %}
+        {% if registration.interclubs %}<span class="badge badge-outline">Interclubs</span>{% endif %}
+        {% if registration.pending %}<span class="badge badge-warning">À confirmer</span>{% endif %}
+        {% if not registration.ranking and not registration.interfacs and not registration.cours and not registration.interclubs and registration.confirmed %}
+            <span class="badge badge-outline">Inscrit</span>
+        {% endif %}
+    </a>
+{% else %}
+    <span class="badge badge-outline">Pas inscrit</span>
+{% endif %}

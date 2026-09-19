@@ -97,6 +97,14 @@ class InterfacMatch implements EntityInterface
         return $this;
     }
 
+    /**
+     * La saison d'un match est celle de sa poule
+     */
+    public function getSeason(): ?Season
+    {
+        return $this->group?->getSeason();
+    }
+
     public function getBooking(): ?Booking
     {
         return $this->booking;

@@ -11,8 +11,11 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: PlayerRepository::class)]
+#[UniqueEntity(fields: ['affiliationNumber'], message: 'Ce numéro d\'affiliation est déjà utilisé par un autre joueur.')]
 class Player implements EntityInterface
 {
     #[ORM\Id]
@@ -26,11 +29,13 @@ class Player implements EntityInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $lastname = null;
 
-    #[ORM\Column(nullable: true, enumType: Ranking::class)]
-    private ?Ranking $ranking = null;
-
-    #[ORM\Column(type: 'smallint', nullable: true)]
-    private ?int $rankingOrder = null; // <-- for sorting
+    /**
+     * Numéro d'affiliation à la fédération (AFT) : identifiant officiel du joueur.
+     * Permet de récupérer son classement : https://mon-classement-tennis.be/joueur/{numéro}
+     */
+    #[ORM\Column(length: 20, nullable: true, unique: true)]
+    #[Assert\Regex(pattern: '/^\d+$/', message: 'Le numéro d\'affiliation ne contient que des chiffres.')]
+    private ?string $affiliationNumber = null;
 
     #[ORM\Column(enumType: Gender::class)]
     private ?Gender $gender = null;
@@ -47,14 +52,13 @@ class Player implements EntityInterface
     #[ORM\ManyToMany(targetEntity: Group::class, mappedBy: 'players')]
     private Collection $groups;
 
-    #[ORM\Column(nullable: true)]
-    private ?bool $interfacs = null;
-
-    #[ORM\Column(nullable: true)]
-    private ?bool $interclubs = null;
-
-    #[ORM\Column(nullable: true)]
-    private ?bool $cours = null;
+    /**
+     * Inscriptions par saison : classement, interfacs, interclubs, cours
+     *
+     * @var Collection<int, PlayerSeason>
+     */
+    #[ORM\OneToMany(targetEntity: PlayerSeason::class, mappedBy: 'player', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    private Collection $seasons;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $availabilities = null;
@@ -74,6 +78,7 @@ class Player implements EntityInterface
     public function __construct()
     {
         $this->groups = new ArrayCollection();
+        $this->seasons = new ArrayCollection();
         $this->matchParticipations = new ArrayCollection();
     }
 
@@ -82,9 +87,11 @@ class Player implements EntityInterface
         return $this->getName();
     }
 
-    public function getNameWithRanking(): string
+    public function getNameWithRanking(?Season $season): string
     {
-        return $this->getName() . ' - ' . $this->ranking->value;
+        $ranking = $this->getRanking($season);
+
+        return $ranking ? $this->getName() . ' - ' . $ranking->value : $this->getName();
     }
 
     public function getName(): string
@@ -121,23 +128,74 @@ class Player implements EntityInterface
         return $this;
     }
 
-    public function getRanking(): ?Ranking
+    /**
+     * @return Collection<int, PlayerSeason>
+     */
+    public function getSeasons(): Collection
     {
-        return $this->ranking;
+        return $this->seasons;
     }
 
-    public function setRanking(?Ranking $ranking): static
+    public function addSeason(PlayerSeason $playerSeason): static
     {
-        $this->ranking = $ranking;
-
-        // Update the sorting order
-        if ($ranking === null) {
-            $this->rankingOrder = null;
-        } else {
-            // Get the array of all enum cases in their declared order
-            $order = array_flip(array_column(Ranking::cases(), 'name'));
-            $this->rankingOrder = $order[$ranking->name] ?? null;
+        if (!$this->seasons->contains($playerSeason)) {
+            $this->seasons->add($playerSeason);
+            $playerSeason->setPlayer($this);
         }
+
+        return $this;
+    }
+
+    public function removeSeason(PlayerSeason $playerSeason): static
+    {
+        $this->seasons->removeElement($playerSeason); // orphanRemoval
+
+        return $this;
+    }
+
+    /**
+     * Inscription du joueur pour une saison
+     *
+     * @param bool $includeDismissed une inscription pré-remplie écartée n'est pas une inscription
+     */
+    public function getRegistration(?Season $season, bool $includeDismissed = false): ?PlayerSeason
+    {
+        if ($season === null) {
+            return null;
+        }
+
+        foreach ($this->seasons as $playerSeason) {
+            if ($playerSeason->getSeason() === $season) {
+                return $playerSeason->isDismissed() && !$includeDismissed ? null : $playerSeason;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Le classement change à chaque saison
+     */
+    public function getRanking(?Season $season): ?Ranking
+    {
+        return $this->getRegistration($season)?->getRanking();
+    }
+
+    public function getRankingOrder(?Season $season): ?int
+    {
+        return $this->getRegistration($season)?->getRankingOrder();
+    }
+
+    public function getAffiliationNumber(): ?string
+    {
+        return $this->affiliationNumber;
+    }
+
+    public function setAffiliationNumber(?string $affiliationNumber): static
+    {
+        // champ vide du formulaire => null (index unique)
+        $affiliationNumber = $affiliationNumber !== null ? trim($affiliationNumber) : null;
+        $this->affiliationNumber = $affiliationNumber === '' ? null : $affiliationNumber;
 
         return $this;
     }
@@ -186,6 +244,16 @@ class Player implements EntityInterface
         return $this->groups;
     }
 
+    /**
+     * @return Collection<int, Group>
+     */
+    public function getGroupsForSeason(?Season $season): Collection
+    {
+        return $this->groups->filter(function (Group $group) use ($season) {
+            return $group->getSeason() === $season;
+        });
+    }
+
     public function addGroup(Group $group): static
     {
         if (!$this->groups->contains($group)) {
@@ -214,13 +282,21 @@ class Player implements EntityInterface
     }
 
     /**
+     * @param Season|null $season null = toutes saisons confondues
+     *
      * @return Collection<int, InterfacMatch>
      */
-    public function getMatchs(): Collection
+    public function getMatchs(?Season $season = null): Collection
     {
         $matchs = $this->matchParticipations->map(function(MatchParticipant $participant) {
             return $participant->getMatch();
         });
+
+        if ($season !== null) {
+            $matchs = $matchs->filter(function (InterfacMatch $match) use ($season) {
+                return $match->getSeason() === $season;
+            });
+        }
 
         $sorted = $matchs->toArray();
 
@@ -242,9 +318,9 @@ class Player implements EntityInterface
      * 
      * @return Collection<int, InterfacMatch>
      */
-    public function getScheduledMatchs(): Collection
+    public function getScheduledMatchs(?Season $season = null): Collection
     {
-        return $this->getMatchs()->filter(function(InterfacMatch $match) {
+        return $this->getMatchs($season)->filter(function(InterfacMatch $match) {
             return $match->isScheduled();
         });
     }
@@ -252,9 +328,9 @@ class Player implements EntityInterface
     /**
      * @return Collection<int, InterfacMatch>
      */
-    public function getNonScheduledMatchs(): Collection
+    public function getNonScheduledMatchs(?Season $season = null): Collection
     {
-        return $this->getMatchs()->filter(function (InterfacMatch $match) {
+        return $this->getMatchs($season)->filter(function (InterfacMatch $match) {
             return $match->isScheduled() == false;
         });
     }
@@ -303,42 +379,6 @@ class Player implements EntityInterface
         return $this->getUpcomingMatchs()->filter(function (InterfacMatch $match) {
             return $match->isConfirmed($this->user) === true;
         });
-    }
-
-    public function isInterfacs(): ?bool
-    {
-        return $this->interfacs;
-    }
-
-    public function setInterfacs(?bool $interfacs): static
-    {
-        $this->interfacs = $interfacs;
-
-        return $this;
-    }
-
-    public function isInterclubs(): ?bool
-    {
-        return $this->interclubs;
-    }
-
-    public function setInterclubs(?bool $interclubs): static
-    {
-        $this->interclubs = $interclubs;
-
-        return $this;
-    }
-
-    public function isCours(): ?bool
-    {
-        return $this->cours;
-    }
-
-    public function setCours(?bool $cours): static
-    {
-        $this->cours = $cours;
-
-        return $this;
     }
 
     public function getAvailabilities(): ?string

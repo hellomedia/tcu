@@ -8,6 +8,7 @@ use App\Entity\Group;
 use App\Enum\Side;
 use App\Repository\GroupRepository;
 use App\Repository\InterfacMatchRepository;
+use App\Service\SeasonContext;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -22,6 +23,11 @@ use Symfonycasts\DynamicForms\DynamicFormBuilder;
  */
 final class SlotBookingForm extends AbstractType
 {
+    public function __construct(
+        private SeasonContext $seasonContext,
+    ) {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder = new DynamicFormBuilder($builder);
@@ -30,7 +36,7 @@ final class SlotBookingForm extends AbstractType
             'label' => 'Poule',
             'class' => Group::class,
             'query_builder' => function (GroupRepository $repo): QueryBuilder {
-                return $repo->getGroupsWithNonProgrammedMatchesQueryBuilder();
+                return $repo->getGroupsWithNonProgrammedMatchesQueryBuilder($this->seasonContext->getSelected());
             },
             'multiple' => false,
             'expanded' => true,

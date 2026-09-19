@@ -145,7 +145,44 @@
         align-items: center;
     }
 
+    .seasons {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 20px;
+
+        .season {
+            padding: 4px 12px;
+            border: 1px solid #e5e7eb;
+            border-radius: 999px;
+            white-space: nowrap;
+        }
+        .season.active {
+            background: #f1f3f5;
+            font-weight: 600;
+        }
+    }
+
 </style>
+
+    {% if season %}
+        <h2>{{ season }}</h2>
+    {% endif %}
+
+    {% if seasons|length > 1 %}
+        <nav class="seasons" aria-label="Saisons">
+            {% for s in seasons %}
+                <a class="season {{ s == season ? 'active' }}"
+                    href="{{ loop.first ? path('interfacs_groups') : path('interfacs_groups', {slug: s.slug}) }}"
+                >{{ s }}</a>
+            {% endfor %}
+        </nav>
+    {% endif %}
+
+    {% if groups is empty %}
+        <p>Les poules ne sont pas encore constituées.</p>
+    {% endif %}
 
     <div class="groups">
 
@@ -169,7 +206,7 @@
                                 <span class="nowrap">{{ row.player.firstname }}</span>
                                 <span class="nowrap">{{ row.player.lastname }}</span>
                             </td>
-                            <td class="ranking">{{ row.player.ranking.value }}</td>
+                            <td class="ranking">{{ row.player.ranking(group.season).value ?? '' }}</td>
                             <td class="matchs-played">{{ row.matchsPlayed}}</td>
                             <td class="points">{{ row.points }}</td>
                         </tr>

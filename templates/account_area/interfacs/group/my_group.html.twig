@@ -179,7 +179,7 @@
 								<span class="nowrap">{{ row.player.firstname }}</span>
 								<span class="nowrap">{{ row.player.lastname }}</span>
 							</td>
-							<td class="ranking">{{ row.player.ranking.value }}</td>
+							<td class="ranking">{{ row.player.ranking(group.season).value ?? '' }}</td>
 							<td class="matchs-played">{{ row.matchsPlayed}}</td>
 							<td class="points">{{ row.points }}</td>
 						</tr>

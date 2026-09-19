@@ -4,8 +4,8 @@
         {% include '@admin/group/_secondary_actions.html.twig' %}
     </div>
     <div class="players">
-        {% for player in group.players %}
-            <div class="player">{{ loop.index }}. {{ player.nameWithRanking }}</div>
+        {% for player in group.playersByRanking %}
+            <div class="player">{{ loop.index }}. {{ player.nameWithRanking(group.season) }}</div>
         {% endfor %}
     </div>
     <div class="matchs">

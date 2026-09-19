@@ -21,11 +21,20 @@ class Group implements EntityInterface
      * @var Collection<int, Player>
      */
     #[ORM\ManyToMany(targetEntity: Player::class, inversedBy: 'groups')]
-    #[ORM\OrderBy(['rankingOrder' => 'DESC', 'lastname' => 'ASC'])]
+    #[ORM\OrderBy(['lastname' => 'ASC'])]
     private Collection $players;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $name = null;
+
+    /**
+     * Une poule appartient à une saison.
+     * Les matchs de la poule appartiennent donc à cette saison,
+     * qu'ils soient programmés ou non.
+     */
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Season $season = null;
 
     /**
      * @var Collection<int, InterfacMatch>
@@ -55,6 +64,38 @@ class Group implements EntityInterface
     public function getPlayers(): Collection
     {
         return $this->players;
+    }
+
+    /**
+     * Joueurs triés par classement (du meilleur au moins bon) pour la saison de la poule, puis par nom
+     * NB: tri en php car le classement dépend de la saison (PlayerSeason)
+     *
+     * @return Collection<int, Player>
+     */
+    public function getPlayersByRanking(): Collection
+    {
+        $players = $this->players->toArray();
+
+        usort($players, function (Player $a, Player $b) {
+            // DESC, sans classement à la fin
+            $cmp = ($b->getRankingOrder($this->season) ?? -1) <=> ($a->getRankingOrder($this->season) ?? -1);
+
+            return $cmp !== 0 ? $cmp : $a->getLastname() <=> $b->getLastname();
+        });
+
+        return new ArrayCollection($players);
+    }
+
+    public function getSeason(): ?Season
+    {
+        return $this->season;
+    }
+
+    public function setSeason(?Season $season): static
+    {
+        $this->season = $season;
+
+        return $this;
     }
 
     public function addPlayer(Player $player): static

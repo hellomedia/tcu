@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Booking;
 use App\Entity\Group;
+use App\Entity\Season;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
@@ -23,6 +24,32 @@ class GroupRepository extends ServiceEntityRepository
         return parent::findBy(criteria: [], orderBy: [
             'name' => 'ASC',
         ]);
+    }
+
+    /**
+     * Poules d'une saison, avec les joueurs et leurs inscriptions (classement par saison)
+     * pour éviter les requêtes supplémentaires
+     *
+     * @return Group[]
+     */
+    public function findBySeason(?Season $season): array
+    {
+        if ($season === null) {
+            return [];
+        }
+
+        return $this->createQueryBuilder('g')
+            ->leftJoin('g.players', 'p')->addSelect('p')
+            // pas de condition sur la saison dans la jointure :
+            // la collection Player::seasons doit rester complète
+            ->leftJoin('p.seasons', 'ps')->addSelect('ps')
+            ->andWhere('g.season = :season')
+            ->setParameter('season', $season)
+            ->addOrderBy('g.name', 'ASC')
+            ->addOrderBy('p.lastname', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
     }
 
     //    /**
@@ -50,14 +77,30 @@ class GroupRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    public function getGroupsWithNonProgrammedMatchesQueryBuilder(): QueryBuilder
+    public function getGroupsWithNonProgrammedMatchesQueryBuilder(?Season $season = null): QueryBuilder
     {
-        return $this->createQueryBuilder('g')
+        $qb = $this->createQueryBuilder('g')
             ->innerJoin('g.matchs', 'm')->addSelect('m')
             // explicit join instead of where('m.booking IS NULL')
             // because single-valued association path expression to an inverse side is not supported in DQL queries
             ->leftJoin('m.booking', 'b')->addSelect('b')
             ->andWhere('b.id IS NULL')
+            ->addOrderBy('g.name', 'ASC')
+        ;
+
+        if ($season !== null) {
+            $qb->andWhere('g.season = :season')
+                ->setParameter('season', $season);
+        }
+
+        return $qb;
+    }
+
+    public function getSeasonQueryBuilder(?Season $season): QueryBuilder
+    {
+        return $this->createQueryBuilder('g')
+            ->andWhere('g.season = :season')
+            ->setParameter('season', $season)
             ->addOrderBy('g.name', 'ASC')
         ;
     }

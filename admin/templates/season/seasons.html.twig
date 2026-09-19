@@ -1,0 +1,117 @@
+{% extends '@admin/base.html.twig' %}
+
+{% block head_stylesheets %}
+    {{ parent() }}
+    <style>
+        .seasons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .season {
+            border: 1px solid var(--border-color);
+            border-radius: 3px;
+            padding: 15px;
+        }
+        .season.selected {
+            border-color: var(--bs-primary, #0d6efd);
+        }
+        .season-header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .season-header h4 {
+            margin: 0;
+        }
+        .season-infos {
+            margin-bottom: 15px;
+            color: var(--text-muted);
+        }
+        .season-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .season-actions form {
+            display: inline;
+        }
+        .help {
+            margin-bottom: 25px;
+        }
+    </style>
+{% endblock %}
+
+{% block content_title %}Saisons{% endblock %}
+
+{% block page_actions %}
+    {% if is_granted('ROLE_MANAGER') %}
+        <a class="btn btn-primary" href="{{ path('admin_season_new') }}">Nouvelle saison</a>
+    {% endif %}
+{% endblock %}
+
+{% block main %}
+
+    <div class="help">
+        <p>
+            <strong>Saison courante</strong> : la saison du club. Le site public affiche les interfacs de cette saison
+            (ou de la dernière saison avec des poules, tant que la saison courante n'en a pas).<br>
+            <strong>Saison sélectionnée</strong> : la saison sur laquelle vous travaillez dans l'admin (poules, inscriptions, planning).
+            Cela permet de préparer la saison suivante ou de consulter une ancienne saison, sans rien changer sur le site public.
+        </p>
+    </div>
+
+    <div class="seasons">
+        {% for season in seasons %}
+            {% set stat = stats[season.id] %}
+            <div class="season {{ season == selected ? 'selected' }}">
+                <div class="season-header">
+                    <h4>{{ season }}</h4>
+                    {% if season.current %}<span class="badge badge-success">Saison courante</span>{% endif %}
+                    {% if season == selected %}<span class="badge badge-primary">Sélectionnée</span>{% endif %}
+                </div>
+                <div class="season-infos">
+                    Du {{ season.startsOn|date('d/m/Y') }} au {{ season.endsOn|date('d/m/Y') }}
+                    • {{ stat.groups }} poule(s)
+                    • {{ stat.confirmed }} inscription(s) confirmée(s)
+                    {%- if stat.pending %}, <strong>{{ stat.pending }} à confirmer</strong>{% endif %}
+                    {%- if stat.dismissed %}, {{ stat.dismissed }} écartée(s){% endif %}
+                </div>
+                <div class="season-actions">
+                    {% if season != selected %}
+                        <a class="btn btn-secondary" href="{{ path('admin_season_select', {id: season.id}) }}">Travailler sur cette saison</a>
+                    {% endif %}
+
+                    {% if is_granted('ROLE_MANAGER') %}
+                        <a class="btn btn-secondary" href="{{ path('admin_season_edit', {entityId: season.id}) }}">Modifier</a>
+
+                        {% if not loop.last %}
+                            <form method="post" action="{{ path('admin_season_prefill', {id: season.id}) }}">
+                                <input type="hidden" name="token" value="{{ csrf_token('season-prefill') }}" />
+                                <button type="submit" class="btn btn-secondary"
+                                    title="Crée les inscriptions manquantes, à confirmer, à partir des saisons précédentes. Les inscriptions existantes ne sont pas modifiées, les inscriptions écartées ne sont pas recréées."
+                                >
+                                    Pré-remplir les inscriptions
+                                </button>
+                            </form>
+                        {% endif %}
+
+                        {% if not season.current %}
+                            <form method="post" action="{{ path('admin_season_set_current', {id: season.id}) }}"
+                                onsubmit="return confirm('Définir {{ season|e('js') }} comme saison courante ? Le site public affichera cette saison par défaut.')"
+                            >
+                                <input type="hidden" name="token" value="{{ csrf_token('season-set-current') }}" />
+                                <button type="submit" class="btn btn-secondary">Définir comme saison courante</button>
+                            </form>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        {% else %}
+            <p>Aucune saison.</p>
+        {% endfor %}
+    </div>
+
+{% endblock %}

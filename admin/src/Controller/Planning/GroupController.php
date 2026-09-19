@@ -7,6 +7,7 @@ use Admin\Factory\MatchFactory;
 use App\Controller\BaseController;
 use App\Entity\Group;
 use App\Repository\GroupRepository;
+use App\Service\SeasonContext;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -15,12 +16,14 @@ use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
 class GroupController extends BaseController
 {
     #[Route('/planning/groups', name: 'admin_planning_groups', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
-    public function groups(GroupRepository $repository): Response
+    public function groups(GroupRepository $repository, SeasonContext $seasonContext): Response
     {
-        $groups = $repository->findAll();
+        $season = $seasonContext->getSelected();
+        $groups = $repository->findBySeason($season);
 
         return $this->render('@admin/group/groups.html.twig', [
             'groups' => $groups,
+            'season' => $season,
         ]);
     }
 

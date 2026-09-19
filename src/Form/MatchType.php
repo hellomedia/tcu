@@ -10,7 +10,9 @@ use App\Entity\Court;
 use App\Entity\Date;
 use App\Entity\Group;
 use App\Enum\BookingType;
+use App\Repository\GroupRepository;
 use App\Repository\SlotRepository;
+use App\Service\SeasonContext;
 use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\QueryBuilder;
@@ -24,6 +26,11 @@ use Symfonycasts\DynamicForms\DynamicFormBuilder;
 
 final class MatchType extends AbstractType
 {
+    public function __construct(
+        private SeasonContext $seasonContext,
+    ) {
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder = new DynamicFormBuilder($builder);
@@ -34,6 +41,9 @@ final class MatchType extends AbstractType
         $builder->add('group', EntityType::class, [
             'label' => 'Poule',
             'class' => Group::class,
+            'query_builder' => function (GroupRepository $repo): QueryBuilder {
+                return $repo->getSeasonQueryBuilder($this->seasonContext->getSelected());
+            },
             'multiple' => false,
             'autocomplete' => true,
         ]);

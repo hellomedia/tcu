@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Booking;
 use App\Entity\Date;
 use App\Entity\Group;
+use App\Entity\Season;
 use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Types\Types;
@@ -37,18 +38,27 @@ class DateRepository extends ServiceEntityRepository
     }
 
     /**
+    * Les dates ne sont pas liées à une saison (les saisons peuvent se chevaucher) :
+    * on se limite aux dates comprises dans la période de la saison
+    *
     * @return Date[] Returns an array of Date objects
     */
-    public function findPastDates(): array
+    public function findPastDates(?Season $season = null): array
     {
-        return $this->createQueryBuilder('d')
+        $qb = $this->createQueryBuilder('d')
             ->leftJoin('d.slots', 's')->addSelect('s')
             ->leftJoin('s.booking', 'b')->addSelect('b')
             ->andWhere('d.date < CURRENT_DATE()')
             ->orderBy('d.date', 'DESC')
-            ->getQuery()
-            ->getResult()
         ;
+
+        if ($season !== null) {
+            $qb->andWhere('d.date BETWEEN :startsOn AND :endsOn')
+                ->setParameter('startsOn', $season->getStartsOn(), Types::DATE_IMMUTABLE)
+                ->setParameter('endsOn', $season->getEndsOn(), Types::DATE_IMMUTABLE);
+        }
+
+        return $qb->getQuery()->getResult();
     }
 
     /**
@@ -118,6 +128,10 @@ class DateRepository extends ServiceEntityRepository
      */
     public function findDatesByGroups(array $groups): array
     {
+        if (!$groups) {
+            return [];
+        }
+
         return $this->createQueryBuilder('d')
             ->innerJoin('d.slots', 's')->addSelect('s')
             ->innerJoin('s.booking', 'b')->addSelect('b')
