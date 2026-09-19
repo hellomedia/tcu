@@ -22,8 +22,8 @@ enum Ranking: string implements TranslatableInterface
     case C_30   = 'C30';
     case C_15_5 = 'C15.5';
     case C_15_4 = 'C15.4';
-    case C_15_2 = 'C15.3';
-    case C_15_3 = 'C15.2';
+    case C_15_3 = 'C15.3';
+    case C_15_2 = 'C15.2';
     case C_15_1 = 'C15.1';
     case C_15   = 'C15';
     case B_4    = 'B+4/6';
