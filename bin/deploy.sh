@@ -75,6 +75,21 @@ esac
 
 trap cleanup INT TERM EXIT
 
+banner () {
+    set +x
+    # Display text in a full-width colored banner
+    esc="$1"; shift
+    text="$*"
+    cols=$(( $(tput cols) - 4 ))
+    echo "$esc"
+    output=$(
+        printf " \n"
+        printf "%*s%s\n" $(( (cols-${#text})/2 )) "" "$text"
+        printf " \n"
+    )
+    echo "$esc" "$output" "\033[0m"
+}
+
 cleanup () {
     trap "" INT TERM EXIT
     rm -rf "$TMP_REPO"
@@ -101,6 +116,15 @@ local_build () {
     # APP_ENV in .env.local must be coherent with composer install args ( prod ==> --no-dev  , dev ==> x )
     cp $LOCAL_REPO/.env.local ./
 
+    # fail deployment if any container-referenced env var is missing or unparseable
+    $COMMAND_PREFIX "cd $BUILD_DIR && APP_ENV=$BUILD_APP_ENV bin/console lint:container --resolve-env-vars"
+    
+    # fail deployment if any twig template is missing or unparseable
+    $COMMAND_PREFIX "cd $BUILD_DIR && APP_ENV=$BUILD_APP_ENV bin/console lint:twig templates"
+
+    # fail deployment if any translation syntax is invalid
+    $COMMAND_PREFIX "cd $BUILD_DIR && APP_ENV=$BUILD_APP_ENV bin/console lint:translations"
+
     $COMMAND_PREFIX "cd $BUILD_DIR && APP_ENV=$BUILD_APP_ENV bin/console importmap:install"
 
     # copy tailwind binary into local build to avoid heavy download
@@ -123,7 +147,9 @@ rsync_local () {
         "$@" \
         --exclude /.git \
         --exclude /.hg \
+        --exclude /node_modules \
         --exclude /var/cache \
+        --exclude /assets \
         --exclude /.env\*local\* \
         ./ "$USER@$HOST:$DEST/"
 }
@@ -131,11 +157,7 @@ rsync_local () {
 remote_activate () {
     if ! $SSH -t "$USER@$HOST" "doas /data/tcu/activate-release.sh $TRACK \"$(basename $DEST)\""; then
         set +x
-        echo -e "\033[41m\033[97m"
-        echo ""
-        echo " Failed"
-        echo -e "\033[0m";
-        set -x
+        banner "\033[41;97m" "Deployment failed"
         exit 1;
     fi
 }
@@ -155,3 +177,7 @@ wait
 if [ $TRACK = "live" ]; then
     (cd "$TMP_REPO" && git push origin --tags)
 fi
+
+set +x
+banner "\033[42;97m" "Deployment successful"
+
