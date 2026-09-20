@@ -19,7 +19,7 @@
 #
 # If deployment breaks site, rollback:
 #
-#     $ ssh deploy@taro.hellokot.be doas /data/tcu/activate-release.sh live <YEAR><MONTH><DATE>-<HOUR><MINUTE><SECOND>
+#     $ ssh deploy@hopia.hellokot.be doas /data/tcu/activate-release.sh live <YEAR><MONTH><DATE>-<HOUR><MINUTE><SECOND>
 #
 #     OR
 #     $ cd /www/tcu/prod
@@ -27,12 +27,11 @@
 #     $ ln -s releases/<previous-working-release> current-release
 #     $ service php_fpm restart
 
-
 set -e
 set -x
 
 BRANCH=main
-HOST=taro.hellokot.be
+HOST=hopia.hellokot.be
 USER=deploy
 TRACK=${TRACK:-live}
 PREFIX=/data/tcu/www/$TRACK
