@@ -338,6 +338,8 @@ class PlayerSeasonCrudController extends AbstractCrudController
         $registration->setStatus($status);
         $entityManager->flush();
 
+        $this->addFlash('success', sprintf('%s : inscription %s.', $registration->getPlayer()->getName(), self::statusVerb($status)));
+
         return $this->redirect($this->getIndexUrl());
     }
 
@@ -353,6 +355,8 @@ class PlayerSeasonCrudController extends AbstractCrudController
 
     private function changeStatusBatch(BatchActionDto $batchActionDto, EntityManagerInterface $entityManager, RegistrationStatus $status): Response
     {
+        $count = 0;
+
         foreach ($batchActionDto->getEntityIds() as $id) {
             $registration = $entityManager->find(PlayerSeason::class, $id);
 
@@ -362,11 +366,27 @@ class PlayerSeasonCrudController extends AbstractCrudController
             }
 
             $registration->setStatus($status);
+            $count++;
         }
 
         $entityManager->flush();
 
+        $this->addFlash($count ? 'success' : 'warning', match ($count) {
+            0 => 'Aucune inscription modifiée.',
+            1 => sprintf('1 inscription %s.', self::statusVerb($status)),
+            default => sprintf('%d inscriptions %s.', $count, self::statusVerb($status, plural: true)),
+        });
+
         return $this->redirect($batchActionDto->getReferrerUrl());
+    }
+
+    private static function statusVerb(RegistrationStatus $status, bool $plural = false): string
+    {
+        return match ($status) {
+            RegistrationStatus::CONFIRMED => 'confirmée',
+            RegistrationStatus::DISMISSED => 'écartée',
+            RegistrationStatus::PENDING => 'rétablie',
+        } . ($plural ? 's' : '');
     }
 
     private function generateStatusUrl(PlayerSeason $registration, RegistrationStatus $status): string
