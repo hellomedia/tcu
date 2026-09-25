@@ -68,3 +68,36 @@ unless we fix tailwind build for admin.css */
         }
     }
 }
+/* Messages flash (EasyAdmin) : par-dessus la page, en haut à droite ;
+   ils disparaissent après quelques secondes (admin.js) */
+#flash-messages {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1090; /* au-dessus des modales (1055) */
+    width: min(420px, calc(100vw - 40px));
+    transition: opacity .3s ease-in;
+}
+#flash-messages.is-hiding {
+    opacity: 0;
+}
+#flash-messages .alert {
+    border-width: 0;
+    border-radius: var(--bs-border-radius);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, .2);
+    margin-bottom: 10px;
+}
+#flash-messages .alert {
+    position: relative;
+    overflow: hidden;
+}
+#flash-messages .flash-timer {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 3px;
+    width: 100%;
+    background: currentColor;
+    opacity: .35;
+    transition: width linear;
+}

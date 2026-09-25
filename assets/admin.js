@@ -44,3 +44,24 @@ import 'chartjs-adapter-luxon';
 // - from Symfony UX
 // - custom controllers
 import './bootstrap.js';
+
+// messages flash (EasyAdmin, #flash-messages) : disparaissent après 5s, avec une barre de temps ;
+// voir styles/admin/admin.css
+const flashMessages = document.getElementById('flash-messages');
+if (flashMessages) {
+    const FLASH_DURATION = 5000;
+
+    flashMessages.querySelectorAll('.alert').forEach((alert) => {
+        const timer = document.createElement('div');
+        timer.className = 'flash-timer';
+        timer.style.transitionDuration = FLASH_DURATION + 'ms';
+        alert.append(timer);
+        // un instant à pleine largeur avant la transition vers 0
+        setTimeout(() => { timer.style.width = 0; }, 10);
+    });
+
+    setTimeout(() => {
+        flashMessages.classList.add('is-hiding');
+        flashMessages.addEventListener('transitionend', () => flashMessages.remove(), { once: true });
+    }, FLASH_DURATION);
+}
