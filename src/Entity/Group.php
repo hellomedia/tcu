@@ -7,6 +7,8 @@ use App\Repository\GroupRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[ORM\Entity(repositoryClass: GroupRepository::class)]
 #[ORM\Table(name: '`group`')]
@@ -112,6 +114,32 @@ class Group implements EntityInterface
         $this->players->removeElement($player);
 
         return $this;
+    }
+
+    /**
+     * Un joueur d'une poule est inscrit pour la saison de la poule (interfacs en hiver)
+     */
+    public static function isEligible(Player $player, Season $season): bool
+    {
+        $registration = $player->getRegistration($season);
+
+        return $registration !== null && (!$season->hasInterfacs() || $registration->isInterfacs());
+    }
+
+    #[Assert\Callback]
+    public function validatePlayers(ExecutionContextInterface $context): void
+    {
+        if ($this->season === null) {
+            return;
+        }
+
+        foreach ($this->players as $player) {
+            if (!self::isEligible($player, $this->season)) {
+                $context->buildViolation(sprintf('%s n\'est pas inscrit%s pour %s.', $player->getName(), $this->season->hasInterfacs() ? ' aux interfacs' : '', $this->season))
+                    ->atPath('players')
+                    ->addViolation();
+            }
+        }
     }
 
     public function getName(): ?string

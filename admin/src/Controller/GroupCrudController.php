@@ -3,6 +3,7 @@
 namespace Admin\Controller;
 
 use App\Entity\Group;
+use App\Enum\RegistrationStatus;
 use App\Service\SeasonContext;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
@@ -65,8 +66,24 @@ class GroupCrudController extends AbstractCrudController
             ->onlyOnIndex()
         ;
 
+        // seuls les joueurs inscrits pour la saison de la poule (interfacs en hiver) : cf Group::validatePlayers()
+        $season = $this->getContext()?->getEntity()?->getInstance()?->getSeason() ?? $this->seasonContext->getSelected();
+
         yield AssociationField::new('players', 'Joueurs')
             ->setFormTypeOption('by_reference', false)
+            ->setQueryBuilder(function (QueryBuilder $qb) use ($season) {
+                $qb->join('entity.seasons', 'registration')
+                    ->andWhere('registration.season = :season')
+                    ->andWhere('registration.status != :dismissed')
+                    ->setParameter('season', $season)
+                    ->setParameter('dismissed', RegistrationStatus::DISMISSED)
+                    ->orderBy('entity.lastname', 'ASC')
+                    ->addOrderBy('entity.firstname', 'ASC');
+
+                if ($season?->hasInterfacs()) {
+                    $qb->andWhere('registration.interfacs = true');
+                }
+            })
             ->setTemplatePath('@admin/field/players.html.twig')
             ->hideOnDetail()
         ;
