@@ -10,6 +10,7 @@ use App\Repository\RegistrationRepository;
 use App\Repository\SeasonRepository;
 use App\Service\RegistrationPrefiller;
 use App\Service\SeasonContext;
+use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -76,6 +77,23 @@ class SeasonController extends BaseController
     {
         $seasonRepository->setCurrent($season);
         $seasonContext->select($season);
+
+        return $this->redirectToRoute('admin_seasons');
+    }
+
+    /**
+     * Interfacs de la saison visibles sur le site public. Tant qu'une saison courante n'est pas publiée,
+     * le site affiche une page d'attente (InterfacsController::comingSoon()).
+     */
+    #[IsGranted('ROLE_MANAGER')]
+    #[IsCsrfTokenValid('season-publish', tokenKey: 'token')]
+    #[Route('/season/{id:season}/publish/{published}', name: 'admin_season_publish', requirements: ['published' => '0|1'], methods: ['POST'])]
+    public function publish(Season $season, bool $published, EntityManagerInterface $entityManager): Response
+    {
+        $season->setPublished($published);
+        $entityManager->flush();
+
+        $this->addFlash('success', sprintf('%s : interfacs %s sur le site.', $season, $published ? 'publiés' : 'masqués'));
 
         return $this->redirectToRoute('admin_seasons');
     }

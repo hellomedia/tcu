@@ -17,12 +17,29 @@ use Symfony\Component\Routing\Attribute\Route;
 class InterfacsController extends BaseController
 {
     #[Route('/interfacs', name: 'interfacs')]
-    public function homepage(): Response
+    public function homepage(SeasonContext $seasonContext): Response
     {
         $this->addBreadcrumb('Homepage', 'homepage');
         $this->addBreadcrumb('Interfacs', 'interfacs');
-        
-        return $this->render('interfacs/interfacs.html.twig', []);
+
+        return $this->comingSoon($seasonContext) ?? $this->render('interfacs/interfacs.html.twig', []);
+    }
+
+    /**
+     * Saison courante pas encore publiée : page d'attente à la place des poules, du planning et des matchs
+     */
+    private function comingSoon(SeasonContext $seasonContext): ?Response
+    {
+        $season = $seasonContext->getUnpublishedInterfacsSeason();
+
+        if ($season === null) {
+            return null;
+        }
+
+        return $this->render('interfacs/coming_soon.html.twig', [
+            'season' => $season,
+            'seasons' => $seasonContext->getPublicInterfacsSeasons(),
+        ]);
     }
 
     #[Route('/interfacs/mes-matchs', name: 'interfacs_my_matchs', methods: ['GET'])]
@@ -37,6 +54,10 @@ class InterfacsController extends BaseController
         $this->addBreadcrumb('Homepage', 'homepage');
         $this->addBreadcrumb('Interfacs', 'interfacs');
         $this->addBreadcrumb('Mes matchs');
+
+        if ($comingSoon = $this->comingSoon($seasonContext)) {
+            return $comingSoon;
+        }
 
         return $this->render('interfacs/my_matchs.html.twig', [
             'form' => $form,
@@ -60,6 +81,14 @@ class InterfacsController extends BaseController
     ): Response
     {
         if ($slug === null) {
+            // pas de saison publiée : page d'attente
+            if ($comingSoon = $this->comingSoon($seasonContext)) {
+                $this->addBreadcrumb('Homepage', 'homepage');
+                $this->addBreadcrumb('Interfacs', 'interfacs');
+
+                return $comingSoon;
+            }
+
             $season = $seasonContext->getInterfacsSeason();
         } else {
             $season = $seasonRepository->findOneBySlug($slug);
@@ -92,8 +121,15 @@ class InterfacsController extends BaseController
     }
 
     #[Route('/interfacs/planning', name: 'interfacs_planning')]
-    public function planning(DateRepository $dateRepository, CourtRepository $courtRepository): Response
+    public function planning(DateRepository $dateRepository, CourtRepository $courtRepository, SeasonContext $seasonContext): Response
     {
+        if ($comingSoon = $this->comingSoon($seasonContext)) {
+            $this->addBreadcrumb('Homepage', 'homepage');
+            $this->addBreadcrumb('Interfacs', 'interfacs');
+
+            return $comingSoon;
+        }
+
         $dates = $dateRepository->findFutureDates();
         $courts = $courtRepository->findAll();
 

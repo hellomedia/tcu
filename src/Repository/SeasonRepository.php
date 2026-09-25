@@ -70,7 +70,7 @@ class SeasonRepository extends ServiceEntityRepository
      *
      * @return Season[]
      */
-    public function findWithGroups(?Season $upTo = null): array
+    public function findWithGroups(?Season $upTo = null, bool $publishedOnly = false): array
     {
         $qb = $this->createQueryBuilder('s')
             ->andWhere('EXISTS (
@@ -82,6 +82,10 @@ class SeasonRepository extends ServiceEntityRepository
         if ($upTo !== null) {
             $qb->andWhere('s.startsOn <= :upTo')
                 ->setParameter('upTo', $upTo->getStartsOn(), Types::DATE_IMMUTABLE);
+        }
+
+        if ($publishedOnly) {
+            $qb->andWhere('s.published = true');
         }
 
         return $qb->getQuery()->getResult();

@@ -57,7 +57,8 @@
     <div class="help">
         <p>
             <strong>Saison courante</strong> : la saison du club. Le site public affiche les interfacs de cette saison
-            (ou de la dernière saison avec des poules, tant que la saison courante n'en a pas).<br>
+            une fois <strong>publiée</strong> ; en attendant, il affiche une page « les poules et le calendrier seront publiés dans quelques jours »
+            avec les résultats des saisons précédentes.<br>
             <strong>Saison sélectionnée</strong> : la saison sur laquelle vous travaillez dans l'admin (poules, inscriptions, planning).
             Cela permet de préparer la saison suivante ou de consulter une ancienne saison, sans rien changer sur le site public.
         </p>
@@ -70,6 +71,13 @@
                 <div class="season-header">
                     <h4>{{ season }}</h4>
                     {% if season.current %}<span class="badge badge-success">Saison courante</span>{% endif %}
+                    {% if season.hasInterfacs %}
+                        {% if season.published %}
+                            <span class="badge badge-success">Publiée sur le site</span>
+                        {% else %}
+                            <span class="badge badge-warning">Non publiée</span>
+                        {% endif %}
+                    {% endif %}
                     {% if season == selected %}<span class="badge badge-primary">Sélectionnée</span>{% endif %}
                 </div>
                 <div class="season-infos">
@@ -95,6 +103,15 @@
                                 >
                                     Pré-remplir les inscriptions
                                 </button>
+                            </form>
+                        {% endif %}
+
+                        {% if season.hasInterfacs %}
+                            <form method="post" action="{{ path('admin_season_publish', {id: season.id, published: season.published ? 0 : 1}) }}"
+                                onsubmit="return confirm('{{ season.published ? 'Masquer les interfacs de ' ~ season|e('js') ~ ' sur le site ? Le site affichera la page d\'attente.' : 'Publier les interfacs de ' ~ season|e('js') ~ ' sur le site ? Les poules et le planning deviennent visibles.' }}')"
+                            >
+                                <input type="hidden" name="token" value="{{ csrf_token('season-publish') }}" />
+                                <button type="submit" class="btn {{ season.published ? 'btn-secondary' : 'btn-primary' }}">{{ season.published ? 'Dépublier' : 'Publier sur le site' }}</button>
                             </form>
                         {% endif %}
 

@@ -55,6 +55,13 @@ class Season implements EntityInterface
     #[ORM\Column(name: 'is_current', options: ['default' => false])]
     private bool $current = false;
 
+    /**
+     * Interfacs visibles sur le site public. Tant que la saison courante n'est pas publiée,
+     * le site affiche une page d'attente (SeasonContext::getUnpublishedInterfacsSeason())
+     */
+    #[ORM\Column(name: 'is_published', options: ['default' => false])]
+    private bool $published = false;
+
     public function __construct(?SeasonType $type = null, ?int $year = null)
     {
         $this->type = $type;
@@ -238,6 +245,18 @@ class Season implements EntityInterface
     public function setCurrent(bool $current): static
     {
         $this->current = $current;
+
+        return $this;
+    }
+
+    public function isPublished(): bool
+    {
+        return $this->published;
+    }
+
+    public function setPublished(bool $published): static
+    {
+        $this->published = $published;
 
         return $this;
     }

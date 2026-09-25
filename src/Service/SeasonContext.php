@@ -38,8 +38,8 @@ class SeasonContext
     }
 
     /**
-     * La saison courante si elle a des poules.
-     * Sinon, la dernière saison qui en avait :
+     * La saison courante si elle a des poules et est publiée.
+     * Sinon, la dernière saison publiée qui en avait :
      * en été, on continue à afficher les interfacs de l'hiver précédent.
      */
     public function getInterfacsSeason(): ?Season
@@ -50,11 +50,22 @@ class SeasonContext
             return null;
         }
 
-        return $this->seasonRepository->findWithGroups(upTo: $current)[0] ?? $current;
+        return $this->seasonRepository->findWithGroups(upTo: $current, publishedOnly: true)[0] ?? $current;
     }
 
     /**
-     * Saisons consultables sur le site : celles qui ont des poules, jusqu'à la saison courante
+     * Saison courante d'interfacs en préparation, pas encore publiée :
+     * le site affiche une page d'attente à la place des poules et du planning (InterfacsController)
+     */
+    public function getUnpublishedInterfacsSeason(): ?Season
+    {
+        $current = $this->getCurrent();
+
+        return $current !== null && $current->hasInterfacs() && !$current->isPublished() ? $current : null;
+    }
+
+    /**
+     * Saisons consultables sur le site : celles qui ont des poules et sont publiées, jusqu'à la saison courante
      *
      * @return Season[]
      */
@@ -62,7 +73,7 @@ class SeasonContext
     {
         $current = $this->getCurrent();
 
-        return $current ? $this->seasonRepository->findWithGroups(upTo: $current) : [];
+        return $current ? $this->seasonRepository->findWithGroups(upTo: $current, publishedOnly: true) : [];
     }
 
     public function isPublic(Season $season): bool
