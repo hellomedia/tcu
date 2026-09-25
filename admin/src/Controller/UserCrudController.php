@@ -3,7 +3,7 @@
 namespace Admin\Controller;
 
 use App\Entity\User;
-use App\Enum\AccountLanguage;
+use App\Service\PlayerAccountManager;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
@@ -16,7 +16,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\EmailField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\TextFilter;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[IsGranted('ROLE_MANAGER')]
@@ -24,9 +23,9 @@ class UserCrudController extends AbstractCrudController
 {
 
     public function __construct(
-        private UserPasswordHasherInterface $passwordHasher)
+        private PlayerAccountManager $accountManager,
+    )
     {
-        
     }
 
     public static function getEntityFqcn(): string
@@ -79,25 +78,10 @@ class UserCrudController extends AbstractCrudController
         ;
     }
 
-    // When we create a user from the admin interface, generate a random password
-    public function createEntity(string $entityFqcn)
+    // Compte créé depuis l'admin : mot de passe aléatoire, actif, vérifié (PlayerAccountManager)
+    public function createEntity(string $entityFqcn): User
     {
-        $user = new User();
-
-        $randomString = bin2hex(random_bytes(10)); // 20 chars
-
-        $user->setPassword(
-            $this->passwordHasher->hashPassword(
-                $user,
-                $randomString,
-            )
-        );
-
-        $user->setEnabled(true);
-        $user->setVerified(true);
-        $user->setAccountLanguage(AccountLanguage::FRENCH);
-
-        return $user;
+        return $this->accountManager->newUser();
     }
 
 

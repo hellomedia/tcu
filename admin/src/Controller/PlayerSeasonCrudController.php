@@ -8,6 +8,7 @@ use App\Entity\Player;
 use App\Entity\PlayerSeason;
 use App\Enum\RankingSource;
 use App\Enum\RegistrationStatus;
+use App\Service\PlayerAccountManager;
 use App\Service\SeasonContext;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
@@ -62,6 +63,7 @@ class PlayerSeasonCrudController extends AbstractCrudController
         private AdminUrlGenerator $adminUrlGenerator,
         private CsrfTokenManagerInterface $csrfTokenManager,
         private RequestStack $requestStack,
+        private PlayerAccountManager $accountManager,
     )
     {
     }
@@ -264,6 +266,13 @@ class PlayerSeasonCrudController extends AbstractCrudController
         }
 
         return $registration;
+    }
+
+    public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
+    {
+        // nouveau joueur avec un email : son compte est créé aussi
+        $this->accountManager->sync($entityInstance->getPlayer());
+        parent::persistEntity($entityManager, $entityInstance);
     }
 
     /**

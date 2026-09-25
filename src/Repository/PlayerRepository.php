@@ -18,6 +18,28 @@ class PlayerRepository extends ServiceEntityRepository
         parent::__construct($registry, Player::class);
     }
 
+    /**
+     * Tous les joueurs avec leur compte, par nom
+     *
+     * @param int[]|null $ids limite aux joueurs donnés
+     * @return Player[] indexés par id
+     */
+    public function findAllWithAccount(?array $ids = null): array
+    {
+        $qb = $this->createQueryBuilder('p', 'p.id')
+            ->leftJoin('p.user', 'u')
+            ->addSelect('u')
+            ->orderBy('p.lastname', 'ASC')
+            ->addOrderBy('p.firstname', 'ASC');
+
+        if ($ids !== null) {
+            $qb->andWhere('p.id IN (:ids)')
+                ->setParameter('ids', $ids);
+        }
+
+        return $qb->getQuery()->getResult();
+    }
+
     //    /**
     //     * @return Player[] Returns an array of Player objects
     //     */

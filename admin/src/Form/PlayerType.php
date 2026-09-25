@@ -6,6 +6,7 @@ use App\Entity\Player;
 use App\Enum\Birthyear;
 use App\Enum\Gender;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -17,7 +18,7 @@ use Symfony\Component\Validator\Constraints\NotNull;
 /**
  * Nouveau joueur créé depuis le formulaire "Nouvelle inscription" (PlayerSeasonCrudController)
  *
- * Mêmes champs que le formulaire Joueur de l'admin (PlayerCrudController), sans l'utilisateur ni les dispos.
+ * Mêmes champs que le formulaire Joueur de l'admin (PlayerCrudController), sans les dispos.
  */
 class PlayerType extends AbstractType
 {
@@ -37,6 +38,12 @@ class PlayerType extends AbstractType
                 'label' => 'N° d\'affiliation',
                 'required' => false,
                 'help' => 'Numéro d\'affiliation à la fédération. Permet de récupérer le classement du joueur.',
+            ])
+            // crée le compte du joueur (PlayerAccountManager)
+            ->add('accountEmail', EmailType::class, [
+                'label' => 'Email',
+                'required' => false,
+                'help' => 'Un compte est créé avec cet email (sans envoi d\'email : la personne passe par « Mot de passe oublié »).',
             ])
             ->add('gender', EnumType::class, [
                 'label' => 'H/F',

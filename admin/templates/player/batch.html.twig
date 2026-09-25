@@ -1,0 +1,107 @@
+{% extends '@admin/base.html.twig' %}
+
+{% form_theme form 'bootstrap_5_layout.html.twig' %}
+
+{% block head_stylesheets %}
+    {{ parent() }}
+    <style>
+        .batch-help {
+            margin-bottom: 20px;
+        }
+        .batch-filters {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .batch-count {
+            color: var(--text-muted);
+        }
+        table.batch td {
+            vertical-align: top;
+        }
+        table.batch td.identity {
+            white-space: nowrap;
+            padding-top: 12px;
+        }
+        table.batch .form-control-sm {
+            min-width: 120px;
+        }
+        table.batch .invalid-feedback {
+            white-space: normal;
+        }
+        .batch-actions {
+            margin-top: 20px;
+        }
+    </style>
+{% endblock %}
+
+{% block content_title %}Compléter les joueurs{% endblock %}
+
+{% block page_actions %}
+    <a class="btn btn-secondary" href="{{ path('admin_player_index') }}">Retour aux joueurs</a>
+{% endblock %}
+
+{% block main %}
+
+    <div class="batch-help">
+        <p>
+            Tous les joueurs de la liste sont enregistrés en une fois avec « Enregistrer ».
+            Un email sur un joueur sans compte crée son compte (sans envoi d'email : la personne passe par « Mot de passe oublié »).
+        </p>
+    </div>
+
+    <form method="get" class="batch-filters">
+        <span>Joueurs sans :</span>
+        <label class="form-check-label"><input type="checkbox" class="form-check-input" name="tel" value="1" {{ filters.tel ? 'checked' }}> téléphone</label>
+        <label class="form-check-label"><input type="checkbox" class="form-check-input" name="email" value="1" {{ filters.email ? 'checked' }}> email</label>
+        <label class="form-check-label"><input type="checkbox" class="form-check-input" name="affiliation" value="1" {{ filters.affiliation ? 'checked' }}> n° d'affiliation</label>
+        <label class="form-check-label"><input type="checkbox" class="form-check-input" name="tous" value="1" {{ filters.tous ? 'checked' }}> tous les joueurs</label>
+        <button type="submit" class="btn btn-secondary btn-sm">Filtrer</button>
+        <span class="batch-count">{{ players|length }} joueur{{ players|length > 1 ? 's' }}</span>
+    </form>
+
+    {{ form_start(form) }}
+        {{ form_errors(form) }}
+
+        <table class="table batch">
+            <thead>
+                <tr>
+                    <th>Joueur</th>
+                    <th>Nom</th>
+                    <th>Prénom</th>
+                    <th>Téléphone</th>
+                    <th>Email</th>
+                    <th>N° d'affiliation</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in form.players %}
+                    {% set player = players[row.vars.name] %}
+                    {% set attr = {class: 'form-control-sm'} %}
+                    <tr>
+                        <td class="identity">
+                            <a href="{{ path('admin_player_edit', {entityId: player.id}) }}">{{ player.lastname }} {{ player.firstname }}</a>
+                            <div class="batch-count">{{ player.gender ? player.gender.value }}{{ player.birthyear ? ' - ' ~ player.birthyear.value }}</div>
+                        </td>
+                        <td>{{ form_widget(row.lastname, {attr: attr}) }}{{ form_errors(row.lastname) }}</td>
+                        <td>{{ form_widget(row.firstname, {attr: attr}) }}{{ form_errors(row.firstname) }}</td>
+                        <td>{{ form_widget(row.phone, {attr: attr}) }}{{ form_errors(row.phone) }}</td>
+                        <td>{{ form_widget(row.accountEmail, {attr: attr}) }}{{ form_errors(row.accountEmail) }}</td>
+                        <td>{{ form_widget(row.affiliationNumber, {attr: attr}) }}{{ form_errors(row.affiliationNumber) }}</td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="6">Aucun joueur.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {% if players is not empty %}
+            <div class="batch-actions">
+                <button type="submit" class="btn btn-primary">Enregistrer</button>
+            </div>
+        {% endif %}
+    {{ form_end(form) }}
+
+{% endblock %}

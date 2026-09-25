@@ -7,6 +7,7 @@ use App\Enum\Birthyear;
 use App\Enum\Gender;
 use App\Enum\Ranking;
 use App\Repository\PlayerRepository;
+use App\Validator\AvailableAccountEmail;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -74,6 +75,14 @@ class Player implements EntityInterface
 
     #[ORM\OneToOne(mappedBy: 'player', cascade: ['persist', 'remove'])]
     private ?User $user = null;
+
+    /**
+     * Email saisi dans un formulaire, pour le compte (User) lié au joueur. Pas une colonne :
+     * c'est PlayerAccountManager qui crée le compte ou change son email à l'enregistrement.
+     */
+    #[Assert\Email]
+    #[AvailableAccountEmail]
+    private ?string $accountEmail = null;
 
     public function __construct()
     {
@@ -408,6 +417,30 @@ class Player implements EntityInterface
     public function getUser(): ?User
     {
         return $this->user;
+    }
+
+    /**
+     * Email du compte lié, ou email saisi mais pas encore enregistré
+     */
+    public function getAccountEmail(): ?string
+    {
+        return $this->accountEmail ?? $this->user?->getEmail();
+    }
+
+    /**
+     * Email saisi : à enregistrer par PlayerAccountManager::sync().
+     * Vide = on ne touche pas au compte.
+     */
+    public function setAccountEmail(?string $accountEmail): static
+    {
+        $this->accountEmail = trim((string) $accountEmail) ?: null;
+
+        return $this;
+    }
+
+    public function hasAccount(): bool
+    {
+        return $this->user !== null;
     }
 
     public function setUser(?User $user): static
