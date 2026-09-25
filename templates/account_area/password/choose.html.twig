@@ -1,0 +1,25 @@
+{% extends 'layout/account_area.html.twig' %}
+
+{% block title %}Choisir mon mot de passe{% endblock %}
+
+{% block content %}
+
+    <p style="margin-bottom: 20px;">
+        Le club a créé votre compte ({{ app.user.email }}). Choisissez un mot de passe pour vous connecter la prochaine fois.
+    </p>
+
+    {{ form_start(form, {'attr': {'class': 'form form-horizontal'}}) }}
+
+        {# hidden username for browser auto-complete #}
+        {{ form_row(form.email) }}
+
+        {{ form_row(form.plainPassword, {label: 'Mot de passe'}) }}
+
+        {% embed 'form/_form_actions.html.twig' %}
+            {% block cancel '' %}
+            {% block submit_label 'Enregistrer' %}
+        {% endembed %}
+
+    {{ form_end(form) }}
+
+{% endblock %}

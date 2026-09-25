@@ -48,8 +48,16 @@
     <div class="batch-help">
         <p>
             Tous les joueurs de la liste sont enregistrés en une fois avec « Enregistrer ».
-            Un email sur un joueur sans compte crée son compte (sans envoi d'email : la personne passe par « Mot de passe oublié »).
+            Un email sur un joueur sans compte crée son compte ; la personne est ensuite invitée à choisir son mot de passe avec « Inviter ».
         </p>
+        {% if to_invite is not empty %}
+            <p>
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#modal-invite">
+                    <i class="fa fa-envelope"></i> Inviter les nouveaux comptes ({{ to_invite|length }})
+                </button>
+                <span class="batch-count">{{ to_invite|map(u => u.player.name)|join(', ') }}</span>
+            </p>
+        {% endif %}
     </div>
 
     <form method="get" class="batch-filters">
@@ -103,5 +111,7 @@
             </div>
         {% endif %}
     {{ form_end(form) }}
+
+    {{ include('@admin/player/_invite_modal.html.twig', {to_invite: to_invite, invite_url: path('admin_players_invite_pending', {token: invitation_token}), lifetime_days: lifetime_days}, with_context = false) }}
 
 {% endblock %}

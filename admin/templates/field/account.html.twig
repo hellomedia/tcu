@@ -1,0 +1,17 @@
+{# Compte du joueur : email, invitation, mot de passe choisi, dernière connexion (PlayerAccountManager, InvitationController) #}
+{% set user = entity.instance.user %}
+{% if user %}
+    {{ user.email }}
+    {% if user.lastLogin %}
+        <span class="badge badge-outline" title="Dernière connexion">{{ user.lastLogin|date('d/m/Y') }}</span>
+    {% endif %}
+    {% if user.mustChoosePassword %}
+        {% if user.invitedAt %}
+            <span class="badge badge-warning" title="Invitation envoyée, mot de passe pas encore choisi">Invité le {{ user.invitedAt|date('d/m/Y') }}</span>
+        {% else %}
+            <span class="badge badge-warning">À inviter</span>
+        {% endif %}
+    {% endif %}
+{% else %}
+    <span class="badge badge-outline">Pas de compte</span>
+{% endif %}

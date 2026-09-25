@@ -1,0 +1,40 @@
+{# Confirmation avant "Inviter les nouveaux comptes" (InvitationController::invitePending) #}
+{# to_invite : User[] (comptes à inviter), invite_url : lien avec jeton #}
+<div id="modal-invite" class="modal fade" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-body">
+                <h4>Inviter les nouveaux comptes</h4>
+                <p>
+                    Chaque personne reçoit un email « Votre compte Tennis Club Université » avec un lien valable {{ lifetime_days }} jours.
+                    En cliquant sur le lien, elle est connectée au site et invitée à choisir son mot de passe.
+                    Elle se connecte ensuite avec son email et ce mot de passe.
+                </p>
+                <p>
+                    Si le lien a expiré, elle passe par « Mot de passe oublié » avec son email.
+                    Une personne déjà invitée ne reçoit pas de second email ici : pour renvoyer une invitation, « Inviter » sur sa ligne dans la liste des joueurs.
+                </p>
+                {% if to_invite is not empty %}
+                    <p><strong>{{ to_invite|length }} invitation{{ to_invite|length > 1 ? 's' }}</strong> :</p>
+                    <ul>
+                        {% for user in to_invite %}
+                            <li>{{ user.player.name }} &lt;{{ user.email }}&gt;</li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>Aucun compte à inviter.</p>
+                {% endif %}
+            </div>
+            <div class="modal-footer">
+                <button type="button" data-bs-dismiss="modal" class="btn btn-secondary">
+                    <span class="btn-label">Annuler</span>
+                </button>
+                {% if to_invite is not empty %}
+                    <a href="{{ invite_url }}" class="btn btn-primary">
+                        <span class="btn-label">Envoyer {{ to_invite|length > 1 ? 'les ' ~ to_invite|length ~ ' invitations' : 'l\'invitation' }}</span>
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>

@@ -3,9 +3,11 @@
 namespace Admin\Controller;
 
 use Admin\Form\PlayerBatchType;
+use Admin\Mailer\InvitationMailer;
 use App\Controller\BaseController;
 use App\Entity\Player;
 use App\Repository\PlayerRepository;
+use App\Repository\UserRepository;
 use App\Service\PlayerAccountManager;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
@@ -13,6 +15,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
@@ -30,7 +33,7 @@ class PlayerBatchController extends BaseController
     private const FILTERS = ['tel', 'email', 'affiliation'];
 
     #[Route('/players/batch', name: 'admin_players_batch', methods: ['GET', 'POST'], defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
-    public function batch(Request $request, PlayerRepository $playerRepository, EntityManagerInterface $entityManager, PlayerAccountManager $accountManager): Response
+    public function batch(Request $request, PlayerRepository $playerRepository, UserRepository $userRepository, EntityManagerInterface $entityManager, PlayerAccountManager $accountManager, CsrfTokenManagerInterface $csrfTokenManager): Response
     {
         $filters = $this->getFilters($request);
 
@@ -71,6 +74,10 @@ class PlayerBatchController extends BaseController
             'form' => $form,
             'players' => $players,
             'filters' => $filters,
+            // comptes créés pas encore invités : Admin\Controller\InvitationController
+            'to_invite' => $userRepository->findPlayersToInvite(),
+            'invitation_token' => $csrfTokenManager->getToken(InvitationController::CSRF_TOKEN_ID)->getValue(),
+            'lifetime_days' => InvitationMailer::LIFETIME_DAYS,
         ]);
     }
 

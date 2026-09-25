@@ -43,7 +43,7 @@ class PlayerType extends AbstractType
             ->add('accountEmail', EmailType::class, [
                 'label' => 'Email',
                 'required' => false,
-                'help' => 'Un compte est créé avec cet email (sans envoi d\'email : la personne passe par « Mot de passe oublié »).',
+                'help' => 'Un compte est créé avec cet email ; la personne est ensuite invitée à choisir son mot de passe (« Inviter » dans la liste des joueurs).',
             ])
             ->add('gender', EnumType::class, [
                 'label' => 'H/F',

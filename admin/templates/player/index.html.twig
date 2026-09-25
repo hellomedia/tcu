@@ -1,0 +1,7 @@
+{# Liste des joueurs : modale de confirmation avant "Inviter les nouveaux comptes" (PlayerCrudController::configureResponseParameters) #}
+{% extends '@EasyAdmin/crud/index.html.twig' %}
+
+{% block delete_form %}
+    {{ parent() }}
+    {{ include('@admin/player/_invite_modal.html.twig', {to_invite: to_invite, invite_url: invite_url, lifetime_days: lifetime_days}, with_context = false) }}
+{% endblock %}

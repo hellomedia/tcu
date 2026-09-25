@@ -20,6 +20,26 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         parent::__construct($registry, User::class);
     }
 
+    /**
+     * Comptes de joueurs créés par un admin, pas encore invités (Admin\Mailer\InvitationMailer)
+     *
+     * @return User[]
+     */
+    public function findPlayersToInvite(): array
+    {
+        // roles est une colonne json : le rôle se filtre en PHP
+        $users = $this->createQueryBuilder('u')
+            ->join('u.player', 'p')
+            ->addSelect('p')
+            ->andWhere('u.invitedAt IS NULL')
+            ->orderBy('p.lastname', 'ASC')
+            ->addOrderBy('p.firstname', 'ASC')
+            ->getQuery()
+            ->getResult();
+
+        return array_values(array_filter($users, fn(User $user) => $user->mustChoosePassword()));
+    }
+
     //    /**
     //     * @return User[] Returns an array of User objects
     //     */

@@ -1,0 +1,45 @@
+{% extends "email/layout/template.html.twig" %}
+
+{% block title %}
+
+    {% include "email/includes/_title.html.twig" with {
+        title: 'Votre compte Tennis Club Université'
+    } %}
+
+{% endblock %}
+
+{% block paragraphs %}
+
+    {% embed "email/includes/_paragraph.html.twig" %}
+        {% block text %}
+            Bonjour {{ name }},<br><br>
+            Le club vous a créé un compte sur {{ siteName }} avec cette adresse email ({{ account_email }}).
+            Il vous permet de voir vos matchs, votre poule et de confirmer vos horaires.<br><br>
+            Pour l'activer, cliquez sur le bouton ci-dessous : vous serez connecté et invité à choisir votre mot de passe.
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}
+
+{% block button %}
+
+    {% include "email/includes/_button.html.twig" with {
+            url: invitation_link,
+            label: 'Choisir mon mot de passe'
+        }
+    %}
+
+{% endblock %}
+
+{% block extra_rows %}
+
+    {% include "email/includes/_spacer.html.twig" %}
+
+    {% embed "email/includes/_paragraph.html.twig" %}
+        {% block text %}
+            Ce lien est valable {{ lifetime_days }} jours. Passé ce délai, utilisez « Mot de passe oublié »
+            sur <a href="{{ password_reset_link }}">{{ siteName }}</a> avec cette adresse email.
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

@@ -174,12 +174,13 @@ class PlayerSeasonCrudController extends AbstractCrudController
         yield ChoiceField::new('ranking', 'Classement');
 
         // modifier le classement à la main => source "Manuel" (PlayerSeason::setRanking())
+        // enum traduisible : EasyAdmin indexe les badges sur le nom du cas, pas sa valeur
         yield ChoiceField::new('rankingSource', 'Source du classement')
             ->renderAsBadges([
-                RankingSource::MANUAL->value => 'secondary',
-                RankingSource::PREVIOUS_SEASON->value => 'warning',
-                RankingSource::PREVISIONAL->value => 'warning',
-                RankingSource::OFFICIAL->value => 'success',
+                RankingSource::MANUAL->name => 'secondary',
+                RankingSource::PREVIOUS_SEASON->name => 'warning',
+                RankingSource::PREVISIONAL->name => 'warning',
+                RankingSource::OFFICIAL->name => 'success',
             ])
             ->hideOnForm();
 
@@ -202,9 +203,9 @@ class PlayerSeasonCrudController extends AbstractCrudController
 
         yield ChoiceField::new('status', 'Statut')
             ->renderAsBadges([
-                RegistrationStatus::PENDING->value => 'warning',
-                RegistrationStatus::CONFIRMED->value => 'success',
-                RegistrationStatus::DISMISSED->value => 'secondary',
+                RegistrationStatus::PENDING->name => 'warning',
+                RegistrationStatus::CONFIRMED->name => 'success',
+                RegistrationStatus::DISMISSED->name => 'secondary',
             ])
             ->setHelp('Une inscription pré-remplie à partir d\'une saison précédente doit être vérifiée (classement, activités) puis confirmée, ou écartée si le joueur ne s\'inscrit pas.');
     }
