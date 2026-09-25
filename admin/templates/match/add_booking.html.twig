@@ -42,8 +42,9 @@
         <div class="infos">
             <h5>{{ player }}</h5>
             <div><b>Dispos</b>:</div>
-            {% if player.availabilities is not empty %}
-                <div>{{ player.availabilities }}</div>
+            {% set availabilities = player.availabilities(match.season) %}
+            {% if availabilities is not empty %}
+                <div>{{ availabilities }}</div>
             {% else %}
                 <div> --- </div>
             {% endif %}

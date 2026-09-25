@@ -18,7 +18,7 @@ use Symfony\Component\Validator\Constraints\NotNull;
 /**
  * Nouveau joueur créé depuis le formulaire "Nouvelle inscription" (PlayerSeasonCrudController)
  *
- * Mêmes champs que le formulaire Joueur de l'admin (PlayerCrudController), sans les dispos.
+ * Mêmes champs que le formulaire Joueur de l'admin (PlayerCrudController).
  */
 class PlayerType extends AbstractType
 {

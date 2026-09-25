@@ -142,7 +142,6 @@ class PlayerCrudController extends AbstractCrudController
 
         yield TextField::new('phone', 'Téléphone');
 
-        yield TextareaField::new('availabilities', 'Dispos');
         yield TextareaField::new('comment', 'Commentaire');
 
     }

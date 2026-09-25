@@ -61,9 +61,6 @@ class Player implements EntityInterface
     #[ORM\OneToMany(targetEntity: PlayerSeason::class, mappedBy: 'player', cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $seasons;
 
-    #[ORM\Column(type: Types::TEXT, nullable: true)]
-    private ?string $availabilities = null;
-
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $phone = null;
 
@@ -390,16 +387,12 @@ class Player implements EntityInterface
         });
     }
 
-    public function getAvailabilities(): ?string
+    /**
+     * Les dispos changent à chaque saison : voir l'inscription (PlayerSeason)
+     */
+    public function getAvailabilities(?Season $season): ?string
     {
-        return $this->availabilities;
-    }
-
-    public function setAvailabilities(?string $availabilities): static
-    {
-        $this->availabilities = $availabilities;
-
-        return $this;
+        return $this->getRegistration($season)?->getAvailabilities();
     }
 
     public function getPhone(): ?string

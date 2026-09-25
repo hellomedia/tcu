@@ -67,6 +67,12 @@ class PlayerSeason implements EntityInterface
     #[ORM\Column(nullable: true)]
     private ?bool $cours = null;
 
+    /**
+     * Disponibilités pour les matchs de la saison, en texte libre
+     */
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $availabilities = null;
+
     #[ORM\Column(enumType: RegistrationStatus::class, options: ['default' => RegistrationStatus::CONFIRMED->value])]
     private RegistrationStatus $status = RegistrationStatus::CONFIRMED;
 
@@ -200,6 +206,18 @@ class PlayerSeason implements EntityInterface
     public function setCours(?bool $cours): static
     {
         $this->cours = $cours;
+
+        return $this;
+    }
+
+    public function getAvailabilities(): ?string
+    {
+        return $this->availabilities;
+    }
+
+    public function setAvailabilities(?string $availabilities): static
+    {
+        $this->availabilities = $availabilities;
 
         return $this;
     }

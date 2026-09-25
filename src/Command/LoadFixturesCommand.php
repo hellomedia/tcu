@@ -233,7 +233,6 @@ class LoadFixturesCommand extends Command
                 ->setLastname($lastname)
                 ->setGender($gender)
                 ->setPhone(sprintf('04%02d 12 34 %02d', 70 + $i, $i))
-                ->setAvailabilities($i % 3 === 0 ? 'Pas dispo avant 16h' : null)
             ;
 
             // Hiver : interfacs. Eté : interclubs. Cours toute l'année.
@@ -242,6 +241,7 @@ class LoadFixturesCommand extends Command
                 ->setRankingFrom($winterRanking, RankingSource::OFFICIAL, $pastWinter->getStartsOn())
                 ->setInterfacs($interfacs)
                 ->setCours($cours)
+                ->setAvailabilities($i % 3 === 0 ? 'Pas dispo avant 16h' : null)
             );
             $player->addSeason((new PlayerSeason())
                 ->setSeason($summer)

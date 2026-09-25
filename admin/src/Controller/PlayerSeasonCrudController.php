@@ -28,6 +28,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
@@ -194,6 +195,10 @@ class PlayerSeasonCrudController extends AbstractCrudController
             yield BooleanField::new('interclubs', 'Interclubs')
                 ->renderAsSwitch(true);
         }
+
+        // dispos pour les matchs de la saison
+        yield TextareaField::new('availabilities', 'Dispos')
+            ->hideOnIndex();
 
         yield ChoiceField::new('status', 'Statut')
             ->renderAsBadges([
