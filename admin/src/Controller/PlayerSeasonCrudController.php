@@ -124,15 +124,9 @@ class PlayerSeasonCrudController extends AbstractCrudController
             ->createAsGlobalAction()
             ->addCssClass('btn btn-secondary');
 
-        // Inscription d'un joueur qui n'existe pas encore : le formulaire crée le joueur
-        $newPlayer = Action::new('newPlayer', 'Nouveau joueur', 'fa fa-user-plus')
-            ->linkToUrl(fn() => $this->generateNewPlayerUrl())
-            ->createAsGlobalAction()
-            ->addCssClass('btn btn-secondary');
-
         return $actions
+            // le formulaire propose de créer le joueur s'il n'existe pas (mode nouveau joueur)
             ->update(Crud::PAGE_INDEX, Action::NEW, fn(Action $action) => $action->setLabel('Inscrire un joueur'))
-            ->add(Crud::PAGE_INDEX, $newPlayer)
             ->add(Crud::PAGE_INDEX, $previsionalRankings)
             ->add(Crud::PAGE_INDEX, $officialRankings)
             ->add(Crud::PAGE_INDEX, $confirm)
