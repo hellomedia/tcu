@@ -3,6 +3,8 @@
 namespace Admin\Controller;
 
 use Admin\Filter\RankingOrderFilter;
+use Admin\Form\PlayerType;
+use App\Entity\Player;
 use App\Entity\PlayerSeason;
 use App\Enum\RankingSource;
 use App\Enum\RegistrationStatus;
@@ -24,11 +26,15 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\BooleanFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\ChoiceFilter;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
+use Symfony\Component\Validator\Constraints\Valid;
 
 /**
  * Inscriptions des joueurs pour la saison sélectionnée dans l'admin :
@@ -37,15 +43,25 @@ use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
  * Une inscription pré-remplie à partir d'une saison précédente est "à confirmer" :
  * elle est confirmée ou écartée. Une inscription écartée n'apparaît plus dans la liste
  * (sauf avec le filtre Statut) et peut être rétablie.
+ *
+ * Le formulaire "Nouvelle inscription" a deux modes (paramètre d'URL "joueur") :
+ * - joueur existant (par défaut) : autocomplete, avec un lien vers le mode nouveau joueur
+ * - nouveau joueur : le joueur est créé avec son inscription (PlayerType)
  */
 class PlayerSeasonCrudController extends AbstractCrudController
 {
     private const CSRF_TOKEN_ID = 'registration-status';
 
+    private const PLAYER_MODE_PARAM = 'joueur';
+    private const PLAYER_MODE_NEW = 'nouveau';
+    // nom tapé dans l'autocomplete, repris pour pré-remplir le nouveau joueur (new_player_link_controller.js)
+    private const PLAYER_NAME_PARAM = 'nom';
+
     public function __construct(
         private SeasonContext $seasonContext,
         private AdminUrlGenerator $adminUrlGenerator,
         private CsrfTokenManagerInterface $csrfTokenManager,
+        private RequestStack $requestStack,
     )
     {
     }
@@ -63,7 +79,7 @@ class PlayerSeasonCrudController extends AbstractCrudController
             ->setEntityLabelInSingular('Inscription')
             ->setEntityLabelInPlural('Inscriptions')
             ->setPageTitle(Crud::PAGE_INDEX, 'Inscriptions - ' . $season)
-            ->setPageTitle(Crud::PAGE_NEW, 'Nouvelle inscription - ' . $season)
+            ->setPageTitle(Crud::PAGE_NEW, 'Nouvelle inscription - ' . $season . ($this->isNewPlayerMode() ? ' (nouveau joueur)' : ''))
             ->setSearchFields(['player.firstname', 'player.lastname'])
             ->setDefaultSort([
                 'player.lastname' => 'ASC',
@@ -106,7 +122,15 @@ class PlayerSeasonCrudController extends AbstractCrudController
             ->createAsGlobalAction()
             ->addCssClass('btn btn-secondary');
 
+        // Inscription d'un joueur qui n'existe pas encore : le formulaire crée le joueur
+        $newPlayer = Action::new('newPlayer', 'Nouveau joueur', 'fa fa-user-plus')
+            ->linkToUrl(fn() => $this->generateNewPlayerUrl())
+            ->createAsGlobalAction()
+            ->addCssClass('btn btn-secondary');
+
         return $actions
+            ->update(Crud::PAGE_INDEX, Action::NEW, fn(Action $action) => $action->setLabel('Inscrire un joueur'))
+            ->add(Crud::PAGE_INDEX, $newPlayer)
             ->add(Crud::PAGE_INDEX, $previsionalRankings)
             ->add(Crud::PAGE_INDEX, $officialRankings)
             ->add(Crud::PAGE_INDEX, $confirm)
@@ -122,10 +146,28 @@ class PlayerSeasonCrudController extends AbstractCrudController
     {
         $season = $this->seasonContext->getSelected();
 
-        yield AssociationField::new('player', 'Joueur')
-            ->autocomplete()
-            // une inscription ne change pas de joueur
-            ->setDisabled($pageName === Crud::PAGE_EDIT);
+        if ($pageName === Crud::PAGE_NEW && $this->isNewPlayerMode()) {
+            // champ virtuel : EasyAdmin n'accepte pas un Field générique sur une association
+            yield Field::new('newPlayer', 'Nouveau joueur')
+                ->setFormType(PlayerType::class)
+                ->setFormTypeOption('property_path', 'player')
+                // valide aussi le joueur (n° d'affiliation unique...), pas seulement l'inscription
+                ->setFormTypeOption('constraints', [new Valid()]);
+        } else {
+            $player = AssociationField::new('player', 'Joueur')
+                ->autocomplete()
+                // une inscription ne change pas de joueur
+                ->setDisabled($pageName === Crud::PAGE_EDIT);
+
+            if ($pageName === Crud::PAGE_NEW) {
+                $player->setHelp(sprintf(
+                    'Le joueur n\'existe pas ? <a href="%s" data-controller="new-player-link" data-action="new-player-link#follow">Créer un nouveau joueur</a>',
+                    htmlspecialchars($this->generateNewPlayerUrl()),
+                ));
+            }
+
+            yield $player;
+        }
 
         yield ChoiceField::new('ranking', 'Classement');
 
@@ -212,8 +254,57 @@ class PlayerSeasonCrudController extends AbstractCrudController
 
     public function createEntity(string $entityFqcn): PlayerSeason
     {
-        return (new PlayerSeason())
+        $registration = (new PlayerSeason())
             ->setSeason($this->seasonContext->getSelected());
+
+        if ($this->isNewPlayerMode()) {
+            $player = (new Player())
+                ->setLastname($this->requestStack->getCurrentRequest()?->query->get(self::PLAYER_NAME_PARAM));
+            $player->addSeason($registration);
+        }
+
+        return $registration;
+    }
+
+    /**
+     * Comme le parent, sans les paramètres du mode nouveau joueur : le nom tapé dans l'autocomplete
+     * ne concerne que ce formulaire, et le mode ne se garde que pour "Créer et ajouter un autre"
+     */
+    protected function getRedirectResponseAfterSave(AdminContext $context, string $action): RedirectResponse
+    {
+        $submitButtonName = $context->getRequest()->request->all()['ea']['newForm']['btn'] ?? null;
+
+        $url = $this->adminUrlGenerator->unset(self::PLAYER_NAME_PARAM);
+        if ($submitButtonName !== Action::SAVE_AND_ADD_ANOTHER) {
+            $url->unset(self::PLAYER_MODE_PARAM);
+        }
+
+        $url = match ($submitButtonName) {
+            Action::SAVE_AND_CONTINUE => $url->setAction(Action::EDIT)->setEntityId($context->getEntity()->getPrimaryKeyValue())->generateUrl(),
+            Action::SAVE_AND_RETURN => $url->setAction(Action::INDEX)->generateUrl(),
+            Action::SAVE_AND_ADD_ANOTHER => $url->setAction(Action::NEW)->generateUrl(),
+            default => $this->generateUrl($context->getDashboardRouteName()),
+        };
+
+        return $this->redirect($url);
+    }
+
+    private function isNewPlayerMode(): bool
+    {
+        return $this->requestStack->getCurrentRequest()?->query->get(self::PLAYER_MODE_PARAM) === self::PLAYER_MODE_NEW;
+    }
+
+    /**
+     * Formulaire "Nouvelle inscription" en mode nouveau joueur
+     */
+    private function generateNewPlayerUrl(): string
+    {
+        return $this->adminUrlGenerator
+            ->unsetAll()
+            ->setController(self::class)
+            ->setAction(Action::NEW)
+            ->set(self::PLAYER_MODE_PARAM, self::PLAYER_MODE_NEW)
+            ->generateUrl();
     }
 
     /**

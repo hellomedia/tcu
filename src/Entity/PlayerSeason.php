@@ -32,8 +32,10 @@ class PlayerSeason implements EntityInterface
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\ManyToOne(inversedBy: 'seasons')]
+    // cascade persist : le formulaire "Nouvelle inscription" peut créer le joueur en même temps
+    #[ORM\ManyToOne(inversedBy: 'seasons', cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    #[Assert\NotNull]
     private ?Player $player = null;
 
     #[ORM\ManyToOne]
