@@ -115,21 +115,21 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::subMenu($selected ? (string) $selected : 'Aucune saison', 'fa fa-sun')
             ->setPermission('ROLE_EDITOR')
             ->setSubItems($seasonItems);
+        yield MenuItem::linkToCrud('Inscriptions', 'fa fa-clipboard-list', PlayerSeason::class)
+            ->setPermission('ROLE_EDITOR');
 
-        yield MenuItem::section('Joueurs')
+        yield MenuItem::section('Club')
             ->setPermission('ROLE_EDITOR');
         yield MenuItem::linkToCrud('Joueurs', 'fa fa-user', Player::class)
             ->setPermission('ROLE_EDITOR');
-        yield MenuItem::linkToCrud('Inscriptions', 'fa fa-clipboard-list', PlayerSeason::class)
+
+        yield MenuItem::section('Interfacs')
             ->setPermission('ROLE_EDITOR');
         yield MenuItem::linkToCrud('Poules', 'fa fa-group', Group::class)
             ->setPermission('ROLE_EDITOR');
-
-        yield MenuItem::section('Planning')
+        yield MenuItem::linkToUrl('Planning par poules', 'fa fa-calendar', $this->urlGenerator->generate('admin_planning_groups'))
             ->setPermission('ROLE_EDITOR');
-        yield MenuItem::linkToUrl('Par poules', 'fa fa-calendar', $this->urlGenerator->generate('admin_planning_groups'))
-            ->setPermission('ROLE_EDITOR');
-        yield MenuItem::linkToUrl('Par dates', 'fa fa-calendar', $this->urlGenerator->generate('admin_planning'))
+        yield MenuItem::linkToUrl('Planning par dates', 'fa fa-calendar', $this->urlGenerator->generate('admin_planning'))
             ->setPermission('ROLE_EDITOR');
         yield MenuItem::linkToUrl('Matchs passés', 'fa fa-calendar', $this->urlGenerator->generate('admin_planning_past'))
             ->setPermission('ROLE_EDITOR');
