@@ -1,27 +1,7 @@
 {% extends 'layout/default.html.twig' %}
 
-{# Saison d'interfacs en préparation, pas encore publiée (SeasonContext::getUnpublishedInterfacsSeason()) #}
-
 {% block title %}Interfacs {{ season }}{% endblock %}
 
 {% block content %}
-
-    <div class="alert alert-info">
-        <p>
-            <strong>Les poules et le calendrier de la saison {{ season }} seront publiés dans quelques jours.</strong>
-        </p>
-        <p>
-            Les inscriptions et les classements sont en cours de vérification. Merci de votre patience !
-        </p>
-    </div>
-
-    {% if seasons is not empty %}
-        <p>En attendant, les résultats des saisons précédentes :</p>
-        <ul>
-            {% for s in seasons %}
-                <li><a href="{{ path('interfacs_groups', {slug: s.slug}) }}">Interfacs {{ s }}</a></li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-
+    {{ include('interfacs/_coming_soon.html.twig') }}
 {% endblock %}

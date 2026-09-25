@@ -19,6 +19,14 @@ class GroupController extends BaseController
         $this->addBreadcrumb('Dashboard', 'dashboard');
         $this->addBreadcrumb('Ma poule');
 
+        // saison en préparation, pas encore publiée : même page d'attente que le site (InterfacsController)
+        if ($upcoming = $seasonContext->getUnpublishedInterfacsSeason()) {
+            return $this->render('account_area/interfacs/group/coming_soon.html.twig', [
+                'season' => $upcoming,
+                'seasons' => $seasonContext->getPublicInterfacsSeasons(),
+            ]);
+        }
+
         $season = $seasonContext->getInterfacsSeason();
         $groups = $this->getUser()->getPlayer()->getGroupsForSeason($season);
         $dates = $dateRepository->findDatesByGroups($groups->toArray());
