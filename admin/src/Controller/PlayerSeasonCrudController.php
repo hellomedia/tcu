@@ -126,7 +126,7 @@ class PlayerSeasonCrudController extends AbstractCrudController
 
         return $actions
             // le formulaire propose de créer le joueur s'il n'existe pas (mode nouveau joueur)
-            ->update(Crud::PAGE_INDEX, Action::NEW, fn(Action $action) => $action->setLabel('Inscrire un joueur'))
+            ->update(Crud::PAGE_INDEX, Action::NEW, fn(Action $action) => $action->setLabel('Nouvelle inscription')->setIcon('fa fa-plus'))
             ->add(Crud::PAGE_INDEX, $previsionalRankings)
             ->add(Crud::PAGE_INDEX, $officialRankings)
             ->add(Crud::PAGE_INDEX, $confirm)
