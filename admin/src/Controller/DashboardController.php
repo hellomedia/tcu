@@ -118,11 +118,6 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Inscriptions', 'fa fa-clipboard-list', PlayerSeason::class)
             ->setPermission('ROLE_EDITOR');
 
-        yield MenuItem::section('Club')
-            ->setPermission('ROLE_EDITOR');
-        yield MenuItem::linkToCrud('Joueurs', 'fa fa-user', Player::class)
-            ->setPermission('ROLE_EDITOR');
-
         yield MenuItem::section('Interfacs')
             ->setPermission('ROLE_EDITOR');
         yield MenuItem::linkToCrud('Poules', 'fa fa-group', Group::class)
@@ -133,7 +128,12 @@ class DashboardController extends AbstractDashboardController
             ->setPermission('ROLE_EDITOR');
         yield MenuItem::linkToUrl('Matchs passés', 'fa fa-calendar', $this->urlGenerator->generate('admin_planning_past'))
             ->setPermission('ROLE_EDITOR');
-        
+
+        yield MenuItem::section('Club')
+            ->setPermission('ROLE_EDITOR');
+        yield MenuItem::linkToCrud('Joueurs', 'fa fa-user', Player::class)
+            ->setPermission('ROLE_EDITOR');
+
         yield MenuItem::section('Admin')
             ->setPermission('ROLE_MANAGER');
         yield MenuItem::linkToUrl('Plages horaires', 'fa fa-calendar', $this->urlGenerator->generate('admin_planning_slots'))
