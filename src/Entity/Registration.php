@@ -6,7 +6,7 @@ use App\Entity\Interface\EntityInterface;
 use App\Enum\Ranking;
 use App\Enum\RankingSource;
 use App\Enum\RegistrationStatus;
-use App\Repository\PlayerSeasonRepository;
+use App\Repository\RegistrationRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -22,10 +22,11 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  * Interfacs : uniquement en hiver. Interclubs : uniquement en été.
  * cf Season::hasInterfacs() et Season::hasInterclubs()
  */
-#[ORM\Entity(repositoryClass: PlayerSeasonRepository::class)]
+#[ORM\Entity(repositoryClass: RegistrationRepository::class)]
+#[ORM\Table(name: 'player_season')]
 #[ORM\UniqueConstraint(name: 'player_season_unique', columns: ['player_id', 'season_id'])]
 #[UniqueEntity(fields: ['player', 'season'], message: 'Ce joueur est déjà inscrit pour cette saison.')]
-class PlayerSeason implements EntityInterface
+class Registration implements EntityInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -33,7 +34,7 @@ class PlayerSeason implements EntityInterface
     private ?int $id = null;
 
     // cascade persist : le formulaire "Nouvelle inscription" peut créer le joueur en même temps
-    #[ORM\ManyToOne(inversedBy: 'seasons', cascade: ['persist'])]
+    #[ORM\ManyToOne(inversedBy: 'registrations', cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     #[Assert\NotNull]
     private ?Player $player = null;

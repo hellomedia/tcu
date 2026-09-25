@@ -126,10 +126,10 @@ class PlayerCrudController extends AbstractCrudController
         yield ChoiceField::new('birthyear', 'Année de naissance');
 
         // Le classement et les activités (interfacs, cours, interclubs) changent à chaque saison :
-        // ils se gèrent dans les inscriptions (PlayerSeasonCrudController)
+        // ils se gèrent dans les inscriptions (RegistrationCrudController)
         $season = $this->seasonContext->getSelected();
 
-        yield AssociationField::new('seasons', 'Inscription ' . $season)
+        yield AssociationField::new('registrations', 'Inscription ' . $season)
             ->setTemplatePath('@admin/field/registration.html.twig')
             ->setCustomOption('season', $season)
             ->setSortable(false)
@@ -161,7 +161,7 @@ class PlayerCrudController extends AbstractCrudController
     public function configureFilters(Filters $filters): Filters
     {
         return $filters
-            // filtres par classement / interfacs / interclubs / cours : voir les inscriptions (PlayerSeasonCrudController)
+            // filtres par classement / interfacs / interclubs / cours : voir les inscriptions (RegistrationCrudController)
             ->add(ChoiceFilter::new('gender')
                 ->setChoices(Gender::getTranslatableChoices())
             )

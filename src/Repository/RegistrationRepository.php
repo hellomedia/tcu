@@ -2,31 +2,31 @@
 
 namespace App\Repository;
 
-use App\Entity\PlayerSeason;
+use App\Entity\Registration;
 use App\Entity\Season;
 use App\Enum\RegistrationStatus;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<PlayerSeason>
+ * @extends ServiceEntityRepository<Registration>
  */
-class PlayerSeasonRepository extends ServiceEntityRepository
+class RegistrationRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, PlayerSeason::class);
+        parent::__construct($registry, Registration::class);
     }
 
     /**
-     * @return array<int, PlayerSeason> inscriptions de la saison, indexées par id du joueur
+     * @return array<int, Registration> inscriptions de la saison, indexées par id du joueur
      */
     public function findBySeasonIndexedByPlayer(Season $season): array
     {
         $registrations = $this->createQueryBuilder('ps')
             ->join('ps.player', 'p')->addSelect('p')
             // toutes les inscriptions du joueur : Player::seasons est initialisée sans requête supplémentaire
-            ->leftJoin('p.seasons', 'all_ps')->addSelect('all_ps')
+            ->leftJoin('p.registrations', 'all_ps')->addSelect('all_ps')
             ->andWhere('ps.season = :season')
             ->setParameter('season', $season)
             ->getQuery()

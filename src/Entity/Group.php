@@ -70,7 +70,7 @@ class Group implements EntityInterface
 
     /**
      * Joueurs triés par classement (du meilleur au moins bon) pour la saison de la poule, puis par nom
-     * NB: tri en php car le classement dépend de la saison (PlayerSeason)
+     * NB: tri en php car le classement dépend de la saison (Registration)
      *
      * @return Collection<int, Player>
      */

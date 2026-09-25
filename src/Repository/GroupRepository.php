@@ -42,7 +42,7 @@ class GroupRepository extends ServiceEntityRepository
             ->leftJoin('g.players', 'p')->addSelect('p')
             // pas de condition sur la saison dans la jointure :
             // la collection Player::seasons doit rester complète
-            ->leftJoin('p.seasons', 'ps')->addSelect('ps')
+            ->leftJoin('p.registrations', 'ps')->addSelect('ps')
             ->andWhere('g.season = :season')
             ->setParameter('season', $season)
             ->addOrderBy('g.name', 'ASC')

@@ -2,11 +2,11 @@
 
 namespace App\Service;
 
-use App\Entity\PlayerSeason;
+use App\Entity\Registration;
 use App\Entity\Season;
 use App\Enum\RankingSource;
 use App\Enum\RegistrationStatus;
-use App\Repository\PlayerSeasonRepository;
+use App\Repository\RegistrationRepository;
 use App\Repository\SeasonRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
@@ -33,7 +33,7 @@ class RegistrationPrefiller
 {
     public function __construct(
         private SeasonRepository $seasonRepository,
-        private PlayerSeasonRepository $playerSeasonRepository,
+        private RegistrationRepository $registrationRepository,
         private EntityManagerInterface $entityManager,
     ) {
     }
@@ -60,12 +60,12 @@ class RegistrationPrefiller
         }
 
         // y compris les inscriptions écartées, pour ne pas les recréer
-        $existing = $this->playerSeasonRepository->findBySeasonIndexedByPlayer($season);
+        $existing = $this->registrationRepository->findBySeasonIndexedByPlayer($season);
 
         // un joueur écarté d'une saison précédente n'y était pas inscrit
-        $notDismissed = fn(PlayerSeason $registration) => !$registration->isDismissed();
-        $fromSource = array_filter($this->playerSeasonRepository->findBySeasonIndexedByPlayer($source), $notDismissed);
-        $fromPrevious = $source === $previous ? $fromSource : array_filter($this->playerSeasonRepository->findBySeasonIndexedByPlayer($previous), $notDismissed);
+        $notDismissed = fn(Registration $registration) => !$registration->isDismissed();
+        $fromSource = array_filter($this->registrationRepository->findBySeasonIndexedByPlayer($source), $notDismissed);
+        $fromPrevious = $source === $previous ? $fromSource : array_filter($this->registrationRepository->findBySeasonIndexedByPlayer($previous), $notDismissed);
 
         $created = 0;
 
@@ -77,7 +77,7 @@ class RegistrationPrefiller
             // classement le plus récent : celui de la dernière saison si le joueur y était inscrit avec un classement
             $ranking = ($fromPrevious[$playerId] ?? null)?->getRanking() ?? $sourceRegistration->getRanking();
 
-            $registration = (new PlayerSeason())
+            $registration = (new Registration())
                 ->setSeason($season)
                 ->setRankingFrom($ranking, RankingSource::PREVIOUS_SEASON)
                 ->setInterfacs($season->hasInterfacs() ? $sourceRegistration->isInterfacs() : null)
@@ -86,7 +86,7 @@ class RegistrationPrefiller
                 ->setStatus(RegistrationStatus::PENDING)
             ;
 
-            $sourceRegistration->getPlayer()->addSeason($registration);
+            $sourceRegistration->getPlayer()->addRegistration($registration);
 
             $this->entityManager->persist($registration);
             $created++;

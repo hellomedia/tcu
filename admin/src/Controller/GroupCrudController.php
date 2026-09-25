@@ -72,7 +72,7 @@ class GroupCrudController extends AbstractCrudController
         yield AssociationField::new('players', 'Joueurs')
             ->setFormTypeOption('by_reference', false)
             ->setQueryBuilder(function (QueryBuilder $qb) use ($season) {
-                $qb->join('entity.seasons', 'registration')
+                $qb->join('entity.registrations', 'registration')
                     ->andWhere('registration.season = :season')
                     ->andWhere('registration.status != :dismissed')
                     ->setParameter('season', $season)

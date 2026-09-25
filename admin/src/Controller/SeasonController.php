@@ -6,7 +6,7 @@ use App\Controller\BaseController;
 use App\Entity\Season;
 use App\Enum\RegistrationStatus;
 use App\Repository\GroupRepository;
-use App\Repository\PlayerSeasonRepository;
+use App\Repository\RegistrationRepository;
 use App\Repository\SeasonRepository;
 use App\Service\RegistrationPrefiller;
 use App\Service\SeasonContext;
@@ -24,7 +24,7 @@ class SeasonController extends BaseController
     public function seasons(
         SeasonRepository $seasonRepository,
         GroupRepository $groupRepository,
-        PlayerSeasonRepository $playerSeasonRepository,
+        RegistrationRepository $registrationRepository,
         SeasonContext $seasonContext,
     ): Response
     {
@@ -34,9 +34,9 @@ class SeasonController extends BaseController
         foreach ($seasons as $season) {
             $stats[$season->getId()] = [
                 'groups' => $groupRepository->count(['season' => $season]),
-                'confirmed' => $playerSeasonRepository->countByStatus($season, RegistrationStatus::CONFIRMED),
-                'pending' => $playerSeasonRepository->countByStatus($season, RegistrationStatus::PENDING),
-                'dismissed' => $playerSeasonRepository->countByStatus($season, RegistrationStatus::DISMISSED),
+                'confirmed' => $registrationRepository->countByStatus($season, RegistrationStatus::CONFIRMED),
+                'pending' => $registrationRepository->countByStatus($season, RegistrationStatus::PENDING),
+                'dismissed' => $registrationRepository->countByStatus($season, RegistrationStatus::DISMISSED),
             ];
         }
 
@@ -90,7 +90,7 @@ class SeasonController extends BaseController
         // les inscriptions à confirmer sont celles de la saison sélectionnée
         $seasonContext->select($season);
 
-        return $this->redirectToRoute('admin_player_season_index', [
+        return $this->redirectToRoute('admin_registration_index', [
             'filters' => ['status' => ['comparison' => '=', 'value' => RegistrationStatus::PENDING->value]],
         ]);
     }

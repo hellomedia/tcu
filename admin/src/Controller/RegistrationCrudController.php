@@ -5,7 +5,7 @@ namespace Admin\Controller;
 use Admin\Filter\RankingOrderFilter;
 use Admin\Form\PlayerType;
 use App\Entity\Player;
-use App\Entity\PlayerSeason;
+use App\Entity\Registration;
 use App\Enum\RankingSource;
 use App\Enum\RegistrationStatus;
 use App\Service\PlayerAccountManager;
@@ -50,7 +50,7 @@ use Symfony\Component\Validator\Constraints\Valid;
  * - joueur existant (par défaut) : autocomplete, avec un lien vers le mode nouveau joueur
  * - nouveau joueur : le joueur est créé avec son inscription (PlayerType)
  */
-class PlayerSeasonCrudController extends AbstractCrudController
+class RegistrationCrudController extends AbstractCrudController
 {
     private const CSRF_TOKEN_ID = 'registration-status';
 
@@ -71,7 +71,7 @@ class PlayerSeasonCrudController extends AbstractCrudController
 
     public static function getEntityFqcn(): string
     {
-        return PlayerSeason::class;
+        return Registration::class;
     }
 
     public function configureCrud(Crud $crud): Crud
@@ -93,16 +93,16 @@ class PlayerSeasonCrudController extends AbstractCrudController
     public function configureActions(Actions $actions): Actions
     {
         $confirm = Action::new('confirm', 'Confirmer', 'fa fa-check')
-            ->linkToUrl(fn(PlayerSeason $registration) => $this->generateStatusUrl($registration, RegistrationStatus::CONFIRMED))
-            ->displayIf(fn(PlayerSeason $registration) => $registration->isPending());
+            ->linkToUrl(fn(Registration $registration) => $this->generateStatusUrl($registration, RegistrationStatus::CONFIRMED))
+            ->displayIf(fn(Registration $registration) => $registration->isPending());
 
         $dismiss = Action::new('dismiss', 'Écarter', 'fa fa-xmark')
-            ->linkToUrl(fn(PlayerSeason $registration) => $this->generateStatusUrl($registration, RegistrationStatus::DISMISSED))
-            ->displayIf(fn(PlayerSeason $registration) => $registration->isPending());
+            ->linkToUrl(fn(Registration $registration) => $this->generateStatusUrl($registration, RegistrationStatus::DISMISSED))
+            ->displayIf(fn(Registration $registration) => $registration->isPending());
 
         $restore = Action::new('restore', 'Rétablir', 'fa fa-rotate-left')
-            ->linkToUrl(fn(PlayerSeason $registration) => $this->generateStatusUrl($registration, RegistrationStatus::PENDING))
-            ->displayIf(fn(PlayerSeason $registration) => $registration->isDismissed());
+            ->linkToUrl(fn(Registration $registration) => $this->generateStatusUrl($registration, RegistrationStatus::PENDING))
+            ->displayIf(fn(Registration $registration) => $registration->isDismissed());
 
         $confirmBatch = Action::new('confirmBatch', 'Confirmer')
             ->linkToCrudAction('confirmBatch')
@@ -168,7 +168,7 @@ class PlayerSeasonCrudController extends AbstractCrudController
 
         yield ChoiceField::new('ranking', 'Classement');
 
-        // modifier le classement à la main => source "Manuel" (PlayerSeason::setRanking())
+        // modifier le classement à la main => source "Manuel" (Registration::setRanking())
         // enum traduisible : EasyAdmin indexe les badges sur le nom du cas, pas sa valeur
         yield ChoiceField::new('rankingSource', 'Source du classement')
             ->renderAsBadges([
@@ -254,15 +254,15 @@ class PlayerSeasonCrudController extends AbstractCrudController
         return $qb;
     }
 
-    public function createEntity(string $entityFqcn): PlayerSeason
+    public function createEntity(string $entityFqcn): Registration
     {
-        $registration = (new PlayerSeason())
+        $registration = (new Registration())
             ->setSeason($this->seasonContext->getSelected());
 
         if ($this->isNewPlayerMode()) {
             $player = (new Player())
                 ->setLastname($this->requestStack->getCurrentRequest()?->query->get(self::PLAYER_NAME_PARAM));
-            $player->addSeason($registration);
+            $player->addRegistration($registration);
         }
 
         return $registration;
@@ -330,7 +330,7 @@ class PlayerSeasonCrudController extends AbstractCrudController
         $status = RegistrationStatus::tryFrom((string) $request->query->get('status'));
         $registration = $context->getEntity()->getInstance();
 
-        if ($status === null || !$registration instanceof PlayerSeason) {
+        if ($status === null || !$registration instanceof Registration) {
             throw $this->createNotFoundException();
         }
 
@@ -357,7 +357,7 @@ class PlayerSeasonCrudController extends AbstractCrudController
         $count = 0;
 
         foreach ($batchActionDto->getEntityIds() as $id) {
-            $registration = $entityManager->find(PlayerSeason::class, $id);
+            $registration = $entityManager->find(Registration::class, $id);
 
             // on n'écarte que des inscriptions à confirmer : une inscription confirmée se supprime
             if ($registration === null || ($status === RegistrationStatus::DISMISSED && !$registration->isPending())) {
@@ -388,7 +388,7 @@ class PlayerSeasonCrudController extends AbstractCrudController
         } . ($plural ? 's' : '');
     }
 
-    private function generateStatusUrl(PlayerSeason $registration, RegistrationStatus $status): string
+    private function generateStatusUrl(Registration $registration, RegistrationStatus $status): string
     {
         // on garde les filtres, le tri et la page de la liste
         return $this->adminUrlGenerator

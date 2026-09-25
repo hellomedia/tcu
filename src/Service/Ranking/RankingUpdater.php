@@ -2,7 +2,7 @@
 
 namespace App\Service\Ranking;
 
-use App\Entity\PlayerSeason;
+use App\Entity\Registration;
 use App\Enum\Ranking;
 use App\Enum\RankingSource;
 
@@ -31,7 +31,7 @@ class RankingUpdater
     /**
      * Ne modifie rien. Fait une requête vers mon-classement-tennis.be : à espacer.
      */
-    public function propose(PlayerSeason $registration, bool $previsional): RankingProposal
+    public function propose(Registration $registration, bool $previsional): RankingProposal
     {
         $player = $registration->getPlayer();
 
@@ -71,7 +71,7 @@ class RankingUpdater
         return new RankingProposal($status, $ranking, $fetched->playerName);
     }
 
-    public function apply(PlayerSeason $registration, Ranking $ranking, bool $previsional, \DateTimeImmutable $fetchedAt): void
+    public function apply(Registration $registration, Ranking $ranking, bool $previsional, \DateTimeImmutable $fetchedAt): void
     {
         $registration->setRankingFrom($ranking, self::getSource($previsional), $fetchedAt);
     }

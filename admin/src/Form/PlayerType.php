@@ -16,7 +16,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\NotNull;
 
 /**
- * Nouveau joueur créé depuis le formulaire "Nouvelle inscription" (PlayerSeasonCrudController)
+ * Nouveau joueur créé depuis le formulaire "Nouvelle inscription" (RegistrationCrudController)
  *
  * Mêmes champs que le formulaire Joueur de l'admin (PlayerCrudController).
  */

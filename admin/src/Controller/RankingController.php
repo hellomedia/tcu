@@ -3,9 +3,9 @@
 namespace Admin\Controller;
 
 use App\Controller\BaseController;
-use App\Entity\PlayerSeason;
+use App\Entity\Registration;
 use App\Enum\Ranking;
-use App\Repository\PlayerSeasonRepository;
+use App\Repository\RegistrationRepository;
 use App\Service\Ranking\RankingProposal;
 use App\Service\Ranking\RankingUpdater;
 use App\Service\SeasonContext;
@@ -41,7 +41,7 @@ class RankingController extends BaseController
     private const MODES = ['previsionnel' => true, 'officiel' => false];
 
     #[Route('/rankings/{mode}', name: 'admin_rankings', requirements: ['mode' => 'previsionnel|officiel'], methods: ['GET'], defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
-    public function index(string $mode, Request $request, PlayerSeasonRepository $repository, SeasonContext $seasonContext): Response
+    public function index(string $mode, Request $request, RegistrationRepository $repository, SeasonContext $seasonContext): Response
     {
         $season = $seasonContext->getSelected();
 
@@ -51,9 +51,9 @@ class RankingController extends BaseController
 
         $registrations = array_filter(
             $repository->findBySeasonIndexedByPlayer($season),
-            fn(PlayerSeason $registration) => !$registration->isDismissed(),
+            fn(Registration $registration) => !$registration->isDismissed(),
         );
-        usort($registrations, fn(PlayerSeason $a, PlayerSeason $b) => [$a->getPlayer()->getLastname(), $a->getPlayer()->getFirstname()] <=> [$b->getPlayer()->getLastname(), $b->getPlayer()->getFirstname()]);
+        usort($registrations, fn(Registration $a, Registration $b) => [$a->getPlayer()->getLastname(), $a->getPlayer()->getFirstname()] <=> [$b->getPlayer()->getLastname(), $b->getPlayer()->getFirstname()]);
 
         // nouvelle récupération
         $request->getSession()->set(self::SESSION_KEY, ['season' => $season->getId(), 'mode' => $mode, 'items' => []]);
@@ -72,7 +72,7 @@ class RankingController extends BaseController
      */
     #[IsCsrfTokenValid('rankings-fetch', tokenKey: 'token')]
     #[Route('/rankings/{mode}/fetch/{id:registration}', name: 'admin_rankings_fetch', requirements: ['mode' => 'previsionnel|officiel'], methods: ['POST'])]
-    public function fetch(string $mode, PlayerSeason $registration, Request $request, RankingUpdater $updater, SeasonContext $seasonContext): JsonResponse
+    public function fetch(string $mode, Registration $registration, Request $request, RankingUpdater $updater, SeasonContext $seasonContext): JsonResponse
     {
         $session = $request->getSession();
         $store = $session->get(self::SESSION_KEY);
@@ -117,7 +117,7 @@ class RankingController extends BaseController
      */
     #[IsCsrfTokenValid('rankings-apply', tokenKey: 'token')]
     #[Route('/rankings/{mode}/apply', name: 'admin_rankings_apply', requirements: ['mode' => 'previsionnel|officiel'], methods: ['POST'])]
-    public function apply(string $mode, Request $request, PlayerSeasonRepository $repository, RankingUpdater $updater, SeasonContext $seasonContext, EntityManagerInterface $entityManager): Response
+    public function apply(string $mode, Request $request, RegistrationRepository $repository, RankingUpdater $updater, SeasonContext $seasonContext, EntityManagerInterface $entityManager): Response
     {
         $session = $request->getSession();
         $store = $session->get(self::SESSION_KEY);
@@ -144,6 +144,6 @@ class RankingController extends BaseController
         $entityManager->flush();
         $session->remove(self::SESSION_KEY);
 
-        return $this->redirectToRoute('admin_player_season_index');
+        return $this->redirectToRoute('admin_registration_index');
     }
 }

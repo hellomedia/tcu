@@ -4,7 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Group;
 use App\Entity\Player;
-use App\Entity\PlayerSeason;
+use App\Entity\Registration;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -80,7 +80,7 @@ class PlayerRepository extends ServiceEntityRepository
             // restrict players to the group membership
             ->join('p.groups', 'g')
             ->andWhere('g = :group')
-            ->leftJoin(PlayerSeason::class, 'ps', 'WITH', 'ps.player = p AND ps.season = g.season')
+            ->leftJoin(Registration::class, 'ps', 'WITH', 'ps.player = p AND ps.season = g.season')
             // LEFT JOIN into participants/matches/results so players with 0 still show
             ->leftJoin('p.matchParticipations', 'mp')     // if you don’t have this inverse, leftJoin MatchParticipant on player explicitly
             ->leftJoin('mp.match', 'm')

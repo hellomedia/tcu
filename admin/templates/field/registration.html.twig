@@ -2,7 +2,7 @@
 {% set season = field.customOptions.get('season') %}
 {% set registration = entity.instance.registration(season) %}
 {% if registration %}
-    <a href="{{ path('admin_player_season_edit', {entityId: registration.id}) }}">
+    <a href="{{ path('admin_registration_edit', {entityId: registration.id}) }}">
         {% if registration.ranking %}
             <span class="tag" {% if registration.rankingSource %}title="{{ registration.rankingSource.label }}"{% endif %}>
                 {{- registration.ranking.value }}{{ registration.rankingProvisional ? ' ?' -}}

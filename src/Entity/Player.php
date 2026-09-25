@@ -56,10 +56,10 @@ class Player implements EntityInterface
     /**
      * Inscriptions par saison : classement, interfacs, interclubs, cours
      *
-     * @var Collection<int, PlayerSeason>
+     * @var Collection<int, Registration>
      */
-    #[ORM\OneToMany(targetEntity: PlayerSeason::class, mappedBy: 'player', cascade: ['persist', 'remove'], orphanRemoval: true)]
-    private Collection $seasons;
+    #[ORM\OneToMany(targetEntity: Registration::class, mappedBy: 'player', cascade: ['persist', 'remove'], orphanRemoval: true)]
+    private Collection $registrations;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $phone = null;
@@ -84,7 +84,7 @@ class Player implements EntityInterface
     public function __construct()
     {
         $this->groups = new ArrayCollection();
-        $this->seasons = new ArrayCollection();
+        $this->registrations = new ArrayCollection();
         $this->matchParticipations = new ArrayCollection();
     }
 
@@ -135,26 +135,26 @@ class Player implements EntityInterface
     }
 
     /**
-     * @return Collection<int, PlayerSeason>
+     * @return Collection<int, Registration>
      */
-    public function getSeasons(): Collection
+    public function getRegistrations(): Collection
     {
-        return $this->seasons;
+        return $this->registrations;
     }
 
-    public function addSeason(PlayerSeason $playerSeason): static
+    public function addRegistration(Registration $registration): static
     {
-        if (!$this->seasons->contains($playerSeason)) {
-            $this->seasons->add($playerSeason);
-            $playerSeason->setPlayer($this);
+        if (!$this->registrations->contains($registration)) {
+            $this->registrations->add($registration);
+            $registration->setPlayer($this);
         }
 
         return $this;
     }
 
-    public function removeSeason(PlayerSeason $playerSeason): static
+    public function removeRegistration(Registration $registration): static
     {
-        $this->seasons->removeElement($playerSeason); // orphanRemoval
+        $this->registrations->removeElement($registration); // orphanRemoval
 
         return $this;
     }
@@ -164,15 +164,15 @@ class Player implements EntityInterface
      *
      * @param bool $includeDismissed une inscription pré-remplie écartée n'est pas une inscription
      */
-    public function getRegistration(?Season $season, bool $includeDismissed = false): ?PlayerSeason
+    public function getRegistration(?Season $season, bool $includeDismissed = false): ?Registration
     {
         if ($season === null) {
             return null;
         }
 
-        foreach ($this->seasons as $playerSeason) {
-            if ($playerSeason->getSeason() === $season) {
-                return $playerSeason->isDismissed() && !$includeDismissed ? null : $playerSeason;
+        foreach ($this->registrations as $registration) {
+            if ($registration->getSeason() === $season) {
+                return $registration->isDismissed() && !$includeDismissed ? null : $registration;
             }
         }
 
@@ -388,7 +388,7 @@ class Player implements EntityInterface
     }
 
     /**
-     * Les dispos changent à chaque saison : voir l'inscription (PlayerSeason)
+     * Les dispos changent à chaque saison : voir l'inscription (Registration)
      */
     public function getAvailabilities(?Season $season): ?string
     {

@@ -10,7 +10,7 @@ use App\Entity\InterfacMatch;
 use App\Entity\MatchParticipant;
 use App\Entity\MatchResult;
 use App\Entity\Player;
-use App\Entity\PlayerSeason;
+use App\Entity\Registration;
 use App\Entity\Season;
 use App\Entity\Slot;
 use App\Entity\User;
@@ -236,14 +236,14 @@ class LoadFixturesCommand extends Command
             ;
 
             // Hiver : interfacs. Eté : interclubs. Cours toute l'année.
-            $player->addSeason((new PlayerSeason())
+            $player->addRegistration((new Registration())
                 ->setSeason($pastWinter)
                 ->setRankingFrom($winterRanking, RankingSource::OFFICIAL, $pastWinter->getStartsOn())
                 ->setInterfacs($interfacs)
                 ->setCours($cours)
                 ->setAvailabilities($i % 3 === 0 ? 'Pas dispo avant 16h' : null)
             );
-            $player->addSeason((new PlayerSeason())
+            $player->addRegistration((new Registration())
                 ->setSeason($summer)
                 ->setRankingFrom($summerRanking, RankingSource::OFFICIAL, $summer->getStartsOn())
                 ->setCours($cours)
@@ -265,7 +265,7 @@ class LoadFixturesCommand extends Command
     {
         $this->prefiller->prefill($winter);
 
-        $registrations = $this->entityManager->getRepository(PlayerSeason::class)->findBy(['season' => $winter], ['id' => 'ASC']);
+        $registrations = $this->entityManager->getRepository(Registration::class)->findBy(['season' => $winter], ['id' => 'ASC']);
 
         foreach ($registrations as $i => $registration) {
             // 1 inscription sur 4 reste à confirmer, la dernière est écartée
@@ -282,7 +282,7 @@ class LoadFixturesCommand extends Command
                 ->setLastname($lastname)
                 ->setGender($gender)
             ;
-            $player->addSeason((new PlayerSeason())
+            $player->addRegistration((new Registration())
                 ->setSeason($winter)
                 ->setRanking($ranking)
                 ->setInterfacs(true)
@@ -299,12 +299,12 @@ class LoadFixturesCommand extends Command
      */
     private function findInterfacsPlayers(Season $season): array
     {
-        $registrations = $this->entityManager->getRepository(PlayerSeason::class)->findBy(
+        $registrations = $this->entityManager->getRepository(Registration::class)->findBy(
             ['season' => $season, 'interfacs' => true, 'status' => RegistrationStatus::CONFIRMED],
             ['rankingOrder' => 'DESC'],
         );
 
-        return array_map(fn(PlayerSeason $registration) => $registration->getPlayer(), $registrations);
+        return array_map(fn(Registration $registration) => $registration->getPlayer(), $registrations);
     }
 
     /**

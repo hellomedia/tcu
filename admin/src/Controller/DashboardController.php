@@ -9,7 +9,7 @@ use App\Entity\Group;
 use App\Entity\Interface\EntityInterface;
 use App\Entity\InterfacMatch;
 use App\Entity\Player;
-use App\Entity\PlayerSeason;
+use App\Entity\Registration;
 use App\Entity\Slot;
 use App\Entity\User;
 use App\Repository\SeasonRepository;
@@ -115,7 +115,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::subMenu($selected ? (string) $selected : 'Aucune saison', 'fa fa-sun')
             ->setPermission('ROLE_EDITOR')
             ->setSubItems($seasonItems);
-        yield MenuItem::linkToCrud('Inscriptions', 'fa fa-clipboard-list', PlayerSeason::class)
+        yield MenuItem::linkToCrud('Inscriptions', 'fa fa-clipboard-list', Registration::class)
             ->setPermission('ROLE_EDITOR');
 
         yield MenuItem::section('Interfacs')

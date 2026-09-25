@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus";
 
 /**
  * Lien "Créer un nouveau joueur" sous l'autocomplete du formulaire "Nouvelle inscription"
- * (PlayerSeasonCrudController) : reprend le nom tapé dans l'autocomplete
+ * (RegistrationCrudController) : reprend le nom tapé dans l'autocomplete
  * pour pré-remplir le formulaire du nouveau joueur (paramètre d'URL "nom").
  *
  * Le texte est mémorisé au fil de la frappe : TomSelect vide son champ de recherche

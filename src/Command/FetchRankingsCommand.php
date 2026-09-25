@@ -2,9 +2,9 @@
 
 namespace App\Command;
 
-use App\Entity\PlayerSeason;
+use App\Entity\Registration;
 use App\Entity\Season;
-use App\Repository\PlayerSeasonRepository;
+use App\Repository\RegistrationRepository;
 use App\Repository\SeasonRepository;
 use App\Service\Ranking\RankingProposal;
 use App\Service\Ranking\RankingUpdater;
@@ -31,7 +31,7 @@ class FetchRankingsCommand extends Command
 {
     public function __construct(
         private SeasonRepository $seasonRepository,
-        private PlayerSeasonRepository $playerSeasonRepository,
+        private RegistrationRepository $registrationRepository,
         private RankingUpdater $updater,
         private EntityManagerInterface $entityManager,
     ) {
@@ -69,10 +69,10 @@ class FetchRankingsCommand extends Command
         $io->title(sprintf('%s - classement %s%s', $season, $previsional ? 'prévisionnel' : 'officiel', $apply ? '' : ' (aperçu)'));
 
         $registrations = array_filter(
-            $this->playerSeasonRepository->findBySeasonIndexedByPlayer($season),
-            fn(PlayerSeason $registration) => !$registration->isDismissed(),
+            $this->registrationRepository->findBySeasonIndexedByPlayer($season),
+            fn(Registration $registration) => !$registration->isDismissed(),
         );
-        usort($registrations, fn(PlayerSeason $a, PlayerSeason $b) => $a->getPlayer()->getLastname() <=> $b->getPlayer()->getLastname());
+        usort($registrations, fn(Registration $a, Registration $b) => $a->getPlayer()->getLastname() <=> $b->getPlayer()->getLastname());
 
         $rows = [];
         $changes = 0;
