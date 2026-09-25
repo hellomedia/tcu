@@ -23,8 +23,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  * cf Season::hasInterfacs() et Season::hasInterclubs()
  */
 #[ORM\Entity(repositoryClass: RegistrationRepository::class)]
-#[ORM\Table(name: 'player_season')]
-#[ORM\UniqueConstraint(name: 'player_season_unique', columns: ['player_id', 'season_id'])]
+#[ORM\UniqueConstraint(name: 'registration_unique', columns: ['player_id', 'season_id'])]
 #[UniqueEntity(fields: ['player', 'season'], message: 'Ce joueur est déjà inscrit pour cette saison.')]
 class Registration implements EntityInterface
 {

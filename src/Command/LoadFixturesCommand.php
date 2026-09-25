@@ -164,7 +164,7 @@ class LoadFixturesCommand extends Command
         // même avec --keep-users. Toutes les tables liées sont listées dans la même commande.
         $tables = [
             'participant_confirmation_info', 'match_result', 'match_participant', 'booking', 'interfac_match',
-            'slot', 'date', 'court', 'group_player', '"group"', 'player_season', 'season',
+            'slot', 'date', 'court', 'group_player', '"group"', 'registration', 'season',
         ];
 
         if ($keepUsers) {
