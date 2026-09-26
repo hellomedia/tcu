@@ -30,6 +30,13 @@ class Group implements EntityInterface
     private ?string $name = null;
 
     /**
+     * Ordre d'affichage des poules au sein de leur saison (puis par nom en cas d'égalité)
+     */
+    #[ORM\Column(options: ['default' => 0])]
+    #[Assert\PositiveOrZero]
+    private int $displayOrder = 0;
+
+    /**
      * Une poule appartient à une saison.
      * Les matchs de la poule appartiennent donc à cette saison,
      * qu'ils soient programmés ou non.
@@ -150,6 +157,18 @@ class Group implements EntityInterface
     public function setName(?string $name): static
     {
         $this->name = $name;
+
+        return $this;
+    }
+
+    public function getDisplayOrder(): int
+    {
+        return $this->displayOrder;
+    }
+
+    public function setDisplayOrder(int $displayOrder): static
+    {
+        $this->displayOrder = $displayOrder;
 
         return $this;
     }

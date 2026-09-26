@@ -4,6 +4,7 @@ namespace Admin\Controller;
 
 use App\Entity\Group;
 use App\Enum\RegistrationStatus;
+use App\Repository\GroupRepository;
 use App\Service\SeasonContext;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
@@ -17,6 +18,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,6 +30,7 @@ class GroupCrudController extends AbstractCrudController
     public function __construct(
         private UrlGeneratorInterface $urlGenerator,
         private SeasonContext $seasonContext,
+        private GroupRepository $groupRepository,
     )
     {
 
@@ -45,9 +48,7 @@ class GroupCrudController extends AbstractCrudController
             ->setEntityLabelInPlural('Poules')
             ->setPageTitle(Crud::PAGE_INDEX, 'Poules - ' . $this->seasonContext->getSelected())
             ->setPageTitle(Crud::PAGE_NEW, 'Nouvelle poule - ' . $this->seasonContext->getSelected())
-            ->setDefaultSort([
-                'name' => 'ASC'
-            ])
+            ->setDefaultSort(GroupRepository::ORDER)
         ;
     }
 
@@ -57,6 +58,10 @@ class GroupCrudController extends AbstractCrudController
             ->hideOnForm();
 
         yield TextField::new('name');
+
+        yield IntegerField::new('displayOrder', 'Ordre')
+            ->setHelp('Ordre d\'affichage des poules de la saison (puis par nom)')
+            ->setFormTypeOption('attr', ['min' => 0]);
 
         // la saison d'une poule est définie à la création (saison sélectionnée) et ne change pas
         yield AssociationField::new('season', 'Saison')
@@ -112,8 +117,11 @@ class GroupCrudController extends AbstractCrudController
 
     public function createEntity(string $entityFqcn): Group
     {
+        $season = $this->seasonContext->getSelected();
+
         return (new Group())
-            ->setSeason($this->seasonContext->getSelected());
+            ->setSeason($season)
+            ->setDisplayOrder($this->groupRepository->nextDisplayOrder($season));
     }
 
     protected function getRedirectResponseAfterSave(AdminContext $context, string $action): RedirectResponse

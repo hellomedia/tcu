@@ -323,6 +323,7 @@ class LoadFixturesCommand extends Command
         foreach ([array_slice($players, 0, $half), array_slice($players, $half)] as $i => $groupPlayers) {
             $group = (new Group())
                 ->setName('Poule ' . ($i + 1))
+                ->setDisplayOrder($i + 1)
                 ->setSeason($season);
 
             foreach ($groupPlayers as $player) {

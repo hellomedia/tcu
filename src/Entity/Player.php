@@ -51,6 +51,7 @@ class Player implements EntityInterface
      * @var Collection<int, Group>
      */
     #[ORM\ManyToMany(targetEntity: Group::class, mappedBy: 'players')]
+    #[ORM\OrderBy(['displayOrder' => 'ASC', 'name' => 'ASC'])]
     private Collection $groups;
 
     /**

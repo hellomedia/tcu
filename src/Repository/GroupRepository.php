@@ -14,6 +14,11 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class GroupRepository extends ServiceEntityRepository
 {
+    /**
+     * Ordre d'affichage des poules (Group::$displayOrder), puis par nom
+     */
+    public const ORDER = ['displayOrder' => 'ASC', 'name' => 'ASC'];
+
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Group::class);
@@ -21,9 +26,26 @@ class GroupRepository extends ServiceEntityRepository
 
     public function findAll(): array
     {
-        return parent::findBy(criteria: [], orderBy: [
-            'name' => 'ASC',
-        ]);
+        return parent::findBy(criteria: [], orderBy: self::ORDER);
+    }
+
+    /**
+     * Ordre d'affichage pour une nouvelle poule : après les poules existantes de la saison
+     */
+    public function nextDisplayOrder(?Season $season): int
+    {
+        if ($season === null) {
+            return 1;
+        }
+
+        $max = $this->createQueryBuilder('g')
+            ->select('MAX(g.displayOrder)')
+            ->andWhere('g.season = :season')
+            ->setParameter('season', $season)
+            ->getQuery()
+            ->getSingleScalarResult();
+
+        return (int) $max + 1;
     }
 
     /**
@@ -45,6 +67,7 @@ class GroupRepository extends ServiceEntityRepository
             ->leftJoin('p.registrations', 'ps')->addSelect('ps')
             ->andWhere('g.season = :season')
             ->setParameter('season', $season)
+            ->addOrderBy('g.displayOrder', 'ASC')
             ->addOrderBy('g.name', 'ASC')
             ->addOrderBy('p.lastname', 'ASC')
             ->getQuery()
@@ -85,6 +108,7 @@ class GroupRepository extends ServiceEntityRepository
             // because single-valued association path expression to an inverse side is not supported in DQL queries
             ->leftJoin('m.booking', 'b')->addSelect('b')
             ->andWhere('b.id IS NULL')
+            ->addOrderBy('g.displayOrder', 'ASC')
             ->addOrderBy('g.name', 'ASC')
         ;
 
@@ -101,6 +125,7 @@ class GroupRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('g')
             ->andWhere('g.season = :season')
             ->setParameter('season', $season)
+            ->addOrderBy('g.displayOrder', 'ASC')
             ->addOrderBy('g.name', 'ASC')
         ;
     }
