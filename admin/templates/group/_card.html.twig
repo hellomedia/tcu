@@ -1,0 +1,14 @@
+{# Carte d'une poule : joueurs uniquement (page Poules). Les matchs : _group.html.twig (planning) #}
+<div class="group" id="group-{{ group.id }}">
+    <div class="group-header">
+        <h4>{{ group }}</h4>
+        {% include '@admin/group/_card_actions.html.twig' %}
+    </div>
+    <div class="players">
+        {% for player in group.playersByRanking %}
+            <div class="player">{{ loop.index }}. {{ player.nameWithRanking(group.season) }}</div>
+        {% else %}
+            <div class="players-empty">Aucun joueur</div>
+        {% endfor %}
+    </div>
+</div>

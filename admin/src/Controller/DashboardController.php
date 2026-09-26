@@ -5,7 +5,6 @@ namespace Admin\Controller;
 use App\Entity\Booking;
 use App\Entity\Court;
 use App\Entity\Date;
-use App\Entity\Group;
 use App\Entity\Interface\EntityInterface;
 use App\Entity\InterfacMatch;
 use App\Entity\Player;
@@ -120,7 +119,7 @@ class DashboardController extends AbstractDashboardController
 
         yield MenuItem::section('Interfacs')
             ->setPermission('ROLE_EDITOR');
-        yield MenuItem::linkToCrud('Poules', 'fa fa-group', Group::class)
+        yield MenuItem::linkToUrl('Poules', 'fa fa-group', $this->urlGenerator->generate('admin_groups'))
             ->setPermission('ROLE_EDITOR');
         yield MenuItem::linkToUrl('Planning par poules', 'fa fa-calendar', $this->urlGenerator->generate('admin_planning_groups'))
             ->setPermission('ROLE_EDITOR');

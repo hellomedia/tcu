@@ -7,13 +7,9 @@ use App\Enum\RegistrationStatus;
 use App\Repository\GroupRepository;
 use App\Service\SeasonContext;
 use Doctrine\ORM\QueryBuilder;
-use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
-use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
-use EasyCorp\Bundle\EasyAdminBundle\Dto\EntityDto;
-use EasyCorp\Bundle\EasyAdminBundle\Dto\SearchDto;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
@@ -21,8 +17,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class GroupCrudController extends AbstractCrudController
@@ -105,14 +99,11 @@ class GroupCrudController extends AbstractCrudController
     }
 
     /**
-     * Uniquement les poules de la saison sélectionnée
+     * La liste des poules est la page "Poules" (cartes avec les joueurs) : GroupController::index()
      */
-    public function createIndexQueryBuilder(SearchDto $searchDto, EntityDto $entityDto, FieldCollection $fields, FilterCollection $filters): QueryBuilder
+    public function index(AdminContext $context): RedirectResponse
     {
-        return parent::createIndexQueryBuilder($searchDto, $entityDto, $fields, $filters)
-            ->andWhere('entity.season = :selectedSeason')
-            ->setParameter('selectedSeason', $this->seasonContext->getSelected())
-        ;
+        return $this->redirectToRoute('admin_groups');
     }
 
     public function createEntity(string $entityFqcn): Group
@@ -126,21 +117,18 @@ class GroupCrudController extends AbstractCrudController
 
     protected function getRedirectResponseAfterSave(AdminContext $context, string $action): RedirectResponse
     {
-        // Keep EA behavior for "Save and continue" on edit
-        if ($action === Action::SAVE_AND_CONTINUE) {
+        // Keep EA behavior for "Save and continue" and "Save and add another"
+        $submitButtonName = $context->getRequest()->request->all()['ea']['newForm']['btn'] ?? null;
+        if ($submitButtonName !== Action::SAVE_AND_RETURN) {
             return parent::getRedirectResponseAfterSave($context, $action);
         }
 
-        // Only change redirect when coming from the EDIT page
-        if ($context->getCrud()->getCurrentPage() === Crud::PAGE_EDIT) {
-            $entity = $context->getEntity()->getInstance();
-
-            $url = $this->urlGenerator->generate('admin_planning_groups');
-
-            return new RedirectResponse($url);
+        // Retour à la page d'où l'on vient (page Poules ou planning par poules), sinon page Poules
+        $referrer = $context->getRequest()->query->get(EA::REFERRER);
+        if (is_string($referrer) && str_starts_with($referrer, '/') && !str_starts_with($referrer, '//')) {
+            return new RedirectResponse($referrer);
         }
 
-        // For other pages (e.g. NEW), keep default
-        return parent::getRedirectResponseAfterSave($context, $action);
+        return new RedirectResponse($this->urlGenerator->generate('admin_groups'));
     }
 }

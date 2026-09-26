@@ -12,7 +12,7 @@
 		
             <div class="hk-dropdown-inner">
 
-                <a href="{{ path('admin_group_edit', {'entityId': group.id} ) }}"
+                <a href="{{ path('admin_group_edit', {'entityId': group.id, 'referrer': path('admin_planning_groups')}) }}"
                     class="hk-dropdown-link"
                 >
                     <twig:ux:icon name="edit" />

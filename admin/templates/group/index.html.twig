@@ -1,0 +1,66 @@
+{% extends '@admin/base.html.twig' %}
+
+{% block head_stylesheets %}
+    {{ parent() }}
+    <style>
+        h4 {
+            margin-bottom: 20px;
+        }
+        .group {
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            padding: 15px;
+        }
+        .group-header {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 0;
+        }
+        .players {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .players-empty {
+            color: var(--text-muted);
+        }
+
+        /* LAYOUT */
+        .groups {
+            display: grid;
+            gap: 30px;
+        }
+        @media (min-width: 768px) {
+            .groups {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        @media (min-width: 1200px) {
+            .groups {
+                grid-template-columns: 1fr 1fr 1fr;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block content_title %}Poules - {{ season }}{% endblock %}
+
+{% block page_actions %}
+    <a class="btn btn-primary" href="{{ path('admin_group_new') }}">Créer Poule</a>
+{% endblock %}
+
+{% block main %}
+
+    <div class="groups" data-controller="modal modal-confirm">
+        {% for group in groups %}
+            {% include '@admin/group/_card.html.twig' %}
+        {% else %}
+            <p>Aucune poule pour cette saison.</p>
+        {% endfor %}
+
+        {% include 'component/modal/_modal.html.twig' %}
+        {% include 'component/modal/_icons_templates.html.twig' %}
+    </div>
+
+{% endblock %}

@@ -1,0 +1,6 @@
+{% embed 'component/modal/success.html.twig' %}
+	{% block streams %}
+        <turbo-stream action="remove" target="group-{{ deletedGroupId }}">
+        </turbo-stream>
+	{% endblock %}
+{% endembed %}
