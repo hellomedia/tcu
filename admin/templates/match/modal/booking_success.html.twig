@@ -1,0 +1,19 @@
+{# vars: feedback, match, slots (slot rows to refresh on the planning page: new slot, and old slot when moving) #}
+{% embed 'component/modal/success.html.twig' %}
+	{% block streams %}
+		{# planning page #}
+		{% for slot in slots %}
+			<turbo-stream action="replace" target="slot-{{ slot.id }}">
+				<template>
+					{% include '@admin/planning/_slot_row.html.twig' %}
+				</template>
+			</turbo-stream>
+		{% endfor %}
+		{# groups page #}
+		<turbo-stream action="replace" target="match-{{ match.id }}">
+			<template>
+				{% include '@admin/group/_match_row.html.twig' %}
+			</template>
+		</turbo-stream>
+	{% endblock %}
+{% endembed %}

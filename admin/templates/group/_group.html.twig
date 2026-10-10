@@ -11,23 +11,7 @@
     <div class="matchs">
         <h5>Matchs</h5>
         {% for match in group.matchs %}
-            <div class="match">
-                <div class="match-label">
-                    {{ match }}
-                </div>
-                <div class="booking">
-                    {% if match.booking is not null %}
-                        {{ match.booking }}
-                    {% else %}
-                        <a class="btn btn-default"
-                            style="margin-left: 5px"
-                            href="{{ path('admin_match_add_booking', {'id': match.id}) }}"
-                        >
-                            Programmer
-                        </a>
-                    {% endif %}
-                </div>
-            </div>
+            {% include '@admin/group/_match_row.html.twig' %}
         {% else %}
             <form method="post" action="{{ path('admin_planning_group_generate_matchs', {'id': group.id}) }}">
                 <button type="submit" class="btn btn-primary">

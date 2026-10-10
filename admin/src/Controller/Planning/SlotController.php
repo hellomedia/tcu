@@ -7,12 +7,16 @@ use Admin\Exception\InvalidWindowException;
 use App\Form\Handler\SlotBulkAddFormHandler;
 use App\Controller\BaseController;
 use App\Entity\Booking;
+use App\Entity\Group;
+use App\Entity\InterfacMatch;
 use App\Entity\Slot;
 use App\Enum\BookingType;
 use App\Form\SlotBookingForm;
 use App\Form\SlotBulkAddType;
 use App\Repository\CourtRepository;
 use App\Repository\DateRepository;
+use App\Repository\GroupRepository;
+use App\Service\SeasonContext;
 use Doctrine\ORM\EntityManager;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use Symfony\Component\Form\ClickableInterface;
@@ -24,6 +28,8 @@ use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
 
 class SlotController extends BaseController
 {
+    private const SESSION_LAST_GROUP = 'admin_planning_last_group';
+
     public function __construct(
         private SlotBulkAddFormHandler $formHandler,
         private EntityManager $entityManager,
@@ -83,14 +89,17 @@ class SlotController extends BaseController
      * Add booking for a slot = schedule a match
      */
     #[Route('/planning/slot/{id:slot}/add-booking', name: 'admin_planning_slot_add_booking', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
-    public function addBooking(Slot $slot, Request $request): Response
+    public function addBooking(Slot $slot, Request $request, GroupRepository $groupRepository, SeasonContext $seasonContext): Response
     {
         $booking = new Booking();
         $booking->setType(BookingType::MATCH);
         $booking->setSlot($slot);
         $slot->setBooking($booking);
 
-        $form = $this->createForm(SlotBookingForm::class, $booking);
+        $form = $this->createForm(SlotBookingForm::class, $booking, [
+            'slot' => $slot,
+            'last_group' => $this->getLastGroup($request, $groupRepository, $seasonContext),
+        ]);
 
         $form->handleRequest($request);
 
@@ -120,12 +129,16 @@ class SlotController extends BaseController
             $this->entityManager->persist($booking);
             $this->entityManager->flush();
 
+            // remember the group: it is pre-selected next time (several matches of the same group are often planned in a row)
+            $request->getSession()->set(self::SESSION_LAST_GROUP, $form->get('group')->getData()?->getId());
+
             $feedback = 'Match programmé';
 
             if ($request->query->get('modal')) {
                 return $this->render('@admin/slot/modal/add_booking_success.html.twig', [
                     'feedback' => $feedback,
                     'slot' => $slot,
+                    'match' => $booking->getMatch(),
                 ]);
             }
 
@@ -147,13 +160,40 @@ class SlotController extends BaseController
         ]);
     }
 
+    /**
+     * Group used for the last booking, if it still belongs to the working season
+     * and still has matches to plan
+     */
+    private function getLastGroup(Request $request, GroupRepository $groupRepository, SeasonContext $seasonContext): ?Group
+    {
+        $id = $request->getSession()->get(self::SESSION_LAST_GROUP);
+
+        if ($id === null) {
+            return null;
+        }
+
+        $group = $groupRepository->find($id);
+
+        if ($group === null || $group->getSeason() !== $seasonContext->getSelected()) {
+            return null;
+        }
+
+        $hasMatchToPlan = $group->getMatchs()->exists(fn ($key, InterfacMatch $match) => !$match->isScheduled());
+
+        return $hasMatchToPlan ? $group : null;
+    }
+
+    /**
+     * Remove booking = free the slot, the match becomes unscheduled
+     */
     #[IsCsrfTokenValid('delete-booking', tokenKey: 'token')]
     #[Route('/planning/slot/{id:slot}/remove-booking', name: 'admin_planning_slot_remove_booking', methods: ['POST'])]
     public function removeBooking(Slot $slot, Request $request): Response
     {        
         $booking = $slot->getBooking();
+        $match = $booking->getMatch();
 
-        $confirmationInfos = $booking->getMatch()->getConfirmationInfos();
+        $confirmationInfos = $match->getConfirmationInfos();
 
         foreach ($confirmationInfos as $info) {
             $this->entityManager->remove($info);
@@ -167,9 +207,12 @@ class SlotController extends BaseController
         // (Unless we tell them like $slot->setBooking(null) or orphan removal)
         // This refreshes the doctrine object
         $this->entityManager->refresh($slot);
+        $this->entityManager->refresh($match);
 
         return $this->render('@admin/planning/booking_removed_success.html.twig', [
+            'feedback' => 'Créneau retiré',
             'slot' => $slot,
+            'match' => $match,
         ]);
     }
 }

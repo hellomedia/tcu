@@ -1,0 +1,51 @@
+{# One match of a group on the "Planning des poules" page; replaced by turbo streams after (un)scheduling #}
+<div class="match {{ match.booking ? 'scheduled' : 'unscheduled' }}" id="match-{{ match.id }}">
+    <div class="match-label">
+        {{ match }}
+    </div>
+    <div class="booking">
+        {% if match.booking is not null %}
+            <span class="booking-label">{{ match.booking }}</span>
+            <div class="match-actions hk-dropdown-container" data-controller="dropdown">
+                <button type="button"
+                    class="hk-dropdown-button"
+                    data-action="dropdown#toggle"
+                    title="Modifier le créneau"
+                >
+                    <twig:ux:icon name="dots"/>
+                </button>
+                <div data-dropdown-target="menu" class="hk-dropdown-menu">
+                    <div class="hk-dropdown-inner">
+                        <a class="hk-dropdown-link"
+                            href="{{ path('admin_match_move_booking', {'id': match.id}) }}"
+                            data-action="modal-remote-form#open"
+                        >
+                            <twig:ux:icon name="calendar"/>
+                            Déplacer / changer de terrain
+                        </a>
+                        <button type="button"
+                            class="hk-dropdown-link"
+                            formaction="{{ path('admin_planning_slot_remove_booking', {'id': match.slot.id}) }}"
+                            data-action="modal-confirm#open"
+                            data-title="Retirer le créneau"
+                            data-html="<p>Le créneau <b>{{ match.booking }}</b> est libéré et le match <b>{{ match }}</b> devra être reprogrammé.<br>Les confirmations des joueurs sont supprimées.</p>"
+                            data-button-label="Retirer le créneau"
+                            data-variant="warning"
+                            data-csrf="{{ csrf_token('delete-booking') }}"
+                        >
+                            <twig:ux:icon name="delete" />
+                            Retirer le créneau
+                        </button>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <a class="btn btn-default"
+                href="{{ path('admin_match_add_booking', {'id': match.id}) }}"
+                data-action="modal-remote-form#open"
+            >
+                Programmer
+            </a>
+        {% endif %}
+    </div>
+</div>

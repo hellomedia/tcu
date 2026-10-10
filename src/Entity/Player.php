@@ -355,11 +355,13 @@ class Player implements EntityInterface
     }
 
     /**
+     * @param Season|null $season null = toutes saisons confondues
+     *
      * @return Collection<int, Date>
      */
-    public function getScheduledMatchsDates(): Collection
+    public function getScheduledMatchsDates(?Season $season = null): Collection
     {
-        return $this->getScheduledMatchs()->map(function(InterfacMatch $match): Date {
+        return $this->getScheduledMatchs($season)->map(function(InterfacMatch $match): Date {
             return $match->getDate();
         });
     }

@@ -1,0 +1,73 @@
+{# Slot -> match booking form, shared by the modal and the full page #}
+{# vars: slot, form, modal (bool) #}
+
+{# Important: Note the syntax with [] and only #}
+{# Ignore global themes; use only EasyAdmin #}
+{% form_theme form with ['@admin/form/form_theme.html.twig'] only %}
+
+{% include '@admin/booking/_styles.html.twig' %}
+
+<div class="booking-form slot-booking">
+
+    <div class="booking-header">
+        <h3>Programmer un match</h3>
+        <div class="booking-context">
+            <twig:ux:icon name="calendar"/>
+            {{ slot.date }}
+            <span class="sep">•</span>
+            {{ slot.timeRange }}
+            <span class="sep">•</span>
+            {{ slot.court }}
+        </div>
+    </div>
+
+    {# Dependent field (match depends on group) is handled by the 'ajax' controller #}
+    {# (data-action="change->ajax#submitOnChange" on the group field) #}
+    {# Final submit: regular form submit (turbo frame in the modal) #}
+    {{ form_start(form, {'attr': {
+        'action': path('admin_planning_slot_add_booking', {'id': slot.id, 'modal': modal ? 1 : null}),
+        'data-controller': 'ajax',
+    }}) }}
+
+        <div data-ajax-target="container">
+
+            <div class="booking-section">
+                <div class="booking-section-title">Poule</div>
+                {{ form_errors(form.group) }}
+                {{ form_widget(form.group) }}
+            </div>
+
+            {% if form.match is defined %}
+                <div class="booking-section">
+                    <div class="booking-section-title">
+                        Match
+                        <span class="hint">— matchs restant à programmer ; les joueurs qui jouent déjà ce jour-là sont signalés avec leur créneau</span>
+                    </div>
+                    {{ form_errors(form.match) }}
+                    {{ form_widget(form.match) }}
+                </div>
+            {% endif %}
+
+            {% set submitBtn = form_widget(form.save) %}
+
+            {{ form_rest(form) }}
+        </div>
+
+        {% if modal %}
+            {% embed 'component/modal/_actions.html.twig' %}
+                {% block submit_button %}
+                    {{ submitBtn|raw }}
+                {% endblock %}
+            {% endembed %}
+        {% else %}
+            {% embed 'form/_form_actions.html.twig' %}
+                {% block cancel_url path('admin_planning') %}
+                {% block submit_button %}
+                    {{ submitBtn|raw }}
+                {% endblock %}
+            {% endembed %}
+        {% endif %}
+
+    </form>
+
+</div>

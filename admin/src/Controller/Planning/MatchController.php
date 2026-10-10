@@ -19,6 +19,7 @@ use Doctrine\ORM\EntityManager;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use Symfony\Component\Form\ClickableInterface;
 use Symfony\Component\Form\FormError;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -36,7 +37,11 @@ class MatchController extends BaseController
      */
     #[Route('/match/{id:match}/add-booking', name: 'admin_match_add_booking', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
     public function addBooking(InterfacMatch $match, Request $request): Response
-    {        
+    {
+        if ($match->isScheduled()) {
+            return $this->redirectToRoute('admin_match_move_booking', ['id' => $match->getId(), 'modal' => $request->query->get('modal')]);
+        }
+
         $booking = new Booking();
         $booking->setType(BookingType::MATCH);
         $booking->setMatch($match);
@@ -53,25 +58,119 @@ class MatchController extends BaseController
         if ($submitBtn->isClicked() && $form->isSubmitted() && $form->isValid()) {
 
             if ($form->get('slot')->getData() == null) {
-                $form->get('slot')->addError(new FormError('Veuillez sélectionner une plage horaire'));
+                $form->get('slot')->addError(new FormError('Veuillez sélectionner un créneau'));
 
-                return $this->render('@admin/match/add_booking.html.twig', [
-                    'match', $match,
-                    'form' => $form,
-                ]);
+                return $this->renderBookingForm($request, $match, $form, mode: 'add');
             }
+
+            $slot = $booking->getSlot();
+            $slot->setBooking($booking); // sync inverse side (for the turbo stream)
 
             $this->entityManager->persist($booking);
             $this->entityManager->flush();
 
-            $this->addFlash('success', 'Match programmé');
+            $feedback = 'Match programmé';
+
+            if ($request->query->get('modal')) {
+                return $this->render('@admin/match/modal/booking_success.html.twig', [
+                    'feedback' => $feedback,
+                    'match' => $match,
+                    'slots' => [$slot],
+                ]);
+            }
+
+            $this->addFlash('success', $feedback);
 
             return $this->redirectToRoute('admin_planning_groups');
         }
 
-        return $this->render('@admin/match/add_booking.html.twig', [
+        return $this->renderBookingForm($request, $match, $form, mode: 'add');
+    }
+
+    /**
+     * Move booking of a scheduled match = change its slot (date, time and/or court)
+     *
+     * Player confirmations are reset when the date or the time changes
+     * (they are kept when only the court changes)
+     */
+    #[Route('/match/{id:match}/move-booking', name: 'admin_match_move_booking', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
+    public function moveBooking(InterfacMatch $match, Request $request): Response
+    {
+        $booking = $match->getBooking();
+
+        if ($booking === null) {
+            return $this->redirectToRoute('admin_match_add_booking', ['id' => $match->getId(), 'modal' => $request->query->get('modal')]);
+        }
+
+        $oldSlot = $booking->getSlot();
+
+        $form = $this->createForm(BookingForMatchForm::class, $booking, [
+            'current_slot' => $oldSlot,
+        ]);
+
+        $form->handleRequest($request);
+
+        $submitBtn = $form->get('save');
+        assert($submitBtn instanceof ClickableInterface);
+
+        /* isClicked() avoids submitting when updating dependent field */
+        if ($submitBtn->isClicked() && $form->isSubmitted() && $form->isValid()) {
+
+            $newSlot = $booking->getSlot();
+
+            if ($newSlot === null) {
+                $booking->setSlot($oldSlot);
+                $form->get('slot')->addError(new FormError('Veuillez sélectionner un créneau'));
+
+                return $this->renderBookingForm($request, $match, $form, mode: 'move');
+            }
+
+            if ($newSlot !== $oldSlot) {
+                // sync inverse sides (for the turbo streams)
+                $oldSlot->setBooking(null);
+                $newSlot->setBooking($booking);
+
+                $sameMoment = $newSlot->getDate() === $oldSlot->getDate()
+                    && $newSlot->getStartsAt() == $oldSlot->getStartsAt();
+
+                if (!$sameMoment) {
+                    foreach ($match->getConfirmationInfos() as $info) {
+                        $this->entityManager->remove($info);
+                        $info->getParticipant()->setConfirmationInfo(null);
+                    }
+                }
+
+                $this->entityManager->flush();
+            }
+
+            $feedback = 'Match déplacé';
+
+            if ($request->query->get('modal')) {
+                return $this->render('@admin/match/modal/booking_success.html.twig', [
+                    'feedback' => $feedback,
+                    'match' => $match,
+                    'slots' => [$oldSlot, $newSlot],
+                ]);
+            }
+
+            $this->addFlash('success', $feedback);
+
+            return $this->redirectToRoute('admin_planning_groups');
+        }
+
+        return $this->renderBookingForm($request, $match, $form, mode: 'move');
+    }
+
+    private function renderBookingForm(Request $request, InterfacMatch $match, FormInterface $form, string $mode): Response
+    {
+        $template = $request->query->get('modal')
+            ? '@admin/match/modal/_booking.html.twig'
+            : '@admin/match/booking.html.twig';
+
+        return $this->render($template, [
             'match' => $match,
             'form' => $form,
+            'mode' => $mode,
         ]);
     }
 
@@ -104,7 +203,7 @@ class MatchController extends BaseController
             
             $this->addFlash('success', $feedback);
         
-            return $this->redirectToRoute('admin_planning_planning');
+            return $this->redirectToRoute('admin_planning');
         }
 
         if ($request->query->get('modal')) {
@@ -211,7 +310,7 @@ class MatchController extends BaseController
             
             $this->addFlash('success', $feedback);
         
-            return $this->redirectToRoute('admin_planning_planning');
+            return $this->redirectToRoute('admin_planning');
         }
 
         if ($request->query->get('modal')) {

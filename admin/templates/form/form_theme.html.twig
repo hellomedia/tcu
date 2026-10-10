@@ -35,44 +35,179 @@
 	</button>
 {% endblock %}
 
-{% block _slot_booking_form_match_widget %}
-	<div>
-		{% for child in form %}
-			<div class="match-choice">
-				{{ form_widget(child) }}
-				{{ form_label(child) }}
+{# ========================================================= #}
+{#  Booking forms : radios rendered as pills / cards          #}
+{#  see @admin/booking/_styles.html.twig                      #}
+{# ========================================================= #}
 
-				{# Extra info under each radio #}
-				<div class="match-extra">
-					<div class="match-extra-side">
-						{% set sideA = child.vars.extra.sideA %}
-						<h5>{{ sideA.name }}</h5>
-						<div class="match-extra-line">
-							Dispos:
-							{{ sideA.dispos is not empty ? sideA.dispos : '—' }}
-						</div>
-						<div class="match-extra-line">
-							Matchs programmés:
-							{{ sideA.dates|join(', ') }}
-						</div>
-					</div>
-					<div class="match-extra-side">
-						{% set sideB = child.vars.extra.sideB %}
-						<h5>{{ sideB.name }}</h5>
-						<div class="match-extra-line">
-							Dispos:
-							{{ sideB.dispos is not empty ? sideB.dispos : '—' }}
-						</div>
-						<div class="match-extra-line">
-							Matchs programmés:
-							{{ sideB.dates|join(', ') }}
-						</div>
-					</div>
-				</div>
-			</div>
+{# hidden radio input of a pill / card #}
+{% macro booking_radio(child) %}
+	<input type="radio"
+		id="{{ child.vars.id }}"
+		name="{{ child.vars.full_name }}"
+		value="{{ child.vars.value }}"
+		{{ child.vars.checked ? 'checked' }}
+		{{ child.vars.disabled ? 'disabled' }}
+	>
+{% endmacro %}
+
+{# Slot -> match : groups as pills, with the number of matches left to plan #}
+{% block _slot_booking_form_group_widget %}
+	<div {{ block('widget_container_attributes') }} class="pills">
+		{% for child in form %}
+			<label class="pill" for="{{ child.vars.id }}">
+				{{ _self.booking_radio(child) }}
+				{{ child.vars.label }}
+				<span class="badge" title="matchs à programmer">{{ child.vars.extra.toPlan }}</span>
+			</label>
+		{% else %}
+			<div class="booking-empty">Tous les matchs de la saison sont programmés</div>
 		{% endfor %}
 	</div>
 {% endblock %}
 
+{# short french date : "Sam 10/10" #}
+{% macro short_date(date) %}
+	{{- date.date|date('D d/m')|replace({'Mon': 'Lun', 'Tue': 'Mar', 'Wed': 'Mer', 'Thu': 'Jeu', 'Fri': 'Ven', 'Sat': 'Sam', 'Sun': 'Dim'}) -}}
+{% endmacro %}
 
+{# Slot -> match : matches as cards, one column per side #}
+{# A player who already plays that day is flagged (with the time slot of the other match), #}
+{# a player who plays at the same time is a real conflict #}
+{% block _slot_booking_form_match_widget %}
+	<div {{ block('widget_container_attributes') }} class="match-cards">
+		{% for child in form %}
+			{% set extra = child.vars.extra %}
+			<label class="match-card {{ extra.conflict ? 'has-conflict' }}" for="{{ child.vars.id }}">
+				{{ _self.booking_radio(child) }}
+				<div class="match-card-body">
+					{% for side in extra.sides %}
+						{% if not loop.first %}
+							<div class="match-vs">vs</div>
+						{% endif %}
+						<div class="match-side">
+							{% for player in side %}
+								<div class="player-name">
+									{{ player.name }}
+									<span class="count" title="matchs programmés / matchs de la saison">{{ player.scheduledCount }}/{{ player.totalCount }}</span>
+								</div>
+								<div class="player-line">
+									<span class="k">Dispos :</span>
+									{{ player.dispos is not empty ? player.dispos : '—' }}
+								</div>
+								<div class="player-line">
+									<span class="k">Programmé :</span>
+									{% if player.dates is empty %}
+										—
+									{% else %}
+										<span class="chips">
+											{% for item in player.dates %}
+												<span class="chip {{ item.overlap ? 'chip-conflict' : (item.sameDay ? 'chip-info') }}" title="{{ item.slot }}">
+													{{- _self.short_date(item.date) -}}
+													{%- if item.sameDay %} · {{ item.slot.timeRange }}{% endif -%}
+												</span>
+											{% endfor %}
+										</span>
+									{% endif %}
+								</div>
+								{% if player.overlap %}
+									<div class="conflict-warning">⚠ joue déjà à cette heure-là</div>
+								{% elseif player.sameDay %}
+									<div class="same-day-info">joue aussi ce jour-là</div>
+								{% endif %}
+							{% endfor %}
+						</div>
+					{% endfor %}
+				</div>
+			</label>
+		{% else %}
+			<div class="booking-empty">Tous les matchs de cette poule sont programmés</div>
+		{% endfor %}
+	</div>
+{% endblock %}
+{# Match -> slot : dates as pills #}
+{% block _booking_for_match_form_date_widget %}
+	<div {{ block('widget_container_attributes') }} class="pills">
+		{% for child in form %}
+			<label class="pill {{ child.vars.extra.current ? 'pill-current' }}" for="{{ child.vars.id }}">
+				{{ _self.booking_radio(child) }}
+				{{ child.vars.label }}
+				{% if child.vars.extra.current %}
+					<span class="tag">actuel</span>
+				{% endif %}
+			</label>
+		{% else %}
+			<div class="booking-empty">Aucune date à venir avec un créneau libre</div>
+		{% endfor %}
+	</div>
+{% endblock %}
 
+{# Match -> slot : time x court grid (grid var set in BookingForMatchForm::finishView) #}
+{# free slots are selectable, booked slots show the match, the current slot and the slots at the same time are flagged #}
+{% block _booking_for_match_form_slot_widget %}
+	{% if grid is defined and grid.rows is not empty %}
+		<div {{ block('widget_container_attributes') }} class="slot-grid-wrapper">
+			<table class="slot-grid">
+				<thead>
+					<tr>
+						<th></th>
+						{% for court in grid.courts %}
+							<th>{{ court }}</th>
+						{% endfor %}
+					</tr>
+				</thead>
+				<tbody>
+					{% for row in grid.rows %}
+						<tr>
+							<th>{{ row.label }}</th>
+							{% for court in grid.courts %}
+								{% set cell = row.cells[court.id] ?? null %}
+								<td>
+									{% if cell is null %}
+										<div class="slot-cell slot-none">—</div>
+									{% elseif cell.choice %}
+										{% set child = cell.choice %}
+										{% set extra = child.vars.extra %}
+										<label class="slot-cell slot-free {{ extra.current ? 'slot-current' }}" for="{{ child.vars.id }}">
+											{{ _self.booking_radio(child) }}
+											{% if extra.current %}
+												<span class="tag">actuel</span>
+											{% elseif extra.sameTime %}
+												<span class="tag">même heure</span>
+											{% else %}
+												<span class="slot-free-label">Libre</span>
+											{% endif %}
+										</label>
+									{% else %}
+										<div class="slot-cell slot-booked" title="{{ cell.slot.match }}">
+											{% for player in cell.slot.match.players %}
+												<span class="slot-player">{{ player }}</span>
+											{% endfor %}
+										</div>
+									{% endif %}
+								</td>
+							{% endfor %}
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	{% else %}
+		<div {{ block('widget_container_attributes') }} class="pills pills-grid">
+			{% for child in form %}
+				{% set extra = child.vars.extra %}
+				<label class="pill {{ extra.current ? 'pill-current' }}" for="{{ child.vars.id }}">
+					{{ _self.booking_radio(child) }}
+					<span>{{ child.vars.label }}</span>
+					{% if extra.current %}
+						<span class="tag">actuel</span>
+					{% elseif extra.sameTime %}
+						<span class="tag">même heure</span>
+					{% endif %}
+				</label>
+			{% else %}
+				<div class="booking-empty">Aucun créneau libre à cette date</div>
+			{% endfor %}
+		</div>
+	{% endif %}
+{% endblock %}

@@ -1,69 +1,13 @@
-{# Important: Note the syntax with [] and only #}
-{# Ignore global themes; use only EasyAdmin #}
-{# important to avoid theme conflicts #}
-{% form_theme form with ['@admin/form/form_theme.html.twig'] only %}
-
 {% extends '@admin/base.html.twig' %}
 
-{% block head_stylesheets %}
-    {{ parent() }}
-    <style>
-        @media (min-width: 768px) {
-            .form-wrapper {
-                max-width: 300px;
-            }
-        }
-        .match-extra {
-            margin-top: 5px;
-            margin-bottom: 25px;
-            margin-left: 25px;
-            h5 {
-                font-size: medium;
-                margin-bottom: 3px;
-            }
-            .match-extra-side {
-                margin-bottom: 5px;
-            }
-            .match-extra-line {
-                margin-left: 15px;
-            }
-        }
-    </style>
-{% endblock %}
-
-{% block content_title %}Progammer un match - {{ slot }}{% endblock %}
+{% block content_title %}Programmer un match - {{ slot }}{% endblock %}
 
 {% block page_actions %}
-
     <a class="btn btn-default" href="{{ path('admin_planning')}}">
         Retour
     </a>
-
 {% endblock %}
 
-
 {% block main %}
-
-    {{ form_start(form, {'attr': {'data-controller': 'ajax'}}) }}
-
-        <div data-ajax-target="container">
-            {{ form_row(form.group) }}
-            
-            {% if form.match is defined %}
-                {{ form_row(form.match) }}
-            {% endif %}
-
-            {% set submitBtn = form_widget(form.save) %}
-
-            {{ form_rest(form) }}
-        </div>
-        
-        {% embed 'form/_form_actions.html.twig' %}
-            {% block submit_button %}
-                {{ submitBtn|raw }}
-            {% endblock %}
-        {% endembed %}
-
-    </form>
-                
+    {% include '@admin/slot/_booking_form.html.twig' with {'modal': false} %}
 {% endblock %}

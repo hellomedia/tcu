@@ -72,16 +72,28 @@ class DateRepository extends ServiceEntityRepository
         ;
     }
 
-    public function getFutureDatesWithAvailableSlotsQueryBuilder(): QueryBuilder
+    /**
+     * @param Date|null $includeDate date always listed, even without free slot
+     *                                (date of the booking being moved)
+     */
+    public function getFutureDatesWithAvailableSlotsQueryBuilder(?Date $includeDate = null): QueryBuilder
     {
-        return $this->createQueryBuilder('d')
+        $qb = $this->createQueryBuilder('d')
             ->innerJoin('d.slots', 's')->addSelect('s')
-            ->andWhere('NOT EXISTS (
-                SELECT 1 FROM ' . Booking::class . ' b WHERE b.slot = s
-            )')
             ->andWhere('d.date >= CURRENT_DATE()')
             ->orderBy('d.date', 'ASC')
         ;
+
+        $free = 'NOT EXISTS (SELECT 1 FROM ' . Booking::class . ' b WHERE b.slot = s)';
+
+        if ($includeDate === null) {
+            $qb->andWhere($free);
+        } else {
+            $qb->andWhere($free . ' OR d = :includeDate')
+                ->setParameter('includeDate', $includeDate);
+        }
+
+        return $qb;
     }
 
 

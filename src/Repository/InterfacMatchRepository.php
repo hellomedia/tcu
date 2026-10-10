@@ -60,6 +60,7 @@ class InterfacMatchRepository extends ServiceEntityRepository
             ->leftJoin('matches.booking', 'booking')->addSelect('booking')
             ->leftJoin('booking.slot', 'slot')->addSelect('slot')
             ->leftJoin('slot.date', 'date')->addSelect('date')
+            ->addOrderBy('m.id', 'ASC')
         ;
     }
 

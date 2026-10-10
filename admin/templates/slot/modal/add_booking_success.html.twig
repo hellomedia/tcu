@@ -1,8 +1,15 @@
 {% embed 'component/modal/success.html.twig' %}
 	{% block streams %}
+		{# planning page #}
 		<turbo-stream action="replace" target="slot-{{ slot.id }}">
 			<template>
 				{% include '@admin/planning/_slot_row.html.twig' %}
+			</template>
+		</turbo-stream>
+		{# groups page #}
+		<turbo-stream action="replace" target="match-{{ match.id }}">
+			<template>
+				{% include '@admin/group/_match_row.html.twig' %}
 			</template>
 		</turbo-stream>
 	{% endblock %}

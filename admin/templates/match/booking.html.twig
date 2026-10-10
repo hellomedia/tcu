@@ -1,0 +1,13 @@
+{% extends '@admin/base.html.twig' %}
+
+{% block content_title %}{{ mode == 'move' ? 'Déplacer' : 'Programmer' }} le match {{ match }}{% endblock %}
+
+{% block page_actions %}
+    <a class="btn btn-default" href="{{ path('admin_planning_groups')}}">
+        Retour
+    </a>
+{% endblock %}
+
+{% block main %}
+    {% include '@admin/match/_booking_form.html.twig' with {'modal': false} %}
+{% endblock %}

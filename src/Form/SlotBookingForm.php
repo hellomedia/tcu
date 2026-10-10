@@ -4,7 +4,10 @@ namespace App\Form;
 
 use App\Entity\InterfacMatch;
 use App\Entity\Booking;
+use App\Entity\Date;
 use App\Entity\Group;
+use App\Entity\Player;
+use App\Entity\Slot;
 use App\Enum\Side;
 use App\Repository\GroupRepository;
 use App\Repository\InterfacMatchRepository;
@@ -19,7 +22,11 @@ use Symfonycasts\DynamicForms\DependentField;
 use Symfonycasts\DynamicForms\DynamicFormBuilder;
 
 /**
- * Make a booking for a slot
+ * Make a booking for a slot : choose a group, then a match of that group
+ *
+ * Options:
+ *  - slot: the slot being booked (used to flag players who already play that day)
+ *  - last_group: group pre-selected when the form opens (last group used by the admin)
  */
 final class SlotBookingForm extends AbstractType
 {
@@ -32,6 +39,9 @@ final class SlotBookingForm extends AbstractType
     {
         $builder = new DynamicFormBuilder($builder);
 
+        $slot = $options['slot'];
+        \assert($slot instanceof Slot);
+
         $builder->add('group', EntityType::class, [
             'label' => 'Poule',
             'class' => Group::class,
@@ -41,13 +51,20 @@ final class SlotBookingForm extends AbstractType
             'multiple' => false,
             'expanded' => true,
             'mapped' => false,
-            'placeholder' => 'Choisir une poule',
+            'data' => $options['last_group'],
+            'placeholder' => false,
             'attr' => [
                 'data-action' => 'change->ajax#submitOnChange',
-            ]
+            ],
+            // ChoiceExtraExtension
+            'choice_extra' => function (Group $group): array {
+                $toPlan = $group->getMatchs()->filter(fn (InterfacMatch $match) => !$match->isScheduled())->count();
+
+                return ['toPlan' => $toPlan];
+            },
         ]);
 
-        $builder->addDependent('match', 'group', function(DependentField $field, ?Group $selectedGroup) {
+        $builder->addDependent('match', 'group', function(DependentField $field, ?Group $selectedGroup) use ($slot) {
             if ($selectedGroup === null) {
                 return;
             }
@@ -60,33 +77,88 @@ final class SlotBookingForm extends AbstractType
                 'multiple' => false,
                 'expanded' => true,
                 // ChoiceExtraExtension
-                'choice_extra' => function (InterfacMatch $match) {
-                    $playerA = $match->getPlayersForSide(Side::A)[0];
-                    $playerB = $match->getPlayersForSide(Side::B)[0];
+                'choice_extra' => function (InterfacMatch $match) use ($slot): array {
+                    $sides = [];
+                    $conflict = false;
+
+                    foreach ([Side::A, Side::B] as $side) {
+                        $players = [];
+
+                        foreach ($match->getPlayersForSide($side) as $player) {
+                            $info = $this->playerInfo($player, $match, $slot);
+                            $conflict = $conflict || $info['overlap'];
+                            $players[] = $info;
+                        }
+
+                        $sides[] = $players;
+                    }
 
                     return [
-                        'sideA' => [
-                            'name' => $playerA->getName(),
-                            'dispos' => $playerA->getAvailabilities($match->getSeason()) ?? '',
-                            'dates' => $playerA->getScheduledMatchsDates(),
-                        ],
-                        'sideB' => [
-                            'name' => $playerB->getName(),
-                            'dispos' => $playerB->getAvailabilities($match->getSeason()) ?? '',
-                            'dates' => $playerB->getScheduledMatchsDates(),
-                        ],
+                        'sides' => $sides,
+                        'conflict' => $conflict,
                     ];
                 },
             ]);
         });
 
-        $builder->add('save', SubmitType::class);
+        $builder->add('save', SubmitType::class, [
+            'label' => 'Programmer',
+        ]);
+    }
+
+    /**
+     * Infos displayed under a match for one of its players.
+     * Only the matches of the match's season (= the working season) are taken into account.
+     *
+     * @return array{name: string, dispos: string, dates: list<array{date: ?Date, slot: Slot, sameDay: bool, overlap: bool}>, scheduledCount: int, totalCount: int, sameDay: bool, overlap: bool}
+     */
+    private function playerInfo(Player $player, InterfacMatch $match, Slot $slot): array
+    {
+        $season = $match->getSeason();
+        $scheduled = $player->getScheduledMatchs($season);
+        $slotDate = $slot->getDate();
+
+        $dates = [];
+        $sameDay = false;
+        $overlap = false;
+
+        foreach ($scheduled as $scheduledMatch) {
+            $other = $scheduledMatch->getSlot();
+            $isSameDay = $other->getDate() === $slotDate;
+            // same day and time ranges overlap : the player cannot play both
+            $isOverlap = $isSameDay
+                && $slot->getStartsAt() < $other->getEndsAt()
+                && $other->getStartsAt() < $slot->getEndsAt();
+            $sameDay = $sameDay || $isSameDay;
+            $overlap = $overlap || $isOverlap;
+            $dates[] = [
+                'date' => $other->getDate(),
+                'slot' => $other,
+                'sameDay' => $isSameDay,
+                'overlap' => $isOverlap,
+            ];
+        }
+
+        return [
+            'name' => $player->getName(),
+            'dispos' => $player->getAvailabilities($season) ?? '',
+            'dates' => $dates,
+            'scheduledCount' => \count($dates),
+            'totalCount' => $player->getMatchs($season)->count(),
+            'sameDay' => $sameDay,
+            'overlap' => $overlap,
+        ];
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => Booking::class,
+            'last_group' => null,
         ]);
+
+        $resolver->setRequired('slot');
+        $resolver->setAllowedTypes('slot', Slot::class);
+        $resolver->setAllowedTypes('last_group', ['null', Group::class]);
     }
 }

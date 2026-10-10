@@ -1,0 +1,120 @@
+{# Match -> slot booking form (schedule or move a match), shared by the modal and the full page #}
+{# vars: match, form, mode ('add'|'move'), modal (bool) #}
+
+{# Important: Note the syntax with [] and only #}
+{# Ignore global themes; use only EasyAdmin #}
+{% form_theme form with ['@admin/form/form_theme.html.twig'] only %}
+
+{% include '@admin/booking/_styles.html.twig' %}
+
+{% set route = mode == 'move' ? 'admin_match_move_booking' : 'admin_match_add_booking' %}
+{% set currentSlot = mode == 'move' ? match.slot : null %}
+
+<div class="booking-form match-booking">
+
+    <div class="booking-header">
+        <h3>{{ mode == 'move' ? 'Déplacer le match' : 'Programmer le match' }}</h3>
+        <div class="booking-context">
+            {{ match }}
+            {% if match.group %}
+                <span class="sep">•</span>
+                {{ match.group }}
+            {% endif %}
+        </div>
+    </div>
+
+    {% if currentSlot %}
+        <div class="booking-section">
+            <div class="booking-section-title">Créneau actuel</div>
+            <div class="booking-context">
+                <twig:ux:icon name="calendar"/>
+                {{ currentSlot.date }}
+                <span class="sep">•</span>
+                {{ currentSlot.timeRange }}
+                <span class="sep">•</span>
+                {{ currentSlot.court }}
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="players-infos">
+        {% for player in match.players %}
+            {% set season = match.season %}
+            <div class="player-infos">
+                <div class="player-name">
+                    {{ player }}
+                    <span class="count" title="matchs programmés / matchs de la saison">{{ player.scheduledMatchs(season)|length }}/{{ player.matchs(season)|length }}</span>
+                </div>
+                <div class="player-line">
+                    <span class="k">Dispos :</span>
+                    {% set availabilities = player.availabilities(season) %}
+                    {{ availabilities is not empty ? availabilities : '—' }}
+                </div>
+                <div class="player-line">
+                    <span class="k">Programmé :</span>
+                    {% set others = player.scheduledMatchs(season)|filter(m => m is not same as match) %}
+                    {% if others is empty %}
+                        —
+                    {% else %}
+                        <span class="chips">
+                            {% for scheduledMatch in others %}
+                                <span class="chip" title="{{ scheduledMatch.booking }} : {{ scheduledMatch }}">{{ scheduledMatch.date.date|date('D d/m')|replace({'Mon': 'Lun', 'Tue': 'Mar', 'Wed': 'Mer', 'Thu': 'Jeu', 'Fri': 'Ven', 'Sat': 'Sam', 'Sun': 'Dim'}) }} · {{ scheduledMatch.timeRange }} · {{ scheduledMatch.court }}</span>
+                            {% endfor %}
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    {# Dependent field (slot depends on date) is handled by the 'ajax' controller #}
+    {# Final submit: regular form submit (turbo frame in the modal) #}
+    {{ form_start(form, {'attr': {
+        'action': path(route, {'id': match.id, 'modal': modal ? 1 : null}),
+        'data-controller': 'ajax',
+    }}) }}
+
+        <div data-ajax-target="container">
+
+            <div class="booking-section">
+                <div class="booking-section-title">Date</div>
+                {{ form_errors(form.date) }}
+                {{ form_widget(form.date) }}
+            </div>
+
+            {% if form.slot is defined %}
+                <div class="booking-section">
+                    <div class="booking-section-title">Créneau</div>
+                    {{ form_errors(form.slot) }}
+                    {{ form_widget(form.slot) }}
+                    {% if mode == 'move' %}
+                        <div class="booking-note">
+                            Changer la date ou l'heure réinitialise les confirmations des joueurs. Changer uniquement de terrain les conserve.
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
+
+            {% set submitBtn = form_widget(form.save) %}
+
+            {{ form_rest(form) }}
+        </div>
+
+        {% if modal %}
+            {% embed 'component/modal/_actions.html.twig' %}
+                {% block submit_button %}
+                    {{ submitBtn|raw }}
+                {% endblock %}
+            {% endembed %}
+        {% else %}
+            {% embed 'form/_form_actions.html.twig' %}
+                {% block cancel_url path('admin_planning_groups') %}
+                {% block submit_button %}
+                    {{ submitBtn|raw }}
+                {% endblock %}
+            {% endembed %}
+        {% endif %}
+
+    </form>
+
+</div>

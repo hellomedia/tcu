@@ -32,7 +32,36 @@
             display: flex;
             flex-wrap: nowrap;
             justify-content: space-between;
-            gap: 70px;
+            align-items: center;
+            gap: 30px;
+            min-height: 32px;
+        }
+        .booking {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+        .match-actions {
+            .hk-dropdown-button svg {
+                height: 22px;
+                color: #999;
+            }
+            .hk-dropdown-button:hover svg {
+                color: inherit;
+            }
+            .hk-dropdown-menu {
+                right: 0;
+            }
+        }
+        @media (min-width: 768px) {
+            .match-actions .hk-dropdown-button {
+                visibility: hidden;
+            }
+            .match:hover .match-actions .hk-dropdown-button,
+            .match-actions:has(.open) .hk-dropdown-button {
+                visibility: visible;
+            }
         }
 
         /* LAYOUT */
@@ -57,7 +86,7 @@
 
 {% block main %}
 
-    <div class="groups" data-controller="modal modal-confirm">
+    <div class="groups" data-controller="modal modal-confirm modal-remote-form">
         {% for group in groups %}
             {% include '@admin/group/_group.html.twig' %}
         {% endfor %}

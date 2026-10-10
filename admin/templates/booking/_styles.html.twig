@@ -1,0 +1,407 @@
+{# Styles shared by the booking forms (slot -> match and match -> slot), in modal or full page #}
+<style>
+    /* wider modal for the booking forms (desktop) */
+    .modal.hk-override:has(.booking-form) {
+        width: 95%;
+        max-width: 1040px;
+        max-height: 90%;
+    }
+
+    .booking-form {
+        width: 100%;
+        --booking-border: #dee2e6;
+        --booking-muted: #6c757d;
+        --booking-accent: #2563eb;
+        --booking-accent-bg: #eff6ff;
+        --booking-warning: #b45309;
+        --booking-warning-bg: #fffbeb;
+        --booking-warning-border: #fcd34d;
+    }
+
+    .booking-header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 10px 20px;
+        margin-bottom: 20px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--booking-border);
+        h3 {
+            margin: 0;
+            font-size: 1.25rem;
+        }
+    }
+    .booking-context {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 600;
+        svg {
+            width: 18px;
+            height: 18px;
+            color: var(--booking-muted);
+        }
+        .sep {
+            color: var(--booking-muted);
+            font-weight: 400;
+        }
+    }
+
+    .booking-section {
+        margin-bottom: 22px;
+    }
+    .booking-section-title {
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--booking-muted);
+        margin-bottom: 8px;
+        .hint {
+            font-weight: 400;
+            text-transform: none;
+            letter-spacing: 0;
+        }
+    }
+    .booking-note {
+        font-size: 0.85rem;
+        color: var(--booking-muted);
+        margin-top: 6px;
+    }
+    .booking-empty {
+        color: var(--booking-muted);
+        font-style: italic;
+    }
+
+    /* radios rendered as pills or cards: keep the input focusable but invisible */
+    .pill input,
+    .match-card input {
+        position: absolute;
+        opacity: 0;
+        width: 1px;
+        height: 1px;
+        pointer-events: none;
+    }
+
+    /* PILLS (groups, dates, slots) */
+    .pills {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    .pills.pills-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    }
+    .pill {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 7px 14px;
+        border: 1px solid var(--booking-border);
+        border-radius: 999px;
+        background: #fff;
+        cursor: pointer;
+        font-weight: 500;
+        margin: 0;
+        line-height: 1.3;
+        user-select: none;
+        &:hover {
+            border-color: var(--booking-accent);
+        }
+        &:has(input:checked) {
+            border-color: var(--booking-accent);
+            background: var(--booking-accent-bg);
+            color: var(--booking-accent);
+            box-shadow: inset 0 0 0 1px var(--booking-accent);
+        }
+        &:has(input:focus-visible) {
+            outline: 2px solid var(--booking-accent);
+            outline-offset: 2px;
+        }
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 20px;
+            height: 20px;
+            padding-inline: 6px;
+            border-radius: 999px;
+            background: #e9ecef;
+            color: #333;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        &:has(input:checked) .badge {
+            background: var(--booking-accent);
+            color: #fff;
+        }
+        .tag {
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            color: var(--booking-muted);
+        }
+        &.pill-current {
+            border-style: dashed;
+        }
+    }
+    .pills-grid .pill {
+        border-radius: 6px;
+        justify-content: space-between;
+    }
+
+    /* MATCH CARDS */
+    .match-cards {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    @media (min-width: 900px) {
+        .match-cards {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+    .match-card {
+        position: relative;
+        display: block;
+        margin: 0;
+        padding: 12px 14px 12px 40px;
+        border: 1px solid var(--booking-border);
+        border-radius: 8px;
+        background: #fff;
+        cursor: pointer;
+        font-weight: 400;
+        &::before {
+            /* radio indicator */
+            content: '';
+            position: absolute;
+            left: 14px;
+            top: 15px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            border: 2px solid #adb5bd;
+            background: #fff;
+        }
+        &:hover {
+            border-color: var(--booking-accent);
+        }
+        &:has(input:checked) {
+            border-color: var(--booking-accent);
+            background: var(--booking-accent-bg);
+            box-shadow: inset 0 0 0 1px var(--booking-accent);
+            &::before {
+                border-color: var(--booking-accent);
+                background: radial-gradient(circle, var(--booking-accent) 45%, #fff 50%);
+            }
+        }
+        &:has(input:focus-visible) {
+            outline: 2px solid var(--booking-accent);
+            outline-offset: 2px;
+        }
+        &.has-conflict {
+            background: var(--booking-warning-bg);
+            border-color: var(--booking-warning-border);
+        }
+    }
+    .match-card-body {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+        gap: 12px;
+        align-items: start;
+    }
+    .match-vs {
+        align-self: center;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: var(--booking-muted);
+    }
+    .match-side {
+        min-width: 0;
+    }
+    .player-name {
+        display: flex;
+        align-items: baseline;
+        gap: 6px;
+        font-weight: 600;
+        margin-bottom: 4px;
+        .count {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--booking-muted);
+            white-space: nowrap;
+        }
+    }
+    .player-line {
+        font-size: 0.85rem;
+        line-height: 1.4;
+        margin-top: 2px;
+        .k {
+            color: var(--booking-muted);
+        }
+    }
+    .chips {
+        display: inline-flex;
+        flex-wrap: wrap;
+        gap: 4px;
+        vertical-align: middle;
+    }
+    .chip {
+        display: inline-block;
+        padding: 0 7px;
+        border-radius: 4px;
+        background: #e9ecef;
+        font-size: 0.75rem;
+        font-weight: 600;
+        line-height: 1.6;
+        white-space: nowrap;
+        &.chip-conflict {
+            background: var(--booking-warning);
+            color: #fff;
+        }
+        &.chip-info {
+            /* same day : muted plum, no red/green/blue meaning, distinct from the accent used by buttons and selection */
+            background: #ece3f2;
+            color: #6b4a8a;
+        }
+    }
+    .same-day-info {
+        margin-top: 4px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #6b4a8a;
+    }
+
+    /* SLOT GRID (time x court) */
+    .slot-grid-wrapper {
+        overflow-x: auto;
+    }
+    .slot-grid {
+        border-collapse: separate;
+        border-spacing: 6px;
+        width: 100%;
+        margin: -6px;
+        th {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--booking-muted);
+            text-align: center;
+            padding: 2px 6px;
+            white-space: nowrap;
+        }
+        tbody th {
+            text-align: right;
+            width: 1%;
+        }
+        td {
+            padding: 0;
+            vertical-align: stretch;
+            min-width: 120px;
+        }
+    }
+    .slot-cell {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2px;
+        min-height: 48px;
+        height: 100%;
+        padding: 6px 10px;
+        border-radius: 6px;
+        margin: 0;
+        font-weight: 500;
+        text-align: center;
+        line-height: 1.3;
+    }
+    .slot-free {
+        border: 1px solid var(--booking-border);
+        background: #fff;
+        cursor: pointer;
+        &:hover {
+            border-color: var(--booking-accent);
+        }
+        &:has(input:checked) {
+            border-color: var(--booking-accent);
+            background: var(--booking-accent-bg);
+            color: var(--booking-accent);
+            box-shadow: inset 0 0 0 1px var(--booking-accent);
+            .tag {
+                color: var(--booking-accent);
+            }
+        }
+        &:has(input:focus-visible) {
+            outline: 2px solid var(--booking-accent);
+            outline-offset: 2px;
+        }
+        &.slot-current {
+            border-style: dashed;
+        }
+        .slot-free-label {
+            color: var(--booking-muted);
+            font-weight: 400;
+        }
+        .tag {
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            color: var(--booking-muted);
+        }
+    }
+    .slot-booked {
+        background: #f1f3f5;
+        color: var(--booking-muted);
+        font-size: 0.8rem;
+        font-weight: 400;
+        cursor: not-allowed;
+        .slot-player {
+            display: block;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 160px;
+        }
+    }
+    .slot-none {
+        color: #ccc;
+        background: repeating-linear-gradient(45deg, transparent, transparent 6px, #f6f6f6 6px, #f6f6f6 12px);
+    }
+    .conflict-warning {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        margin-top: 4px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--booking-warning);
+    }
+
+    /* player infos (match -> slot form) */
+    .players-infos {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 10px 24px;
+        margin-bottom: 22px;
+    }
+    .player-infos {
+        padding: 10px 14px;
+        border: 1px solid var(--booking-border);
+        border-radius: 8px;
+    }
+
+    .booking-form .invalid-feedback,
+    .booking-form .form-error-message {
+        display: block;
+        margin-bottom: 10px;
+    }
+    .booking-form .form-actions {
+        margin-top: 20px;
+    }
+</style>

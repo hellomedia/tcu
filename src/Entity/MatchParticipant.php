@@ -84,10 +84,10 @@ class MatchParticipant
         return $this->confirmationInfo;
     }
 
-    public function setConfirmationInfo(ParticipantConfirmationInfo $confirmationInfo): static
+    public function setConfirmationInfo(?ParticipantConfirmationInfo $confirmationInfo): static
     {
         // set the owning side of the relation if necessary
-        if ($confirmationInfo->getParticipant() !== $this) {
+        if ($confirmationInfo !== null && $confirmationInfo->getParticipant() !== $this) {
             $confirmationInfo->setParticipant($this);
         }
 
