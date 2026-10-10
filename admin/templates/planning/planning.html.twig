@@ -184,6 +184,34 @@
             font-size: 0.85rem;
         }
 
+        /* DRAG & DROP : booked slot -> free slot */
+        @media (min-width: 768px) {
+            .dnd-enabled .slot-row.booked .slot-content {
+                cursor: grab;
+            }
+        }
+        .slot-row.dragging .slot-content {
+            opacity: 0.4;
+        }
+        .dnd-enabled.dragging-active .slot-row.free .slot-content {
+            border-style: solid;
+            border-color: #adb5bd;
+        }
+        .slot-row.free.drop-target .slot-content {
+            border-color: #2563eb;
+            background: #eff6ff;
+            .btn {
+                visibility: hidden;
+            }
+        }
+        .slot-row.free.drop-target .slot-content-inner::after {
+            content: attr(data-drop-label);
+            color: #2563eb;
+            font-weight: 600;
+            font-size: 0.85rem;
+            position: absolute;
+        }
+
         /* filtered rows fade out but keep their place: times stay aligned across courts */
         .slot-row.dimmed {
             opacity: 0.18;
@@ -313,7 +341,12 @@
             </div>
         {% endblock %}
 
-        <div class="planning" data-controller="modal modal-confirm modal-remote-form" data-planning-filter-target="planning">
+        <div class="planning {{ block('dnd_enabled') ? 'dnd-enabled' }}"
+            data-controller="modal modal-confirm modal-remote-form{{ block('dnd_enabled') ? ' planning-dnd' }}"
+            data-planning-filter-target="planning"
+            data-planning-dnd-token-value="{{ csrf_token('move-booking') }}"
+            data-planning-dnd-url-value="{{ path('admin_match_move_booking_to', {'id': 'MATCH', 'slot': 'SLOT'}) }}"
+        >
             {% for date in dates %}
                 {% include '@admin/planning/_date.html.twig' %}
             {% endfor %}
@@ -328,3 +361,6 @@
 
 {# localStorage key : the filters are remembered per page #}
 {% block storage_key 'planning-filter' %}
+
+{# drag & drop of booked slots onto free slots (not on past matches) #}
+{% block dnd_enabled true %}

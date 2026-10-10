@@ -8,6 +8,7 @@ use App\Entity\Booking;
 use App\Entity\InterfacMatch;
 use App\Entity\MatchResult;
 use App\Entity\ParticipantConfirmationInfo;
+use App\Entity\Slot;
 use App\Enum\BookingType;
 use App\Enum\Side;
 use App\Form\BookingForMatchForm;
@@ -22,7 +23,9 @@ use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
 
 class MatchController extends BaseController
 {
@@ -125,23 +128,7 @@ class MatchController extends BaseController
                 return $this->renderBookingForm($request, $match, $form, mode: 'move');
             }
 
-            if ($newSlot !== $oldSlot) {
-                // sync inverse sides (for the turbo streams)
-                $oldSlot->setBooking(null);
-                $newSlot->setBooking($booking);
-
-                $sameMoment = $newSlot->getDate() === $oldSlot->getDate()
-                    && $newSlot->getStartsAt() == $oldSlot->getStartsAt();
-
-                if (!$sameMoment) {
-                    foreach ($match->getConfirmationInfos() as $info) {
-                        $this->entityManager->remove($info);
-                        $info->getParticipant()->setConfirmationInfo(null);
-                    }
-                }
-
-                $this->entityManager->flush();
-            }
+            $this->applyMove($match, $oldSlot, $newSlot);
 
             $feedback = 'Match déplacé';
 
@@ -159,6 +146,94 @@ class MatchController extends BaseController
         }
 
         return $this->renderBookingForm($request, $match, $form, mode: 'move');
+    }
+
+    /**
+     * Move a scheduled match to a given free slot, without form : drag & drop on the planning
+     *
+     * - with ?modal=1 (confirmation modal) : success modal + turbo streams
+     * - otherwise (direct fetch) : turbo streams only
+     */
+    #[IsCsrfTokenValid('move-booking', tokenKey: 'token')]
+    #[Route('/match/{id:match}/move-booking-to/{slot}', name: 'admin_match_move_booking_to', methods: ['POST'], defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
+    public function moveBookingTo(
+        InterfacMatch $match,
+        #[MapEntity(mapping: ['slot' => 'id'])]
+        Slot $slot,
+        Request $request,
+    ): Response {
+        $booking = $match->getBooking();
+
+        if ($booking === null) {
+            return new Response('Ce match n\'est pas programmé', Response::HTTP_CONFLICT);
+        }
+
+        $oldSlot = $booking->getSlot();
+
+        if ($slot !== $oldSlot && $slot->getBooking() !== null) {
+            return new Response('Ce créneau vient d\'être réservé', Response::HTTP_CONFLICT);
+        }
+
+        if ($slot->getDate()->isPast()) {
+            return new Response('Ce créneau est passé', Response::HTTP_CONFLICT);
+        }
+
+        $this->applyMove($match, $oldSlot, $slot);
+
+        $slots = [$oldSlot, $slot];
+
+        if ($request->query->get('modal')) {
+            return $this->render('@admin/match/modal/booking_success.html.twig', [
+                'feedback' => 'Match déplacé',
+                'match' => $match,
+                'slots' => $slots,
+            ]);
+        }
+
+        $response = $this->render('@admin/match/_booking_streams.html.twig', [
+            'match' => $match,
+            'slots' => $slots,
+        ]);
+        $response->headers->set('Content-Type', 'text/vnd.turbo-stream.html; charset=utf-8');
+
+        return $response;
+    }
+
+    /**
+     * Change the slot of a scheduled match.
+     * Player confirmations are reset when the date or the time changes (kept when only the court changes).
+     */
+    private function applyMove(InterfacMatch $match, Slot $oldSlot, Slot $newSlot): void
+    {
+        if ($newSlot === $oldSlot) {
+            return;
+        }
+
+        $booking = $match->getBooking();
+
+        // The slots may be lazy proxies. Initializing one AFTER the booking has been changed would undo
+        // the change: when Doctrine loads a slot it completes the bidirectional one-to-one by setting
+        // the owning side (booking.slot) back to that slot.
+        $this->entityManager->initializeObject($oldSlot);
+        $this->entityManager->initializeObject($newSlot);
+
+        $booking->setSlot($newSlot);
+
+        // sync inverse sides (for the turbo streams)
+        $oldSlot->setBooking(null);
+        $newSlot->setBooking($booking);
+
+        $sameMoment = $newSlot->getDate() === $oldSlot->getDate()
+            && $newSlot->getStartsAt() == $oldSlot->getStartsAt();
+
+        if (!$sameMoment) {
+            foreach ($match->getConfirmationInfos() as $info) {
+                $this->entityManager->remove($info);
+                $info->getParticipant()->setConfirmationInfo(null);
+            }
+        }
+
+        $this->entityManager->flush();
     }
 
     private function renderBookingForm(Request $request, InterfacMatch $match, FormInterface $form, string $mode): Response
