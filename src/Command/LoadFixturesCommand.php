@@ -51,7 +51,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 #[AsCommand(name: 'app:fixtures:load', description: 'DEV : vide la base de données et charge des données de démo')]
 class LoadFixturesCommand extends Command
 {
-    private const PASSWORD = 'password';
+    private const PASSWORD = '000000';
 
     // [prénom, nom, genre, classement hiver terminé, classement été, interfacs, cours, interclubs]
     private const PLAYERS = [
@@ -150,7 +150,7 @@ class LoadFixturesCommand extends Command
 
         $io->success(sprintf('Fixtures chargées : %s, %s, %s.', $pastWinter, $summer, $winter));
         if (!$keepUsers) {
-            $io->writeln(sprintf(' Utilisateurs (mot de passe "%s") : admin@tcu.test, manager@tcu.test, editor@tcu.test, joueur@tcu.test', self::PASSWORD));
+            $io->writeln(sprintf(' Utilisateurs (mot de passe "%s") : admin@tcuniversite.be, manager@tcuniversite.be, editor@tcuniversite.be, joueur@tcuniversite.be', self::PASSWORD));
         }
 
         return Command::SUCCESS;
@@ -185,7 +185,7 @@ class LoadFixturesCommand extends Command
     private function loadCourts(): array
     {
         $courts = [];
-        foreach (['BG 1' => 'Blanc Gravier 1', 'BG 2' => 'Blanc Gravier 2', 'French 1' => null, 'BP 1' => null] as $name => $description) {
+        foreach (['BG 1' => 'Blanc Gravier 1', 'BG 2' => 'Blanc Gravier 2', 'BG 3' => 'Blanc Gravier 3'] as $name => $description) {
             $court = (new Court())->setName($name)->setDescription($description);
             $this->entityManager->persist($court);
             $courts[] = $court;
@@ -368,10 +368,9 @@ class LoadFixturesCommand extends Command
         $today = new \DateTimeImmutable('today');
 
         $pastDays = $today > $season->getStartsOn() ? $this->saturdays($season->getStartsOn(), $today->modify('-1 day')) : [];
-        $pastDays = array_slice($pastDays, -4);
-        $futureDays = array_slice($this->saturdays(max($today, $season->getStartsOn()), $season->getEndsOn()), 0, 8);
+        $futureDays = $this->saturdays(max($today, $season->getStartsOn()), $season->getEndsOn());
 
-        // 2 terrains, 1 samedi sur 2 sur les dates futures : il reste des créneaux libres
+        // tous les samedis de la saison ont des créneaux ; 1 match sur 3 est programmé dans le futur : il reste des créneaux libres
         $pastSlots = $this->createSlots($pastDays);
         $futureSlots = $this->createSlots($futureDays);
 
@@ -485,7 +484,7 @@ class LoadFixturesCommand extends Command
     }
 
     /**
-     * Samedis de 14h à 18h sur 2 terrains
+     * Samedis de 16h à 20h, créneaux d'une heure sur les 3 terrains
      *
      * @param \DateTimeImmutable[] $days
      *
@@ -503,8 +502,8 @@ class LoadFixturesCommand extends Command
                 $this->entityManager->persist($this->dates[$ymd]);
             }
 
-            for ($hour = 14; $hour < 18; $hour++) {
-                foreach (array_slice($this->courts, 0, 2) as $court) {
+            for ($hour = 16; $hour < 20; $hour++) {
+                foreach ($this->courts as $court) {
                     $slot = (new Slot())
                         ->setStartsAt($day->setTime($hour, 0))
                         ->setEndsAt($day->setTime($hour + 1, 0))
@@ -541,11 +540,11 @@ class LoadFixturesCommand extends Command
     private function loadUsers(array $players): void
     {
         $users = [
-            ['admin@tcu.test', 'Admin', ['ROLE_SUPER_ADMIN'], null],
-            ['manager@tcu.test', 'Manager', ['ROLE_ADMIN', 'ROLE_MANAGER'], null],
-            ['editor@tcu.test', 'Editor', ['ROLE_ADMIN', 'ROLE_EDITOR'], null],
+            ['admin@tcuniversite.be', 'Admin', ['ROLE_SUPER_ADMIN'], null],
+            ['manager@tcuniversite.be', 'Manager', ['ROLE_ADMIN', 'ROLE_MANAGER'], null],
+            ['editor@tcuniversite.be', 'Editor', ['ROLE_ADMIN', 'ROLE_EDITOR'], null],
             // joueur inscrit aux interfacs des 2 hivers
-            ['joueur@tcu.test', null, [], $players[4]],
+            ['joueur@tcuniversite.be', null, [], $players[4]],
         ];
 
         foreach ($users as [$email, $name, $roles, $player]) {
