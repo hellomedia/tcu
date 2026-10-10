@@ -1,0 +1,35 @@
+{# Incomplete round-robin (player added after the generation) or orphan matchs (player removed) #}
+{# vars: group, link (bool, optional) : link to the planning page where the actions are #}
+{% if group.matchs is not empty %}
+    {% set missing = group.missingMatchCount %}
+    {% set orphans = group.orphanMatchs|length %}
+    {% if missing > 0 %}
+        <div class="group-warning">
+            <span>⚠</span>
+            <span>
+                {{ missing }} match{{ missing > 1 ? 's' }} manquant{{ missing > 1 ? 's' }}
+                {% if link|default(false) %}
+                    — <a href="{{ path('admin_planning_groups') }}#group-{{ group.id }}">compléter</a>
+                {% else %}
+                    — voir le menu ⋮
+                {% endif %}
+            </span>
+        </div>
+    {% endif %}
+    {% set unplayed = group.orphanMatchs|filter(m => m.result is null)|length %}
+    {% if orphans > 0 %}
+        <div class="group-warning">
+            <span>⚠</span>
+            <span>
+                {{ orphans }} match{{ orphans > 1 ? 's' }} d'un joueur qui n'est plus dans la poule
+                {% if unplayed == 0 %}
+                    ({{ orphans > 1 ? 'joués, conservés' : 'joué, conservé' }})
+                {% elseif link|default(false) %}
+                    — <a href="{{ path('admin_planning_groups') }}#group-{{ group.id }}">nettoyer</a>
+                {% else %}
+                    — voir le menu ⋮
+                {% endif %}
+            </span>
+        </div>
+    {% endif %}
+{% endif %}

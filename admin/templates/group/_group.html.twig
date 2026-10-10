@@ -10,6 +10,7 @@
     </div>
     <div class="matchs">
         <h5>Matchs</h5>
+        {% include '@admin/group/_matchs_warnings.html.twig' %}
         {% for match in group.matchs %}
             {% include '@admin/group/_match_row.html.twig' %}
         {% else %}

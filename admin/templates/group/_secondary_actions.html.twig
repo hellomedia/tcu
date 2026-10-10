@@ -21,6 +21,45 @@
 
                 {% if group.matchs is not empty %}
 
+                    {% set missing = group.missingMatchCount %}
+                    {% set orphans = group.orphanMatchs|length %}
+
+                    {% if missing > 0 %}
+                        <button type="button"
+                            class="hk-dropdown-link"
+                            formaction="{{ path('admin_planning_group_complete_matchs', {'id': group.id}) }}"
+                            data-action="modal-confirm#open"
+                            data-title="Compléter les matchs"
+                            data-html="<p>{{ missing }} match{{ missing > 1 ? 's' }} manquant{{ missing > 1 ? 's' }} ser{{ missing > 1 ? 'ont' : 'a' }} ajouté{{ missing > 1 ? 's' }} pour les joueurs qui n'ont pas encore tous leurs matchs.<br>Les matchs existants, programmés ou joués, ne changent pas.</p>"
+                            data-button-label="Compléter les matchs"
+                            data-csrf="{{ csrf_token('complete-matchs') }}"
+                        >
+                            <twig:ux:icon name="add" />
+                            Compléter les matchs ({{ missing }})
+                        </button>
+                    {% endif %}
+
+                    {% set unplayed = group.orphanMatchs|filter(m => m.result is null)|length %}
+                    {% if unplayed > 0 %}
+                        <button type="button"
+                            class="hk-dropdown-link"
+                            formaction="{{ path('admin_planning_group_delete_orphan_matchs', {'id': group.id}) }}"
+                            data-action="modal-confirm#open"
+                            data-title="Supprimer les matchs orphelins"
+                            data-html="<p>{{ orphans }} match{{ orphans > 1 ? 's' }} concerne{{ orphans > 1 ? 'nt' }} un joueur qui n'est plus dans la poule.<br>{{ unplayed }} match{{ unplayed > 1 ? 's' }} non joué{{ unplayed > 1 ? 's' }} ser{{ unplayed > 1 ? 'ont' : 'a' }} supprimé{{ unplayed > 1 ? 's' }} (les créneaux réservés sont libérés){{ orphans > unplayed ? ', les matchs joués sont conservés' }}.</p>"
+                            data-button-label="Supprimer les matchs orphelins"
+                            data-variant="warning"
+                            data-csrf="{{ csrf_token('delete-orphan-matchs') }}"
+                        >
+                            <twig:ux:icon name="delete" />
+                            Supprimer les matchs orphelins ({{ orphans }})
+                        </button>
+                    {% endif %}
+
+                    {% if missing > 0 or unplayed > 0 %}
+                        <hr>
+                    {% endif %}
+
                     <button type="button"
                         class="hk-dropdown-link"
                         formaction="{{ path('admin_planning_group_add_matchs', {'id': group.id}) }}"

@@ -1,0 +1,10 @@
+{# vars: group, feedback #}
+{% embed 'component/modal/success.html.twig' %}
+	{% block streams %}
+        <turbo-stream action="replace" target="group-{{ group.id }}">
+            <template>
+                {% include '@admin/group/_group.html.twig' %}
+            </template>
+        </turbo-stream>
+	{% endblock %}
+{% endembed %}

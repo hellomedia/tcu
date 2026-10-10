@@ -6,6 +6,7 @@ use App\Entity\Interface\EntityInterface;
 use App\Repository\GroupRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use App\Enum\MatchFormat;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
@@ -189,6 +190,113 @@ class Group implements EntityInterface
         }
 
         return $this;
+    }
+
+    /**
+     * Matchs simples de la poule (les seuls que le round-robin génère)
+     *
+     * @return Collection<int, InterfacMatch>
+     */
+    public function getSinglesMatchs(): Collection
+    {
+        return $this->matchs->filter(fn (InterfacMatch $match) => $match->getFormat() === MatchFormat::SINGLES);
+    }
+
+    /**
+     * Nombre de séries de la poule (1 = chaque paire se rencontre une fois), déduit des matchs existants :
+     * le plus grand nombre de matchs entre deux joueurs.
+     */
+    public function getRounds(): int
+    {
+        $rounds = 1;
+
+        foreach ($this->countMatchsByPair() as $count) {
+            $rounds = max($rounds, $count);
+        }
+
+        return $rounds;
+    }
+
+    /**
+     * Paires de joueurs de la poule qui n'ont pas tous leurs matchs
+     * (joueur ajouté après la génération, match supprimé) : à compléter.
+     *
+     * @return list<array{a: Player, b: Player, missing: int}> a est le mieux classé
+     */
+    public function getMissingPairs(): array
+    {
+        if ($this->matchs->isEmpty()) {
+            return []; // pas encore de matchs : il faut les générer, pas les compléter
+        }
+
+        $rounds = $this->getRounds();
+        $counts = $this->countMatchsByPair();
+        $players = $this->getPlayersByRanking()->toArray();
+        $missing = [];
+
+        for ($i = 0; $i < \count($players); $i++) {
+            for ($j = $i + 1; $j < \count($players); $j++) {
+                $count = $counts[self::pairKey($players[$i], $players[$j])] ?? 0;
+
+                if ($count < $rounds) {
+                    $missing[] = ['a' => $players[$i], 'b' => $players[$j], 'missing' => $rounds - $count];
+                }
+            }
+        }
+
+        return $missing;
+    }
+
+    public function getMissingMatchCount(): int
+    {
+        return array_sum(array_column($this->getMissingPairs(), 'missing'));
+    }
+
+    /**
+     * Matchs dont un joueur ne fait plus partie de la poule
+     *
+     * @return Collection<int, InterfacMatch>
+     */
+    public function getOrphanMatchs(): Collection
+    {
+        return $this->matchs->filter(function (InterfacMatch $match) {
+            foreach ($match->getPlayers() as $player) {
+                if (!$this->players->contains($player)) {
+                    return true;
+                }
+            }
+
+            return false;
+        });
+    }
+
+    /**
+     * @return array<string, int> nombre de matchs simples par paire de joueurs
+     */
+    private function countMatchsByPair(): array
+    {
+        $counts = [];
+
+        foreach ($this->getSinglesMatchs() as $match) {
+            $players = $match->getPlayers()->toArray();
+
+            if (\count($players) !== 2) {
+                continue;
+            }
+
+            $key = self::pairKey($players[0], $players[1]);
+            $counts[$key] = ($counts[$key] ?? 0) + 1;
+        }
+
+        return $counts;
+    }
+
+    private static function pairKey(Player $a, Player $b): string
+    {
+        $ids = [$a->getId(), $b->getId()];
+        sort($ids);
+
+        return implode('-', $ids);
     }
 
     public function removeMatch(InterfacMatch $match): static

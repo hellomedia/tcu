@@ -76,14 +76,14 @@ class MatchFactory
         $this->entityManager->flush();
     }
 
-    public function deleteGroupMatchs(Group $group)
+    public function deleteGroupMatchs(Group $group): void
     {
         foreach ($group->getMatchs() as $match) {
             $this->remove($match);
         }
     }
 
-    public function regenerateGroupMatchs(Group $group)
+    public function regenerateGroupMatchs(Group $group): void
     {
         $this->deleteGroupMatchs($group);
 
@@ -93,12 +93,65 @@ class MatchFactory
     /**
      * Add a series of group matchs to a group with existing matches
      */
-    public function addGroupMatchs(Group $group)
+    public function addGroupMatchs(Group $group): void
     {
         $this->generateGroupMatchs($group);
     }
 
-    public function remove(InterfacMatch $match)
+    /**
+     * Create the matchs missing in a group with existing matchs (player added after the generation...).
+     * Existing matchs, planned or played, are left untouched. Idempotent.
+     *
+     * @return int number of matchs created
+     */
+    public function completeGroupMatchs(Group $group): int
+    {
+        $created = 0;
+
+        foreach ($group->getMissingPairs() as $pair) {
+            for ($i = 0; $i < $pair['missing']; $i++) {
+                $match = new InterfacMatch();
+                $group->addMatch($match);
+
+                // like generateGroupMatchs() : the better ranked player on side A
+                $match->addParticipant($this->_createParticipant($match, $pair['a'], Side::A));
+                $match->addParticipant($this->_createParticipant($match, $pair['b'], Side::B));
+
+                $this->entityManager->persist($match);
+                $created++;
+            }
+        }
+
+        $this->entityManager->flush();
+
+        return $created;
+    }
+
+    /**
+     * Delete the matchs of players who are no longer in the group.
+     * Played matchs (with a result) are kept.
+     *
+     * @return array{deleted: int, kept: int}
+     */
+    public function deleteOrphanMatchs(Group $group): array
+    {
+        $deleted = 0;
+        $kept = 0;
+
+        foreach ($group->getOrphanMatchs() as $match) {
+            if ($match->getResult() !== null) {
+                $kept++;
+                continue;
+            }
+
+            $this->remove($match);
+            $deleted++;
+        }
+
+        return ['deleted' => $deleted, 'kept' => $kept];
+    }
+
+    public function remove(InterfacMatch $match): void
     {
         $booking = $match->getBooking();
         $group = $match->getGroup();
