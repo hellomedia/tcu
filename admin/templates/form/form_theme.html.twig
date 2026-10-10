@@ -187,7 +187,8 @@
 											{% endif %}
 										</label>
 									{% else %}
-										<div class="slot-cell slot-booked" title="{{ cell.slot.match }}">
+										{% set cellGroup = cell.slot.match.group %}
+										<div class="slot-cell slot-booked" title="{{ cell.slot.match }}{{ cellGroup ? ' (' ~ cellGroup ~ ')' }}" {% if cellGroup %}style="--group-color: {{ group_color(cellGroup) }}"{% endif %}>
 											{% for player in cell.slot.match.players %}
 												<span class="slot-player">{{ player }}</span>
 											{% endfor %}
