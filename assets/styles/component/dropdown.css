@@ -134,3 +134,14 @@
         }
     }
 }
+/* In EasyAdmin (body.hk-admin), a plain .dropdown-menu is Bootstrap's (user menu, action menus) :
+   the layered component rules above lose to Bootstrap for the properties it sets (display, position...)
+   but not for the others, and opacity: 0 kept the menu invisible once Bootstrap added .show.
+   Our own dropdowns in the admin always use the hk-dropdown-* classes. */
+.hk-admin .dropdown-menu:not(.hk-dropdown-menu) {
+    opacity: 1;
+    width: auto;
+    max-width: none;
+    margin-top: 0;
+    padding-inline: 0;
+}
