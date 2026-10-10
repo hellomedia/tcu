@@ -28,16 +28,17 @@ class BotDetector
             return $session->get('type') == 'r';
         }
 
-        // search engines don't set HTTP_ACCEPT_LANGUAGE
+        // search engines don't set Accept-Language
         // https://stackoverflow.com/questions/368570/search-engines-and-browser-accept-language
-        if (empty($_SERVER["HTTP_ACCEPT_LANGUAGE"])) {
+        if (empty($request->headers->get('Accept-Language'))) {
 
             $session->set('type', 'r');
 
             return true;
         }
 
-        $ua_string = $request->headers->get('HTTP_USER_AGENT');
+        // HeaderBag keys are header names ('User-Agent'), not $_SERVER keys ('HTTP_USER_AGENT')
+        $ua_string = $request->headers->get('User-Agent');
 
         $robots = [
             'antibot',
