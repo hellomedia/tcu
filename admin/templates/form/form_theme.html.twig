@@ -60,6 +60,7 @@
 		{% for child in form %}
 			<label class="pill" for="{{ child.vars.id }}">
 				{{ _self.booking_radio(child, child.vars.id == focusedId) }}
+				<span class="group-swatch" style="background: {{ child.vars.extra.color }}"></span>
 				{{ child.vars.label }}
 				<span class="badge" title="matchs à programmer">{{ child.vars.extra.toPlan }}</span>
 			</label>

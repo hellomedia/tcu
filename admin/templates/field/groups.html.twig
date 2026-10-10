@@ -4,8 +4,8 @@
 <div class="entity-list">
 	{% if groups|length > 0 %}
         {% for item in groups %}
-            <a href="{{ path('admin_group_detail', {entityId: item.id}) }}">
-                {{ item }}
+            <a href="{{ path('admin_group_detail', {entityId: item.id}) }}" style="white-space: nowrap">
+                <span class="group-swatch" style="display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; background: {{ group_color(item) }}"></span>{{ item }}
             </a>
         {% endfor %}
     {% else %}

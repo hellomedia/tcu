@@ -1,7 +1,7 @@
 {# Carte d'une poule : joueurs uniquement (page Poules). Les matchs : _group.html.twig (planning) #}
-<div class="group" id="group-{{ group.id }}">
+<div class="group" id="group-{{ group.id }}" style="--group-color: {{ group_color(group) }}">
     <div class="group-header">
-        <h4>{{ group }}</h4>
+        <h4>{% include '@admin/group/_swatch.html.twig' %}{{ group }}</h4>
         {% include '@admin/group/_card_actions.html.twig' %}
     </div>
     <div class="players">

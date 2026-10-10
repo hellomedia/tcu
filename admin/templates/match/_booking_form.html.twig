@@ -18,7 +18,7 @@
             {{ match }}
             {% if match.group %}
                 <span class="sep">•</span>
-                {{ match.group }}
+                {% with {group: match.group} %}{% include '@admin/group/_swatch.html.twig' %}{% endwith %}{{ match.group }}
             {% endif %}
         </div>
     </div>

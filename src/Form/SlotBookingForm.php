@@ -11,6 +11,7 @@ use App\Entity\Slot;
 use App\Enum\Side;
 use App\Repository\GroupRepository;
 use App\Repository\InterfacMatchRepository;
+use App\Service\GroupColors;
 use App\Service\SeasonContext;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
@@ -32,6 +33,7 @@ final class SlotBookingForm extends AbstractType
 {
     public function __construct(
         private SeasonContext $seasonContext,
+        private GroupColors $groupColors,
     ) {
     }
 
@@ -60,7 +62,10 @@ final class SlotBookingForm extends AbstractType
             'choice_extra' => function (Group $group): array {
                 $toPlan = $group->getMatchs()->filter(fn (InterfacMatch $match) => !$match->isScheduled())->count();
 
-                return ['toPlan' => $toPlan];
+                return [
+                    'toPlan' => $toPlan,
+                    'color' => $this->groupColors->colorOf($group),
+                ];
             },
         ]);
 
