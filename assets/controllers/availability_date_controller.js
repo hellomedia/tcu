@@ -3,13 +3,13 @@ import { Controller } from "@hotwired/stimulus";
 /**
  * One date card of the availability grid (templates/availability/_grid.html.twig).
  *
- * - "Toute la journée" checks / unchecks every time slot
+ * - "Toute la journée" checks every time slot, "Pas dispo ce jour" unchecks them all
  * - any interaction marks the date as answered (hidden input): unchecked slots then mean "not available",
  *   as opposed to an untouched date which means "not filled in"
- * - the badge and the status line follow the state
+ * - the quick buttons, the badge and the status line follow the state
  */
 export default class extends Controller {
-    static targets = ["all", "allLabel", "time", "answered", "badge", "status"];
+    static targets = ["allBtn", "noneBtn", "time", "answered", "badge", "status"];
     static values = {
         answered: { type: Number, default: 0 },
     };
@@ -18,9 +18,14 @@ export default class extends Controller {
         this.refresh();
     }
 
-    toggleAll() {
-        const checked = this.allTarget.checked;
-        this.timeTargets.forEach((input) => (input.checked = checked));
+    setAll() {
+        this.timeTargets.forEach((input) => (input.checked = true));
+        this.markAnswered();
+        this.refresh();
+    }
+
+    setNone() {
+        this.timeTargets.forEach((input) => (input.checked = false));
         this.markAnswered();
         this.refresh();
     }
@@ -41,12 +46,11 @@ export default class extends Controller {
         const available = this.timeTargets.filter((input) => input.checked).length;
         const answered = this.answeredValue === 1;
 
-        if (this.hasAllTarget) {
-            this.allTarget.checked = total > 0 && available === total;
-            this.allTarget.indeterminate = available > 0 && available < total;
+        if (this.hasAllBtnTarget) {
+            this.allBtnTarget.classList.toggle("active", answered && total > 0 && available === total);
         }
-        if (this.hasAllLabelTarget) {
-            this.allLabelTarget.textContent = answered && available === 0 ? "Pas disponible ce jour-là" : "Toute la journée";
+        if (this.hasNoneBtnTarget) {
+            this.noneBtnTarget.classList.toggle("active", answered && available === 0);
         }
 
         if (!answered) return; // server-rendered texts stay for untouched dates

@@ -70,20 +70,45 @@
             font-weight: 700;
         }
     }
-    .avail-all {
+    .avail-quick {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+        margin-bottom: 10px;
+    }
+    .avail-quick-btn {
+        all: unset;
+        box-sizing: border-box;
         display: flex;
         align-items: center;
-        gap: 8px;
-        margin: 0 0 10px;
-        font-size: 0.85rem;
+        justify-content: center;
+        gap: 5px;
+        padding: 6px 8px;
+        border: 1px solid var(--avail-border);
+        border-radius: 6px;
+        background: #fff;
         color: var(--avail-muted);
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-align: center;
+        line-height: 1.2;
         cursor: pointer;
-        input {
-            width: 16px;
-            height: 16px;
-            margin: 0;
-            accent-color: var(--avail-accent);
-            cursor: pointer;
+        &:hover {
+            border-color: var(--avail-accent);
+        }
+        &:focus-visible {
+            outline: 2px solid var(--avail-accent);
+            outline-offset: 2px;
+        }
+        &.avail-quick-yes.active {
+            background: var(--avail-yes);
+            border-color: var(--avail-yes);
+            color: #fff;
+        }
+        &.avail-quick-no.active {
+            background: var(--avail-no);
+            border-color: var(--avail-no);
+            color: #fff;
         }
     }
     .avail-times {
@@ -223,10 +248,16 @@
                         </span>
                     </div>
 
-                    <label class="avail-all">
-                        <input type="checkbox" data-availability-date-target="all" data-action="availability-date#toggleAll">
-                        <span data-availability-date-target="allLabel">Toute la journée</span>
-                    </label>
+                    <div class="avail-quick">
+                        <button type="button" class="avail-quick-btn avail-quick-yes {{ item.status != 'none' and item.available == item.times|length and item.times is not empty ? 'active' }}"
+                            data-availability-date-target="allBtn" data-action="availability-date#setAll" title="Disponible sur tous les créneaux de la journée">
+                            ✓ Toute la journée
+                        </button>
+                        <button type="button" class="avail-quick-btn avail-quick-no {{ item.status != 'none' and item.available == 0 ? 'active' }}"
+                            data-availability-date-target="noneBtn" data-action="availability-date#setNone" title="Pas disponible ce jour-là">
+                            ✗ Pas dispo ce jour
+                        </button>
+                    </div>
 
                     <div class="avail-times">
                         {% for time in item.times %}
@@ -245,7 +276,7 @@
 
                     <div class="avail-date-status" data-availability-date-target="status">
                         {% if item.status == 'none' %}
-                            Coche les créneaux où tu peux jouer, ou "Toute la journée". Si tu ne peux pas ce jour-là, décoche tout.
+                            Coche les créneaux où tu peux jouer, ou utilise les deux boutons.
                         {% elseif item.available == 0 %}
                             Pas disponible ce jour-là
                         {% else %}
@@ -257,7 +288,7 @@
         </div>
 
         <p class="avail-note">
-            Une date non renseignée est différente d'une date où tu n'es pas disponible : pour dire que tu ne peux pas jouer ce jour-là, coche puis décoche "Toute la journée".
+            Une date grise n'est pas renseignée : ce n'est pas la même chose qu'une date où tu n'es pas disponible. Pour une journée sans dispo, clique sur "Pas dispo ce jour".
         </p>
 
         <div class="avail-actions">
