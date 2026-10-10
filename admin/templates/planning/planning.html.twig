@@ -112,6 +112,90 @@
             }
         }
 
+        /* POULE COLOUR : stripe on the left of a booked slot (confirmation dots are next to the names) */
+        .slot-row.booked .slot-content {
+            border-left: 5px solid var(--group-color, #ccc);
+        }
+
+        /* TOOLBAR : free slots only, poule legend / focus */
+        .planning-toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px 24px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+        .planning-toolbar .toolbar-label {
+            color: #6c757d;
+        }
+        .planning-toolbar .free-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0;
+            font-weight: 500;
+            cursor: pointer;
+            input {
+                margin: 0;
+            }
+        }
+        .group-legend {
+            display: inline-flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 6px;
+        }
+        .group-legend-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 3px 10px 3px 8px;
+            border: 1px solid #dee2e6;
+            border-radius: 999px;
+            background: #fff;
+            font-weight: 500;
+            cursor: pointer;
+            line-height: 1.3;
+            &:hover {
+                border-color: var(--group-color);
+            }
+            &.active {
+                border-color: var(--group-color);
+                box-shadow: inset 0 0 0 1px var(--group-color);
+            }
+            .swatch {
+                width: 10px;
+                height: 10px;
+                border-radius: 2px;
+                background: var(--group-color);
+            }
+            .remaining {
+                color: #6c757d;
+                font-weight: 400;
+                font-size: 0.8rem;
+            }
+        }
+        .planning-toolbar .toolbar-reset {
+            all: unset;
+            color: #6c757d;
+            cursor: pointer;
+            text-decoration: underline;
+            font-size: 0.85rem;
+        }
+
+        /* filtered rows fade out but keep their place: times stay aligned across courts */
+        .slot-row.dimmed {
+            opacity: 0.18;
+            transition: opacity 0.15s;
+        }
+        .slot-row.dimmed .slot-actions {
+            visibility: hidden;
+        }
+        .date.all-dimmed {
+            opacity: 0.4;
+        }
+
         /* LAYOUT */
         .planning {
             display: grid;
@@ -191,13 +275,56 @@
 
 {% block main %}
 
-    <div class="planning" data-controller="modal modal-confirm modal-remote-form">
-        {% for date in dates %}
-            {% include '@admin/planning/_date.html.twig' %}
-        {% endfor %}
+    <div data-controller="planning-filter" data-planning-filter-storage-key-value="{{ block('storage_key') }}">
 
-        {% include 'component/modal/_modal.html.twig' %}
-        {% include 'component/modal/_icons_templates.html.twig' %}
+        {% block toolbar %}
+            <div class="planning-toolbar">
+                <label class="free-toggle">
+                    <input type="checkbox" data-planning-filter-target="freeOnly" data-action="planning-filter#toggleFreeOnly">
+                    Créneaux libres uniquement
+                </label>
+
+                {% if groups is not empty %}
+                    <div class="group-legend">
+                        <span class="toolbar-label">Poules :</span>
+                        {% for group in groups %}
+                            {% set remaining = group.matchs|filter(m => not m.scheduled)|length %}
+                            <button type="button"
+                                class="group-legend-item"
+                                style="--group-color: {{ group_color(group) }}"
+                                data-group-id="{{ group.id }}"
+                                data-planning-filter-target="group"
+                                data-action="planning-filter#toggleGroup"
+                                title="{{ remaining }} match{{ remaining > 1 ? 's' }} à programmer — cliquer pour ne voir que cette poule"
+                            >
+                                <span class="swatch"></span>
+                                {{ group }}
+                                {% if remaining > 0 %}
+                                    <span class="remaining">{{ remaining }}</span>
+                                {% endif %}
+                            </button>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <button type="button" class="toolbar-reset" data-planning-filter-target="reset" data-action="planning-filter#reset" hidden>
+                    Tout afficher
+                </button>
+            </div>
+        {% endblock %}
+
+        <div class="planning" data-controller="modal modal-confirm modal-remote-form" data-planning-filter-target="planning">
+            {% for date in dates %}
+                {% include '@admin/planning/_date.html.twig' %}
+            {% endfor %}
+
+            {% include 'component/modal/_modal.html.twig' %}
+            {% include 'component/modal/_icons_templates.html.twig' %}
+        </div>
+
     </div>
 
 {% endblock %}
+
+{# localStorage key : the filters are remembered per page #}
+{% block storage_key 'planning-filter' %}

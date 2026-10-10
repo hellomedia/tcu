@@ -6,6 +6,7 @@ use Admin\Controller\DashboardController;
 use App\Controller\BaseController;
 use App\Repository\CourtRepository;
 use App\Repository\DateRepository;
+use App\Repository\GroupRepository;
 use App\Service\SeasonContext;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,7 +15,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class PlanningController extends BaseController
 {
     #[Route('/planning', name: 'admin_planning', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
-    public function planning(DateRepository $dateRepository, CourtRepository $courtRepository): Response
+    public function planning(DateRepository $dateRepository, CourtRepository $courtRepository, GroupRepository $groupRepository, SeasonContext $seasonContext): Response
     {
         $dates = $dateRepository->findFutureDates();
         $courts = $courtRepository->findAll();
@@ -22,11 +23,12 @@ class PlanningController extends BaseController
         return $this->render('@admin/planning/planning.html.twig', [
             'dates' => $dates,
             'courts' => $courts,
+            'groups' => $groupRepository->findBySeason($seasonContext->getSelected()),
         ]);
     }
 
     #[Route('/planning/past', name: 'admin_planning_past', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
-    public function planningPast(DateRepository $dateRepository, CourtRepository $courtRepository, SeasonContext $seasonContext): Response
+    public function planningPast(DateRepository $dateRepository, CourtRepository $courtRepository, GroupRepository $groupRepository, SeasonContext $seasonContext): Response
     {
         $season = $seasonContext->getSelected();
         $dates = $dateRepository->findPastDates($season);
@@ -35,6 +37,7 @@ class PlanningController extends BaseController
         return $this->render('@admin/planning/past.html.twig', [
             'dates' => $dates,
             'courts' => $courts,
+            'groups' => $groupRepository->findBySeason($season),
         ]);
     }
 }

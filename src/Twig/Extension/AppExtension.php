@@ -3,6 +3,7 @@
 namespace App\Twig\Extension;
 
 use App\Twig\Runtime\AppExtensionRuntime;
+use App\Twig\Runtime\GroupColorRuntime;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Twig\Extension\AbstractExtension;
 use Twig\Extension\GlobalsInterface;
@@ -34,6 +35,7 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
     {
         return [
             new TwigFunction('is_current_page', [AppExtensionRuntime::class, 'isCurrentPage']),
+            new TwigFunction('group_color', [GroupColorRuntime::class, 'groupColor']),
         ];
     }
 

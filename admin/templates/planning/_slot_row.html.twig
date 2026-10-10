@@ -1,8 +1,13 @@
-<div class="slot-row" id="slot-{{ slot.id }}">
+{% set group = slot.match ? slot.match.group : null %}
+<div class="slot-row {{ slot.match ? 'booked' : 'free' }}"
+    id="slot-{{ slot.id }}"
+    data-slot-id="{{ slot.id }}"
+    {% if group %}data-group-id="{{ group.id }}" style="--group-color: {{ group_color(group) }}"{% endif %}
+>
 	<div class="slot-time">
 		{{ slot.startsAt|date('H:i') }}
 	</div>
-	<div class="slot-content">
+	<div class="slot-content" {% if group %}title="{{ group }}"{% endif %}>
 		<div class="slot-content-inner {{ slot.match ? 'with-match' }}">
 			{# <div class="placeholder"></div> #}
             {% if slot.match is empty %}
