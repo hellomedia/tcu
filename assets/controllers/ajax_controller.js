@@ -239,7 +239,13 @@ export default class extends Controller {
                 const doc = new DOMParser().parseFromString(html, "text/html");
                 const container = doc.querySelector("[data-ajax-target='container']");
                 if (!container) throw new Error("No [data-ajax-target='container'] in response");
+
+                // keep the keyboard focus on the same field (e.g. the radio that triggered the reload)
+                const focusedId = this.containerTarget.contains(document.activeElement) ? document.activeElement.id : null;
                 this.containerTarget.innerHTML = container.innerHTML;
+                if (focusedId) {
+                    document.getElementById(focusedId)?.focus();
+                }
             } else {
                 throw new Error(`HTTP ${response.status}`);
             }

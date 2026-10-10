@@ -53,6 +53,14 @@
             {{ form_rest(form) }}
         </div>
 
+        <div class="keyboard-hint">
+            <kbd>←</kbd><kbd>→</kbd><kbd>↑</kbd><kbd>↓</kbd> choisir
+            <span class="sep">·</span>
+            <kbd>Entrée</kbd> {{ (mode ?? 'add') == 'move' ? 'déplacer' : 'programmer' }}
+            <span class="sep">·</span>
+            <kbd>Échap</kbd> fermer
+        </div>
+
         {% if modal %}
             {% embed 'component/modal/_actions.html.twig' %}
                 {% block submit_button %}

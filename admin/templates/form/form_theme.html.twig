@@ -40,23 +40,26 @@
 {#  see @admin/booking/_styles.html.twig                      #}
 {# ========================================================= #}
 
-{# hidden radio input of a pill / card #}
-{% macro booking_radio(child) %}
+{# hidden radio input of a pill / card ; autofocus = focus it when the form appears (first field) #}
+{% macro booking_radio(child, autofocus = false) %}
 	<input type="radio"
 		id="{{ child.vars.id }}"
 		name="{{ child.vars.full_name }}"
 		value="{{ child.vars.value }}"
 		{{ child.vars.checked ? 'checked' }}
 		{{ child.vars.disabled ? 'disabled' }}
+		{% if autofocus %}data-controller="auto-focus"{% endif %}
 	>
 {% endmacro %}
 
 {# Slot -> match : groups as pills, with the number of matches left to plan #}
 {% block _slot_booking_form_group_widget %}
+	{% set attr = attr|merge({'data-controller': (attr['data-controller']|default('') ~ ' radio-nav')|trim, 'data-radio-nav-submit-value': 'false'}) %}
+	{% set focusedId = (form.children|filter(c => c.vars.checked)|first ?: form.children|first).vars.id|default(null) %}
 	<div {{ block('widget_container_attributes') }} class="pills">
 		{% for child in form %}
 			<label class="pill" for="{{ child.vars.id }}">
-				{{ _self.booking_radio(child) }}
+				{{ _self.booking_radio(child, child.vars.id == focusedId) }}
 				{{ child.vars.label }}
 				<span class="badge" title="matchs à programmer">{{ child.vars.extra.toPlan }}</span>
 			</label>
@@ -75,6 +78,7 @@
 {# A player who already plays that day is flagged (with the time slot of the other match), #}
 {# a player who plays at the same time is a real conflict #}
 {% block _slot_booking_form_match_widget %}
+	{% set attr = attr|merge({'data-controller': (attr['data-controller']|default('') ~ ' radio-nav')|trim, 'data-radio-nav-submit-value': 'true'}) %}
 	<div {{ block('widget_container_attributes') }} class="match-cards">
 		{% for child in form %}
 			{% set extra = child.vars.extra %}
@@ -127,10 +131,12 @@
 {% endblock %}
 {# Match -> slot : dates as pills #}
 {% block _booking_for_match_form_date_widget %}
+	{% set attr = attr|merge({'data-controller': (attr['data-controller']|default('') ~ ' radio-nav')|trim, 'data-radio-nav-submit-value': 'false'}) %}
+	{% set focusedId = (form.children|filter(c => c.vars.checked)|first ?: form.children|first).vars.id|default(null) %}
 	<div {{ block('widget_container_attributes') }} class="pills">
 		{% for child in form %}
 			<label class="pill {{ child.vars.extra.current ? 'pill-current' }}" for="{{ child.vars.id }}">
-				{{ _self.booking_radio(child) }}
+				{{ _self.booking_radio(child, child.vars.id == focusedId) }}
 				{{ child.vars.label }}
 				{% if child.vars.extra.current %}
 					<span class="tag">actuel</span>
@@ -145,6 +151,7 @@
 {# Match -> slot : time x court grid (grid var set in BookingForMatchForm::finishView) #}
 {# free slots are selectable, booked slots show the match, the current slot and the slots at the same time are flagged #}
 {% block _booking_for_match_form_slot_widget %}
+	{% set attr = attr|merge({'data-controller': (attr['data-controller']|default('') ~ ' radio-nav')|trim, 'data-radio-nav-submit-value': 'true'}) %}
 	{% if grid is defined and grid.rows is not empty %}
 		<div {{ block('widget_container_attributes') }} class="slot-grid-wrapper">
 			<table class="slot-grid">
