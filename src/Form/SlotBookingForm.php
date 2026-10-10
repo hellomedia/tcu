@@ -11,6 +11,7 @@ use App\Entity\Slot;
 use App\Enum\Side;
 use App\Repository\GroupRepository;
 use App\Repository\InterfacMatchRepository;
+use App\Service\AvailabilityGrid;
 use App\Service\GroupColors;
 use App\Service\SeasonContext;
 use Doctrine\ORM\QueryBuilder;
@@ -18,6 +19,8 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfonycasts\DynamicForms\DependentField;
 use Symfonycasts\DynamicForms\DynamicFormBuilder;
@@ -34,6 +37,7 @@ final class SlotBookingForm extends AbstractType
     public function __construct(
         private SeasonContext $seasonContext,
         private GroupColors $groupColors,
+        private AvailabilityGrid $availabilityGrid,
     ) {
     }
 
@@ -43,6 +47,11 @@ final class SlotBookingForm extends AbstractType
 
         $slot = $options['slot'];
         \assert($slot instanceof Slot);
+
+        // availabilities of every registered player, in one query (see playerInfo)
+        if ($season = $this->seasonContext->getSelected()) {
+            $this->availabilityGrid->preloadSeason($season);
+        }
 
         $builder->add('group', EntityType::class, [
             'label' => 'Poule',
@@ -85,6 +94,7 @@ final class SlotBookingForm extends AbstractType
                 'choice_extra' => function (InterfacMatch $match) use ($slot): array {
                     $sides = [];
                     $conflict = false;
+                    $statuses = [];
 
                     foreach ([Side::A, Side::B] as $side) {
                         $players = [];
@@ -92,6 +102,7 @@ final class SlotBookingForm extends AbstractType
                         foreach ($match->getPlayersForSide($side) as $player) {
                             $info = $this->playerInfo($player, $match, $slot);
                             $conflict = $conflict || $info['overlap'];
+                            $statuses[] = $info['availability'];
                             $players[] = $info;
                         }
 
@@ -101,6 +112,12 @@ final class SlotBookingForm extends AbstractType
                     return [
                         'sides' => $sides,
                         'conflict' => $conflict,
+                        // for the slot : 'yes' = every player available, 'no' = at least one not available, else 'unknown'
+                        'availability' => match (true) {
+                            \in_array(AvailabilityGrid::NO, $statuses, true) => AvailabilityGrid::NO,
+                            $statuses !== [] && !\in_array(AvailabilityGrid::UNKNOWN, $statuses, true) => AvailabilityGrid::YES,
+                            default => AvailabilityGrid::UNKNOWN,
+                        },
                     ];
                 },
             ]);
@@ -115,7 +132,7 @@ final class SlotBookingForm extends AbstractType
      * Infos displayed under a match for one of its players.
      * Only the matches of the match's season (= the working season) are taken into account.
      *
-     * @return array{name: string, dispos: string, dates: list<array{date: ?Date, slot: Slot, sameDay: bool, overlap: bool}>, scheduledCount: int, totalCount: int, sameDay: bool, overlap: bool}
+     * @return array{name: string, availability: string, dispos: string, dates: list<array{date: ?Date, slot: Slot, sameDay: bool, overlap: bool}>, scheduledCount: int, totalCount: int, sameDay: bool, overlap: bool}
      */
     private function playerInfo(Player $player, InterfacMatch $match, Slot $slot): array
     {
@@ -146,6 +163,7 @@ final class SlotBookingForm extends AbstractType
 
         return [
             'name' => $player->getName(),
+            'availability' => $this->availabilityGrid->status($player->getRegistration($season), $slotDate, $slot->getStartsAt()),
             'dispos' => $player->getAvailabilities($season) ?? '',
             'dates' => $dates,
             'scheduledCount' => \count($dates),
@@ -153,6 +171,26 @@ final class SlotBookingForm extends AbstractType
             'sameDay' => $sameDay,
             'overlap' => $overlap,
         ];
+    }
+
+    /**
+     * Matchs ordered by availability for the slot : both players available first, unknown, then not available.
+     * Stable : the group order is kept inside each category.
+     */
+    public function finishView(FormView $view, FormInterface $form, array $options): void
+    {
+        if (!isset($view['match'])) {
+            return;
+        }
+
+        $rank = [AvailabilityGrid::YES => 0, AvailabilityGrid::UNKNOWN => 1, AvailabilityGrid::NO => 2];
+        $children = $view['match']->children;
+
+        uasort($children, fn (FormView $a, FormView $b) =>
+            ($rank[$a->vars['extra']['availability'] ?? 'unknown'] ?? 1) <=> ($rank[$b->vars['extra']['availability'] ?? 'unknown'] ?? 1)
+        );
+
+        $view['match']->children = $children;
     }
 
     public function configureOptions(OptionsResolver $resolver): void

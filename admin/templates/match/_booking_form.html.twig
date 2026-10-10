@@ -46,9 +46,20 @@
                     <span class="count" title="matchs programmés / matchs de la saison">{{ player.scheduledMatchs(season)|length }}/{{ player.matchs(season)|length }}</span>
                 </div>
                 <div class="player-line">
-                    <span class="k">Dispos :</span>
-                    {% set availabilities = player.availabilities(season) %}
-                    {{ availabilities is not empty ? availabilities : '—' }}
+                    {% set registration = player.registration(season) %}
+                    {% if registration %}
+                        {% set summary = availability_summary(registration) %}
+                        <span class="k">Dispos :</span>
+                        {% if summary.total == 0 %}
+                            —
+                        {% else %}
+                            {{ summary.answered }}/{{ summary.total }} dates renseignées{{ summary.partial > 0 ? ' (' ~ summary.partial ~ ' partielle' ~ (summary.partial > 1 ? 's') ~ ')' }}
+                        {% endif %}
+                    {% endif %}
+                    {% set remarks = player.availabilities(season) %}
+                    {% if remarks is not empty %}
+                        <span class="remarks" title="Remarques du joueur">{{ remarks }}</span>
+                    {% endif %}
                 </div>
                 <div class="player-line">
                     <span class="k">Programmé :</span>

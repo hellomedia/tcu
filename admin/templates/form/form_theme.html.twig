@@ -83,7 +83,7 @@
 	<div {{ block('widget_container_attributes') }} class="match-cards">
 		{% for child in form %}
 			{% set extra = child.vars.extra %}
-			<label class="match-card {{ extra.conflict ? 'has-conflict' }}" for="{{ child.vars.id }}">
+			<label class="match-card {{ extra.conflict ? 'has-conflict' }} avail-{{ extra.availability }}" for="{{ child.vars.id }}">
 				{{ _self.booking_radio(child) }}
 				<div class="match-card-body">
 					{% for side in extra.sides %}
@@ -97,8 +97,12 @@
 									<span class="count" title="matchs programmés / matchs de la saison">{{ player.scheduledCount }}/{{ player.totalCount }}</span>
 								</div>
 								<div class="player-line">
-									<span class="k">Dispos :</span>
-									{{ player.dispos is not empty ? player.dispos : '—' }}
+									<span class="avail-chip avail-chip-{{ player.availability }}">
+										{{- player.availability == 'yes' ? '✓ Disponible' : (player.availability == 'no' ? '✗ Pas disponible' : '? Dispo non renseignée') -}}
+									</span>
+									{% if player.dispos is not empty %}
+										<span class="remarks" title="Remarques du joueur">{{ player.dispos }}</span>
+									{% endif %}
 								</div>
 								<div class="player-line">
 									<span class="k">Programmé :</span>
@@ -167,7 +171,16 @@
 				<tbody>
 					{% for row in grid.rows %}
 						<tr>
-							<th>{{ row.label }}</th>
+							<th>
+								{{ row.label }}
+								{% if row.availability is defined and row.availability is not empty %}
+									<span class="avail-dots">
+										{% for player in row.availability %}
+											<span class="dot dot-{{ player.status }}" title="{{ player.name }} : {{ player.status == 'yes' ? 'disponible' : (player.status == 'no' ? 'pas disponible' : 'dispo non renseignée') }}"></span>
+										{% endfor %}
+									</span>
+								{% endif %}
+							</th>
 							{% for court in grid.courts %}
 								{% set cell = row.cells[court.id] ?? null %}
 								<td>

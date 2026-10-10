@@ -281,6 +281,48 @@
             color: #6b4a8a;
         }
     }
+    /* AVAILABILITY : chips in the match cards, dots in the slot grid rows */
+    .avail-chip {
+        display: inline-block;
+        padding: 0 7px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        line-height: 1.6;
+        white-space: nowrap;
+        &.avail-chip-yes { background: #e6f4ea; color: #2f855a; }
+        &.avail-chip-no { background: #fff4e0; color: #b45309; }
+        &.avail-chip-unknown { background: #f1f3f5; color: var(--booking-muted); }
+    }
+    .player-line .remarks {
+        display: block;
+        margin-top: 2px;
+        font-size: 0.8rem;
+        color: var(--booking-muted);
+        font-style: italic;
+    }
+    .match-card.avail-yes:not(.has-conflict) {
+        border-color: #b7dfc3;
+    }
+    .match-card.avail-no:not(.has-conflict) {
+        background: #f8f9fa;
+    }
+    .avail-dots {
+        display: inline-flex;
+        gap: 3px;
+        margin-left: 6px;
+        vertical-align: middle;
+        .dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            border: 1px solid transparent;
+        }
+        .dot-yes { background: #2f855a; }
+        .dot-no { background: #b45309; }
+        .dot-unknown { background: #e9ecef; border-color: #adb5bd; }
+    }
+
     .same-day-info {
         margin-top: 4px;
         font-size: 0.8rem;

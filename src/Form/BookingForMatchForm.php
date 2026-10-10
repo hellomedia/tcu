@@ -5,8 +5,10 @@ namespace App\Form;
 use App\Entity\Booking;
 use App\Entity\Slot;
 use App\Entity\Date;
+use App\Entity\Player;
 use App\Repository\DateRepository;
 use App\Repository\SlotRepository;
+use App\Service\AvailabilityGrid;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -28,6 +30,7 @@ final class BookingForMatchForm extends AbstractType
 {
     public function __construct(
         private SlotRepository $slotRepository,
+        private AvailabilityGrid $availabilityGrid,
     ) {
     }
 
@@ -98,7 +101,7 @@ final class BookingForMatchForm extends AbstractType
     /**
      * Slots of the selected date as a time x court grid (see form theme)
      *
-     * rows: [['label' => '10:00-10:30', 'cells' => [courtId => ['slot' => Slot, 'choice' => ?FormView]]]]
+     * rows: [['label' => '10:00-10:30', 'availability' => [['name', 'status'] per player], 'cells' => [courtId => ['slot' => Slot, 'choice' => ?FormView]]]]
      * A cell without choice is a booked slot (not selectable).
      */
     public function finishView(FormView $view, FormInterface $form, array $options): void
@@ -118,6 +121,11 @@ final class BookingForMatchForm extends AbstractType
             $choicesBySlotId[(string) $child->vars['value']] = $child;
         }
 
+        // availability of the match players for each time of the date (same for every court)
+        $match = $form->getData()?->getMatch();
+        $players = $match ? $match->getPlayers()->toArray() : [];
+        $season = $match?->getSeason();
+
         $courts = [];
         $rows = [];
 
@@ -127,6 +135,10 @@ final class BookingForMatchForm extends AbstractType
 
             $key = $slot->getTimeRange();
             $rows[$key]['label'] = $key;
+            $rows[$key]['availability'] ??= array_map(fn (Player $player) => [
+                'name' => $player->getName(),
+                'status' => $this->availabilityGrid->status($player->getRegistration($season), $date, $slot->getStartsAt()),
+            ], $players);
             $rows[$key]['cells'][$court->getId()] = [
                 'slot' => $slot,
                 'choice' => $choicesBySlotId[(string) $slot->getId()] ?? null,
