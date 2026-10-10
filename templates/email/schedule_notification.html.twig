@@ -1,38 +1,57 @@
 {% extends "email/layout/template.html.twig" %}
 
 {% block title %}
-
-    {% include "email/includes/_title.html.twig" with {
-        title: title
-    } %}
-
+    {% include "email/includes/_title.html.twig" with { title: title } %}
 {% endblock %}
 
 {% block paragraphs %}
+    {% if cancelled_matchs is not empty and new_matchs is empty and changed_matchs is empty %}
+        {% embed "email/includes/_paragraph.html.twig" %}
+            {% block text %}{{ name }}, {{ cancelled_matchs|length > 1 ? 'ces matchs ne sont plus programmés' : 'ce match n\'est plus programmé' }} : un nouvel horaire te sera communiqué.{% endblock %}
+        {% endembed %}
+    {% else %}
+        {% embed "email/includes/_paragraph.html.twig" %}
+            {% block text %}{{ name }}, voici {{ (new_matchs|length + changed_matchs|length + unconfirmed_matchs|length) > 1 ? 'tes horaires' : 'ton horaire' }} pour les interfacs. Merci de {{ (new_matchs|length + changed_matchs|length + unconfirmed_matchs|length) > 1 ? 'les' : 'le' }} confirmer avec le bouton ci-dessous.{% endblock %}
+        {% endembed %}
+    {% endif %}
 
-    {% for match in unconfirmed_matchs %}
-        {% include "email/includes/_match_schedule.html.twig" with {
-            date: match.date,
-            time: match.timeRange,
-        } %}
-    {% endfor %}
+    {% if changed_matchs is not empty %}
+        {% include "email/includes/_subtitle.html.twig" with { text: changed_matchs|length > 1 ? 'Horaires modifiés' : 'Horaire modifié' } %}
+        {% for item in changed_matchs %}
+            {% include "email/includes/_match_line.html.twig" with { item: item, kind: 'changed' } %}
+        {% endfor %}
+    {% endif %}
 
+    {% if new_matchs is not empty %}
+        {% include "email/includes/_subtitle.html.twig" with { text: new_matchs|length > 1 ? 'Nouveaux matchs' : 'Nouveau match' } %}
+        {% for item in new_matchs %}
+            {% include "email/includes/_match_line.html.twig" with { item: item, kind: 'new' } %}
+        {% endfor %}
+    {% endif %}
+
+    {% if cancelled_matchs is not empty %}
+        {% include "email/includes/_subtitle.html.twig" with { text: cancelled_matchs|length > 1 ? 'Matchs annulés' : 'Match annulé' } %}
+        {% for item in cancelled_matchs %}
+            {% include "email/includes/_match_line.html.twig" with { item: item, kind: 'cancelled' } %}
+        {% endfor %}
+    {% endif %}
+
+    {% if unconfirmed_matchs is not empty %}
+        {% include "email/includes/_subtitle.html.twig" with { text: 'Toujours à confirmer' } %}
+        {% for item in unconfirmed_matchs %}
+            {% include "email/includes/_match_line.html.twig" with { item: item, kind: 'unconfirmed' } %}
+        {% endfor %}
+    {% endif %}
 {% endblock %}
 
 {% block button %}
-
-    {% include "email/includes/_button.html.twig" with {
-            url: confirmation_link,
-            label: confirmation_label
-        }
-    %}
-
+    {% if confirmation_link %}
+        {% include "email/includes/_button.html.twig" with { url: confirmation_link, label: confirmation_label } %}
+    {% endif %}
 {% endblock %}
 
 {% block extra_rows %}
-
     {% include "email/includes/_spacer.html.twig" %}
-
     {% embed "email/includes/_paragraph.html.twig" %}
         {% block text %}
             En cas de problème, contactez<br>
@@ -40,5 +59,4 @@
             ou Jeoffrey (0488/65.08.13 ou whatsapp).
         {% endblock %}
     {% endembed %}
-
 {% endblock %}

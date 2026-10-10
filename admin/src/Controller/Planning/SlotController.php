@@ -193,10 +193,14 @@ class SlotController extends BaseController
         $booking = $slot->getBooking();
         $match = $booking->getMatch();
 
-        $confirmationInfos = $match->getConfirmationInfos();
-
-        foreach ($confirmationInfos as $info) {
-            $this->entityManager->remove($info);
+        foreach ($match->getConfirmationInfos() as $info) {
+            if ($info->isEmailSent()) {
+                // the player was told a time : keep the record, the cancellation is pending notification
+                $info->resetConfirmations();
+            } else {
+                $this->entityManager->remove($info);
+                $info->getParticipant()->setConfirmationInfo(null);
+            }
         }
 
         $this->entityManager->remove($booking);

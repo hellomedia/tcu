@@ -1,0 +1,30 @@
+{% extends "email/layout/template.html.twig" %}
+
+{% block title %}
+    {% include "email/includes/_title.html.twig" with { title: title } %}
+{% endblock %}
+
+{% block paragraphs %}
+    {% embed "email/includes/_paragraph.html.twig" %}
+        {% block text %}{{ name }}, {{ unconfirmed_matchs|length > 1 ? 'tes horaires d\'interfacs ne sont pas encore confirmés' : 'ton horaire d\'interfacs n\'est pas encore confirmé' }}. Un clic suffit.{% endblock %}
+    {% endembed %}
+
+    {% for item in unconfirmed_matchs %}
+        {% include "email/includes/_match_line.html.twig" with { item: item, kind: 'unconfirmed' } %}
+    {% endfor %}
+{% endblock %}
+
+{% block button %}
+    {% include "email/includes/_button.html.twig" with { url: confirmation_link, label: confirmation_label } %}
+{% endblock %}
+
+{% block extra_rows %}
+    {% include "email/includes/_spacer.html.twig" %}
+    {% embed "email/includes/_paragraph.html.twig" %}
+        {% block text %}
+            Un horaire ne convient pas ? Contactez<br>
+            Léon (leon@tcuniversite.be ou 0495/53.98.34)<br>
+            ou Jeoffrey (0488/65.08.13 ou whatsapp).
+        {% endblock %}
+    {% endembed %}
+{% endblock %}

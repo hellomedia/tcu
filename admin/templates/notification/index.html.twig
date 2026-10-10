@@ -1,0 +1,164 @@
+{% extends '@admin/base.html.twig' %}
+
+{% block head_stylesheets %}
+    {{ parent() }}
+    <style>
+        .notif-intro {
+            color: #6c757d;
+            margin-bottom: 16px;
+            max-width: 900px;
+        }
+        .notif-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+            form {
+                display: inline;
+            }
+        }
+        .notif-table {
+            width: 100%;
+            border-collapse: collapse;
+            th, td {
+                padding: 8px 10px;
+                border-bottom: 1px solid #e9ecef;
+                vertical-align: middle;
+                text-align: left;
+            }
+            th {
+                font-size: 0.8rem;
+                text-transform: uppercase;
+                letter-spacing: 0.04em;
+                color: #6c757d;
+            }
+            td.actions {
+                text-align: right;
+                white-space: nowrap;
+                form {
+                    display: inline;
+                }
+            }
+        }
+        .notif-tag {
+            display: inline-block;
+            padding: 1px 8px;
+            border-radius: 999px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            margin-right: 4px;
+            white-space: nowrap;
+            &.new { background: #e6f4ea; color: #2f855a; }
+            &.changed { background: #fff4e0; color: #b45309; }
+            &.cancelled { background: #f8d7da; color: #842029; }
+            &.unconfirmed { background: #e7f0fe; color: #1d4ed8; }
+            &.ok { background: #f1f3f5; color: #6c757d; }
+        }
+        .notif-muted {
+            color: #6c757d;
+            font-size: 0.85rem;
+        }
+        .notif-dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 6px;
+            vertical-align: -1px;
+            &.default { background: #bbb; }
+            &.notified { background: blue; }
+            &.changed { background: #f59e0b; }
+            &.confirmed { background: green; }
+        }
+    </style>
+{% endblock %}
+
+{% block content_title %}Notifications - {{ season }}{% endblock %}
+
+{% block page_actions %}{% endblock %}
+
+{% block main %}
+    <p class="notif-intro">
+        Les emails ne partent jamais automatiquement. Un envoi reprend tout ce que le joueur doit apprendre :
+        nouveaux matchs, horaires modifiés et annulations depuis son dernier email, plus les matchs déjà
+        communiqués qu'il n'a pas confirmés. Un rappel ne concerne que les matchs communiqués et non confirmés.
+    </p>
+
+    <div class="notif-actions">
+        <form method="post" action="{{ path('admin_planning_notifications_send_all') }}" onsubmit="return confirm('Envoyer un email à {{ to_notify }} joueur{{ to_notify > 1 ? 's' }} ?')">
+            <input type="hidden" name="token" value="{{ csrf_token('notify') }}">
+            <button type="submit" class="btn btn-primary" {{ to_notify == 0 ? 'disabled' }}>
+                Notifier les {{ to_notify }} joueur{{ to_notify > 1 ? 's' }} en attente
+            </button>
+        </form>
+        <form method="post" action="{{ path('admin_planning_notifications_remind_all') }}" onsubmit="return confirm('Envoyer un rappel à {{ to_remind }} joueur{{ to_remind > 1 ? 's' }} ?')">
+            <input type="hidden" name="token" value="{{ csrf_token('notify') }}">
+            <button type="submit" class="btn btn-secondary" {{ to_remind == 0 ? 'disabled' }}>
+                Rappel aux {{ to_remind }} joueur{{ to_remind > 1 ? 's' }} sans confirmation
+            </button>
+        </form>
+    </div>
+
+    <table class="notif-table">
+        <thead>
+            <tr>
+                <th>Joueur</th>
+                <th>À communiquer</th>
+                <th>Dernier email</th>
+                <th>À confirmer</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in rows %}
+                {% set c = row.collected %}
+                {% set player = row.player %}
+                <tr>
+                    <td>
+                        {{ player }}
+                        {% if player.user is null %}
+                            <br><span class="notif-muted">pas de compte : à prévenir autrement</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if c.new is not empty %}<span class="notif-tag new">{{ c.new|length }} nouveau{{ c.new|length > 1 ? 'x' }}</span>{% endif %}
+                        {% if c.changed is not empty %}<span class="notif-tag changed">{{ c.changed|length }} modifié{{ c.changed|length > 1 ? 's' }}</span>{% endif %}
+                        {% if c.cancelled is not empty %}<span class="notif-tag cancelled">{{ c.cancelled|length }} annulé{{ c.cancelled|length > 1 ? 's' }}</span>{% endif %}
+                        {% if c.pending == 0 %}<span class="notif-tag ok">à jour</span>{% endif %}
+                    </td>
+                    <td class="notif-muted">
+                        {{ c.lastEmailAt ? c.lastEmailAt|date('d/m/Y H:i') : '—' }}
+                        {% if c.remindedAt %}<br>rappel le {{ c.remindedAt|date('d/m/Y H:i') }}{% endif %}
+                    </td>
+                    <td>
+                        {% if c.unconfirmed is not empty %}
+                            <span class="notif-tag unconfirmed">{{ c.unconfirmed|length }} match{{ c.unconfirmed|length > 1 ? 's' }}</span>
+                            <span class="notif-muted">
+                                {% for item in c.unconfirmed %}{{ item.match.date.date|date('d/m') }}{{ not loop.last ? ', ' }}{% endfor %}
+                            </span>
+                        {% elseif c.pending == 0 and c.lastEmailAt %}
+                            <span class="notif-muted">tout est confirmé</span>
+                        {% endif %}
+                    </td>
+                    <td class="actions">
+                        {% if player.user %}
+                            {% if c.pending > 0 %}
+                                <form method="post" action="{{ path('admin_planning_notifications_send', {'id': player.id}) }}">
+                                    <input type="hidden" name="token" value="{{ csrf_token('notify') }}">
+                                    <button type="submit" class="btn btn-primary btn-sm">Envoyer</button>
+                                </form>
+                            {% elseif c.unconfirmed is not empty %}
+                                <form method="post" action="{{ path('admin_planning_notifications_remind', {'id': player.id}) }}">
+                                    <input type="hidden" name="token" value="{{ csrf_token('notify') }}">
+                                    <button type="submit" class="btn btn-secondary btn-sm">Rappel</button>
+                                </form>
+                            {% endif %}
+                        {% endif %}
+                    </td>
+                </tr>
+            {% else %}
+                <tr><td colspan="5" class="notif-muted">Aucun joueur dans les poules de la saison.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

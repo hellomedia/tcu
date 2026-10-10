@@ -228,8 +228,13 @@ class MatchController extends BaseController
 
         if (!$sameMoment) {
             foreach ($match->getConfirmationInfos() as $info) {
-                $this->entityManager->remove($info);
-                $info->getParticipant()->setConfirmationInfo(null);
+                if ($info->isEmailSent()) {
+                    // the player knows the old time : keep the record, the change is pending notification
+                    $info->resetConfirmations();
+                } else {
+                    $this->entityManager->remove($info);
+                    $info->getParticipant()->setConfirmationInfo(null);
+                }
             }
         }
 

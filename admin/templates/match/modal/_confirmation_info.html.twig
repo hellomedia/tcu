@@ -146,6 +146,11 @@
         >
             <input type="hidden" name="token" value="{{ csrf_token('send-email') }}" />
         </form>
+        <form method="post" id="send-reminder-form-{{ data.participant.id }}"
+            action="{{ path('confirmation_send_reminder', {'id': data.participant.id }) }}"
+        >
+            <input type="hidden" name="token" value="{{ csrf_token('send-reminder') }}" />
+        </form>
     {% endfor %}
 
 </turbo-frame>

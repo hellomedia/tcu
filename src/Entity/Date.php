@@ -45,11 +45,20 @@ class Date implements EntityInterface
 
     public function __toString()
     {
+        return self::formatDay($this->date);
+    }
+
+    /**
+     * "Samedi 14/11/26" : same format for a Date entity and for a stored day (ParticipantConfirmationInfo::notifiedOn)
+     */
+    public static function formatDay(\DateTimeInterface $day): string
+    {
         $fmt = new IntlDateFormatter(
             locale: 'fr-FR',
             pattern: 'EEEE dd/MM/YY'
         );
-        return ucfirst($fmt->format($this->date));
+
+        return ucfirst($fmt->format($day));
     }
 
     public function getId(): ?int

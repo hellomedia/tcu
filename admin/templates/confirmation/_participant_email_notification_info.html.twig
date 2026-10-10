@@ -1,10 +1,14 @@
+{# "Notification email" cell of the confirmation modal. vars: data (ParticipantConfirmationInfo, possibly unsaved) #}
+{% set pending = data.pendingNotification %}
 <turbo-frame data-turbo="true" {# activate turbo for this turbo frame -- since turbo disabled on <html> element #}
     id="participant-{{ data.participant.id }}-email-notification-info"
     class="inner-cell"
 >
     <div class="place-holder"></div>
     <div class="mid">
-        {% if data.isEmailSent %}
+        {% if pending == 'changed' %}
+            <span title="Horaire modifié depuis le dernier email" style="display:inline-block;width:24px;height:24px;border-radius:50%;background:#f59e0b;color:#fff;font-weight:700;text-align:center;line-height:24px">!</span>
+        {% elseif data.isEmailSent and pending is null %}
             <twig:ux:icon name="check" style="color:green" width="24px" />
         {% else %}
             <twig:ux:icon name="cross" width="24px" />
@@ -13,31 +17,34 @@
     <div class="bottom {{ data.isEmailSent ? 'bottom-text' }}">
         {% if data.isEmailSent %}
             Envoyé le {{ data.emailSentAt ? data.emailSentAt|date('d/m/Y H:i') }}
-            {% if not data.confirmedByPlayer and is_granted('ROLE_SUPER_ADMIN') %}
-                <button type="submit" class="btn btn-default"
-                    form="send-email-form-{{ data.participant.id }}"
-                    {# must be explicit about turbo-frame here because submitted form lives outside #}
-                    data-turbo-frame="participant-{{ data.participant.id }}-email-notification-info"
-                >
-                    <twig:ux:icon name="send-email" width="1em" style="margin-right: 5px"/>
-                    [SA] Again
-                </button>
+            {% if pending == 'changed' %}
+                <br><span style="color:#b45309">pour {{ data.notifiedLabel }}</span>
             {% endif %}
-        {% elseif not data.confirmedByPlayer and not data.confirmedByAdmin %}
-            {# Use a Form, not a link:
-                - perform action on POST
-                - avoid url pre-fetching which triggers multiple actions
-                - csrf protection #}
-            {# BUT the form cannot live here because it would be nested inside the confirmation info form !!
-                Nested forms are not allowed
-                ==> move the form outside (in _confirmation_info.html.twig) and reference it in the button #}
+            {% if data.remindedAt %}
+                <br>Rappel le {{ data.remindedAt|date('d/m/Y H:i') }}
+            {% endif %}
+        {% endif %}
+
+        {# the buttons submit forms living outside this (nested) form, see _confirmation_info.html.twig #}
+        {% if data.participant.user is null %}
+            <span style="color:#6c757d">pas de compte : à prévenir autrement</span>
+        {% elseif pending is not null %}
             <button type="submit" class="btn btn-default"
                 form="send-email-form-{{ data.participant.id }}"
-                {# must be explicit about turbo-frame here because submitted form lives outside #}
                 data-turbo-frame="participant-{{ data.participant.id }}-email-notification-info"
+                title="Envoie au joueur tout ce qui est en attente : nouveaux matchs, horaires modifiés, annulations"
             >
                 <twig:ux:icon name="send-email" width="1em" style="margin-right: 5px"/>
-                Envoyer email
+                {{ pending == 'changed' ? 'Envoyer la modification' : 'Envoyer email' }}
+            </button>
+        {% elseif data.isEmailSent and not data.confirmed %}
+            <button type="submit" class="btn btn-default"
+                form="send-reminder-form-{{ data.participant.id }}"
+                data-turbo-frame="participant-{{ data.participant.id }}-email-notification-info"
+                title="Rappel des matchs communiqués et pas encore confirmés"
+            >
+                <twig:ux:icon name="send-email" width="1em" style="margin-right: 5px"/>
+                Rappel
             </button>
         {% endif %}
     </div>
