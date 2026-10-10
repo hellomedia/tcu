@@ -100,6 +100,10 @@ class RegistrationCrudController extends AbstractCrudController
             ->linkToUrl(fn(Registration $registration) => $this->generateStatusUrl($registration, RegistrationStatus::DISMISSED))
             ->displayIf(fn(Registration $registration) => $registration->isPending());
 
+        $availabilities = Action::new('availabilities', 'Dispos', 'fa fa-calendar-check')
+            ->linkToRoute('admin_registration_availabilities', fn(Registration $registration) => ['id' => $registration->getId()])
+            ->displayIf(fn(Registration $registration) => $registration->isInterfacs() === true);
+
         $restore = Action::new('restore', 'Rétablir', 'fa fa-rotate-left')
             ->linkToUrl(fn(Registration $registration) => $this->generateStatusUrl($registration, RegistrationStatus::PENDING))
             ->displayIf(fn(Registration $registration) => $registration->isDismissed());
@@ -133,7 +137,9 @@ class RegistrationCrudController extends AbstractCrudController
             ->add(Crud::PAGE_INDEX, $confirm)
             ->add(Crud::PAGE_INDEX, $dismiss)
             ->add(Crud::PAGE_INDEX, $restore)
-            ->reorder(Crud::PAGE_INDEX, ['confirm', 'dismiss', 'restore', Action::DETAIL, Action::EDIT, Action::DELETE])
+            ->add(Crud::PAGE_INDEX, $availabilities)
+            ->add(Crud::PAGE_DETAIL, $availabilities)
+            ->reorder(Crud::PAGE_INDEX, ['confirm', 'dismiss', 'restore', 'availabilities', Action::DETAIL, Action::EDIT, Action::DELETE])
             ->addBatchAction($confirmBatch)
             ->addBatchAction($dismissBatch)
         ;
@@ -196,8 +202,16 @@ class RegistrationCrudController extends AbstractCrudController
                 ->renderAsSwitch(true);
         }
 
-        // dispos pour les matchs de la saison
-        yield TextareaField::new('availabilities', 'Dispos')
+        // dispos structurées (Availability) : grille par date et heure, voir Admin\Controller\AvailabilityController
+        if ($season?->hasInterfacs()) {
+            // champ virtuel (pas de propriété) : rendu par le template
+            yield Field::new('availabilityStatus', 'Dispos')
+                ->setTemplatePath('@admin/field/availabilities.html.twig')
+                ->onlyOnIndex();
+        }
+
+        // remarques libres du joueur sur ses dispos
+        yield TextareaField::new('availabilities', 'Remarques dispos')
             ->hideOnIndex();
 
         yield ChoiceField::new('status', 'Statut')

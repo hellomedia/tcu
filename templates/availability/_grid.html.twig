@@ -1,0 +1,270 @@
+{# Availability grid of a registration (player page and admin page) #}
+{# vars: grid (AvailabilityGrid::build), action (form url), token (csrf), cancel_url (optional), submit_label (optional) #}
+<style>
+    .avail-grid {
+        --avail-border: #dee2e6;
+        --avail-muted: #6c757d;
+        --avail-yes: #2f855a;
+        --avail-yes-bg: #e6f4ea;
+        --avail-no: #b45309;
+        --avail-no-bg: #fff4e0;
+        --avail-unknown-bg: #f1f3f5;
+        --avail-accent: #2563eb;
+    }
+    .avail-summary {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px 16px;
+        margin-bottom: 20px;
+        font-size: 0.95rem;
+    }
+    .avail-legend {
+        display: inline-flex;
+        gap: 12px;
+        color: var(--avail-muted);
+        font-size: 0.85rem;
+        .dot {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 4px;
+            vertical-align: -1px;
+            border: 1px solid transparent;
+        }
+        .dot-yes { background: var(--avail-yes); }
+        .dot-no { background: var(--avail-no); }
+        .dot-unknown { background: var(--avail-unknown-bg); border-color: #adb5bd; }
+    }
+    .avail-badge {
+        display: inline-block;
+        padding: 2px 10px;
+        border-radius: 999px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        &.complete, &.answered { background: var(--avail-yes-bg); color: var(--avail-yes); }
+        &.partial { background: var(--avail-no-bg); color: var(--avail-no); }
+        &.none { background: var(--avail-unknown-bg); color: var(--avail-muted); }
+    }
+    .avail-dates {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 14px;
+    }
+    .avail-date {
+        border: 1px solid var(--avail-border);
+        border-radius: 8px;
+        padding: 12px 14px;
+        background: #fff;
+        &.answered { border-color: #b7dfc3; }
+        &.partial { border-color: #f5cf8a; }
+    }
+    .avail-date-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 8px;
+        margin-bottom: 10px;
+        .avail-date-label {
+            font-weight: 700;
+        }
+    }
+    .avail-all {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0 0 10px;
+        font-size: 0.85rem;
+        color: var(--avail-muted);
+        cursor: pointer;
+        input {
+            width: 16px;
+            height: 16px;
+            margin: 0;
+            accent-color: var(--avail-accent);
+            cursor: pointer;
+        }
+    }
+    .avail-times {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 6px;
+    }
+    .avail-time {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        margin: 0;
+        padding: 8px 6px;
+        border: 1px solid var(--avail-border);
+        border-radius: 6px;
+        background: var(--avail-unknown-bg);
+        color: var(--avail-muted);
+        font-weight: 500;
+        font-size: 0.9rem;
+        cursor: pointer;
+        user-select: none;
+        line-height: 1.2;
+        input {
+            position: absolute;
+            opacity: 0;
+            width: 1px;
+            height: 1px;
+            pointer-events: none;
+        }
+        &::before {
+            content: '';
+            width: 14px;
+            height: 14px;
+            border-radius: 3px;
+            border: 2px solid #adb5bd;
+            background: #fff;
+            flex: 0 0 auto;
+        }
+        &:hover {
+            border-color: var(--avail-accent);
+        }
+        &:has(input:focus-visible) {
+            outline: 2px solid var(--avail-accent);
+            outline-offset: 2px;
+        }
+        &:has(input:checked) {
+            background: var(--avail-yes-bg);
+            border-color: #b7dfc3;
+            color: var(--avail-yes);
+            &::before {
+                background: var(--avail-yes);
+                border-color: var(--avail-yes);
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='white' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round' d='M3.5 8.5l3 3 6-7'/%3E%3C/svg%3E");
+                background-size: 12px;
+                background-position: center;
+                background-repeat: no-repeat;
+            }
+        }
+        /* answered and not checked = not available */
+        .avail-date[data-answered="1"] &:not(:has(input:checked)) {
+            background: var(--avail-no-bg);
+            border-color: #f5cf8a;
+            color: var(--avail-no);
+            &::before {
+                border-color: var(--avail-no);
+                background: var(--avail-no);
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='white' stroke-width='2.5' stroke-linecap='round' d='M4.5 4.5l7 7M11.5 4.5l-7 7'/%3E%3C/svg%3E");
+                background-size: 12px;
+                background-position: center;
+                background-repeat: no-repeat;
+            }
+        }
+    }
+    .avail-date-status {
+        margin-top: 10px;
+        font-size: 0.8rem;
+        color: var(--avail-muted);
+    }
+    .avail-empty {
+        color: var(--avail-muted);
+        font-style: italic;
+    }
+    .avail-actions {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        margin-top: 24px;
+    }
+    .avail-note {
+        margin-top: 12px;
+        font-size: 0.85rem;
+        color: var(--avail-muted);
+    }
+</style>
+
+<form method="post" action="{{ action }}" class="avail-grid">
+    <input type="hidden" name="token" value="{{ token }}">
+
+    <div class="avail-summary">
+        {% set summary = grid.summary %}
+        <span class="avail-badge {{ summary.status }}">
+            {% if summary.total == 0 %}
+                Aucune date à venir
+            {% elseif summary.status == 'complete' %}
+                Toutes les dates sont renseignées
+            {% else %}
+                {{ summary.answered }} date{{ summary.answered > 1 ? 's' }} sur {{ summary.total }} renseignée{{ summary.answered > 1 ? 's' }}{{ summary.partial > 0 ? ', ' ~ summary.partial ~ ' partielle' ~ (summary.partial > 1 ? 's') }}
+            {% endif %}
+        </span>
+        <span class="avail-legend">
+            <span><span class="dot dot-yes"></span>disponible</span>
+            <span><span class="dot dot-no"></span>pas disponible</span>
+            <span><span class="dot dot-unknown"></span>pas renseigné</span>
+        </span>
+    </div>
+
+    {% if grid.dates is empty %}
+        <p class="avail-empty">Aucune date avec des créneaux n'est encore prévue pour cette saison.</p>
+    {% else %}
+        <div class="avail-dates">
+            {% for item in grid.dates %}
+                {% set date = item.date %}
+                {% set answered = item.status != 'none' ? 1 : 0 %}
+                <div class="avail-date {{ item.status }}"
+                    data-controller="availability-date"
+                    data-answered="{{ answered }}"
+                    data-availability-date-answered-value="{{ answered }}"
+                >
+                    <input type="hidden" name="answered[{{ date.id }}]" value="{{ answered }}" data-availability-date-target="answered">
+
+                    <div class="avail-date-header">
+                        <span class="avail-date-label">{{ date }}</span>
+                        <span class="avail-badge {{ item.status }}" data-availability-date-target="badge">
+                            {{ item.status == 'answered' ? 'renseigné' : (item.status == 'partial' ? 'partiel' : 'pas renseigné') }}
+                        </span>
+                    </div>
+
+                    <label class="avail-all">
+                        <input type="checkbox" data-availability-date-target="all" data-action="availability-date#toggleAll">
+                        <span data-availability-date-target="allLabel">Toute la journée</span>
+                    </label>
+
+                    <div class="avail-times">
+                        {% for time in item.times %}
+                            <label class="avail-time" title="{{ time.status == 'yes' ? 'Disponible' : (time.status == 'no' ? 'Pas disponible' : 'Pas renseigné') }}">
+                                <input type="checkbox"
+                                    name="avail[{{ date.id }}][{{ time.key }}]"
+                                    value="1"
+                                    {{ time.status == 'yes' ? 'checked' }}
+                                    data-availability-date-target="time"
+                                    data-action="availability-date#changeTime"
+                                >
+                                {{ time.label }}
+                            </label>
+                        {% endfor %}
+                    </div>
+
+                    <div class="avail-date-status" data-availability-date-target="status">
+                        {% if item.status == 'none' %}
+                            Coche les créneaux où tu peux jouer, ou "Toute la journée". Si tu ne peux pas ce jour-là, décoche tout.
+                        {% elseif item.available == 0 %}
+                            Pas disponible ce jour-là
+                        {% else %}
+                            Disponible sur {{ item.available }} créneau{{ item.available > 1 ? 'x' }} sur {{ item.times|length }}
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <p class="avail-note">
+            Une date non renseignée est différente d'une date où tu n'es pas disponible : pour dire que tu ne peux pas jouer ce jour-là, coche puis décoche "Toute la journée".
+        </p>
+
+        <div class="avail-actions">
+            <button type="submit" class="btn btn-primary">{{ submit_label|default('Enregistrer') }}</button>
+            {% if cancel_url is defined and cancel_url %}
+                <a class="btn btn-default" href="{{ cancel_url }}">Retour</a>
+            {% endif %}
+        </div>
+    {% endif %}
+</form>

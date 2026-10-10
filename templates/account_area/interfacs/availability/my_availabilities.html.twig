@@ -1,0 +1,15 @@
+{% extends 'layout/account_area.html.twig' %}
+
+{% block title %}Mes disponibilités - {{ season }}{% endblock %}
+
+{% block content %}
+    <p style="margin-bottom: 20px">
+        Indique, pour chaque date, les créneaux où tu peux jouer. Les matchs sont programmés en tenant compte de ces disponibilités.
+    </p>
+
+    {% include 'availability/_grid.html.twig' with {
+        'grid': grid,
+        'action': path('my_availabilities_save'),
+        'token': csrf_token('availabilities'),
+    } %}
+{% endblock %}

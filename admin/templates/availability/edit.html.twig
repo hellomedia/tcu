@@ -1,0 +1,20 @@
+{% extends '@admin/base.html.twig' %}
+
+{% block content_title %}Dispos de {{ registration.player }} - {{ registration.season }}{% endblock %}
+
+{% block page_actions %}
+    <a class="btn btn-default" href="{{ path('admin_registration_index') }}">Retour</a>
+{% endblock %}
+
+{% block main %}
+    {% if registration.availabilities %}
+        <p style="margin-bottom: 20px"><b>Remarques du joueur :</b> {{ registration.availabilities }}</p>
+    {% endif %}
+
+    {% include 'availability/_grid.html.twig' with {
+        'grid': grid,
+        'action': path('admin_registration_availabilities_save', {'id': registration.id}),
+        'token': csrf_token('availabilities'),
+        'cancel_url': path('admin_registration_index'),
+    } %}
+{% endblock %}

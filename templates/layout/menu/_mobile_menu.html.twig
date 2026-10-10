@@ -25,6 +25,11 @@
 				Ma poule
 			</a>
 
+			<a href="{{ path('my_availabilities') }}" class="mobile-menu-item {{ is_current_page('my_availabilities') ? 'active' }}" data-action="mobile-menu#toggle">
+				<twig:ux:icon name="calendar" class="mobile-menu-item-icon"/>
+				Mes disponibilités
+			</a>
+
 			<a href="/logout" class="mobile-menu-item" data-action="mobile-menu#toggle">
 				<twig:ux:icon name="logout" class="mobile-menu-item-icon"/>
 				{{ 'Logout'|trans }}

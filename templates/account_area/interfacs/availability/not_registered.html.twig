@@ -1,0 +1,11 @@
+{% extends 'layout/account_area.html.twig' %}
+
+{% block title %}Mes disponibilités{% endblock %}
+
+{% block content %}
+    {% if season is null or not season.hasInterfacs %}
+        <p>Pas de saison d'interfacs en cours : les disponibilités seront demandées à l'ouverture des inscriptions de l'hiver.</p>
+    {% else %}
+        <p>Tu n'es pas inscrit aux interfacs pour la saison {{ season }}. Contacte le club si c'est une erreur.</p>
+    {% endif %}
+{% endblock %}

@@ -20,6 +20,9 @@
 			<a href="{{ path('my_group') }}" class="dropdown-link" data-action="dropdown#toggle">
 				Ma poule
 			</a>
+			<a href="{{ path('my_availabilities') }}" class="dropdown-link" data-action="dropdown#toggle">
+				Mes disponibilités
+			</a>
 			{% if is_granted('ROLE_USER') %}
 				<hr style="margin-top:12px;margin-bottom:12px">
 				<a href="/logout" class="dropdown-link" data-action="dropdown#toggle">

@@ -1,0 +1,15 @@
+{# Registration index : availability status, link to the edit grid #}
+{% set registration = entity.instance %}
+{% if registration.interfacs %}
+    {% set summary = availability_summary(registration) %}
+    {% set badge = summary.status == 'complete' ? 'success' : (summary.status == 'partial' ? 'warning' : 'secondary') %}
+    <a href="{{ path('admin_registration_availabilities', {'id': registration.id}) }}" title="Voir / modifier les disponibilités">
+        <span class="badge badge-{{ badge }}">
+            {% if summary.total == 0 %}
+                —
+            {% else %}
+                {{ summary.answered }}/{{ summary.total }}{{ summary.partial > 0 ? ' (+' ~ summary.partial ~ ' partielle' ~ (summary.partial > 1 ? 's') ~ ')' }}
+            {% endif %}
+        </span>
+    </a>
+{% endif %}

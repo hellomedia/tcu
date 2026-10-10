@@ -2,6 +2,7 @@
 
 namespace App\Command;
 
+use App\Entity\Availability;
 use App\Entity\Booking;
 use App\Entity\Court;
 use App\Entity\Date;
@@ -42,7 +43,8 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
  *   Les classements des saisons passées sont "officiels", ceux de l'hiver à venir sont repris de la saison précédente.
  *   Pas de numéro d'affiliation : ce sont ceux de vraies personnes.
  * - l'hiver en cours ou à venir : inscriptions pré-remplies (une partie reste à confirmer, une est écartée),
- *   poules, matchs programmés sur les prochains samedis, matchs non programmés
+ *   poules, matchs programmés sur les prochains samedis, matchs non programmés,
+ *   disponibilités : un tiers des inscrits a tout renseigné, un tiers partiellement, un tiers pas du tout
  *
  * La saison courante est celle dans laquelle tombe la date du jour.
  *
@@ -141,6 +143,8 @@ class LoadFixturesCommand extends Command
         $groups = $this->loadGroups($winter, $this->findInterfacsPlayers($winter));
         $this->entityManager->flush();
         $this->loadCurrentMatchs($groups, $winter);
+        $this->entityManager->flush();
+        $this->loadAvailabilities($winter);
 
         if (!$keepUsers) {
             $this->loadUsers($players);
@@ -164,7 +168,7 @@ class LoadFixturesCommand extends Command
         // même avec --keep-users. Toutes les tables liées sont listées dans la même commande.
         $tables = [
             'participant_confirmation_info', 'match_result', 'match_participant', 'booking', 'interfac_match',
-            'slot', 'date', 'court', 'group_player', '"group"', 'registration', 'season',
+            'availability', 'slot', 'date', 'court', 'group_player', '"group"', 'registration', 'season',
         ];
 
         if ($keepUsers) {
@@ -383,6 +387,45 @@ class LoadFixturesCommand extends Command
                     $this->book($match, $futureSlots);
                 }
                 // sinon : match non programmé
+            }
+        }
+    }
+
+    /**
+     * Disponibilités des inscrits aux interfacs pour les samedis à venir de la saison :
+     * 1 inscrit sur 3 a tout renseigné, 1 sur 3 les premières dates seulement, 1 sur 3 rien
+     */
+    private function loadAvailabilities(Season $season): void
+    {
+        $today = new \DateTimeImmutable('today');
+        $dates = array_values(array_filter($this->dates, fn (Date $date) => $date->getDate() >= $today && $date->getDate() >= $season->getStartsOn() && $date->getDate() <= $season->getEndsOn()));
+        usort($dates, fn (Date $a, Date $b) => $a->getDate() <=> $b->getDate());
+
+        $registrations = $this->entityManager->getRepository(Registration::class)->findBy(['season' => $season, 'interfacs' => true], ['id' => 'ASC']);
+
+        foreach ($registrations as $i => $registration) {
+            $answeredDates = match ($i % 3) {
+                0 => $dates,
+                1 => array_slice($dates, 0, intdiv(count($dates), 2)),
+                default => [],
+            };
+
+            foreach ($answeredDates as $date) {
+                $times = [];
+                foreach ($date->getSlots() as $slot) {
+                    $times[$slot->getStartsAt()->format('H:i')] = $slot->getStartsAt();
+                }
+                // 1 date sur 5 : pas disponible du tout
+                $dayOff = mt_rand(1, 5) === 1;
+
+                foreach ($times as $startsAt) {
+                    $availability = (new Availability())
+                        ->setRegistration($registration)
+                        ->setDate($date)
+                        ->setStartsAt($startsAt)
+                        ->setAvailable(!$dayOff && mt_rand(1, 4) !== 1);
+                    $this->entityManager->persist($availability);
+                }
             }
         }
     }

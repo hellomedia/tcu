@@ -62,6 +62,27 @@ class DateRepository extends ServiceEntityRepository
     }
 
     /**
+     * Dates à venir de la saison (avec leurs créneaux) : celles pour lesquelles on demande les disponibilités.
+     * Les dates ne sont pas liées à une saison : on se limite à la période de la saison.
+     *
+     * @return Date[]
+     */
+    public function findUpcomingDates(Season $season): array
+    {
+        return $this->createQueryBuilder('d')
+            ->innerJoin('d.slots', 's')->addSelect('s')
+            ->andWhere('d.date >= CURRENT_DATE()')
+            ->andWhere('d.date BETWEEN :startsOn AND :endsOn')
+            ->setParameter('startsOn', $season->getStartsOn(), Types::DATE_IMMUTABLE)
+            ->setParameter('endsOn', $season->getEndsOn(), Types::DATE_IMMUTABLE)
+            ->orderBy('d.date', 'ASC')
+            ->addOrderBy('s.startsAt', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    /**
     * @return Date[] Returns an array of Date objects
     */
     public function findFutureDatesWithAvailableSlots(): array
