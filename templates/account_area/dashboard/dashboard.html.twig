@@ -2,80 +2,217 @@
 
 {% block content %}
 
+	{% include 'interfacs/match/_card_styles.html.twig' %}
+
 	<style>
-		.homepage-grid {
+		.dash {
 			display: grid;
-			grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-			gap: 30px;
+			gap: 36px;
 		}
-		.item {
-			background-color: var(--color-primary-background);
-            border: 1px solid var(--color-border);
-			/* recommended way to center text inside a grid item, using grid as well */
-			display: grid; /* could also be done with flexbox, justify-content, align-items, and text-align instead */
-			place-content: center; /* title and status line stacked in the middle */
-			gap: 6px;
-			text-align: center; /* aligns text horizontally in case of full line or multiple lines */
-			min-height: 100px;
-			padding: 10px;
-			border-radius: 3px;
-			font-size: 20px;
+		.dash-hello {
+			margin-bottom: -12px;
+			font-size: 18px;
+			color: var(--color-gray-600);
 		}
-		.item-status {
-			font-size: 14px;
+		.dash-title {
+			margin-bottom: 12px;
+			font-size: 18px;
+			font-weight: bold;
+			color: var(--color-gray-900);
+		}
+
+		/* À faire : one row per action */
+		.dash-todos {
+			display: grid;
+			gap: 10px;
+		}
+		.dash-todo {
+			display: flex;
+			align-items: center;
+			gap: 14px;
+			padding: 12px 16px;
+			border: 1px solid var(--color-yellow-200);
+			border-left: 5px solid var(--color-yellow-400);
+			border-radius: 6px;
+			background-color: var(--color-yellow-50);
+			color: var(--color-gray-800);
+			&:hover {
+				border-color: var(--color-yellow-400);
+			}
+			&.urgent {
+				border-color: var(--color-red-200);
+				border-left-color: var(--color-red-500);
+				background-color: var(--color-red-50);
+				&:hover {
+					border-color: var(--color-red-500);
+				}
+			}
+			svg {
+				flex: 0 0 auto;
+				width: 22px;
+				height: 22px;
+				color: var(--color-gray-600);
+			}
+			.dash-todo-text {
+				flex: 1;
+			}
+			.dash-todo-detail {
+				display: block;
+				font-size: 14px;
+				color: var(--color-gray-600);
+			}
+			.dash-todo-cta {
+				font-weight: 600;
+				white-space: nowrap;
+			}
+		}
+
+		.dash-empty {
 			color: var(--color-gray-500);
 		}
-		.item-badge {
-			display: inline-block;
-			margin-left: 4px;
-			padding: 1px 8px;
-			border-radius: 999px;
-			font-size: 13px;
-			font-weight: 600;
-			background-color: var(--color-yellow-100);
-			color: var(--color-yellow-900);
 
-			&.urgent {
-				background-color: var(--color-red-100);
-				color: var(--color-red-800);
+		/* links to the pages */
+		.dash-links {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+			gap: 14px;
+		}
+		.dash-link {
+			display: flex;
+			align-items: center;
+			gap: 14px;
+			padding: 16px 18px;
+			border: 1px solid var(--color-gray-200);
+			border-radius: 8px;
+			background-color: #fff;
+			color: var(--color-gray-800);
+			transition: border-color 0.15s, box-shadow 0.15s;
+			&:hover {
+				border-color: var(--color-gray-300);
+				box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+			}
+			.dash-link-icon {
+				display: grid;
+				place-items: center;
+				flex: 0 0 auto;
+				width: 44px;
+				height: 44px;
+				border-radius: 50%;
+				background-color: var(--color-gray-100);
+				color: var(--color-gray-700);
+				svg {
+					width: 22px;
+					height: 22px;
+				}
+			}
+			.dash-link-text {
+				flex: 1;
+				min-width: 0;
+			}
+			.dash-link-title {
+				display: block;
+				font-size: 17px;
+				font-weight: 600;
+				color: var(--color-gray-900);
+			}
+			.dash-link-status {
+				display: block;
+				font-size: 14px;
+				color: var(--color-gray-500);
+			}
+			.dash-link-chevron {
+				width: 14px;
+				height: 14px;
+				color: var(--color-gray-400);
 			}
 		}
 	</style>
 
-	<div class="homepage-grid">
-		<a class="item" href="{{ path('my_matchs') }}">
-			Mes matchs
-			<span class="item-status">
-				{% if next_match %}
-					Prochain : {{ next_match.date }} · {{ next_match.timeRange }}
-				{% else %}
-					Aucun match programmé
-				{% endif %}
-				{% if to_confirm > 0 %}
-					<span class="item-badge">{{ to_confirm }} à confirmer</span>
-				{% endif %}
-			</span>
-		</a>
-		<a class="item" href="{{ path('my_group') }}">
-			Ma poule
-			{% if groups is not empty %}
-				<span class="item-status">{{ groups|join(', ') }}</span>
-			{% endif %}
-		</a>
-		<a class="item" href="{{ path('my_availabilities') }}">
-			Mes disponibilités
-			{% if availabilities and availabilities.total > 0 %}
-				<span class="item-status">
-					{% if availabilities.status == 'complete' %}
-						Toutes les dates sont renseignées
-					{% else %}
-						{% set missing = availabilities.total - availabilities.answered %}
-						{{ availabilities.answered }} date{{ availabilities.answered > 1 ? 's' }} sur {{ availabilities.total }} renseignée{{ availabilities.answered > 1 ? 's' }}
+	{% set missing_dates = availabilities ? availabilities.total - availabilities.answered : 0 %}
+
+	<div class="dash">
+
+		{% if player %}
+			<p class="dash-hello">Salut {{ player.firstname }} 👋</p>
+		{% endif %}
+
+		{% if to_confirm > 0 or missing_dates > 0 %}
+			<section>
+				<h2 class="dash-title">À faire</h2>
+				<div class="dash-todos">
+					{% if to_confirm > 0 %}
+						<a class="dash-todo" href="{{ path('my_matchs') }}">
+							<twig:ux:icon name="check" />
+							<span class="dash-todo-text">
+								{{ to_confirm > 1 ? to_confirm ~ ' horaires de match attendent' : '1 horaire de match attend' }} ta confirmation
+							</span>
+							<span class="dash-todo-cta">Confirmer ›</span>
+						</a>
+					{% endif %}
+					{% if missing_dates > 0 %}
 						{# red when some of them are less than AvailabilityGrid::SOON away #}
-						<span class="item-badge {{ availabilities.missingSoon > 0 ? 'urgent' }}">{{ missing }} à renseigner</span>
+						<a class="dash-todo {{ availabilities.missingSoon > 0 ? 'urgent' }}" href="{{ path('my_availabilities') }}">
+							<twig:ux:icon name="calendar" />
+							<span class="dash-todo-text">
+								{{ missing_dates }} date{{ missing_dates > 1 ? 's' }} sans disponibilités
+								{% if availabilities.missingSoon > 0 %}
+									<span class="dash-todo-detail">dont {{ availabilities.missingSoon }} dans les deux prochains mois</span>
+								{% endif %}
+							</span>
+							<span class="dash-todo-cta">Renseigner ›</span>
+						</a>
+					{% endif %}
+				</div>
+			</section>
+		{% endif %}
+
+		{% if player %}
+			<section>
+				<h2 class="dash-title">Prochain match</h2>
+				{% if next_match %}
+					{% include 'interfacs/match/_card.html.twig' with {match: next_match} %}
+				{% else %}
+					<p class="dash-empty">Aucun match programmé pour l'instant.</p>
+				{% endif %}
+			</section>
+		{% endif %}
+
+		<nav class="dash-links" aria-label="Mon espace">
+			<a class="dash-link" href="{{ path('my_matchs') }}">
+				<span class="dash-link-icon"><twig:ux:icon name="lessons" /></span>
+				<span class="dash-link-text">
+					<span class="dash-link-title">Mes matchs</span>
+					<span class="dash-link-status">
+						{{ upcoming > 0 ? upcoming ~ ' à venir' : 'Aucun match à venir' }}
+					</span>
+				</span>
+				<twig:ux:icon name="forward" class="dash-link-chevron" />
+			</a>
+			<a class="dash-link" href="{{ path('my_group') }}">
+				<span class="dash-link-icon"><twig:ux:icon name="interclubs" /></span>
+				<span class="dash-link-text">
+					<span class="dash-link-title">Ma poule</span>
+					{% for item in groups %}
+						<span class="dash-link-status">
+							{{ item.group }} · {{ item.position }}{{ item.position == 1 ? 'er' : 'e' }} sur {{ item.players }} · {{ item.points }} pt{{ item.points > 1 ? 's' }}
+						</span>
+					{% endfor %}
+				</span>
+				<twig:ux:icon name="forward" class="dash-link-chevron" />
+			</a>
+			<a class="dash-link" href="{{ path('my_availabilities') }}">
+				<span class="dash-link-icon"><twig:ux:icon name="calendar" /></span>
+				<span class="dash-link-text">
+					<span class="dash-link-title">Mes disponibilités</span>
+					{% if availabilities and availabilities.total > 0 %}
+						<span class="dash-link-status">
+							{{ availabilities.status == 'complete' ? 'Toutes les dates sont renseignées' : availabilities.answered ~ ' date' ~ (availabilities.answered > 1 ? 's') ~ ' sur ' ~ availabilities.total ~ ' renseignée' ~ (availabilities.answered > 1 ? 's') }}
+						</span>
 					{% endif %}
 				</span>
-			{% endif %}
-		</a>
+				<twig:ux:icon name="forward" class="dash-link-chevron" />
+			</a>
+		</nav>
+
 	</div>
 {% endblock %}

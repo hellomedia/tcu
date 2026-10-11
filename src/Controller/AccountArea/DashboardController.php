@@ -3,6 +3,7 @@
 namespace App\Controller\AccountArea;
 
 use App\Controller\BaseController;
+use App\Repository\PlayerRepository;
 use App\Service\AvailabilityGrid;
 use App\Service\SeasonContext;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,7 +14,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class DashboardController extends BaseController
 {
     #[Route('/dashboard', name: 'dashboard')]
-    public function index(SeasonContext $seasonContext, AvailabilityGrid $availabilityGrid): Response
+    public function index(SeasonContext $seasonContext, AvailabilityGrid $availabilityGrid, PlayerRepository $playerRepository): Response
     {
         $this->addBreadcrumb('Dashboard', 'dashboard');
 
@@ -24,11 +25,32 @@ class DashboardController extends BaseController
         $registration = $season?->hasInterfacs() ? $player?->getRegistration($season) : null;
         $availabilities = $registration?->isInterfacs() ? $availabilityGrid->summary($registration) : null;
 
+        // poules et place au classement, pas affichées tant que la saison n'est pas publiée (comme Ma poule)
+        $groups = [];
+        if ($player !== null && $seasonContext->getUnpublishedInterfacsSeason() === null) {
+            foreach ($player->getGroupsForSeason($seasonContext->getInterfacsSeason()) as $group) {
+                $standings = $playerRepository->groupStandings($group);
+                foreach ($standings as $index => $row) {
+                    if ($row['player'] === $player) {
+                        $groups[] = [
+                            'group' => $group,
+                            'position' => $index + 1,
+                            'players' => \count($standings),
+                            'points' => $row['points'],
+                        ];
+                    }
+                }
+            }
+        }
+
+        $upcoming = $player?->getUpcomingMatchs();
+
         return $this->render('account_area/dashboard/dashboard.html.twig', [
-            'next_match' => $player?->getUpcomingMatchs()->first() ?: null,
+            'player' => $player,
+            'next_match' => $upcoming?->first() ?: null,
+            'upcoming' => $upcoming?->count() ?? 0,
             'to_confirm' => $player?->getUnconfirmedUpcomingMatchs()->count() ?? 0,
-            // pas de poule affichée tant que la saison n'est pas publiée (comme Ma poule)
-            'groups' => $seasonContext->getUnpublishedInterfacsSeason() ? [] : $player?->getGroupsForSeason($seasonContext->getInterfacsSeason())->toArray() ?? [],
+            'groups' => $groups,
             'availabilities' => $availabilities,
         ]);
     }

@@ -83,20 +83,20 @@ class AvailabilityGrid
     /**
      * Grille complète d'une inscription, pour l'affichage / l'édition
      *
+     * sections : résumés séparés des dates proches et des dates à plus de LATER (repliées sur la page du joueur),
+     * null quand il n'y a pas de quoi faire deux groupes
+     *
      * @return array{
-     *     dates: list<array{date: Date, status: string, times: list<array{key: string, label: string, startsAt: \DateTimeImmutable, status: string}>, available: int, answered: int, soon: bool, later: bool}>,
-     *     summary: array{status: string, answered: int, partial: int, total: int, missingSoon: int, later: int, missingLater: int}
+     *     dates: list<array{date: Date, status: string, times: list<array{key: string, label: string, startsAt: \DateTimeImmutable, status: string}>, available: int, answered: int, later: bool}>,
+     *     summary: array{status: string, answered: int, partial: int, total: int, missingSoon: int},
+     *     sections: array{near: array{status: string, answered: int, partial: int, total: int}, later: array{status: string, answered: int, partial: int, total: int}}|null
      * }
      */
     public function build(Registration $registration): array
     {
         $answers = $this->getAnswers($registration);
         $dates = [];
-        $answeredDates = 0;
-        $partialDates = 0;
         $missingSoon = 0;
-        $laterDates = 0;
-        $missingLater = 0;
         $today = new \DateTimeImmutable('today');
         $soonLimit = $today->modify(self::SOON);
         $laterLimit = $today->modify(self::LATER);
@@ -124,15 +124,8 @@ class AvailabilityGrid
                 $answered > 0 => 'partial',
                 default => 'none',
             };
-            $answeredDates += $dateStatus === 'answered' ? 1 : 0;
-            $partialDates += $dateStatus === 'partial' ? 1 : 0;
 
-            $soon = $date->getDate() <= $soonLimit;
-            $later = $date->getDate() > $laterLimit;
-            $missing = $times !== [] && $dateStatus !== 'answered';
-            $missingSoon += $soon && $missing ? 1 : 0;
-            $laterDates += $later ? 1 : 0;
-            $missingLater += $later && $missing ? 1 : 0;
+            $missingSoon += $times !== [] && $dateStatus !== 'answered' && $date->getDate() <= $soonLimit ? 1 : 0;
 
             $dates[] = [
                 'date' => $date,
@@ -140,36 +133,51 @@ class AvailabilityGrid
                 'times' => $times,
                 'available' => $available,
                 'answered' => $answered,
-                'soon' => $soon,
-                'later' => $later,
+                'later' => $date->getDate() > $laterLimit,
             ];
         }
 
-        $total = \count($dates);
+        $near = array_values(array_filter($dates, fn (array $item) => !$item['later']));
+        $later = array_values(array_filter($dates, fn (array $item) => $item['later']));
 
         return [
             'dates' => $dates,
-            'summary' => [
-                'status' => match (true) {
-                    $total === 0 => 'none',
-                    $answeredDates === $total => 'complete',
-                    $answeredDates > 0 || $partialDates > 0 => 'partial',
-                    default => 'none',
-                },
-                'answered' => $answeredDates,
-                'partial' => $partialDates,
-                'total' => $total,
-                'missingSoon' => $missingSoon,
-                'later' => $laterDates,
-                'missingLater' => $missingLater,
-            ],
+            'summary' => $this->summarize($dates) + ['missingSoon' => $missingSoon],
+            'sections' => $near !== [] && $later !== [] ? [
+                'near' => $this->summarize($near),
+                'later' => $this->summarize($later),
+            ] : null,
         ];
     }
 
     /**
-     * Résumé seul (liste des inscriptions)
+     * @param list<array{status: string}> $dates
      *
-     * @return array{status: string, answered: int, partial: int, total: int, missingSoon: int, later: int, missingLater: int}
+     * @return array{status: string, answered: int, partial: int, total: int}
+     */
+    private function summarize(array $dates): array
+    {
+        $total = \count($dates);
+        $answered = \count(array_filter($dates, fn (array $item) => $item['status'] === 'answered'));
+        $partial = \count(array_filter($dates, fn (array $item) => $item['status'] === 'partial'));
+
+        return [
+            'status' => match (true) {
+                $total === 0 => 'none',
+                $answered === $total => 'complete',
+                $answered > 0 || $partial > 0 => 'partial',
+                default => 'none',
+            },
+            'answered' => $answered,
+            'partial' => $partial,
+            'total' => $total,
+        ];
+    }
+
+    /**
+     * Résumé seul (liste des inscriptions, dashboard)
+     *
+     * @return array{status: string, answered: int, partial: int, total: int, missingSoon: int}
      */
     public function summary(Registration $registration): array
     {

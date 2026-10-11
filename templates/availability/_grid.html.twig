@@ -317,17 +317,10 @@
 </style>
 
 {% set autosave = autosave|default(false) %}
-{# dates more than AvailabilityGrid::LATER ahead are folded, unless that would leave nothing above #}
-{% set upcoming = grid.dates %}
-{% set later = [] %}
-{% if split|default(false) %}
-    {% set upcoming = grid.dates|filter(item => not item.later) %}
-    {% set later = grid.dates|filter(item => item.later) %}
-    {% if upcoming is empty %}
-        {% set upcoming = grid.dates %}
-        {% set later = [] %}
-    {% endif %}
-{% endif %}
+{# dates more than AvailabilityGrid::LATER ahead are folded, each part with its own summary (grid.sections) #}
+{% set sections = split|default(false) ? grid.sections : null %}
+{% set upcoming = sections ? grid.dates|filter(item => not item.later) : grid.dates %}
+{% set later = sections ? grid.dates|filter(item => item.later) : [] %}
 
 <form method="post" action="{{ action }}" class="avail-grid"
     {% if autosave %}
@@ -337,7 +330,11 @@
 >
     <input type="hidden" name="token" value="{{ token }}">
 
-    {% include 'availability/_grid_summary.html.twig' with {summary: grid.summary} %}
+    {% if sections %}
+        {% include 'availability/_grid_summary.html.twig' with {summary: sections.near, label: 'Prochaines dates'} %}
+    {% else %}
+        {% include 'availability/_grid_summary.html.twig' with {summary: grid.summary} %}
+    {% endif %}
 
     {% if grid.dates is empty %}
         <p class="avail-empty">Aucune date avec des créneaux n'est encore prévue pour cette saison.</p>
@@ -350,7 +347,7 @@
 
         {% if later is not empty %}
             <details class="avail-later">
-                {% include 'availability/_grid_later_summary.html.twig' with {summary: grid.summary} %}
+                {% include 'availability/_grid_later_summary.html.twig' with {summary: sections.later} %}
                 <p class="avail-note">Ces dates sont encore loin : tu peux les renseigner maintenant ou plus tard.</p>
                 <div class="avail-dates">
                     {% for item in later %}

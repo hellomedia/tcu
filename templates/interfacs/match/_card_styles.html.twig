@@ -1,0 +1,89 @@
+{# styles of interfacs/match/_card, included once per page #}
+<style>
+    .match-card {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px 20px;
+        padding: 14px 18px;
+        background: #fff;
+        border: 1px solid var(--color-gray-200);
+        /* poule colour as a stripe on the left */
+        border-left: 5px solid var(--group-color, var(--color-gray-300));
+        border-radius: 6px;
+    }
+    .match-card-body {
+        display: grid;
+        gap: 4px;
+        min-width: 0;
+    }
+    .match-card-when {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        column-gap: 10px;
+    }
+    .match-card-date {
+        font-weight: bold;
+        color: var(--color-gray-900);
+    }
+    .match-card-time {
+        font-weight: bold;
+        color: var(--color-gray-900);
+        white-space: nowrap;
+    }
+    .match-card-court {
+        color: var(--color-gray-500);
+        white-space: nowrap;
+    }
+    .match-card--unscheduled .match-card-date {
+        font-weight: normal;
+        font-style: italic;
+        color: var(--color-gray-500);
+    }
+    .match-card-label {
+        color: var(--color-gray-500);
+    }
+    .match-card-opponent {
+        white-space: nowrap;
+        font-weight: 600;
+        color: var(--color-gray-800);
+    }
+    .match-card-group {
+        font-size: 13px;
+        color: var(--color-gray-500);
+    }
+    .match-card-aside {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-left: auto;
+    }
+    .match-card-outcome {
+        padding: 2px 10px;
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: 600;
+
+        &.won {
+            background-color: var(--color-green-100);
+            color: var(--color-green-800);
+        }
+        &.lost {
+            background-color: var(--color-gray-100);
+            color: var(--color-gray-600);
+        }
+    }
+    .match-card-score {
+        display: flex;
+        gap: 8px;
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+        color: var(--color-gray-500);
+    }
+    .match-card-set.won {
+        font-weight: bold;
+        color: var(--color-gray-900);
+    }
+</style>

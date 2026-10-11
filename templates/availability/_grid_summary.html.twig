@@ -1,11 +1,12 @@
 {# Summary line of the availability grid, refreshed after each autosave #}
-{# vars: summary (AvailabilityGrid::summary) #}
+{# vars: summary (AvailabilityGrid::summary or one of its sections), label (optional: which dates it counts) #}
 <div class="avail-summary" id="avail-summary">
     <span class="avail-badge {{ summary.status }}">
+        {%- if label|default(false) %}{{ label }} : {% endif -%}
         {% if summary.total == 0 %}
             Aucune date à venir
         {% elseif summary.status == 'complete' %}
-            Toutes les dates sont renseignées
+            {{ label|default(false) ? 'toutes renseignées' : 'Toutes les dates sont renseignées' }}
         {% else %}
             {{ summary.answered }} date{{ summary.answered > 1 ? 's' }} sur {{ summary.total }} renseignée{{ summary.answered > 1 ? 's' }}{{ summary.partial > 0 ? ', ' ~ summary.partial ~ ' partielle' ~ (summary.partial > 1 ? 's') }}
         {% endif %}
