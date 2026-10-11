@@ -21,7 +21,7 @@
 					{% endif %}
 				{% endif %}
 				<p style="margin: 2px 0 0; word-break: break-word; font-size: 14px; color: #808389;">
-					contre {{ item.opponent }}
+					{% if item.partner|default('') %}avec {{ item.partner }} · {% endif %}contre {{ item.opponent }}
 				</p>
 				{% if item.confirmed|default(false) %}
 					{# confirmed on the site before this email #}

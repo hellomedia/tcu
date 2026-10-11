@@ -129,25 +129,20 @@ class ConfirmationMailer extends BaseMailer
     /**
      * Données sérialisables d'un match pour le template (l'email est pré-rendu, voir BaseMailer::send)
      *
-     * @return array{slot: ?string, date: ?string, time: ?string, court: ?string, opponent: string, previous: ?string, confirmed: bool}
+     * @return array{slot: ?string, date: ?string, time: ?string, court: ?string, opponent: string, partner: string, previous: ?string, confirmed: bool}
      */
     private function describe(InterfacMatch $match, Player $player, ?string $previous = null, bool $confirmed = false): array
     {
         $slot = $match->getSlot();
-        $opponents = [];
-
-        foreach ($match->getPlayers() as $other) {
-            if ($other !== $player) {
-                $opponents[] = $other->getName();
-            }
-        }
+        $names = fn (array $players) => implode(' et ', array_map(fn (Player $other) => $other->getName(), $players));
 
         return [
             'slot' => $slot ? (string) $slot : null,
             'date' => $slot ? (string) $slot->getDate() : null,
             'time' => $slot?->getTimeRange(),
             'court' => $slot ? (string) $slot->getCourt() : null,
-            'opponent' => implode(' et ', $opponents),
+            'opponent' => $names($match->getOpponentsOf($player)),
+            'partner' => $names($match->getPartnersOf($player)), // doubles, empty in singles
             'previous' => $previous,
             'confirmed' => $confirmed,
         ];
