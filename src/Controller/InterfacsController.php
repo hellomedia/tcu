@@ -127,7 +127,7 @@ class InterfacsController extends BaseController
     }
 
     #[Route('/interfacs/planning', name: 'interfacs_planning')]
-    public function planning(DateRepository $dateRepository, CourtRepository $courtRepository, SeasonContext $seasonContext): Response
+    public function planning(DateRepository $dateRepository, CourtRepository $courtRepository, GroupRepository $groupRepository, SeasonContext $seasonContext): Response
     {
         if ($comingSoon = $this->comingSoon($seasonContext)) {
             $this->addBreadcrumb('Homepage', 'homepage');
@@ -139,6 +139,28 @@ class InterfacsController extends BaseController
         $dates = $dateRepository->findFutureDates();
         $courts = $courtRepository->findAll();
 
+        // légende des couleurs : les poules qui ont un match dans le planning, dans l'ordre des poules
+        $planned = [];
+        foreach ($dates as $date) {
+            foreach ($date->getSlots() as $slot) {
+                if ($group = $slot->getMatch()?->getGroup()) {
+                    $planned[$group->getId()] = $group;
+                }
+            }
+        }
+        $seasons = [];
+        foreach ($planned as $group) {
+            $seasons[$group->getSeason()->getId()] = $group->getSeason();
+        }
+        $groups = [];
+        foreach ($seasons as $season) {
+            foreach ($groupRepository->findBySeason($season) as $group) {
+                if (isset($planned[$group->getId()])) {
+                    $groups[] = $group;
+                }
+            }
+        }
+
         $this->addBreadcrumb('Homepage', 'homepage');
         $this->addBreadcrumb('Interfacs', 'interfacs');
         $this->addBreadcrumb('Planning');
@@ -146,6 +168,7 @@ class InterfacsController extends BaseController
         return $this->render('interfacs/planning.html.twig', [
             'dates' => $dates,
             'courts' => $courts,
+            'groups' => $groups,
         ]);
     }
 
