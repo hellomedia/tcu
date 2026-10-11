@@ -24,6 +24,12 @@ export default class extends Controller {
     connect() {
         this.state = this._load();
 
+        // remembered poule not on this page any more (other season...): forget it, or everything would be filtered out
+        if (this.state.groupId && !this.groupTargets.some((button) => button.dataset.groupId === this.state.groupId)) {
+            this.state.groupId = null;
+            this._save();
+        }
+
         // slot rows replaced by turbo streams lose their classes: re-apply
         this.observer = new MutationObserver(() => this._apply());
         this.observer.observe(this.planningTarget, { childList: true, subtree: true });
