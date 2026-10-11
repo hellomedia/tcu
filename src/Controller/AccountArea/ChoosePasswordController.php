@@ -47,7 +47,7 @@ class ChoosePasswordController extends BaseController
 
             $entityManager->flush();
 
-            $this->addFlash('success', 'Votre mot de passe est enregistré.');
+            $this->addFlash('success', 'Ton mot de passe est enregistré.');
 
             // le mot de passe et les rôles ont changé : User::isEqualTo() déconnecterait la personne, on la reconnecte
             return $security->login($user, LoginFormAuthenticator::class);

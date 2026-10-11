@@ -1,5 +1,5 @@
 # Messages des formulaires de Pack\Security (inscription, mot de passe), écrits en anglais dans le pack
-'Please enter a password': 'Indiquez un mot de passe'
+'Please enter a password': 'Choisir un mot de passe'
 'Your password should be at least {{ limit }} characters': 'Le mot de passe doit contenir au moins {{ limit }} caractères'
-'Please enter your email': 'Indiquez votre adresse email'
+'Please enter your email': 'Indiquer une adresse email'
 'You should agree to our terms.': 'Vous devez accepter les conditions d''utilisation.'
