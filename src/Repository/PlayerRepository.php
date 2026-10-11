@@ -114,9 +114,11 @@ class PlayerRepository extends ServiceEntityRepository
             return [];
         }
 
+        // ids, pas l'entité : un joueur dans plusieurs poules donne plusieurs lignes,
+        // l'hydratation d'objets n'en garderait qu'une (la dernière poule)
         $qb = $this->createQueryBuilder('p') // FROM Player p
             ->select([
-                'p AS player',
+                'p.id AS playerId',
                 'g.id AS groupId',
                 // total points per player in this group (0 if none)
                 "COALESCE(SUM(CASE WHEN mp.side = 'A' THEN r.pointsA WHEN mp.side = 'B' THEN r.pointsB ELSE 0 END), 0) AS points",
@@ -128,29 +130,44 @@ class PlayerRepository extends ServiceEntityRepository
             // restrict players to the group membership
             ->join('p.groups', 'g')
             ->andWhere('g IN (:groups)')
-            // côté inverse d'un OneToOne : sans jointure, une requête par joueur
-            ->leftJoin('p.user', 'u')->addSelect('u')
             ->leftJoin(Registration::class, 'ps', 'WITH', 'ps.player = p AND ps.season = g.season')
             // LEFT JOIN into participants/matches/results so players with 0 still show
             ->leftJoin('p.matchParticipations', 'mp')     // if you don’t have this inverse, leftJoin MatchParticipant on player explicitly
-            ->leftJoin('mp.match', 'm')
+            // count only matches in this group (in the join : a player without match in the group stays listed)
+            ->leftJoin('mp.match', 'm', 'WITH', 'm.group = g')
             ->leftJoin('m.result', 'r')
-            ->andWhere('m.group = g')                   // count only matches in this group
             ->setParameter('groups', $groups)
             ->groupBy('p.id')
             ->addGroupBy('g.id')
-            ->addGroupBy('u.id')
             ->orderBy('groupId', 'ASC')
             ->addOrderBy('points', 'DESC')
             ->addOrderBy('matchsPlayed', 'DESC')
             ->addOrderBy('rankingOrder', 'DESC')
             ->addOrderBy('p.lastname', 'ASC');
 
+        $rows = $qb->getQuery()->getScalarResult();
+
+        // les joueurs en une requête, avec leur compte (côté inverse d'un OneToOne : sans jointure, une requête par joueur)
+        $players = [];
+        if ($rows) {
+            $result = $this->createQueryBuilder('p')
+                ->leftJoin('p.user', 'u')->addSelect('u')
+                ->andWhere('p.id IN (:ids)')
+                ->setParameter('ids', array_unique(array_column($rows, 'playerId')))
+                ->getQuery()
+                ->getResult();
+            foreach ($result as $player) {
+                $players[$player->getId()] = $player;
+            }
+        }
+
         $standings = [];
-        foreach ($qb->getQuery()->getResult() as $row) { // arrays [player, groupId, points, matchsPlayed]
-            $groupId = $row['groupId'];
-            unset($row['groupId']);
-            $standings[$groupId][] = $row;
+        foreach ($rows as $row) {
+            $standings[$row['groupId']][] = [
+                'player' => $players[$row['playerId']],
+                'points' => (int) $row['points'],
+                'matchsPlayed' => (int) $row['matchsPlayed'],
+            ];
         }
 
         return $standings;
