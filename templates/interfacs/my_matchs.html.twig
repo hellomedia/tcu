@@ -5,39 +5,13 @@
 {% block content %}
 
     <style>
-
         .matchs {
             display: block; /* turbo-frame is inline by default */
-            margin-top: 50px;
+            margin-top: 40px;
         }
-        .match {
-            margin-bottom: 20px;
+        .matchs-title {
+            margin-bottom: 25px;
         }
-        .nowrap {
-            white-space: nowrap;
-        }
-        .date {
-            font-weight: bold;
-            white-space: nowrap;
-        }
-        .time {
-            white-space: nowrap;
-            font-weight: bold;
-        }
-        .court {
-            white-space: nowrap;
-            font-style: italic;
-        }
-
-        .label {
-            /* first column */
-        }
-
-        .booking {
-            /* second column */
-            text-align: right;
-        }
-
     </style>
 
 	{# The form targets the frame so only the list is swapped #}
@@ -48,51 +22,20 @@
             'data-turbo-frame': 'player-matchs'
         }
     }) }}
-	
+
     {{ form_row(form.player) }}
 	{{ form_end(form) }}
 
 	<turbo-frame id="player-matchs" class="matchs">
-		
+
         {% if player %}
 
-            {% if player.scheduledMatchs(season) is not empty %}
-                <h2>{{ player.firstName }}, voilà tes matchs ✨</h2>
+            {% if upcoming is empty and unscheduled is empty and played is empty %}
+                <h2 class="matchs-title">{{ player.firstname }}, tu n'as pas encore de matchs cette saison.</h2>
             {% else %}
-                <h2>{{ player.firstname }}, tes matchs ne sont pas encore programmés 😭</h2>
-            {% endif %}
+                <h2 class="matchs-title">{{ player.firstname }}, voilà tes matchs ✨</h2>
 
-            {% if player.scheduledMatchs(season) is not empty %}
-                {% for match in player.scheduledMatchs(season) %}
-                    <div class="match">
-                        <div>
-                            <span class="date">{{ match.date }}</span> •
-                            <span class="time">{{ match.timeRange }}</span> •
-                            <span class="court">Terrain: {{ match.court }}</span>
-                        </div>
-                        <div class="label">
-                            {% for player in match.players %}
-                                <span class="nowrap">{{ player }}</span>
-                                {{ not loop.last ? ' - ' }}
-                            {% endfor %}
-                        </div>
-                    </div>
-                {% endfor %}
-
-                {% if player.nonScheduledMatchs(season) is not empty %}
-                    <h2 style="margin-top: 40px;">Tu as aussi des matchs qui ne sont pas encore programmés...</h2>
-
-                    {% for match in player.nonScheduledMatchs(season) %}
-                        <div class="match">
-                            <div class="label">
-                                {% for player in match.players %}
-                                    <span class="nowrap">{{ player }}</span>
-                                    {{ not loop.last ? ' - ' }}
-                                {% endfor %}
-                            </div>
-                        </div>
-                    {% endfor %}
-                {% endif %}
+                {% include 'interfacs/match/_list.html.twig' %}
             {% endif %}
 
 		{% endif %}

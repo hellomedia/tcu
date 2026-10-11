@@ -5,5 +5,10 @@
 				{% include 'account_area/interfacs/match/_confirmation_status.html.twig' %}
 			</template>
 		</turbo-stream>
+		<turbo-stream action="replace" target="matchs-to-confirm">
+			<template>
+				{% include 'account_area/interfacs/match/_to_confirm.html.twig' %}
+			</template>
+		</turbo-stream>
 	{% endblock %}
 {% endembed %}

@@ -1,0 +1,9 @@
+{# upcoming matchs whose schedule the player has not confirmed yet (refreshed after each confirmation) #}
+{% set to_confirm = app.user.player ? app.user.player.unconfirmedUpcomingMatchs|length : 0 %}
+<div id="matchs-to-confirm">
+    {% if to_confirm > 0 %}
+        <p class="to-confirm">
+            {{ to_confirm > 1 ? to_confirm ~ ' horaires attendent' : '1 horaire attend' }} ta confirmation.
+        </p>
+    {% endif %}
+</div>

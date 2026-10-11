@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\InterfacMatch;
 use App\Entity\Season;
 use App\Form\PlayerPickerForm;
 use App\Repository\CourtRepository;
@@ -10,6 +11,7 @@ use App\Repository\GroupRepository;
 use App\Repository\PlayerRepository;
 use App\Repository\SeasonRepository;
 use App\Service\SeasonContext;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -59,10 +61,14 @@ class InterfacsController extends BaseController
             return $comingSoon;
         }
 
+        $matchs = $player?->getMatchs($seasonContext->getInterfacsSeason()) ?? new ArrayCollection();
+
         return $this->render('interfacs/my_matchs.html.twig', [
             'form' => $form,
             'player' => $player,
-            'season' => $seasonContext->getInterfacsSeason(),
+            'upcoming' => $matchs->filter(fn (InterfacMatch $match) => $match->isUpcoming())->toArray(),
+            'unscheduled' => $matchs->filter(fn (InterfacMatch $match) => !$match->isScheduled())->toArray(),
+            'played' => array_reverse($matchs->filter(fn (InterfacMatch $match) => $match->isPast())->toArray()),
         ]);
     }
 

@@ -1,0 +1,63 @@
+{#
+    One match seen by one player: when / where, partner and opponents, then score or confirmation.
+    vars:
+      - match
+      - player: point of view (partner, opponents, won / lost)
+      - confirmable: show the schedule confirmation (account area, upcoming matchs)
+#}
+{% set side = match.sideOf(player) %}
+{% set partners = match.partnersOf(player) %}
+{% set opponents = match.opponentsOf(player) %}
+{% set result = match.result %}
+{% set winner = result ? result.winner : null %}
+
+<article class="match-card {{ not match.scheduled ? 'match-card--unscheduled' }}" style="--group-color: {{ group_color(match.group) }}">
+    <div class="match-card-body">
+        <div class="match-card-when">
+            {% if match.scheduled %}
+                <span class="match-card-date">{{ match.date }}</span>
+                <span class="match-card-time">{{ match.timeRange }}</span>
+                <span class="match-card-court">{{ match.court }}</span>
+            {% else %}
+                <span class="match-card-date">Pas encore programmé</span>
+            {% endif %}
+        </div>
+
+        <div class="match-card-players">
+            {% if partners is not empty %}
+                <div>
+                    <span class="match-card-label">avec</span>
+                    {% for partner in partners %}<span class="nowrap">{{ partner }}</span>{{ not loop.last ? ', ' }}{% endfor %}
+                </div>
+            {% endif %}
+            <div>
+                <span class="match-card-label">contre</span>
+                {% for opponent in opponents %}
+                    <span class="match-card-opponent">{{ opponent }}</span>{{ not loop.last ? ' & ' }}
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="match-card-group">{{ match.group }}</div>
+    </div>
+
+    {% if result %}
+        <div class="match-card-aside">
+            {% if winner %}
+                <span class="match-card-outcome {{ winner == side ? 'won' : 'lost' }}">{{ winner == side ? 'Victoire' : 'Défaite' }}</span>
+            {% endif %}
+            <span class="match-card-score">
+                {% for set in result.sets %}
+                    {# score from the player's point of view: their games first #}
+                    {% set mine = side.value == 'B' ? set[1] : set[0] %}
+                    {% set theirs = side.value == 'B' ? set[0] : set[1] %}
+                    <span class="match-card-set {{ mine > theirs ? 'won' }}">{{ mine }}-{{ theirs }}</span>
+                {% endfor %}
+            </span>
+        </div>
+    {% elseif confirmable|default(false) and match.upcoming %}
+        <div class="match-card-aside">
+            {% include 'account_area/interfacs/match/_confirmation_status.html.twig' %}
+        </div>
+    {% endif %}
+</article>

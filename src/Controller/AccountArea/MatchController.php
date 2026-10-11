@@ -21,14 +21,19 @@ class MatchController extends BaseController
     public function index(InterfacMatchRepository $matchRepository, SeasonContext $seasonContext): Response
     {
         $this->addBreadcrumb('Dashboard', 'dashboard');
-        $this->addBreadcrumb('Mes matchs à venir');
+        $this->addBreadcrumb('Mes matchs');
 
-        $upcomingMatchs = $matchRepository->findUpcomingMatchs($this->getUser());
-        $nonScheduledMatchs = $matchRepository->findNonScheduledMatchs($this->getUser(), $seasonContext->getInterfacsSeason());
+        $user = $this->getUser();
+        $season = $seasonContext->getInterfacsSeason();
+
+        // à venir : toutes saisons (les matchs de la saison suivante sont à confirmer avant son début)
+        $played = $user->getPlayer()?->getMatchs($season)->filter(fn (InterfacMatch $match) => $match->isPast())->toArray() ?? [];
 
         return $this->render('account_area/interfacs/match/my_matchs.html.twig', [
-            'upcoming_matchs' => $upcomingMatchs,
-            'non_scheduled_matchs' => $nonScheduledMatchs,
+            'player' => $user->getPlayer(),
+            'upcoming' => $matchRepository->findUpcomingMatchs($user),
+            'unscheduled' => $matchRepository->findNonScheduledMatchs($user, $season),
+            'played' => array_reverse($played),
         ]);
     }
 

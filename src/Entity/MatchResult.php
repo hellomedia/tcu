@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Enum\Side;
 use App\Repository\MatchResultRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -153,5 +154,41 @@ class MatchResult
         $this->pointsB = $pointsB;
 
         return $this;
+    }
+    /**
+     * Sets played, as [games A, games B]
+     *
+     * @return array<array{int, int}>
+     */
+    public function getSets(): array
+    {
+        $sets = [];
+
+        foreach ([[$this->set1A, $this->set1B], [$this->set2A, $this->set2B], [$this->set3A, $this->set3B]] as [$a, $b]) {
+            if ($a !== null || $b !== null) {
+                $sets[] = [(int) $a, (int) $b];
+            }
+        }
+
+        return $sets;
+    }
+
+    /**
+     * Side that won more sets (null if not decided)
+     */
+    public function getWinner(): ?Side
+    {
+        $setsA = $setsB = 0;
+
+        foreach ($this->getSets() as [$a, $b]) {
+            $setsA += $a > $b ? 1 : 0;
+            $setsB += $b > $a ? 1 : 0;
+        }
+
+        return match (true) {
+            $setsA > $setsB => Side::A,
+            $setsB > $setsA => Side::B,
+            default => null,
+        };
     }
 }

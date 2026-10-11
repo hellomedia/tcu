@@ -262,6 +262,50 @@ class InterfacMatch implements EntityInterface
         return $sideParticipants;
     }
 
+    /**
+     * Side of a player in this match (null if the player does not play it)
+     */
+    public function getSideOf(Player $player): ?Side
+    {
+        foreach ($this->participants as $participant) {
+            if ($participant->getPlayer() === $player) {
+                return $participant->getSide();
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Doubles partner(s) of a player
+     *
+     * @return array<Player>
+     */
+    public function getPartnersOf(Player $player): array
+    {
+        $side = $this->getSideOf($player);
+
+        if ($side === null) {
+            return [];
+        }
+
+        return array_values(array_filter($this->getPlayersForSide($side), fn (Player $p) => $p !== $player));
+    }
+
+    /**
+     * @return array<Player>
+     */
+    public function getOpponentsOf(Player $player): array
+    {
+        $side = $this->getSideOf($player);
+
+        if ($side === null) {
+            return [];
+        }
+
+        return $this->getPlayersForSide($side === Side::A ? Side::B : Side::A);
+    }
+
     public function getResult(): ?MatchResult
     {
         return $this->result;

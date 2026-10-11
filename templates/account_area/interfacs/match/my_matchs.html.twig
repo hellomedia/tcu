@@ -1,99 +1,47 @@
 {% extends 'layout/account_area.html.twig' %}
 
-
-
 {% block content %}
 
     <style>
-
-        .match {
-            margin-bottom: 30px;
-        }
-        .match-date {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-        .separator {
-            margin-inline: 5px;
-        }
-        .time {
-            font-size: 16px;
-        }
-        .match-details  {
-            margin-bottom: 10px;
-        }
-        .unscheduled {
-            margin-top
-        }
         .confirmed {
-            --line-height: 32px;
             display: inline-flex;
-            font-size: 15px;
-            line-height: var(--line-height);
-            border-radius: 5px;
-            padding-inline: 10px;
+            align-items: center;
             gap: 5px;
-            background-color: var(--color-green-200);
-            color: var(--color-green-700);
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 14px;
+            font-weight: 600;
+            background-color: var(--color-green-100);
+            color: var(--color-green-800);
             svg {
-                height: var(--line-height);
+                width: 16px;
+                height: 16px;
             }
         }
-
-        @media (min-width: 1000px) {
-            .matchs {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 30px;
-            } 
-            .match {
-                display: contents;
-            }
-            .match-date {
-                margin-top: auto;
-                margin-bottom: auto;
-            }
-            .match-details {
-                margin-top: auto;
-                margin-bottom: auto;
-            }
+        .to-confirm {
+            margin-bottom: 25px;
+            padding: 12px 16px;
+            border-radius: 6px;
+            background-color: var(--color-yellow-50);
+            border: 1px solid var(--color-yellow-200);
+            color: var(--color-yellow-900);
         }
-
     </style>
 
-<div data-controller="modal modal-confirm">
+    <div data-controller="modal modal-confirm">
 
-    <div class="matchs">
-        {% for match in upcoming_matchs %}
-            <div class="match">
-                <div>
-                    <div class="match-date">
-                        <span class="date">{{ match.date }}</span>
-                        <span class="separator">•</span>
-                        <span class="time">{{ match.timeRange }}</span>
-                    </div>
-                    <div class="match-details">
-                        {{ match }}
-                    </div>
-                </div>
-                {% include 'account_area/interfacs/match/_confirmation_status.html.twig' %}
-            </div>
-        {% endfor %}
-    </div>
+        {% if player is null %}
+            <p>Ton compte n'est lié à aucun joueur.</p>
+        {% elseif upcoming is empty and unscheduled is empty and played is empty %}
+            <p>
+                Tu n'as pas encore de matchs.
+                En attendant, tu peux indiquer <a href="{{ path('my_availabilities') }}">tes disponibilités</a>.
+            </p>
+        {% else %}
+            {% include 'account_area/interfacs/match/_to_confirm.html.twig' %}
 
-    {% if non_scheduled_matchs is not empty %}
-        <h2 style="margin-top: 80px;margin-bottom: 50px;">Matchs pas encore programmés</h2>
-        <div class="unscheduled">
-            {% for match in non_scheduled_matchs %}
-                <div style="margin-bottom: 20px;">
-                    <div class="match-details">
-                        {{ match }}
-                    </div>
-                </div>
-            {% endfor %}
-        </div>
-    {% endif %}
+            {% include 'interfacs/match/_list.html.twig' with {confirmable: true} %}
+        {% endif %}
 
         {% include 'component/modal/_modal.html.twig' %}
         {% include 'component/modal/_icons_templates.html.twig' %}

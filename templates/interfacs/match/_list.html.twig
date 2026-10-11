@@ -1,0 +1,185 @@
+{#
+    Matchs of one player, by section: upcoming, not yet scheduled, played.
+    vars:
+      - player
+      - upcoming, unscheduled, played: lists of matchs (played: most recent first)
+      - confirmable: show the schedule confirmation on upcoming matchs (account area)
+#}
+<style>
+    .match-sections {
+        display: grid;
+        gap: 40px;
+    }
+    .match-section-title {
+        display: flex;
+        align-items: baseline;
+        gap: 10px;
+        margin-bottom: 15px;
+        font-size: 18px;
+        font-weight: bold;
+
+        .count {
+            font-size: 14px;
+            font-weight: normal;
+            color: var(--color-gray-500);
+        }
+    }
+    .match-section-intro {
+        margin-top: -8px;
+        margin-bottom: 15px;
+        color: var(--color-gray-500);
+        font-size: 14px;
+    }
+    .match-cards {
+        display: grid;
+        gap: 12px;
+
+        @media (min-width: 1000px) {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+
+    .match-card {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px 20px;
+        padding: 14px 18px;
+        background: #fff;
+        border: 1px solid var(--color-gray-200);
+        /* poule colour as a stripe on the left */
+        border-left: 5px solid var(--group-color, var(--color-gray-300));
+        border-radius: 6px;
+    }
+    .match-card-body {
+        display: grid;
+        gap: 4px;
+        min-width: 0;
+    }
+    .match-card-when {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        column-gap: 10px;
+    }
+    .match-card-date {
+        font-weight: bold;
+        color: var(--color-gray-900);
+    }
+    .match-card-time {
+        font-weight: bold;
+        color: var(--color-gray-900);
+        white-space: nowrap;
+    }
+    .match-card-court {
+        color: var(--color-gray-500);
+        white-space: nowrap;
+    }
+    .match-card--unscheduled .match-card-date {
+        font-weight: normal;
+        font-style: italic;
+        color: var(--color-gray-500);
+    }
+    .match-card-label {
+        color: var(--color-gray-500);
+    }
+    .match-card-opponent {
+        white-space: nowrap;
+        font-weight: 600;
+        color: var(--color-gray-800);
+    }
+    .match-card-group {
+        font-size: 13px;
+        color: var(--color-gray-500);
+    }
+    .match-card-aside {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-left: auto;
+    }
+    .match-card-outcome {
+        padding: 2px 10px;
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: 600;
+
+        &.won {
+            background-color: var(--color-green-100);
+            color: var(--color-green-800);
+        }
+        &.lost {
+            background-color: var(--color-gray-100);
+            color: var(--color-gray-600);
+        }
+    }
+    .match-card-score {
+        display: flex;
+        gap: 8px;
+        font-variant-numeric: tabular-nums;
+        white-space: nowrap;
+        color: var(--color-gray-500);
+    }
+    .match-card-set.won {
+        font-weight: bold;
+        color: var(--color-gray-900);
+    }
+    .match-empty {
+        padding: 20px;
+        border: 1px dashed var(--color-gray-300);
+        border-radius: 6px;
+        color: var(--color-gray-500);
+    }
+</style>
+
+<div class="match-sections">
+
+    <section>
+        <h2 class="match-section-title">
+            À venir
+            {% if upcoming is not empty %}<span class="count">{{ upcoming|length }}</span>{% endif %}
+        </h2>
+        {% if upcoming is not empty %}
+            <div class="match-cards">
+                {% for match in upcoming %}
+                    {% include 'interfacs/match/_card.html.twig' %}
+                {% endfor %}
+            </div>
+        {% else %}
+            <p class="match-empty">
+                Aucun match programmé pour le moment.
+                {% if unscheduled is not empty %}Les dates sont fixées en fonction des disponibilités.{% endif %}
+            </p>
+        {% endif %}
+    </section>
+
+    {% if unscheduled is not empty %}
+        <section>
+            <h2 class="match-section-title">
+                Pas encore programmés
+                <span class="count">{{ unscheduled|length }}</span>
+            </h2>
+            <div class="match-cards">
+                {% for match in unscheduled %}
+                    {% include 'interfacs/match/_card.html.twig' %}
+                {% endfor %}
+            </div>
+        </section>
+    {% endif %}
+
+    {% if played is not empty %}
+        <section>
+            <h2 class="match-section-title">
+                Joués
+                <span class="count">{{ played|length }}</span>
+            </h2>
+            <div class="match-cards">
+                {% for match in played %}
+                    {% include 'interfacs/match/_card.html.twig' %}
+                {% endfor %}
+            </div>
+        </section>
+    {% endif %}
+
+</div>
