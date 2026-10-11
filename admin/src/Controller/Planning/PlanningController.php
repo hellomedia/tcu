@@ -19,11 +19,14 @@ class PlanningController extends BaseController
     {
         $dates = $dateRepository->findFutureDates();
         $courts = $courtRepository->findAll();
+        $groups = $groupRepository->findBySeason($seasonContext->getSelected());
+        // légende : nombre de matchs à programmer par poule
+        $groupRepository->loadMatchs($groups);
 
         return $this->render('@admin/planning/planning.html.twig', [
             'dates' => $dates,
             'courts' => $courts,
-            'groups' => $groupRepository->findBySeason($seasonContext->getSelected()),
+            'groups' => $groups,
         ]);
     }
 
@@ -33,11 +36,14 @@ class PlanningController extends BaseController
         $season = $seasonContext->getSelected();
         $dates = $dateRepository->findPastDates($season);
         $courts = $courtRepository->findAll();
+        $groups = $groupRepository->findBySeason($season);
+        // légende : nombre de matchs à programmer par poule
+        $groupRepository->loadMatchs($groups);
 
         return $this->render('@admin/planning/past.html.twig', [
             'dates' => $dates,
             'courts' => $courts,
-            'groups' => $groupRepository->findBySeason($season),
+            'groups' => $groups,
         ]);
     }
 }

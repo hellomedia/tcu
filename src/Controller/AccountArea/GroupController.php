@@ -4,6 +4,7 @@ namespace App\Controller\AccountArea;
 
 use App\Controller\BaseController;
 use App\Repository\DateRepository;
+use App\Repository\GroupRepository;
 use App\Repository\PlayerRepository;
 use App\Service\SeasonContext;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -15,7 +16,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class GroupController extends BaseController
 {
     #[Route('/ma/poule', name: 'my_group')]
-    public function index(DateRepository $dateRepository, PlayerRepository $playerRepository, SeasonContext $seasonContext): Response
+    public function index(DateRepository $dateRepository, GroupRepository $groupRepository, PlayerRepository $playerRepository, SeasonContext $seasonContext): Response
     {
         $this->addBreadcrumb('Mon TCU', 'dashboard');
         $this->addBreadcrumb('Ma poule');
@@ -30,12 +31,10 @@ class GroupController extends BaseController
 
         $season = $seasonContext->getInterfacsSeason();
         $groups = $this->getUser()->getPlayer()?->getGroupsForSeason($season) ?? new ArrayCollection();
+        $groupRepository->loadPlayers($groups->toArray());
         $dates = $dateRepository->findDatesByGroups($groups->toArray());
 
-        $standings = [];
-        foreach ($groups as $group) {
-            $standings[$group->getId()] = $playerRepository->groupStandings($group);
-        }
+        $standings = $playerRepository->groupsStandings($groups->toArray());
 
         return $this->render('account_area/interfacs/group/my_group.html.twig', [
             'groups' => $groups,

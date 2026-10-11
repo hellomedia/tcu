@@ -49,8 +49,9 @@ class GroupRepository extends ServiceEntityRepository
     }
 
     /**
-     * Poules d'une saison, avec les joueurs et leurs inscriptions (classement par saison)
-     * pour éviter les requêtes supplémentaires
+     * Poules d'une saison, avec les joueurs, leur compte et leurs inscriptions (classement par saison)
+     * pour éviter les requêtes supplémentaires (Player::$user, côté inverse d'un OneToOne,
+     * coûte une requête par joueur s'il n'est pas joint)
      *
      * @return Group[]
      */
@@ -62,6 +63,7 @@ class GroupRepository extends ServiceEntityRepository
 
         return $this->createQueryBuilder('g')
             ->leftJoin('g.players', 'p')->addSelect('p')
+            ->leftJoin('p.user', 'u')->addSelect('u')
             // pas de condition sur la saison dans la jointure :
             // la collection Player::seasons doit rester complète
             ->leftJoin('p.registrations', 'ps')->addSelect('ps')
@@ -70,6 +72,60 @@ class GroupRepository extends ServiceEntityRepository
             ->addOrderBy('g.displayOrder', 'ASC')
             ->addOrderBy('g.name', 'ASC')
             ->addOrderBy('p.lastname', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    /**
+     * Charge en une requête les joueurs des poules, avec leur compte et leurs inscriptions,
+     * pour des poules déjà chargées sans eux (comme findBySeason())
+     *
+     * @param Group[] $groups
+     */
+    public function loadPlayers(array $groups): void
+    {
+        if (!$groups) {
+            return;
+        }
+
+        $this->createQueryBuilder('g')
+            ->leftJoin('g.players', 'p')->addSelect('p')
+            ->leftJoin('p.user', 'u')->addSelect('u')
+            ->leftJoin('p.registrations', 'ps')->addSelect('ps')
+            ->andWhere('g IN (:groups)')
+            ->setParameter('groups', $groups)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    /**
+     * Charge en une requête les matchs des poules (avec leur créneau, leur résultat et leurs joueurs),
+     * au lieu de plusieurs requêtes par poule et par match à l'accès de Group::$matchs
+     *
+     * @param Group[] $groups
+     */
+    public function loadMatchs(array $groups): void
+    {
+        if (!$groups) {
+            return;
+        }
+
+        $this->createQueryBuilder('g')
+            ->leftJoin('g.matchs', 'm')->addSelect('m')
+            // côtés inverses de OneToOne : à joindre, sinon une requête par match
+            ->leftJoin('m.booking', 'b')->addSelect('b')
+            ->leftJoin('m.result', 'r')->addSelect('r')
+            ->leftJoin('b.slot', 's')->addSelect('s')
+            ->leftJoin('s.date', 'd')->addSelect('d')
+            ->leftJoin('s.court', 'c')->addSelect('c')
+            ->leftJoin('m.participants', 'part')->addSelect('part')
+            ->leftJoin('part.confirmationInfo', 'info')->addSelect('info')
+            ->leftJoin('part.player', 'p')->addSelect('p')
+            ->leftJoin('p.user', 'u')->addSelect('u')
+            ->andWhere('g IN (:groups)')
+            ->setParameter('groups', $groups)
             ->getQuery()
             ->getResult()
         ;

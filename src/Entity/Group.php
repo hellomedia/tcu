@@ -50,6 +50,8 @@ class Group implements EntityInterface
      * @var Collection<int, InterfacMatch>
      */
     #[ORM\OneToMany(targetEntity: InterfacMatch::class, mappedBy: 'group')]
+    // ordre de génération, même quand la collection est chargée par une jointure (GroupRepository::loadMatchs)
+    #[ORM\OrderBy(['id' => 'ASC'])]
     private Collection $matchs;
 
     public function __construct()

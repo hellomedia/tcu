@@ -35,7 +35,7 @@ class Date implements EntityInterface
      * (see removeSlot() )
      */
     #[ORM\OneToMany(targetEntity: Slot::class, mappedBy: 'date', orphanRemoval: true)]
-    #[ORM\OrderBy(['startsAt' => 'ASC'])]
+    #[ORM\OrderBy(['startsAt' => 'ASC', 'id' => 'ASC'])]
     private Collection $slots;
 
     public function __construct()

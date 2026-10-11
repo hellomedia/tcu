@@ -3,7 +3,7 @@ import { Controller } from "@hotwired/stimulus";
 /**
  * Planning page filters:
  *  - free slots only
- *  - focus on one poule (click on its legend item)
+ *  - focus on one poule (click on its legend item, or ?poule=<id> in the url)
  *
  * Filtered slot rows are dimmed (not hidden) so the times stay aligned across courts.
  * The state is kept in localStorage and re-applied when a slot row is replaced by a turbo stream.
@@ -23,6 +23,15 @@ export default class extends Controller {
 
     connect() {
         this.state = this._load();
+
+        // link from a poule (public poules page): ?poule=<id> focuses on it, then the param is dropped from the url
+        const url = new URL(window.location.href);
+        if (url.searchParams.has("poule")) {
+            this.state.groupId = url.searchParams.get("poule");
+            this._save();
+            url.searchParams.delete("poule");
+            history.replaceState(history.state, "", url);
+        }
 
         // remembered poule not on this page any more (other season...): forget it, or everything would be filtered out
         if (this.state.groupId && !this.groupTargets.some((button) => button.dataset.groupId === this.state.groupId)) {

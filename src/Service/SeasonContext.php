@@ -21,6 +21,9 @@ class SeasonContext
     private ?Season $current = null;
     private bool $currentLoaded = false;
 
+    /** @var Season[]|null */
+    private ?array $publicInterfacsSeasons = null;
+
     public function __construct(
         private SeasonRepository $seasonRepository,
         private RequestStack $requestStack,
@@ -50,7 +53,7 @@ class SeasonContext
             return null;
         }
 
-        return $this->seasonRepository->findWithGroups(upTo: $current, publishedOnly: true)[0] ?? $current;
+        return $this->getPublicInterfacsSeasons()[0] ?? $current;
     }
 
     /**
@@ -71,9 +74,12 @@ class SeasonContext
      */
     public function getPublicInterfacsSeasons(): array
     {
-        $current = $this->getCurrent();
+        if ($this->publicInterfacsSeasons === null) {
+            $current = $this->getCurrent();
+            $this->publicInterfacsSeasons = $current ? $this->seasonRepository->findWithGroups(upTo: $current, publishedOnly: true) : [];
+        }
 
-        return $current ? $this->seasonRepository->findWithGroups(upTo: $current, publishedOnly: true) : [];
+        return $this->publicInterfacsSeasons;
     }
 
     public function isPublic(Season $season): bool

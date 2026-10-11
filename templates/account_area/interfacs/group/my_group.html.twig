@@ -21,7 +21,7 @@
 		<div class="groups">
 			{% for group in groups %}
 				{% include 'interfacs/group/_card.html.twig' with {
-					standings: standings[group.id],
+					standings: standings[group.id] ?? [],
 					me: app.user.player,
 					mine_label: false,
 				} %}

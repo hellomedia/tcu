@@ -20,6 +20,7 @@ class GroupController extends BaseController
     {
         $season = $seasonContext->getSelected();
         $groups = $repository->findBySeason($season);
+        $repository->loadMatchs($groups);
 
         return $this->render('@admin/group/groups.html.twig', [
             'groups' => $groups,

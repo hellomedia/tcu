@@ -45,7 +45,7 @@ class InterfacsController extends BaseController
     }
 
     #[Route('/interfacs/mes-matchs', name: 'interfacs_my_matchs', methods: ['GET'])]
-    public function myMatchs(Request $request, SeasonContext $seasonContext): Response
+    public function myMatchs(Request $request, PlayerRepository $playerRepository, SeasonContext $seasonContext): Response
     {
         $form = $this->createForm(PlayerPickerForm::class);
 
@@ -61,6 +61,7 @@ class InterfacsController extends BaseController
             return $comingSoon;
         }
 
+        $playerRepository->loadMatchs($player);
         $matchs = $player?->getMatchs($seasonContext->getInterfacsSeason()) ?? new ArrayCollection();
 
         return $this->render('interfacs/my_matchs.html.twig', [
@@ -107,11 +108,7 @@ class InterfacsController extends BaseController
 
         $groups = $repository->findBySeason($season);
         $dates = $dateRepository->findDatesByGroups($groups);
-
-        $standings = [];
-        foreach ($groups as $group) {
-            $standings[$group->getId()] = $playerRepository->groupStandings($group);
-        }
+        $standings = $playerRepository->groupsStandings($groups);
 
         $this->addBreadcrumb('Homepage', 'homepage');
         $this->addBreadcrumb('Interfacs', 'interfacs');
@@ -154,7 +151,7 @@ class InterfacsController extends BaseController
         }
         $groups = [];
         foreach ($seasons as $season) {
-            foreach ($groupRepository->findBySeason($season) as $group) {
+            foreach ($groupRepository->getSeasonQueryBuilder($season)->getQuery()->getResult() as $group) {
                 if (isset($planned[$group->getId()])) {
                     $groups[] = $group;
                 }

@@ -27,9 +27,7 @@ class DateRepository extends ServiceEntityRepository
     */
     public function findFutureDates(): array
     {
-        return $this->createQueryBuilder('d')
-            ->leftJoin('d.slots', 's')->addSelect('s')
-            ->leftJoin('s.booking', 'b')->addSelect('b')
+        return $this->withMatchs($this->createQueryBuilder('d'))
             ->andWhere('d.date >= CURRENT_DATE()')
             ->orderBy('d.date', 'ASC')
             ->getQuery()
@@ -45,9 +43,7 @@ class DateRepository extends ServiceEntityRepository
     */
     public function findPastDates(?Season $season = null): array
     {
-        $qb = $this->createQueryBuilder('d')
-            ->leftJoin('d.slots', 's')->addSelect('s')
-            ->leftJoin('s.booking', 'b')->addSelect('b')
+        $qb = $this->withMatchs($this->createQueryBuilder('d'))
             ->andWhere('d.date < CURRENT_DATE()')
             ->orderBy('d.date', 'DESC')
         ;
@@ -62,6 +58,26 @@ class DateRepository extends ServiceEntityRepository
     }
 
     /**
+     * Planning : tous les créneaux de la date, avec leur match, sa poule, ses joueurs et son résultat,
+     * pour éviter une requête par match / participant / joueur (Player::$user et InterfacMatch::$result
+     * sont des côtés inverses de OneToOne : Doctrine les charge un par un s'ils ne sont pas joints)
+     */
+    private function withMatchs(QueryBuilder $qb): QueryBuilder
+    {
+        return $qb
+            ->leftJoin('d.slots', 's')->addSelect('s')
+            ->leftJoin('s.booking', 'b')->addSelect('b')
+            ->leftJoin('b.match', 'm')->addSelect('m')
+            ->leftJoin('m.group', 'g')->addSelect('g')
+            ->leftJoin('m.result', 'res')->addSelect('res')
+            ->leftJoin('m.participants', 'part')->addSelect('part')
+            ->leftJoin('part.confirmationInfo', 'info')->addSelect('info')
+            ->leftJoin('part.player', 'player')->addSelect('player')
+            ->leftJoin('player.user', 'u')->addSelect('u')
+        ;
+    }
+
+    /**
      * Dates à venir de la saison (avec leurs créneaux) : celles pour lesquelles on demande les disponibilités.
      * Les dates ne sont pas liées à une saison : on se limite à la période de la saison.
      *
@@ -71,6 +87,8 @@ class DateRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('d')
             ->innerJoin('d.slots', 's')->addSelect('s')
+            // côté inverse d'un OneToOne : sans jointure, une requête par créneau
+            ->leftJoin('s.booking', 'b')->addSelect('b')
             ->andWhere('d.date >= CURRENT_DATE()')
             ->andWhere('d.date BETWEEN :startsOn AND :endsOn')
             ->setParameter('startsOn', $season->getStartsOn(), Types::DATE_IMMUTABLE)

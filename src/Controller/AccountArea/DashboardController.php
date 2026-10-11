@@ -43,6 +43,7 @@ class DashboardController extends BaseController
             }
         }
 
+        $playerRepository->loadMatchs($player);
         $upcoming = $player?->getUpcomingMatchs();
 
         return $this->render('account_area/dashboard/dashboard.html.twig', [

@@ -45,10 +45,28 @@
 
         h4 {
             font-weight: bold;
+            margin-right: auto; /* "Ta poule" and the planning link on the right */
         }
         .group-mine {
             font-size: 13px;
             color: var(--color-gray-500);
+        }
+        .group-planning-link {
+            font-size: 13px;
+            white-space: nowrap;
+            text-decoration: underline;
+        }
+    }
+    /* matchs folded under a toggle (public poules page) */
+    .group-matchs {
+        margin-top: 20px;
+        summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--color-gray-700);
+        }
+        .dates {
+            margin-top: 10px;
         }
     }
     .players {

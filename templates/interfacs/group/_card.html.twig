@@ -6,8 +6,11 @@
       - dates: dates with matchs of the page's poules
       - me: Player to highlight (logged in player), or null
       - mine_label: "Ta poule" next to the name of the player's poule (default true)
+      - collapse_matchs: matchs folded under a "Matchs" toggle, the page focuses on the standings (default false)
+      - planning_link: link to the public planning filtered on the poule, when it has upcoming matchs (default false)
 #}
 {% set me = me|default(null) %}
+{% set group_dates = dates|filter(date => date.hasMatchFromGroup(group)) %}
 {% set side_a = enum('App\\Enum\\Side').A %}
 {% set side_b = enum('App\\Enum\\Side').B %}
 
@@ -16,6 +19,9 @@
         <h4>{{ group }}</h4>
         {% if me and (mine_label ?? true) and me in group.players %}
             <span class="group-mine">Ta poule</span>
+        {% endif %}
+        {% if (planning_link ?? false) and group_dates|filter(date => date.future) is not empty %}
+            <a class="group-planning-link" href="{{ path('interfacs_planning', {poule: group.id}) }}">Voir au planning</a>
         {% endif %}
     </div>
     <table class="table players">
@@ -39,52 +45,57 @@
             </tr>
         {% endfor %}
     </table>
+    {% if (collapse_matchs ?? false) and group_dates is not empty %}
+        <details class="group-matchs">
+            <summary>Matchs ({{ group_dates|reduce((count, date) => count + date.matchsByGroup(group)|length, 0) }})</summary>
+    {% endif %}
     <div class="dates">
-        {% for date in dates %}
-            {% if date.hasMatchFromGroup(group) %}
-                <h5 class="date">{{ date }}</h5>
-                <div class="matchs">
-                    {% for match in date.matchsByGroup(group) %}
-                        {% set result = match.result %}
-                        {% set winner = result ? result.winner : null %}
-                        <div class="match {{ result ? 'with-result' }} {{ me and match.sideOf(me) ? 'mine' }}">
-                            <div class="sides">
-                                {% for side in [side_a, side_b] %}
-                                    <div class="side {{ winner == side ? 'winner' }}">
-                                        {% for player in match.playersForSide(side) %}
-                                            {{ loop.index == 2 ? ' - ' }}
-                                            <span class="player">{{ player }}</span>
-                                        {% endfor %}
-                                    </div>
-                                {% endfor %}
-                            </div>
-
-                            {% if result %}
-                                <div class="score">
-                                    <table>
-                                        <tr>
-                                            {% for set in result.sets %}
-                                                <td class="{{ set[0] > set[1] ? 'won' }}">{{ set[0] }}</td>
-                                            {% endfor %}
-                                        </tr>
-                                        <tr>
-                                            {% for set in result.sets %}
-                                                <td class="{{ set[1] > set[0] ? 'won' }}">{{ set[1] }}</td>
-                                            {% endfor %}
-                                        </tr>
-                                    </table>
+        {% for date in group_dates %}
+            <h5 class="date">{{ date }}</h5>
+            <div class="matchs">
+                {% for match in date.matchsByGroup(group) %}
+                    {% set result = match.result %}
+                    {% set winner = result ? result.winner : null %}
+                    <div class="match {{ result ? 'with-result' }} {{ me and match.sideOf(me) ? 'mine' }}">
+                        <div class="sides">
+                            {% for side in [side_a, side_b] %}
+                                <div class="side {{ winner == side ? 'winner' }}">
+                                    {% for player in match.playersForSide(side) %}
+                                        {{ loop.index == 2 ? ' - ' }}
+                                        <span class="player">{{ player }}</span>
+                                    {% endfor %}
                                 </div>
-                            {% elseif match.booking %}
-                                <div class="time">
-                                    <span class="nowrap">{{ match.timeRange }}</span>
-                                </div>
-                            {% else %}
-                                <div></div>
-                            {% endif %}
+                            {% endfor %}
                         </div>
-                    {% endfor %}
-                </div>
-            {% endif %}
+
+                        {% if result %}
+                            <div class="score">
+                                <table>
+                                    <tr>
+                                        {% for set in result.sets %}
+                                            <td class="{{ set[0] > set[1] ? 'won' }}">{{ set[0] }}</td>
+                                        {% endfor %}
+                                    </tr>
+                                    <tr>
+                                        {% for set in result.sets %}
+                                            <td class="{{ set[1] > set[0] ? 'won' }}">{{ set[1] }}</td>
+                                        {% endfor %}
+                                    </tr>
+                                </table>
+                            </div>
+                        {% elseif match.booking %}
+                            <div class="time">
+                                <span class="nowrap">{{ match.timeRange }}</span>
+                            </div>
+                        {% else %}
+                            <div></div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
         {% endfor %}
     </div>
+    {% if (collapse_matchs ?? false) and group_dates is not empty %}
+        </details>
+    {% endif %}
 </div>

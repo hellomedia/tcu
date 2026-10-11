@@ -6,6 +6,7 @@ use App\Controller\BaseController;
 use App\Entity\InterfacMatch;
 use App\Entity\ParticipantConfirmationInfo;
 use App\Repository\InterfacMatchRepository;
+use App\Repository\PlayerRepository;
 use App\Service\SeasonContext;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManager;
@@ -18,13 +19,15 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class MatchController extends BaseController
 {
     #[Route('/mes/matchs', name: 'my_matchs')]
-    public function index(InterfacMatchRepository $matchRepository, SeasonContext $seasonContext): Response
+    public function index(InterfacMatchRepository $matchRepository, PlayerRepository $playerRepository, SeasonContext $seasonContext): Response
     {
         $this->addBreadcrumb('Mon TCU', 'dashboard');
         $this->addBreadcrumb('Mes matchs');
 
         $user = $this->getUser();
         $season = $seasonContext->getInterfacsSeason();
+
+        $playerRepository->loadMatchs($user->getPlayer());
 
         // à venir : toutes saisons (les matchs de la saison suivante sont à confirmer avant son début)
         $played = $user->getPlayer()?->getMatchs($season)->filter(fn (InterfacMatch $match) => $match->isPast())->toArray() ?? [];

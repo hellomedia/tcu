@@ -34,6 +34,8 @@ class InterfacMatch implements EntityInterface
      * @var Collection<int, MatchParticipant>
      */
     #[ORM\OneToMany(targetEntity: MatchParticipant::class, mappedBy: 'match',  cascade: ['persist', 'remove'], orphanRemoval: true)]
+    // ordre de création, même quand la collection est chargée par une jointure (planning)
+    #[ORM\OrderBy(['id' => 'ASC'])]
     private Collection $participants;
 
     #[ORM\OneToOne(mappedBy: 'match', cascade: ['persist', 'remove'])]
