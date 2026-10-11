@@ -59,6 +59,17 @@
 		</a>
 		<a class="item" href="{{ path('my_availabilities') }}">
 			Mes disponibilités
+			{% if availabilities and availabilities.total > 0 %}
+				<span class="item-status">
+					{% if availabilities.status == 'complete' %}
+						Toutes les dates sont renseignées
+					{% else %}
+						{% set missing = availabilities.total - availabilities.answered %}
+						{{ availabilities.answered }} date{{ availabilities.answered > 1 ? 's' }} sur {{ availabilities.total }} renseignée{{ availabilities.answered > 1 ? 's' }}
+						<span class="item-badge">{{ missing }} à renseigner</span>
+					{% endif %}
+				</span>
+			{% endif %}
 		</a>
 	</div>
 {% endblock %}
