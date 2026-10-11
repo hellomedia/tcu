@@ -4,7 +4,8 @@
     {% include 'layout/menu/_account_band.html.twig' %}
 
     <div id="main-wrapper">
-        <header class="{% block header_classes '' %}">
+        {# no visible title: the header is empty, no margin under it #}
+        <header class="{{ block('title') is empty ? 'no-margin' }} {% block header_classes '' %}">
             <div class="default-container default-container-xpadding">
                 
                 {# no breadcrumbs: the account band (tabs) tells where we are #}
