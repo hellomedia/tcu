@@ -30,7 +30,7 @@ class AvailabilityGrid
     /** dates non renseignées à moins de 2 mois : rappel insistant (dashboard) */
     public const SOON = '+2 months';
 
-    /** dates non renseignées à moins de 4 semaines : empêchent de planifier les matchs (dashboard) */
+    /** dates non renseignées dans les 4 semaines à partir du début de la saison (ou d'aujourd'hui) : empêchent de planifier les matchs (dashboard) */
     public const PLANNING = '+4 weeks';
 
     /** dates à plus de 3 mois : repliées sous "Plus tard" sur la page du joueur */
@@ -38,6 +38,9 @@ class AvailabilityGrid
 
     /** @var array<int, Date[]> dates à venir par saison */
     private array $upcomingDates = [];
+
+    /** @var array<int, \DateTimeImmutable> début de la fenêtre PLANNING par saison */
+    private array $planningStarts = [];
 
     /** @var array<int, array<string, bool>> réponses par inscription : [registrationId][dateId-H:i] => available */
     private array $answers = [];
@@ -58,6 +61,20 @@ class AvailabilityGrid
     public function getUpcomingDates(Season $season): array
     {
         return $this->upcomingDates[$season->getId()] ??= $this->dateRepository->findUpcomingDates($season);
+    }
+
+    /**
+     * Aujourd'hui, ou la première date de la saison si elle n'a pas encore commencé
+     */
+    private function getPlanningStart(Season $season): \DateTimeImmutable
+    {
+        if (!isset($this->planningStarts[$season->getId()])) {
+            $today = new \DateTimeImmutable('today');
+            $firstDate = $this->dateRepository->findFirstDate($season)?->getDate();
+            $this->planningStarts[$season->getId()] = $firstDate !== null && $firstDate > $today ? \DateTimeImmutable::createFromInterface($firstDate) : $today;
+        }
+
+        return $this->planningStarts[$season->getId()];
     }
 
     /**
@@ -91,7 +108,7 @@ class AvailabilityGrid
      *
      * @return array{
      *     dates: list<array{date: Date, status: string, times: list<array{key: string, label: string, startsAt: \DateTimeImmutable, status: string}>, available: int, answered: int, later: bool}>,
-     *     summary: array{status: string, answered: int, partial: int, total: int, missingSoon: int, missingPlanning: int},
+     *     summary: array{status: string, answered: int, partial: int, total: int, missingNear: int, missingSoon: int, missingPlanning: int},
      *     sections: array{near: array{status: string, answered: int, partial: int, total: int}, later: array{status: string, answered: int, partial: int, total: int}}|null
      * }
      */
@@ -99,11 +116,12 @@ class AvailabilityGrid
     {
         $answers = $this->getAnswers($registration);
         $dates = [];
+        $missingNear = 0;
         $missingSoon = 0;
         $missingPlanning = 0;
         $today = new \DateTimeImmutable('today');
         $soonLimit = $today->modify(self::SOON);
-        $planningLimit = $today->modify(self::PLANNING);
+        $planningLimit = $this->getPlanningStart($registration->getSeason())->modify(self::PLANNING);
         $laterLimit = $today->modify(self::LATER);
 
         foreach ($this->getUpcomingDates($registration->getSeason()) as $date) {
@@ -131,8 +149,9 @@ class AvailabilityGrid
             };
 
             $missing = $times !== [] && $dateStatus !== 'answered';
+            $missingNear += $missing && $date->getDate() <= $laterLimit ? 1 : 0;
             $missingSoon += $missing && $date->getDate() <= $soonLimit ? 1 : 0;
-            $missingPlanning += $missing && $date->getDate() <= $planningLimit ? 1 : 0;
+            $missingPlanning += $missing && $date->getDate() < $planningLimit ? 1 : 0;
 
             $dates[] = [
                 'date' => $date,
@@ -149,7 +168,7 @@ class AvailabilityGrid
 
         return [
             'dates' => $dates,
-            'summary' => $this->summarize($dates) + ['missingSoon' => $missingSoon, 'missingPlanning' => $missingPlanning],
+            'summary' => $this->summarize($dates) + ['missingNear' => $missingNear, 'missingSoon' => $missingSoon, 'missingPlanning' => $missingPlanning],
             'sections' => $near !== [] && $later !== [] ? [
                 'near' => $this->summarize($near),
                 'later' => $this->summarize($later),
@@ -184,7 +203,7 @@ class AvailabilityGrid
     /**
      * Résumé seul (liste des inscriptions, dashboard)
      *
-     * @return array{status: string, answered: int, partial: int, total: int, missingSoon: int, missingPlanning: int}
+     * @return array{status: string, answered: int, partial: int, total: int, missingNear: int, missingSoon: int, missingPlanning: int}
      */
     public function summary(Registration $registration): array
     {

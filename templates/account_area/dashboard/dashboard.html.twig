@@ -121,7 +121,8 @@
 		}
 	</style>
 
-	{% set missing_dates = availabilities ? availabilities.total - availabilities.answered : 0 %}
+	{# shown once a date within 2 months is missing (AvailabilityGrid::SOON), then counts every date before "Plus tard" (AvailabilityGrid::LATER) #}
+	{% set missing_dates = availabilities and availabilities.missingSoon > 0 ? availabilities.missingNear : 0 %}
 
 	<div class="dash">
 
@@ -148,7 +149,7 @@
 							<span class="dash-todo-text">
 								{{ availabilities.answered > 0 ? 'Compléter' : 'Renseigner' }} mes disponibilités
 								<span class="dash-todo-detail">
-									{{ missing_dates }} date{{ missing_dates > 1 ? 's' }} sans réponse{% if availabilities.missingSoon > 0 %}, dont {{ availabilities.missingSoon }} dans les deux prochains mois{% endif %}
+									{{ missing_dates }} date{{ missing_dates > 1 ? 's' }} sans réponse{% if availabilities.missingSoon < missing_dates %}, dont {{ availabilities.missingSoon }} dans les deux prochains mois{% endif %}
 								</span>
 							</span>
 							<span class="dash-todo-cta">Renseigner ›</span>

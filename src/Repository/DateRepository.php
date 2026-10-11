@@ -101,6 +101,23 @@ class DateRepository extends ServiceEntityRepository
     }
 
     /**
+     * Première date de la saison (avec des créneaux), passée ou non
+     */
+    public function findFirstDate(Season $season): ?Date
+    {
+        return $this->createQueryBuilder('d')
+            ->innerJoin('d.slots', 's')
+            ->andWhere('d.date BETWEEN :startsOn AND :endsOn')
+            ->setParameter('startsOn', $season->getStartsOn(), Types::DATE_IMMUTABLE)
+            ->setParameter('endsOn', $season->getEndsOn(), Types::DATE_IMMUTABLE)
+            ->orderBy('d.date', 'ASC')
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult()
+        ;
+    }
+
+    /**
     * @return Date[] Returns an array of Date objects
     */
     public function findFutureDatesWithAvailableSlots(): array
