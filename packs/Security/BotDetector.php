@@ -14,7 +14,7 @@ class BotDetector
     ) {}
 
     /**
-     * Detect bot from HTTP_ACCEPT_LANGUAGE and HTTP_USER_AGENT
+     * Detect bot from a missing Accept-Language header
      * Tag session with :
      *   - h for human
      *   - r for bot
@@ -35,87 +35,6 @@ class BotDetector
             $session->set('type', 'r');
 
             return true;
-        }
-
-        // HeaderBag keys are header names ('User-Agent'), not $_SERVER keys ('HTTP_USER_AGENT')
-        $ua_string = $request->headers->get('User-Agent');
-
-        $robots = [
-            'antibot',
-            'appie1.1',
-            'archive',
-            'ask',
-            'askjeeves',
-            'baiduspider',
-            'converacrawler',
-            'deepIndex',
-            'dloader',
-            'exabot',
-            'fast',
-            'fluffy',
-            'gigabot',
-            'girafabot',
-            'google',
-            'google adsence',
-            'googlebot',
-            'googlebot-image',
-            'grub.org',
-            'henrilerobotmirago',
-            'heritrix',
-            'holmes',
-            'httrack',
-            'ia_archiver',
-            'ichiro',
-            'inktomi slurp',
-            'java',
-            'larbin',
-            'lwp-trivial',
-            'mediapartners-google',
-            'mj12bot',
-            'msnbot',
-            'msnbot-media',
-            'msiecrawler',
-            'msrbot',
-            'netresearchserver',
-            'nimblecrawler',
-            'nutch',
-            'nutchcvs',
-            'openbot',
-            'openfind',
-            'picsearch',
-            'pompos',
-            'psbot',
-            'python-urllib',
-            'sbider',
-            'seekbot',
-            'scooter',
-            'shinchakubin',
-            'slurp',
-            'spider',
-            'stackramber',
-            'surveybot',
-            'szukacz',
-            'teoma',
-            'voila',
-            'voilabot',
-            'voyager',
-            'webcrawler',
-            'xenu link sleuth',
-            'yandex',
-            'yahoo',
-            'yahoo!',
-            'yahoo-mmcrawler',
-            'yahooseeker',
-            'zyborg',
-        ];
-
-        foreach ($robots as $bot) {
-            if ($ua_string != null && stripos($ua_string, $bot) !== false) {
-
-                $session->set('type', 'r');
-
-                return true;
-            }
         }
 
         $session->set('type', 'h');
