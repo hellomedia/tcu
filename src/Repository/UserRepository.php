@@ -2,7 +2,9 @@
 
 namespace App\Repository;
 
+use App\Entity\Season;
 use App\Entity\User;
+use App\Enum\RegistrationStatus;
 use Pack\Security\Repository\Trait\UserSecurityRepositoryTrait;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -21,21 +23,32 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     }
 
     /**
-     * Comptes de joueurs créés par un admin, pas encore invités (Admin\Mailer\InvitationMailer)
+     * Comptes de joueurs créés par un admin, pas encore invités (Admin\Mailer\InvitationMailer),
+     * limités aux inscrits aux interfacs d'une saison si elle est donnée (page Invitations de l'admin)
      *
      * @return User[]
      */
-    public function findPlayersToInvite(): array
+    public function findPlayersToInvite(?Season $season = null): array
     {
         // roles est une colonne json : le rôle se filtre en PHP
-        $users = $this->createQueryBuilder('u')
+        $qb = $this->createQueryBuilder('u')
             ->join('u.player', 'p')
             ->addSelect('p')
             ->andWhere('u.invitedAt IS NULL')
             ->orderBy('p.lastname', 'ASC')
-            ->addOrderBy('p.firstname', 'ASC')
-            ->getQuery()
-            ->getResult();
+            ->addOrderBy('p.firstname', 'ASC');
+
+        if ($season !== null) {
+            // mêmes inscrits que RegistrationRepository::findInterfacsBySeason
+            $qb->join('p.registrations', 'r')
+                ->andWhere('r.season = :season')
+                ->andWhere('r.interfacs = true')
+                ->andWhere('r.status != :dismissed')
+                ->setParameter('season', $season)
+                ->setParameter('dismissed', RegistrationStatus::DISMISSED);
+        }
+
+        $users = $qb->getQuery()->getResult();
 
         return array_values(array_filter($users, fn(User $user) => $user->mustChoosePassword()));
     }

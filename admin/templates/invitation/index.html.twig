@@ -1,0 +1,179 @@
+{% extends '@admin/base.html.twig' %}
+
+{#
+    Page Invitations : inscrits aux interfacs de la saison sélectionnée, par état de leur compte
+    (à inviter, invités, actifs, sans compte), invitation ou relance de chacun (InvitationController)
+#}
+
+{% block head_stylesheets %}
+    {{ parent() }}
+    <style>
+        .invite-intro {
+            color: #6c757d;
+            margin-bottom: 16px;
+            max-width: 900px;
+        }
+        .invite-counts {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 24px;
+            .btn {
+                margin-left: 8px;
+            }
+        }
+        .invite-section {
+            margin-bottom: 28px;
+            h4 {
+                margin-bottom: 4px;
+                font-size: 1.05rem;
+                font-weight: 600;
+            }
+            .invite-help {
+                color: #6c757d;
+                font-size: 0.9rem;
+                margin-bottom: 8px;
+            }
+        }
+        .invite-table {
+            width: 100%;
+            border-collapse: collapse;
+            th, td {
+                padding: 8px 10px;
+                border-bottom: 1px solid #e9ecef;
+                vertical-align: middle;
+                text-align: left;
+            }
+            th {
+                font-size: 0.8rem;
+                text-transform: uppercase;
+                letter-spacing: 0.04em;
+                color: #6c757d;
+            }
+            .col-player { width: 28%; }
+            .col-email { width: 30%; }
+            td.actions {
+                text-align: right;
+                white-space: nowrap;
+            }
+        }
+        .invite-muted {
+            color: #6c757d;
+            font-size: 0.85rem;
+        }
+        .invite-expired {
+            color: #b91c1c;
+            font-weight: 600;
+        }
+    </style>
+{% endblock %}
+
+{% block content_title %}Invitations{{ season ? ' - ' ~ season }}{% endblock %}
+
+{% block page_actions %}{% endblock %}
+
+{% block main %}
+    {% set titles = {
+        to_invite: 'À inviter',
+        invited: 'Invités, mot de passe pas encore choisi',
+        active: 'Comptes actifs',
+        no_account: 'Sans compte',
+    } %}
+    {% set helps = {
+        to_invite: 'Compte créé par un admin, invitation pas encore envoyée.',
+        invited: 'Le lien de l\'invitation est valable ' ~ lifetime_days ~ ' jours. Lien expiré : renvoyer une invitation, ou la personne passe par « Mot de passe oublié ».',
+        active: 'Mot de passe choisi : la personne se connecte avec son email et son mot de passe.',
+        no_account: 'Pas d\'email : ajouter l\'email du joueur crée son compte, à inviter ensuite.',
+    } %}
+
+    {% set total = sections|reduce((carry, rows) => carry + rows|length, 0) %}
+
+    <p class="invite-intro">
+        Les joueurs dont un admin a créé le compte reçoivent par email un lien de connexion qui les mène à « Choisir mon mot de passe ».
+        Ils accèdent ensuite à leur espace « Mes interfacs » (disponibilités, matchs).
+    </p>
+
+    {% if season is null %}
+        <p>Aucune saison sélectionnée.</p>
+    {% elseif total == 0 %}
+        <p>Aucun inscrit aux interfacs pour {{ season }}.</p>
+    {% else %}
+        <div class="invite-counts">
+            <span class="badge badge-secondary">{{ total }} inscrit{{ total > 1 ? 's' }}</span>
+            <span class="badge badge-warning">{{ sections.to_invite|length }} à inviter</span>
+            <span class="badge badge-info">{{ sections.invited|length }} invité{{ sections.invited|length > 1 ? 's' }}</span>
+            <span class="badge badge-success">{{ sections.active|length }} actif{{ sections.active|length > 1 ? 's' }}</span>
+            <span class="badge badge-outline">{{ sections.no_account|length }} sans compte</span>
+            {% if to_invite is not empty %}
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#modal-invite">
+                    <i class="fa fa-envelope"></i> Inviter les nouveaux comptes ({{ to_invite|length }})
+                </button>
+            {% endif %}
+        </div>
+
+        {% for status, rows in sections|filter(rows => rows is not empty) %}
+            <div class="invite-section">
+                <h4>{{ titles[status] }} ({{ rows|length }})</h4>
+                <p class="invite-help">
+                    {{ helps[status] }}
+                    {% if status == 'no_account' %}
+                        <a href="{{ path('admin_players_batch') }}">Compléter les joueurs</a>
+                    {% endif %}
+                </p>
+
+                <table class="invite-table">
+                    <thead>
+                        <tr>
+                            <th class="col-player">Joueur</th>
+                            <th class="col-email">Email</th>
+                            <th>Compte</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in rows %}
+                            {% set registration = row.registration %}
+                            {% set player = registration.player %}
+                            {% set user = player.user %}
+                            <tr>
+                                <td class="col-player">
+                                    {{ player }}
+                                    {% if registration.status.value == 'pending' %}
+                                        <br><span class="invite-muted">inscription à confirmer</span>
+                                    {% endif %}
+                                </td>
+                                <td class="col-email">
+                                    {{ user ? user.email : '—' }}
+                                </td>
+                                <td>
+                                    {% if status == 'invited' %}
+                                        Invité le {{ user.invitedAt|date('d/m/Y') }}
+                                        {% if row.expired %}
+                                            <br><span class="invite-expired">lien expiré</span>
+                                        {% endif %}
+                                    {% elseif status == 'active' %}
+                                        {% if user.lastLogin %}
+                                            Dernière connexion le {{ user.lastLogin|date('d/m/Y') }}
+                                        {% else %}
+                                            <span class="invite-muted">jamais connecté</span>
+                                        {% endif %}
+                                    {% endif %}
+                                </td>
+                                <td class="actions">
+                                    {% if status in ['to_invite', 'invited'] %}
+                                        <a class="btn btn-sm btn-default" href="{{ path('admin_player_invite', {id: player.id, token: token}) }}">
+                                            <i class="fa fa-envelope"></i> {{ status == 'invited' ? 'Renvoyer' : 'Inviter' }}
+                                        </a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% endfor %}
+
+        {{ include('@admin/player/_invite_modal.html.twig', {to_invite: to_invite, invite_url: path('admin_players_invite_pending', {token: token, season: season.id}), lifetime_days: lifetime_days}, with_context = false) }}
+    {% endif %}
+{% endblock %}
