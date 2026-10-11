@@ -282,6 +282,8 @@ class ParticipantConfirmationInfo
 
     /**
      * Pastille sur le planning : default (jamais notifié) / notified / changed (à re-notifier) / confirmed
+     *
+     * Confirmé avant tout email (le joueur a vu l'horaire sur le site) : confirmed, même si l'email reste à envoyer
      */
     public function getStatus(): string
     {
@@ -289,7 +291,7 @@ class ParticipantConfirmationInfo
 
         return match (true) {
             $pending === self::PENDING_CHANGED => 'changed',
-            $pending === null && $this->isConfirmed() => 'confirmed',
+            ($pending === null || $pending === self::PENDING_NEW) && $this->isConfirmed() => 'confirmed',
             $pending === null && $this->isEmailSent => 'notified',
             default => 'default',
         };

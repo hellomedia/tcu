@@ -11,7 +11,14 @@
         {% endembed %}
     {% else %}
         {% embed "email/includes/_paragraph.html.twig" %}
-            {% block text %}{{ name }}, voici {{ (new_matchs|length + changed_matchs|length + unconfirmed_matchs|length) > 1 ? 'tes horaires' : 'ton horaire' }} pour les interfacs. Merci de {{ (new_matchs|length + changed_matchs|length + unconfirmed_matchs|length) > 1 ? 'les' : 'le' }} confirmer avec le bouton ci-dessous.{% endblock %}
+            {# to_confirm: matchs not confirmed yet (a new match may already be confirmed on the site) #}
+            {% block text %}
+                {%- set listed = new_matchs|length + changed_matchs|length + unconfirmed_matchs|length -%}
+                {{ name }}, voici {{ listed > 1 ? 'tes horaires' : 'ton horaire' }} pour les interfacs.
+                {%- if to_confirm == 0 %} {{ listed > 1 ? 'Tu les as déjà confirmés' : 'Tu l\'as déjà confirmé' }}, merci !
+                {%- elseif to_confirm < listed %} Merci de confirmer {{ to_confirm > 1 ? 'ceux qui ne le sont pas encore' : 'celui qui ne l\'est pas encore' }} avec le bouton ci-dessous.
+                {%- else %} Merci de {{ listed > 1 ? 'les' : 'le' }} confirmer avec le bouton ci-dessous.
+                {%- endif %}{% endblock %}
         {% endembed %}
     {% endif %}
 

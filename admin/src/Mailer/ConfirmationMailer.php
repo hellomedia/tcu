@@ -37,13 +37,14 @@ class ConfirmationMailer extends BaseMailer
             return false;
         }
 
-        $new = array_map(fn (array $item) => $this->describe($item['match'], $player), $collected['new']);
+        // a new match can already be confirmed: the player saw it on the site before this email
+        $new = array_map(fn (array $item) => $this->describe($item['match'], $player, confirmed: (bool) $item['info']?->isConfirmed()), $collected['new']);
         $changed = array_map(fn (array $item) => $this->describe($item['match'], $player, $item['info']->getNotifiedLabel()), $collected['changed']);
         $cancelled = array_map(fn (array $item) => $this->describe($item['match'], $player, $item['info']->getNotifiedLabel()), $collected['cancelled']);
         $unconfirmed = array_map(fn (array $item) => $this->describe($item['match'], $player), $collected['unconfirmed']);
 
-        $toConfirm = \count($new) + \count($changed) + \count($unconfirmed);
-        $onlyCancellations = $toConfirm === 0;
+        $toConfirm = \count(array_filter($new, fn (array $item) => !$item['confirmed'])) + \count($changed) + \count($unconfirmed);
+        $onlyCancellations = $new === [] && $changed === [] && $unconfirmed === [];
 
         $subject = match (true) {
             $onlyCancellations => 'Match Interfacs annulé',
@@ -63,7 +64,8 @@ class ConfirmationMailer extends BaseMailer
                 'changed_matchs' => $changed,
                 'cancelled_matchs' => $cancelled,
                 'unconfirmed_matchs' => $unconfirmed,
-                'confirmation_link' => $onlyCancellations ? null : $this->confirmationLink($player),
+                'to_confirm' => $toConfirm,
+                'confirmation_link' => $toConfirm === 0 ? null : $this->confirmationLink($player),
                 'confirmation_label' => $toConfirm > 1 ? 'Confirmer mes horaires' : 'Confirmer mon horaire',
             ]);
 
@@ -127,9 +129,9 @@ class ConfirmationMailer extends BaseMailer
     /**
      * Données sérialisables d'un match pour le template (l'email est pré-rendu, voir BaseMailer::send)
      *
-     * @return array{slot: ?string, date: ?string, time: ?string, court: ?string, opponent: string, previous: ?string}
+     * @return array{slot: ?string, date: ?string, time: ?string, court: ?string, opponent: string, previous: ?string, confirmed: bool}
      */
-    private function describe(InterfacMatch $match, Player $player, ?string $previous = null): array
+    private function describe(InterfacMatch $match, Player $player, ?string $previous = null, bool $confirmed = false): array
     {
         $slot = $match->getSlot();
         $opponents = [];
@@ -147,6 +149,7 @@ class ConfirmationMailer extends BaseMailer
             'court' => $slot ? (string) $slot->getCourt() : null,
             'opponent' => implode(' et ', $opponents),
             'previous' => $previous,
+            'confirmed' => $confirmed,
         ];
     }
 }
