@@ -3,7 +3,7 @@
 {% block content_title %}Dispos de {{ registration.player }} - {{ registration.season }}{% endblock %}
 
 {% block page_actions %}
-    <a class="btn btn-default" href="{{ path('admin_registration_index') }}">Retour</a>
+    <a class="btn btn-default" href="{{ back_url }}">Retour</a>
 {% endblock %}
 
 {% block main %}
@@ -13,8 +13,8 @@
 
     {% include 'availability/_grid.html.twig' with {
         'grid': grid,
-        'action': path('admin_registration_availabilities_save', {'id': registration.id}),
+        'action': path('admin_registration_availabilities_save', {'id': registration.id}|merge(from ? {'from': from} : {})),
         'token': csrf_token('availabilities'),
-        'cancel_url': path('admin_registration_index'),
+        'cancel_url': back_url,
     } %}
 {% endblock %}
