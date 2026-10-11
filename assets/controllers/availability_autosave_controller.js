@@ -33,14 +33,12 @@ export default class extends Controller {
         };
         window.addEventListener("pagehide", this.flushOnLeave);
         window.addEventListener("beforeunload", this.warnOnLeave);
-        document.addEventListener("turbo:before-visit", this.flushOnLeave);
     }
 
     disconnect() {
         this.flush();
         window.removeEventListener("pagehide", this.flushOnLeave);
         window.removeEventListener("beforeunload", this.warnOnLeave);
-        document.removeEventListener("turbo:before-visit", this.flushOnLeave);
         clearTimeout(this.hideTimer);
     }
 

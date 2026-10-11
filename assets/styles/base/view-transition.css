@@ -1,4 +1,15 @@
+/* Native transitions between pages (no Turbo Drive): same-origin navigations cross-fade */
+@view-transition {
+    navigation: auto;
+}
+
 @layer base {
+
+    /* default cross-fade, shorter than the browser's 0.25s: snappier */
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+        animation-duration: 0.15s;
+    }
 
     @keyframes move-out {
         from {
@@ -19,13 +30,14 @@
     }
 
     /* only use translation view transition on mobile where it feels native */
+    /* "back" type: set on history back navigations by the pagereveal script in layout/base.html.twig */
     @media (max-width: theme(--breakpoint-mobile-end)) {
-        html[data-turbo-visit-direction="back"]::view-transition-old(root) {
+        html:active-view-transition-type(back)::view-transition-old(root) {
             /* on mobile, screen width is small so animation needs to be fast to feel snappy */
             animation: 0.2s ease-in both move-out;
         }
 
-        html[data-turbo-visit-direction="back"]::view-transition-new(root) {
+        html:active-view-transition-type(back)::view-transition-new(root) {
             /* on mobile, screen width is small so animation needs to be fast to feel snappy */
             animation: 0.2s ease-in both move-in;
         }

@@ -37,6 +37,7 @@ export default class extends Controller {
         this.boundStart = this.start.bind(this);
         this.boundStop = this.stop.bind(this);
 
+        // Forms submitted by Turbo: inside a turbo-frame (modals). No Turbo Drive: the other forms are native submits.
         // Attaching loading#start to turbo:submit-start event on the button itself does not work
         // Attaching loading#start to turbo:submit-start event on the form does not work either
         // We must attach it to turbo:submit-start on the * document * !
@@ -44,19 +45,27 @@ export default class extends Controller {
         document.addEventListener('turbo:submit-start', this.boundStart);
         document.addEventListener('turbo:submit-end', this.boundStop);
 
-        // Non-turbo submit
-        document.addEventListener('submit', (e) => {
+        // Native submit (full page): only the button of the submitted form
+        this.boundNativeSubmit = (event) => {
             // If Turbo intercepted the submit, it will have prevented default.
-            if (e.defaultPrevented) return;
-            // non-Turbo form
-            this.boundStart();
-        });
+            if (event.defaultPrevented) return;
+            this.start(event);
+        };
+        document.addEventListener('submit', this.boundNativeSubmit);
+
+        // Page restored from the back/forward cache after a native submit: the spinner would still be on
+        this.boundPageShow = (event) => {
+            if (event.persisted) this.stop();
+        };
+        window.addEventListener('pageshow', this.boundPageShow);
     }
 
     disconnect() {
         // Clean up listeners to avoid memory leaks
         document.removeEventListener('turbo:submit-start', this.boundStart);
         document.removeEventListener('turbo:submit-end', this.boundStop);
+        document.removeEventListener('submit', this.boundNativeSubmit);
+        window.removeEventListener('pageshow', this.boundPageShow);
     }
 
     start(event) {
