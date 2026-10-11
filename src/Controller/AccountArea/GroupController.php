@@ -6,6 +6,7 @@ use App\Controller\BaseController;
 use App\Repository\DateRepository;
 use App\Repository\PlayerRepository;
 use App\Service\SeasonContext;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -28,7 +29,7 @@ class GroupController extends BaseController
         }
 
         $season = $seasonContext->getInterfacsSeason();
-        $groups = $this->getUser()->getPlayer()->getGroupsForSeason($season);
+        $groups = $this->getUser()->getPlayer()?->getGroupsForSeason($season) ?? new ArrayCollection();
         $dates = $dateRepository->findDatesByGroups($groups->toArray());
 
         $standings = [];

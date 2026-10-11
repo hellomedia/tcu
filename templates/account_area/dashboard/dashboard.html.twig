@@ -13,25 +13,52 @@
             border: 1px solid var(--color-border);
 			/* recommended way to center text inside a grid item, using grid as well */
 			display: grid; /* could also be done with flexbox, justify-content, align-items, and text-align instead */
-			place-items: center; /* for a grid containing plain text, this combines align and justify */
+			place-content: center; /* title and status line stacked in the middle */
+			gap: 6px;
 			text-align: center; /* aligns text horizontally in case of full line or multiple lines */
-			height: 100px;
+			min-height: 100px;
 			padding: 10px;
 			border-radius: 3px;
 			font-size: 20px;
+		}
+		.item-status {
+			font-size: 14px;
+			color: var(--color-gray-500);
+		}
+		.item-badge {
+			display: inline-block;
+			margin-left: 4px;
+			padding: 1px 8px;
+			border-radius: 999px;
+			font-size: 13px;
+			font-weight: 600;
+			background-color: var(--color-yellow-100);
+			color: var(--color-yellow-900);
 		}
 	</style>
 
 	<div class="homepage-grid">
 		<a class="item" href="{{ path('my_matchs') }}">
 			Mes matchs
+			<span class="item-status">
+				{% if next_match %}
+					Prochain : {{ next_match.date }} · {{ next_match.timeRange }}
+				{% else %}
+					Aucun match programmé
+				{% endif %}
+				{% if to_confirm > 0 %}
+					<span class="item-badge">{{ to_confirm }} à confirmer</span>
+				{% endif %}
+			</span>
 		</a>
 		<a class="item" href="{{ path('my_group') }}">
 			Ma poule
+			{% if groups is not empty %}
+				<span class="item-status">{{ groups|join(', ') }}</span>
+			{% endif %}
 		</a>
 		<a class="item" href="{{ path('my_availabilities') }}">
 			Mes disponibilités
 		</a>
 	</div>
 {% endblock %}
-
