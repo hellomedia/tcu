@@ -15,6 +15,25 @@
         background-color: var(--color-logo-background);
     }
 
+    /* "TC Université › Interfacs" on small screens (_menu.html.twig) */
+    .logo-section {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-left: calc(var(--spacing) * -3);
+        padding-right: calc(var(--spacing) * 5);
+        color: white;
+        font-weight: 600;
+        white-space: nowrap;
+        @media (min-width: theme(--breakpoint-lg)) {
+            display: none;
+        }
+    }
+    .logo-section-separator {
+        opacity: 0.6;
+        font-weight: 400;
+    }
+
     #main-menu-items {
         display: none;
         @media (min-width: theme(--breakpoint-lg)) {

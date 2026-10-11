@@ -1,35 +1,52 @@
 @layer components {
 
-    /* Band on top of the account area (templates/layout/menu/_account_band.html.twig) */
-    #account-band {
-        /* theme colour, lightly: the account area is told apart from the public pages */
+    /*
+     * Band on top of a section: one line of tabs (templates/layout/menu/_band.html.twig)
+     *  - .band-account: account area (Mes interfacs), lightly in the theme colour: the account area is told apart from the public pages.
+     *    Its title on the left of the tabs on large screens (in the top menu on small ones: "TC Université › Mes interfacs")
+     *  - .band-section: public section (Interfacs...), neutral, tabs only
+     */
+    .band {
+        border-bottom: 1px solid var(--color-gray-200);
+        background-color: var(--color-white);
+    }
+    .band-account {
         background-color: color-mix(in srgb, var(--color-theme) 7%, var(--color-white));
-        border-bottom: 1px solid color-mix(in srgb, var(--color-theme) 20%, var(--color-white));
+        border-bottom-color: color-mix(in srgb, var(--color-theme) 20%, var(--color-white));
     }
 
     /* the band replaces the breadcrumbs: less space above the content */
-    #account-band + #main-wrapper {
+    .band + #main-wrapper {
         padding-top: calc(var(--spacing) * 6);
         @media (min-width: theme(--breakpoint-md)) {
             padding-top: calc(var(--spacing) * 8);
         }
     }
 
-    .account-band-title {
+    .band-inner {
         display: flex;
         align-items: center;
+        gap: 24px;
+    }
+
+    .band-title {
+        display: none;
+        align-items: center;
         gap: 8px;
-        padding-top: 14px;
+        min-width: 0;
         color: var(--color-theme-darker);
+        @media (min-width: theme(--breakpoint-lg)) {
+            display: flex;
+        }
 
         svg {
             width: 20px;
             height: 20px;
         }
-        .account-band-name {
+        .band-name {
             font-weight: 700;
         }
-        .account-band-player {
+        .band-subtitle {
             color: var(--color-gray-600);
             white-space: nowrap;
             overflow: hidden;
@@ -37,10 +54,11 @@
         }
     }
 
-    .account-tabs {
+    .band-tabs {
         display: flex;
         gap: 4px;
-        margin-top: 6px;
+        margin-top: 4px;
+        min-width: 0;
         /* many tabs on a narrow screen: scroll instead of wrapping */
         overflow-x: auto;
         scrollbar-width: none;
@@ -49,8 +67,11 @@
         }
     }
 
-    .account-tab {
+    .band-tab {
         flex: 0 0 auto;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
         padding: 8px 10px 10px;
         border-bottom: 3px solid transparent;
         color: var(--color-gray-600);
@@ -67,14 +88,21 @@
             font-weight: 600;
         }
 
-        .account-tab-long {
+        /* the tab leads to the account area (Mes interfacs) */
+        .band-tab-icon {
+            width: 16px;
+            height: 16px;
+            color: var(--color-theme);
+        }
+
+        .band-tab-long {
             display: none;
         }
         @media (min-width: theme(--breakpoint-sm)) {
-            .account-tab-long {
+            .band-tab-long {
                 display: inline;
             }
-            .account-tab-short {
+            .band-tab-short {
                 display: none;
             }
         }

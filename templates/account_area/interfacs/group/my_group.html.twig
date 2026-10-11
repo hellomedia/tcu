@@ -24,9 +24,12 @@
 					standings: standings[group.id] ?? [],
 					me: app.user.player,
 					mine_label: false,
+					planning_link: true,
 				} %}
 			{% endfor %}
 		</div>
 	{% endif %}
+
+	{% include 'account_area/interfacs/_public_links.html.twig' %}
 
 {% endblock %}

@@ -1,37 +1,5 @@
-{% extends 'layout/base.html.twig' %}
+{% extends 'layout/banded.html.twig' %}
 
-{% block main %}
+{% block band %}
     {% include 'layout/menu/_account_band.html.twig' %}
-
-    <div id="main-wrapper">
-        {# no visible title: the header is empty, no margin under it #}
-        <header class="{{ block('title') is empty ? 'no-margin' }} {% block header_classes '' %}">
-            <div class="default-container default-container-xpadding">
-                
-                {# no breadcrumbs: the account band (tabs) tells where we are #}
-                {% block breadcrumbs '' %}
-
-                {# visible title when the page has one (season...), otherwise the page name for screen readers only, the current tab shows it #}
-                {% if block('title') is not empty %}
-                    <h1>{% block title '' %}</h1>
-                {% elseif page_name() %}
-                    <h1 class="sr-only">{{ page_name() }}</h1>
-                {% endif %}
-
-                {% block header_extra_content '' %}
-
-            </div>
-        </header>
-
-        <main>
-            <div class="default-container default-container-xpadding">
-
-                    {# old school flash messages still used in some instances (security...) #}
-                    {% block flash_messages '' %}
-
-                    {% block content '' %}
-
-            </div>
-        </main>
-    </div>
 {% endblock %}

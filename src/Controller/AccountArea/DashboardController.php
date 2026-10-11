@@ -16,7 +16,7 @@ class DashboardController extends BaseController
     #[Route('/dashboard', name: 'dashboard')]
     public function index(SeasonContext $seasonContext, AvailabilityGrid $availabilityGrid, PlayerRepository $playerRepository): Response
     {
-        $this->addBreadcrumb('Mon TCU', 'dashboard');
+        $this->addBreadcrumb('Mes interfacs', 'dashboard');
 
         $player = $this->getUser()->getPlayer();
 

@@ -6,6 +6,7 @@
       - dates: dates with matchs of the page's poules
       - me: Player to highlight (logged in player), or null
       - mine_label: "Ta poule" next to the name of the player's poule (default true)
+      - account_link: "Ta poule" links to Ma poule in Mes interfacs (account area) (default false)
       - collapse_matchs: matchs folded under a "Matchs" toggle, the page focuses on the standings (default false)
       - planning_link: link to the public planning filtered on the poule, when it has upcoming matchs (default false)
 #}
@@ -18,7 +19,11 @@
     <div class="group-header">
         <h4>{{ group }}</h4>
         {% if me and (mine_label ?? true) and me in group.players %}
-            <span class="group-mine">Ta poule</span>
+            {% if account_link ?? false %}
+                <a class="group-mine group-mine-link" href="{{ path('my_group') }}" title="Voir dans Mes interfacs">{{ ux_icon('account') }}Ta poule</a>
+            {% else %}
+                <span class="group-mine">Ta poule</span>
+            {% endif %}
         {% endif %}
         {% if (planning_link ?? false) and group_dates|filter(date => date.future) is not empty %}
             <a class="group-planning-link" href="{{ path('interfacs_planning', {poule: group.id}) }}">Voir au planning</a>

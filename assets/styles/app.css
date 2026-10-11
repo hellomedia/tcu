@@ -42,7 +42,7 @@
 @import "./component/modal-animation.css";
 @import "./component/flashes.css";
 @import "./component/table.css";
-@import "./component/account-band.css";
+@import "./component/band.css";
 
 /* path processing only works from app.css */
 #chat-box-container {

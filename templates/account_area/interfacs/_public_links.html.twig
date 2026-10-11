@@ -1,0 +1,27 @@
+{# Bottom of the interfacs pages of Mon TCU: the public pages of the whole competition #}
+<style>
+    .public-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 20px;
+        margin-top: 40px;
+        padding-top: 20px;
+        border-top: 1px solid var(--color-gray-200);
+        color: var(--color-gray-500);
+        a {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 500;
+            svg {
+                width: 16px;
+                height: 16px;
+            }
+        }
+    }
+</style>
+<nav class="public-links" aria-label="Interfacs">
+    <span>Toutes les interfacs :</span>
+    <a href="{{ path('interfacs_groups') }}">{{ ux_icon('interclubs') }}Poules</a>
+    <a href="{{ path('interfacs_planning') }}">{{ ux_icon('calendar') }}Planning</a>
+</nav>

@@ -1,4 +1,4 @@
-{% extends 'layout/default.html.twig' %}
+{% extends 'layout/interfacs.html.twig' %}
 
 {% block body_extra_classes 'with-cards' %}
 
@@ -48,12 +48,15 @@
 
     <div class="groups">
 
-        {% for group in groups %}
+        {% set me = app.user ? app.user.player : null %}
+        {# the player's poule first ; "Ta poule" links to Ma poule, which shows the season of the default page (not the archives) #}
+        {% for group in me ? groups|sort((a, b) => (me in b.players) <=> (me in a.players)) : groups %}
             {% include 'interfacs/group/_card.html.twig' with {
                 standings: standings[group.id] ?? [],
                 collapse_matchs: true,
                 planning_link: true,
-                me: app.user ? app.user.player : null,
+                account_link: season == seasons|first,
+                me: me,
             } %}
         {% endfor %}
 

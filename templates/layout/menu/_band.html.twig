@@ -1,0 +1,37 @@
+{#
+    Band on top of a section of the site: tabs between the pages of the section, on a single line.
+    Replaces the breadcrumbs (layout/banded.html.twig).
+    The name of the section is in the top menu (current item on large screens, "TC Université › Section" on small ones):
+    only the account area (Mes interfacs), which is not a top menu item, shows its title, next to the tabs on large screens.
+    vars:
+      - variant: 'account' (account area, theme colour, title) | 'section' (public section: Interfacs..., tabs only)
+      - icon, title (aria label of the tabs), subtitle (optional)
+      - tabs: [{url, label, short (label on small screens), current, icon (optional, after the label)}]
+#}
+<div class="band band-{{ variant }}">
+    <div class="band-inner default-container default-container-xpadding">
+        {% if variant == 'account' %}
+            <div class="band-title">
+                {{ ux_icon(icon) }}
+                <span class="band-name">{{ title }}</span>
+                {% if subtitle ?? null %}
+                    <span class="band-subtitle">· {{ subtitle }}</span>
+                {% endif %}
+            </div>
+        {% endif %}
+        <nav class="band-tabs" aria-label="{{ title }}">
+            {% for tab in tabs %}
+                <a href="{{ tab.url }}"
+                    class="band-tab {{ tab.current ? 'current' }}"
+                    {{ tab.current ? 'aria-current="page"' }}
+                >
+                    <span class="band-tab-long">{{ tab.label }}</span>
+                    <span class="band-tab-short">{{ tab.short }}</span>
+                    {% if tab.icon ?? null %}
+                        {{ ux_icon(tab.icon, {class: 'band-tab-icon'}) }}
+                    {% endif %}
+                </a>
+            {% endfor %}
+        </nav>
+    </div>
+</div>

@@ -1,4 +1,4 @@
-{% extends 'layout/default.html.twig' %}
+{% extends 'layout/interfacs.html.twig' %}
 
 {% block body_extra_classes 'with-cards' %}
 
@@ -170,10 +170,23 @@
         }
     </style>
 
+    {% set me = app.user ? app.user.player : null %}
+    {% set my_slots = me ? dates|reduce((count, date) => count + date.slots|filter(slot => slot.match and slot.match.sideOf(me))|length, 0) : 0 %}
+
     <div data-controller="planning-filter" data-planning-filter-storage-key-value="public-planning-filter">
 
     {% if groups is not empty %}
         <div class="group-legend" aria-label="Poules">
+            {% if my_slots > 0 %}
+                <button type="button"
+                    class="group-legend-item group-legend-mine"
+                    style="--group-color: var(--color-yellow-400)"
+                    data-group-id="mine"
+                    data-planning-filter-target="group"
+                    data-action="planning-filter#toggleGroup"
+                    title="Ne voir que mes matchs"
+                ><span class="swatch"></span>Mes matchs</button>
+            {% endif %}
             {% for group in groups %}
                 <button type="button"
                     class="group-legend-item"
@@ -207,7 +220,7 @@
                             <div class="slots">
                                 {% for slot in slots %}
                                     {% set group = slot.match ? slot.match.group : null %}
-                                    <div class="slot-row {{ group ? 'booked' }}" {% if group %}data-group-id="{{ group.id }}" style="--group-color: {{ group_color(group) }}" title="{{ group }}"{% endif %}>
+                                    <div class="slot-row {{ group ? 'booked' }} {{ me and group and slot.match.sideOf(me) ? 'mine' }}" {% if group %}data-group-id="{{ group.id }}" style="--group-color: {{ group_color(group) }}" title="{{ group }}"{% endif %}>
                                         <div class="slot-time">
                                             {{ slot.startsAt|date('H:i') }}
                                         </div>

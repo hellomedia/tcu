@@ -20,7 +20,7 @@ class AvailabilityController extends BaseController
     #[Route('/mes/disponibilites', name: 'my_availabilities', methods: ['GET'])]
     public function index(SeasonContext $seasonContext, AvailabilityGrid $grid): Response
     {
-        $this->addBreadcrumb('Mon TCU', 'dashboard');
+        $this->addBreadcrumb('Mes interfacs', 'dashboard');
         $this->addBreadcrumb('Mes disponibilités');
 
         $season = $seasonContext->getCurrent();

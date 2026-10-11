@@ -1,0 +1,14 @@
+{#
+    Band on top of the public interfacs pages.
+    "Mes interfacs" leads to the account area of the same name (account icon), through the login page when logged out: players log in to see their matchs.
+#}
+{% include 'layout/menu/_band.html.twig' with {
+    variant: 'section',
+    icon: 'trophy',
+    title: 'Interfacs',
+    tabs: [
+        {url: path('interfacs_groups'), label: 'Poules', short: 'Poules', current: app.current_route == 'interfacs_groups'},
+        {url: path('interfacs_planning'), label: 'Planning', short: 'Planning', current: is_current_page('interfacs_planning')},
+        {url: path('dashboard'), label: 'Mes interfacs', short: 'Mes interfacs', current: false, icon: 'account'},
+    ],
+} only %}

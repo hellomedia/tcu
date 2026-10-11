@@ -2,29 +2,25 @@
 
 namespace App\Controller;
 
-use App\Entity\InterfacMatch;
 use App\Entity\Season;
-use App\Form\PlayerPickerForm;
 use App\Repository\CourtRepository;
 use App\Repository\DateRepository;
 use App\Repository\GroupRepository;
 use App\Repository\PlayerRepository;
 use App\Repository\SeasonRepository;
 use App\Service\SeasonContext;
-use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 class InterfacsController extends BaseController
 {
+    /**
+     * Pas de page d'accueil : les pages interfacs ont une bande d'onglets (Poules, Planning, Mes interfacs)
+     */
     #[Route('/interfacs', name: 'interfacs')]
-    public function homepage(SeasonContext $seasonContext): Response
+    public function homepage(): Response
     {
-        $this->addBreadcrumb('Homepage', 'homepage');
-        $this->addBreadcrumb('Interfacs', 'interfacs');
-
-        return $this->comingSoon($seasonContext) ?? $this->render('interfacs/interfacs.html.twig', []);
+        return $this->redirectToRoute('interfacs_groups');
     }
 
     /**
@@ -44,33 +40,13 @@ class InterfacsController extends BaseController
         ]);
     }
 
+    /**
+     * Ancienne recherche publique des matchs d'un joueur : les matchs sont dans Mon TCU (connexion requise)
+     */
     #[Route('/interfacs/mes-matchs', name: 'interfacs_my_matchs', methods: ['GET'])]
-    public function myMatchs(Request $request, PlayerRepository $playerRepository, SeasonContext $seasonContext): Response
+    public function myMatchs(): Response
     {
-        $form = $this->createForm(PlayerPickerForm::class);
-
-        $form->handleRequest($request);
-
-        $player = $form->get('player')?->getData();
-    
-        $this->addBreadcrumb('Homepage', 'homepage');
-        $this->addBreadcrumb('Interfacs', 'interfacs');
-        $this->addBreadcrumb('Mes matchs');
-
-        if ($comingSoon = $this->comingSoon($seasonContext)) {
-            return $comingSoon;
-        }
-
-        $playerRepository->loadMatchs($player);
-        $matchs = $player?->getMatchs($seasonContext->getInterfacsSeason()) ?? new ArrayCollection();
-
-        return $this->render('interfacs/my_matchs.html.twig', [
-            'form' => $form,
-            'player' => $player,
-            'upcoming' => $matchs->filter(fn (InterfacMatch $match) => $match->isUpcoming())->toArray(),
-            'unscheduled' => $matchs->filter(fn (InterfacMatch $match) => !$match->isScheduled())->toArray(),
-            'played' => array_reverse($matchs->filter(fn (InterfacMatch $match) => $match->isPast())->toArray()),
-        ]);
+        return $this->redirectToRoute('dashboard', status: Response::HTTP_MOVED_PERMANENTLY);
     }
 
     /**

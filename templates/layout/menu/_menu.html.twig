@@ -13,10 +13,18 @@
                     >
 						TC Université
 					</a>
+					{# small screens: the section next to the site name (the top menu items are hidden, the band only has tabs) #}
+					{% set section = current_section() %}
+					{% if section %}
+						<a href="{{ path(section.route) }}" class="logo-section">
+							<span class="logo-section-separator" aria-hidden="true">›</span>
+							{{ section.name }}
+						</a>
+					{% endif %}
 				</div>
 
                 <div id="main-menu-items">
-					<a href="{{ path('interfacs') }}"
+					<a href="{{ path('interfacs_groups') }}"
 						class="main-menu-item {{ app.current_route starts with 'interfacs' ? 'current' }}"
 						data-action="mouseenter->menu-hover#enter mouseleave->menu-hover#leave">
 						Interfacs

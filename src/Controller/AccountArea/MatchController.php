@@ -21,7 +21,7 @@ class MatchController extends BaseController
     #[Route('/mes/matchs', name: 'my_matchs')]
     public function index(InterfacMatchRepository $matchRepository, PlayerRepository $playerRepository, SeasonContext $seasonContext): Response
     {
-        $this->addBreadcrumb('Mon TCU', 'dashboard');
+        $this->addBreadcrumb('Mes interfacs', 'dashboard');
         $this->addBreadcrumb('Mes matchs');
 
         $user = $this->getUser();

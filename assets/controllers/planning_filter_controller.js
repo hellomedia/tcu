@@ -4,6 +4,7 @@ import { Controller } from "@hotwired/stimulus";
  * Planning page filters:
  *  - free slots only
  *  - focus on one poule (click on its legend item, or ?poule=<id> in the url)
+ *    or on the player's own matchs (legend item with data-group-id="mine", slot rows with the class "mine")
  *
  * Filtered slot rows are dimmed (not hidden) so the times stay aligned across courts.
  * The state is kept in localStorage and re-applied when a slot row is replaced by a turbo stream.
@@ -91,7 +92,8 @@ export default class extends Controller {
 
                 if (booked) {
                     // poule focus hides the other poules ; "free only" alone hides every booked slot
-                    dimmed = groupId ? row.dataset.groupId !== groupId : freeOnly;
+                    const focused = groupId === "mine" ? row.classList.contains("mine") : row.dataset.groupId === groupId;
+                    dimmed = groupId ? !focused : freeOnly;
                 } else {
                     // free slots stay visible with "free only", even when focusing on a poule :
                     // that is where its remaining matches can go
