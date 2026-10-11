@@ -40,14 +40,6 @@
 			&:hover {
 				border-color: var(--color-yellow-400);
 			}
-			&.urgent {
-				border-color: var(--color-red-200);
-				border-left-color: var(--color-red-500);
-				background-color: var(--color-red-50);
-				&:hover {
-					border-color: var(--color-red-500);
-				}
-			}
 			svg {
 				flex: 0 0 auto;
 				width: 22px;
@@ -151,8 +143,7 @@
 						</a>
 					{% endif %}
 					{% if missing_dates > 0 %}
-						{# red when some of them are less than AvailabilityGrid::SOON away #}
-						<a class="dash-todo {{ availabilities.missingSoon > 0 ? 'urgent' }}" href="{{ path('my_availabilities') }}">
+						<a class="dash-todo" href="{{ path('my_availabilities') }}">
 							<twig:ux:icon name="calendar" />
 							<span class="dash-todo-text">
 								{{ missing_dates }} date{{ missing_dates > 1 ? 's' }} sans disponibilités
