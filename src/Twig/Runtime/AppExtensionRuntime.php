@@ -2,6 +2,7 @@
 
 namespace App\Twig\Runtime;
 
+use App\Helper\BreadcrumbsHelper;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Twig\Extension\RuntimeExtensionInterface;
 
@@ -12,7 +13,18 @@ class AppExtensionRuntime implements RuntimeExtensionInterface
 
     public function __construct(
         private RequestStack $requestStack,
+        private BreadcrumbsHelper $breadcrumbsHelper,
     ) {}
+
+    /**
+     * Name of the page = last breadcrumb (heading of the account pages, which have no breadcrumbs)
+     */
+    public function pageName(): ?string
+    {
+        $breadcrumbs = $this->breadcrumbsHelper->getBreadcrumbs();
+
+        return $breadcrumbs === [] ? null : end($breadcrumbs)['item'];
+    }
 
     public function isAccountArea(): bool
     {
