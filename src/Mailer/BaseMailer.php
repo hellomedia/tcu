@@ -14,6 +14,9 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class BaseMailer
 {
+    /** nom de l'expéditeur de tous les emails (le nom du site, TCU, est trop court pour une boîte mail) */
+    private const SENDER_NAME = 'TC Université';
+
     public function __construct(
         protected string $siteName,
         protected string $emailDomain,
@@ -32,15 +35,11 @@ abstract class BaseMailer
     ) {
     }
 
-    /**
-     * @param string|null $fromName nom de l'expéditeur, le nom du site par défaut
-     */
-    protected function send(TemplatedEmail $email, ?string $from = 'postmaster', ?string $fromName = null): void
+    protected function send(TemplatedEmail $email, ?string $from = 'postmaster'): void
     {
         $this->_setSender(
             emailMessage: $email,
             from: $from,
-            fromName: $fromName,
         );
 
         $baseContext = [
@@ -65,10 +64,10 @@ abstract class BaseMailer
         $this->mailer->send($email);
     }
 
-    private function _setSender(TemplatedEmail $emailMessage, string $from, ?string $fromName = null): void
+    private function _setSender(TemplatedEmail $emailMessage, string $from): void
     {
         $senderEmail = $from . '@' . $this->emailDomain;
-        $senderName = $fromName ?? $this->siteName;
+        $senderName = self::SENDER_NAME;
 
         $emailMessage->from(new Address($senderEmail, $senderName));
     }

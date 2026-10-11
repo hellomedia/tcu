@@ -21,7 +21,6 @@ class InvitationMailer extends BaseMailer
     public const LIFETIME_DAYS = 14;
 
     private const INTERFACS_SUBJECT = 'Ton compte Interfacs (TC Université)';
-    private const INTERFACS_SENDER_NAME = 'TC Université';
 
     /**
      * @param Season|null $season saison sélectionnée dans l'admin : version interfacs si le joueur y est inscrit aux interfacs
@@ -51,7 +50,7 @@ class InvitationMailer extends BaseMailer
                 'season_name' => (string) $season,
             ]);
 
-        $this->send($email, fromName: $interfacs ? self::INTERFACS_SENDER_NAME : null);
+        $this->send($email);
 
         $user->setInvitedAt(new \DateTimeImmutable());
     }
