@@ -173,7 +173,8 @@
     {% set me = app.user ? app.user.player : null %}
     {% set my_slots = me ? dates|reduce((count, date) => count + date.slots|filter(slot => slot.match and slot.match.sideOf(me))|length, 0) : 0 %}
 
-    <div data-controller="planning-filter" data-planning-filter-storage-key-value="public-planning-filter">
+    {# filters are not remembered: the planning always opens with every poule #}
+    <div data-controller="planning-filter">
 
     {% if groups is not empty %}
         <div class="group-legend" aria-label="Poules">

@@ -7,7 +7,8 @@ import { Controller } from "@hotwired/stimulus";
  *    or on the player's own matchs (legend item with data-group-id="mine", slot rows with the class "mine")
  *
  * Filtered slot rows are dimmed (not hidden) so the times stay aligned across courts.
- * The state is kept in localStorage and re-applied when a slot row is replaced by a turbo stream.
+ * The state is re-applied when a slot row is replaced by a turbo stream.
+ * With a storage key, it is also kept in localStorage across visits (admin); without, every visit starts unfiltered (public).
  *
  *  <div data-controller="planning-filter" data-planning-filter-storage-key-value="planning-filter">
  *      <input type="checkbox" data-planning-filter-target="freeOnly" data-action="planning-filter#toggleFreeOnly">
@@ -19,7 +20,7 @@ import { Controller } from "@hotwired/stimulus";
 export default class extends Controller {
     static targets = ["freeOnly", "group", "reset", "planning"];
     static values = {
-        storageKey: { type: String, default: "planning-filter" },
+        storageKey: { type: String, default: "" },
     };
 
     connect() {
@@ -109,6 +110,10 @@ export default class extends Controller {
     }
 
     _load() {
+        if (!this.storageKeyValue) {
+            return { freeOnly: false, groupId: null };
+        }
+
         try {
             const stored = JSON.parse(localStorage.getItem(this.storageKeyValue) || "{}");
             return { freeOnly: !!stored.freeOnly, groupId: stored.groupId || null };
@@ -118,6 +123,10 @@ export default class extends Controller {
     }
 
     _save() {
+        if (!this.storageKeyValue) {
+            return;
+        }
+
         localStorage.setItem(this.storageKeyValue, JSON.stringify(this.state));
     }
 }

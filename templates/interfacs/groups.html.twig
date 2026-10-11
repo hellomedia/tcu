@@ -49,8 +49,8 @@
     <div class="groups">
 
         {% set me = app.user ? app.user.player : null %}
-        {# the player's poule first ; "Ta poule" links to Ma poule, which shows the season of the default page (not the archives) #}
-        {% for group in me ? groups|sort((a, b) => (me in b.players) <=> (me in a.players)) : groups %}
+        {# same order for everyone, the player's poule is highlighted ; "Ta poule" links to Ma poule, which shows the season of the default page (not the archives) #}
+        {% for group in groups %}
             {% include 'interfacs/group/_card.html.twig' with {
                 standings: standings[group.id] ?? [],
                 collapse_matchs: true,
