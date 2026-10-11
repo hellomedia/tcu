@@ -53,6 +53,8 @@ class DashboardController extends BaseController
             'to_confirm' => $player?->getUnconfirmedUpcomingMatchs()->count() ?? 0,
             'groups' => $groups,
             'availabilities' => $availabilities,
+            // aucun match planifié cette saison : le joueur attend son premier match
+            'first_match_pending' => $season !== null && $player?->getScheduledMatchs($season)->isEmpty(),
         ]);
     }
 }
