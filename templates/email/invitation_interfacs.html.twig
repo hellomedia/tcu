@@ -1,0 +1,46 @@
+{# Invitation d'un joueur inscrit aux interfacs (Admin\Mailer\InvitationMailer), version tutoiement de invitation.html.twig #}
+{% extends "email/layout/template.html.twig" %}
+
+{% block title %}
+
+    {% include "email/includes/_title.html.twig" with {
+        title: title
+    } %}
+
+{% endblock %}
+
+{% block paragraphs %}
+
+    {% embed "email/includes/_paragraph.html.twig" %}
+        {% block text %}
+            Bonjour {{ name }},<br><br>
+            Pour les interfacs ({{ season_name }}), le club t'a créé un compte sur {{ siteName }} avec cette adresse email ({{ account_email }}).
+            Dans ton espace « Mes interfacs », tu retrouves ta poule et tes matchs, tu indiques tes disponibilités et tu confirmes tes horaires.<br><br>
+            Pour l'activer, clique sur le bouton ci-dessous : le lien te connecte au site et t'invite à choisir ton mot de passe.
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}
+
+{% block button %}
+
+    {% include "email/includes/_button.html.twig" with {
+            url: invitation_link,
+            label: 'Choisir mon mot de passe'
+        }
+    %}
+
+{% endblock %}
+
+{% block extra_rows %}
+
+    {% include "email/includes/_spacer.html.twig" %}
+
+    {% embed "email/includes/_paragraph.html.twig" %}
+        {% block text %}
+            Ce lien est valable {{ lifetime_days }} jours. Passé ce délai, utilise « Mot de passe oublié »
+            sur <a href="{{ password_reset_link }}">{{ siteName }}</a> avec cette adresse email.
+        {% endblock %}
+    {% endembed %}
+
+{% endblock %}

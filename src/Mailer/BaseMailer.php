@@ -32,11 +32,15 @@ abstract class BaseMailer
     ) {
     }
 
-    protected function send(TemplatedEmail $email, ?string $from = 'postmaster'): void
+    /**
+     * @param string|null $fromName nom de l'expéditeur, le nom du site par défaut
+     */
+    protected function send(TemplatedEmail $email, ?string $from = 'postmaster', ?string $fromName = null): void
     {
         $this->_setSender(
             emailMessage: $email,
             from: $from,
+            fromName: $fromName,
         );
 
         $baseContext = [
@@ -61,10 +65,10 @@ abstract class BaseMailer
         $this->mailer->send($email);
     }
 
-    private function _setSender(TemplatedEmail $emailMessage, string $from): void
+    private function _setSender(TemplatedEmail $emailMessage, string $from, ?string $fromName = null): void
     {
         $senderEmail = $from . '@' . $this->emailDomain;
-        $senderName = $this->siteName;
+        $senderName = $fromName ?? $this->siteName;
 
         $emailMessage->from(new Address($senderEmail, $senderName));
     }

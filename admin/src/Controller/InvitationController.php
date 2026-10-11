@@ -74,7 +74,7 @@ class InvitationController extends BaseController
      * Un joueur, même déjà invité (lien expiré, email corrigé)
      */
     #[Route('/players/{id:player}/invite', name: 'admin_player_invite', requirements: ['id' => '\d+'], methods: ['GET'], defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
-    public function invite(Player $player, Request $request, InvitationMailer $mailer, EntityManagerInterface $entityManager): Response
+    public function invite(Player $player, Request $request, InvitationMailer $mailer, EntityManagerInterface $entityManager, SeasonContext $seasonContext): Response
     {
         $this->checkToken($request);
 
@@ -83,7 +83,7 @@ class InvitationController extends BaseController
         if ($user === null || !$user->mustChoosePassword()) {
             $this->addFlash('warning', sprintf('%s n\'a pas de compte à inviter.', $player->getName()));
         } else {
-            $mailer->sendInvitation($user);
+            $mailer->sendInvitation($user, $seasonContext->getSelected());
             $entityManager->flush();
 
             $this->addFlash('success', sprintf('Invitation envoyée à %s (%s).', $player->getName(), $user->getEmail()));
@@ -96,7 +96,7 @@ class InvitationController extends BaseController
      * Tous les comptes de joueurs pas encore invités, ou ceux des inscrits aux interfacs d'une saison (?season=, page Invitations)
      */
     #[Route('/players/invite-pending', name: 'admin_players_invite_pending', methods: ['GET'], defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
-    public function invitePending(Request $request, UserRepository $userRepository, SeasonRepository $seasonRepository, InvitationMailer $mailer, EntityManagerInterface $entityManager): Response
+    public function invitePending(Request $request, UserRepository $userRepository, SeasonRepository $seasonRepository, SeasonContext $seasonContext, InvitationMailer $mailer, EntityManagerInterface $entityManager): Response
     {
         $this->checkToken($request);
 
@@ -106,8 +106,10 @@ class InvitationController extends BaseController
         }
         $users = $userRepository->findPlayersToInvite($season);
 
+        // version interfacs de l'email pour les inscrits aux interfacs de la saison (Admin\Mailer\InvitationMailer)
+        $emailSeason = $season ?? $seasonContext->getSelected();
         foreach ($users as $user) {
-            $mailer->sendInvitation($user);
+            $mailer->sendInvitation($user, $emailSeason);
         }
 
         $entityManager->flush();
