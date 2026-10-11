@@ -33,7 +33,7 @@ class AvailabilityGrid
     /** dates non renseignées dans les 4 semaines à partir du début de la saison (ou d'aujourd'hui) : empêchent de planifier les matchs (dashboard) */
     public const PLANNING = '+4 weeks';
 
-    /** dates à plus de 3 mois : repliées sous "Plus tard" sur la page du joueur */
+    /** dates à plus de 3 mois : regroupées sous "Plus tard" sur la page du joueur */
     public const LATER = '+3 months';
 
     /** @var array<int, Date[]> dates à venir par saison */
@@ -103,7 +103,7 @@ class AvailabilityGrid
     /**
      * Grille complète d'une inscription, pour l'affichage / l'édition
      *
-     * sections : résumés séparés des dates proches et des dates à plus de LATER (repliées sur la page du joueur),
+     * sections : résumés séparés des dates proches et des dates à plus de LATER (regroupées sous "Plus tard" sur la page du joueur),
      * null quand il n'y a pas de quoi faire deux groupes
      *
      * @return array{

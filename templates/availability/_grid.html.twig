@@ -317,7 +317,7 @@
 </style>
 
 {% set autosave = autosave|default(false) %}
-{# dates more than AvailabilityGrid::LATER ahead are folded, each part with its own summary (grid.sections) #}
+{# dates more than AvailabilityGrid::LATER ahead are grouped under "Plus tard" (open, can be folded), each part with its own summary (grid.sections) #}
 {% set sections = split|default(false) ? grid.sections : null %}
 {% set upcoming = sections ? grid.dates|filter(item => not item.later) : grid.dates %}
 {% set later = sections ? grid.dates|filter(item => item.later) : [] %}
@@ -346,7 +346,7 @@
         </div>
 
         {% if later is not empty %}
-            <details class="avail-later">
+            <details class="avail-later" open>
                 {% include 'availability/_grid_later_summary.html.twig' with {summary: sections.later} %}
                 <p class="avail-note">Ces dates sont encore loin : tu peux les renseigner maintenant ou plus tard.</p>
                 <div class="avail-dates">
