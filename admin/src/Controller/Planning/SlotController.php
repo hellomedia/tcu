@@ -214,7 +214,7 @@ class SlotController extends BaseController
         $this->entityManager->refresh($match);
 
         return $this->render('@admin/planning/booking_removed_success.html.twig', [
-            'feedback' => 'Créneau retiré',
+            'feedback' => 'Match déprogrammé',
             'slot' => $slot,
             'match' => $match,
         ]);

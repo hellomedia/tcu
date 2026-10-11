@@ -54,14 +54,14 @@
                     class="hk-dropdown-link"
                     formaction="{{ path('admin_planning_slot_remove_booking', {'id': slot.id}) }}"
                     data-action="modal-confirm#open"
-                    data-title="Retirer le créneau"
-                    data-html="<p>Le créneau est libéré et le match <b>{{ slot.match }}</b> devra être reprogrammé.<br>Les confirmations des joueurs sont supprimées.</p>"
-                    data-button-label="Retirer le créneau"
+                    data-title="Déprogrammer le match"
+                    data-html="<p>Le match <b>{{ slot.match }}</b> devra être reprogrammé et le créneau est libéré.<br>Les confirmations des joueurs sont supprimées.</p>"
+                    data-button-label="Déprogrammer le match"
                     data-variant="warning"
                     data-csrf="{{ csrf_token('delete-booking') }}"
                 >
                     <twig:ux:icon name="delete" />
-                    Retirer le créneau
+                    Déprogrammer le match
                 </button>
 
             </div>
