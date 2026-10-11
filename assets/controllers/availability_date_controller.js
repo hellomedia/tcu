@@ -7,6 +7,7 @@ import { Controller } from "@hotwired/stimulus";
  * - any interaction marks the date as answered (hidden input): unchecked slots then mean "not available",
  *   as opposed to an untouched date which means "not filled in"
  * - the quick buttons, the badge and the status line follow the state
+ * - each change dispatches "availability-date:changed" (autosave on the player page)
  */
 export default class extends Controller {
     static targets = ["allBtn", "noneBtn", "time", "answered", "badge", "status"];
@@ -22,17 +23,20 @@ export default class extends Controller {
         this.timeTargets.forEach((input) => (input.checked = true));
         this.markAnswered();
         this.refresh();
+        this.dispatch("changed"); // autosave (availability_autosave_controller)
     }
 
     setNone() {
         this.timeTargets.forEach((input) => (input.checked = false));
         this.markAnswered();
         this.refresh();
+        this.dispatch("changed"); // autosave (availability_autosave_controller)
     }
 
     changeTime() {
         this.markAnswered();
         this.refresh();
+        this.dispatch("changed"); // autosave (availability_autosave_controller)
     }
 
     markAnswered() {

@@ -34,6 +34,11 @@
 			font-weight: 600;
 			background-color: var(--color-yellow-100);
 			color: var(--color-yellow-900);
+
+			&.urgent {
+				background-color: var(--color-red-100);
+				color: var(--color-red-800);
+			}
 		}
 	</style>
 
@@ -66,7 +71,8 @@
 					{% else %}
 						{% set missing = availabilities.total - availabilities.answered %}
 						{{ availabilities.answered }} date{{ availabilities.answered > 1 ? 's' }} sur {{ availabilities.total }} renseignée{{ availabilities.answered > 1 ? 's' }}
-						<span class="item-badge">{{ missing }} à renseigner</span>
+						{# red when some of them are less than AvailabilityGrid::SOON away #}
+						<span class="item-badge {{ availabilities.missingSoon > 0 ? 'urgent' }}">{{ missing }} à renseigner</span>
 					{% endif %}
 				</span>
 			{% endif %}

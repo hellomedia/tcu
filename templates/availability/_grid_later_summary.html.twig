@@ -1,0 +1,17 @@
+{# Title of the folded "Plus tard" dates, refreshed after each autosave #}
+{# vars: summary (AvailabilityGrid::summary), later (dates of the section) #}
+<summary class="avail-later-summary" id="avail-later-summary">
+    <span class="avail-later-title">
+        Plus tard
+        <span class="avail-later-months">
+            {{ later|first.date.date|format_date(pattern: 'MMMM', locale: 'fr') }}
+            {%- if (later|last.date.date|date('Y-m')) != (later|first.date.date|date('Y-m')) %} – {{ later|last.date.date|format_date(pattern: 'MMMM', locale: 'fr') }}{% endif %}
+            · {{ summary.later }} date{{ summary.later > 1 ? 's' }}
+        </span>
+    </span>
+    {% if summary.missingLater > 0 %}
+        <span class="avail-badge none">{{ summary.missingLater }} pas renseignée{{ summary.missingLater > 1 ? 's' }}</span>
+    {% else %}
+        <span class="avail-badge complete">toutes renseignées</span>
+    {% endif %}
+</summary>

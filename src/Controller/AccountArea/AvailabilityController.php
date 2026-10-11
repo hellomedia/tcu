@@ -55,6 +55,16 @@ class AvailabilityController extends BaseController
             $request->request->all('avail'),
         ));
 
+        // autosave (availability_autosave_controller) : summaries only, the date cards are being edited
+        if ($this->isRequestForStream($request)) {
+            $response = $this->render('account_area/interfacs/availability/_save_streams.html.twig', [
+                'grid' => $grid->build($registration),
+            ]);
+            $response->headers->set('Content-Type', 'text/vnd.turbo-stream.html; charset=utf-8');
+
+            return $response;
+        }
+
         $this->addFlash('success', 'Disponibilités enregistrées');
 
         return $this->redirectToRoute('my_availabilities');

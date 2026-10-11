@@ -1,0 +1,14 @@
+{# answer to an autosave of the availability grid: refreshed summaries #}
+<turbo-stream action="replace" target="avail-summary">
+    <template>
+        {% include 'availability/_grid_summary.html.twig' with {summary: grid.summary} %}
+    </template>
+</turbo-stream>
+{% set later = grid.dates|filter(item => item.later) %}
+{% if later is not empty %}
+    <turbo-stream action="replace" target="avail-later-summary">
+        <template>
+            {% include 'availability/_grid_later_summary.html.twig' with {summary: grid.summary, later: later} %}
+        </template>
+    </turbo-stream>
+{% endif %}

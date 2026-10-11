@@ -27,6 +27,12 @@ class AvailabilityGrid
     public const NO = 'no';
     public const UNKNOWN = 'unknown';
 
+    /** dates non renseignées à moins de 2 mois : rappel insistant (dashboard) */
+    public const SOON = '+2 months';
+
+    /** dates à plus de 3 mois : repliées sous "Plus tard" sur la page du joueur */
+    public const LATER = '+3 months';
+
     /** @var array<int, Date[]> dates à venir par saison */
     private array $upcomingDates = [];
 
@@ -78,8 +84,8 @@ class AvailabilityGrid
      * Grille complète d'une inscription, pour l'affichage / l'édition
      *
      * @return array{
-     *     dates: list<array{date: Date, status: string, times: list<array{key: string, label: string, startsAt: \DateTimeImmutable, status: string}>, available: int, answered: int}>,
-     *     summary: array{status: string, answered: int, partial: int, total: int}
+     *     dates: list<array{date: Date, status: string, times: list<array{key: string, label: string, startsAt: \DateTimeImmutable, status: string}>, available: int, answered: int, soon: bool, later: bool}>,
+     *     summary: array{status: string, answered: int, partial: int, total: int, missingSoon: int, later: int, missingLater: int}
      * }
      */
     public function build(Registration $registration): array
@@ -88,6 +94,12 @@ class AvailabilityGrid
         $dates = [];
         $answeredDates = 0;
         $partialDates = 0;
+        $missingSoon = 0;
+        $laterDates = 0;
+        $missingLater = 0;
+        $today = new \DateTimeImmutable('today');
+        $soonLimit = $today->modify(self::SOON);
+        $laterLimit = $today->modify(self::LATER);
 
         foreach ($this->getUpcomingDates($registration->getSeason()) as $date) {
             $times = [];
@@ -115,12 +127,21 @@ class AvailabilityGrid
             $answeredDates += $dateStatus === 'answered' ? 1 : 0;
             $partialDates += $dateStatus === 'partial' ? 1 : 0;
 
+            $soon = $date->getDate() <= $soonLimit;
+            $later = $date->getDate() > $laterLimit;
+            $missing = $times !== [] && $dateStatus !== 'answered';
+            $missingSoon += $soon && $missing ? 1 : 0;
+            $laterDates += $later ? 1 : 0;
+            $missingLater += $later && $missing ? 1 : 0;
+
             $dates[] = [
                 'date' => $date,
                 'status' => $dateStatus,
                 'times' => $times,
                 'available' => $available,
                 'answered' => $answered,
+                'soon' => $soon,
+                'later' => $later,
             ];
         }
 
@@ -138,6 +159,9 @@ class AvailabilityGrid
                 'answered' => $answeredDates,
                 'partial' => $partialDates,
                 'total' => $total,
+                'missingSoon' => $missingSoon,
+                'later' => $laterDates,
+                'missingLater' => $missingLater,
             ],
         ];
     }
@@ -145,7 +169,7 @@ class AvailabilityGrid
     /**
      * Résumé seul (liste des inscriptions)
      *
-     * @return array{status: string, answered: int, partial: int, total: int}
+     * @return array{status: string, answered: int, partial: int, total: int, missingSoon: int, later: int, missingLater: int}
      */
     public function summary(Registration $registration): array
     {

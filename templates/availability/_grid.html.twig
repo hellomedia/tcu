@@ -1,5 +1,6 @@
 {# Availability grid of a registration (player page and admin page) #}
-{# vars: grid (AvailabilityGrid::build), action (form url), token (csrf), cancel_url (optional), submit_label (optional) #}
+{# vars: grid (AvailabilityGrid::build), action (form url), token (csrf), cancel_url (optional), submit_label (optional),
+   split (optional: fold the dates after AvailabilityGrid::LATER), autosave (optional: save on each change, see availability_autosave_controller) #}
 <style>
     .avail-grid {
         --avail-border: #dee2e6;
@@ -230,94 +231,144 @@
         font-size: 0.85rem;
         color: var(--avail-muted);
     }
+    .avail-later {
+        margin-top: 24px;
+        border: 1px solid var(--avail-border);
+        border-radius: 8px;
+        background: #fff;
+        &[open] {
+            padding-bottom: 14px;
+        }
+        > .avail-note {
+            margin: 0 14px 14px;
+        }
+        > .avail-dates {
+            margin-inline: 14px;
+        }
+    }
+    .avail-later-summary {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px 16px;
+        padding: 12px 14px;
+        cursor: pointer;
+        list-style: none;
+        &::-webkit-details-marker {
+            display: none;
+        }
+        &::before {
+            content: "▸";
+            color: var(--avail-muted);
+            transition: transform 0.15s;
+        }
+        .avail-later[open] > &::before {
+            transform: rotate(90deg);
+        }
+        .avail-later-title {
+            flex: 1;
+            font-weight: 700;
+        }
+        .avail-later-months {
+            margin-left: 6px;
+            font-weight: normal;
+            color: var(--avail-muted);
+        }
+    }
+    /* autosave feedback, fixed above the mobile bottom menu */
+    .avail-save-status {
+        position: fixed;
+        z-index: 101;
+        left: 50%;
+        bottom: 90px;
+        transform: translateX(-50%);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 16px;
+        border-radius: 999px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        white-space: nowrap;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+        background: #fff;
+        color: var(--avail-muted);
+        @media (min-width: 768px) {
+            bottom: 24px;
+        }
+        &[hidden] {
+            display: none;
+        }
+        &.saved {
+            background: var(--avail-yes-bg);
+            color: var(--avail-yes);
+        }
+        &.error {
+            background: #fde8e8;
+            color: #b91c1c;
+        }
+        button {
+            all: unset;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+    }
 </style>
 
-<form method="post" action="{{ action }}" class="avail-grid">
+{% set autosave = autosave|default(false) %}
+{# dates more than AvailabilityGrid::LATER ahead are folded, unless that would leave nothing above #}
+{% set upcoming = grid.dates %}
+{% set later = [] %}
+{% if split|default(false) %}
+    {% set upcoming = grid.dates|filter(item => not item.later) %}
+    {% set later = grid.dates|filter(item => item.later) %}
+    {% if upcoming is empty %}
+        {% set upcoming = grid.dates %}
+        {% set later = [] %}
+    {% endif %}
+{% endif %}
+
+<form method="post" action="{{ action }}" class="avail-grid"
+    {% if autosave %}
+        data-controller="availability-autosave"
+        data-action="availability-date:changed->availability-autosave#schedule"
+    {% endif %}
+>
     <input type="hidden" name="token" value="{{ token }}">
 
-    <div class="avail-summary">
-        {% set summary = grid.summary %}
-        <span class="avail-badge {{ summary.status }}">
-            {% if summary.total == 0 %}
-                Aucune date à venir
-            {% elseif summary.status == 'complete' %}
-                Toutes les dates sont renseignées
-            {% else %}
-                {{ summary.answered }} date{{ summary.answered > 1 ? 's' }} sur {{ summary.total }} renseignée{{ summary.answered > 1 ? 's' }}{{ summary.partial > 0 ? ', ' ~ summary.partial ~ ' partielle' ~ (summary.partial > 1 ? 's') }}
-            {% endif %}
-        </span>
-        <span class="avail-legend">
-            <span><span class="dot dot-yes"></span>disponible</span>
-            <span><span class="dot dot-no"></span>pas disponible</span>
-            <span><span class="dot dot-unknown"></span>pas renseigné</span>
-        </span>
-    </div>
+    {% include 'availability/_grid_summary.html.twig' with {summary: grid.summary} %}
 
     {% if grid.dates is empty %}
         <p class="avail-empty">Aucune date avec des créneaux n'est encore prévue pour cette saison.</p>
     {% else %}
         <div class="avail-dates">
-            {% for item in grid.dates %}
-                {% set date = item.date %}
-                {% set answered = item.status != 'none' ? 1 : 0 %}
-                <div class="avail-date {{ item.status }}"
-                    data-controller="availability-date"
-                    data-answered="{{ answered }}"
-                    data-availability-date-answered-value="{{ answered }}"
-                >
-                    <input type="hidden" name="answered[{{ date.id }}]" value="{{ answered }}" data-availability-date-target="answered">
-
-                    <div class="avail-date-header">
-                        <span class="avail-date-label">{{ date }}</span>
-                        <span class="avail-badge {{ item.status }}" data-availability-date-target="badge">
-                            {{ item.status == 'answered' ? 'renseigné' : (item.status == 'partial' ? 'partiel' : 'pas renseigné') }}
-                        </span>
-                    </div>
-
-                    <div class="avail-quick">
-                        <button type="button" class="avail-quick-btn avail-quick-yes {{ item.status != 'none' and item.available == item.times|length and item.times is not empty ? 'active' }}"
-                            data-availability-date-target="allBtn" data-action="availability-date#setAll" title="Disponible sur tous les créneaux de la journée">
-                            <span class="avail-icon avail-icon-yes"></span> Toute la journée
-                        </button>
-                        <button type="button" class="avail-quick-btn avail-quick-no {{ item.status != 'none' and item.available == 0 ? 'active' }}"
-                            data-availability-date-target="noneBtn" data-action="availability-date#setNone" title="Pas disponible ce jour-là">
-                            <span class="avail-icon avail-icon-no"></span> Pas dispo ce jour
-                        </button>
-                    </div>
-
-                    <div class="avail-times">
-                        {% for time in item.times %}
-                            <label class="avail-time" title="{{ time.status == 'yes' ? 'Disponible' : (time.status == 'no' ? 'Pas disponible' : 'Pas renseigné') }}">
-                                <input type="checkbox"
-                                    name="avail[{{ date.id }}][{{ time.key }}]"
-                                    value="1"
-                                    {{ time.status == 'yes' ? 'checked' }}
-                                    data-availability-date-target="time"
-                                    data-action="availability-date#changeTime"
-                                >
-                                {{ time.label }}
-                            </label>
-                        {% endfor %}
-                    </div>
-
-                    <div class="avail-date-status" data-availability-date-target="status">
-                        {% if item.status == 'none' %}
-                            Coche les créneaux où tu peux jouer, ou utilise les deux boutons.
-                        {% elseif item.available == 0 %}
-                            Pas disponible ce jour-là
-                        {% else %}
-                            Disponible sur {{ item.available }} créneau{{ item.available > 1 ? 'x' }} sur {{ item.times|length }}
-                        {% endif %}
-                    </div>
-                </div>
+            {% for item in upcoming %}
+                {% include 'availability/_grid_date.html.twig' %}
             {% endfor %}
         </div>
 
-        <div class="avail-actions">
+        {% if later is not empty %}
+            <details class="avail-later">
+                {% include 'availability/_grid_later_summary.html.twig' with {summary: grid.summary} %}
+                <p class="avail-note">Ces dates sont encore loin : tu peux les renseigner maintenant ou plus tard.</p>
+                <div class="avail-dates">
+                    {% for item in later %}
+                        {% include 'availability/_grid_date.html.twig' %}
+                    {% endfor %}
+                </div>
+            </details>
+        {% endif %}
+
+        <div class="avail-actions" {{ autosave ? 'data-availability-autosave-target="actions"' }}>
             <button type="submit" class="btn btn-primary">{{ submit_label|default('Enregistrer') }}</button>
             {% if cancel_url is defined and cancel_url %}
                 <a class="btn btn-default" href="{{ cancel_url }}">Retour</a>
             {% endif %}
         </div>
+
+        {% if autosave %}
+            <div class="avail-save-status" data-availability-autosave-target="status" role="status" aria-live="polite" hidden></div>
+        {% endif %}
     {% endif %}
 </form>

@@ -1,0 +1,54 @@
+{# One date of the availability grid (availability/_grid) #}
+{# vars: item (AvailabilityGrid::build dates) #}
+{% set date = item.date %}
+{% set answered = item.status != 'none' ? 1 : 0 %}
+<div class="avail-date {{ item.status }}"
+    data-controller="availability-date"
+    data-answered="{{ answered }}"
+    data-availability-date-answered-value="{{ answered }}"
+>
+    <input type="hidden" name="answered[{{ date.id }}]" value="{{ answered }}" data-availability-date-target="answered">
+
+    <div class="avail-date-header">
+        <span class="avail-date-label">{{ date }}</span>
+        <span class="avail-badge {{ item.status }}" data-availability-date-target="badge">
+            {{ item.status == 'answered' ? 'renseigné' : (item.status == 'partial' ? 'partiel' : 'pas renseigné') }}
+        </span>
+    </div>
+
+    <div class="avail-quick">
+        <button type="button" class="avail-quick-btn avail-quick-yes {{ item.status != 'none' and item.available == item.times|length and item.times is not empty ? 'active' }}"
+            data-availability-date-target="allBtn" data-action="availability-date#setAll" title="Disponible sur tous les créneaux de la journée">
+            <span class="avail-icon avail-icon-yes"></span> Toute la journée
+        </button>
+        <button type="button" class="avail-quick-btn avail-quick-no {{ item.status != 'none' and item.available == 0 ? 'active' }}"
+            data-availability-date-target="noneBtn" data-action="availability-date#setNone" title="Pas disponible ce jour-là">
+            <span class="avail-icon avail-icon-no"></span> Pas dispo ce jour
+        </button>
+    </div>
+
+    <div class="avail-times">
+        {% for time in item.times %}
+            <label class="avail-time" title="{{ time.status == 'yes' ? 'Disponible' : (time.status == 'no' ? 'Pas disponible' : 'Pas renseigné') }}">
+                <input type="checkbox"
+                    name="avail[{{ date.id }}][{{ time.key }}]"
+                    value="1"
+                    {{ time.status == 'yes' ? 'checked' }}
+                    data-availability-date-target="time"
+                    data-action="availability-date#changeTime"
+                >
+                {{ time.label }}
+            </label>
+        {% endfor %}
+    </div>
+
+    <div class="avail-date-status" data-availability-date-target="status">
+        {% if item.status == 'none' %}
+            Coche les créneaux où tu peux jouer, ou utilise les deux boutons.
+        {% elseif item.available == 0 %}
+            Pas disponible ce jour-là
+        {% else %}
+            Disponible sur {{ item.available }} créneau{{ item.available > 1 ? 'x' }} sur {{ item.times|length }}
+        {% endif %}
+    </div>
+</div>
