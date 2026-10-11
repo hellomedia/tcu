@@ -1,0 +1,90 @@
+{#
+    One poule: standings, then its matchs by date (score or time).
+    vars:
+      - group
+      - standings: rows of PlayerRepository::groupStandings()
+      - dates: dates with matchs of the page's poules
+      - me: Player to highlight (logged in player), or null
+      - mine_label: "Ta poule" next to the name of the player's poule (default true)
+#}
+{% set me = me|default(null) %}
+{% set side_a = enum('App\\Enum\\Side').A %}
+{% set side_b = enum('App\\Enum\\Side').B %}
+
+<div class="group" style="--group-color: {{ group_color(group) }}">
+    <div class="group-header">
+        <h4>{{ group }}</h4>
+        {% if me and (mine_label ?? true) and me in group.players %}
+            <span class="group-mine">Ta poule</span>
+        {% endif %}
+    </div>
+    <table class="table players">
+        <tr>
+            <th></th>
+            <th></th>
+            <th></th>
+            <th><span class="short">Joués</span><span class="long">Matchs joués</span></th>
+            <th><span class="short">Pts</span><span class="long">Points</span></th>
+        </tr>
+        {% for row in standings %}
+            <tr class="{{ row.player == me ? 'me' }}">
+                <td class="rank">{{ loop.index }}.</td>
+                <td class="player">
+                    <span class="nowrap">{{ row.player.firstname }}</span>
+                    <span class="nowrap">{{ row.player.lastname }}</span>
+                </td>
+                <td class="ranking">{{ row.player.ranking(group.season).value ?? '' }}</td>
+                <td class="matchs-played">{{ row.matchsPlayed }}</td>
+                <td class="points">{{ row.points }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+    <div class="dates">
+        {% for date in dates %}
+            {% if date.hasMatchFromGroup(group) %}
+                <h5 class="date">{{ date }}</h5>
+                <div class="matchs">
+                    {% for match in date.matchsByGroup(group) %}
+                        {% set result = match.result %}
+                        {% set winner = result ? result.winner : null %}
+                        <div class="match {{ result ? 'with-result' }} {{ me and match.sideOf(me) ? 'mine' }}">
+                            <div class="sides">
+                                {% for side in [side_a, side_b] %}
+                                    <div class="side {{ winner == side ? 'winner' }}">
+                                        {% for player in match.playersForSide(side) %}
+                                            {{ loop.index == 2 ? ' - ' }}
+                                            <span class="player">{{ player }}</span>
+                                        {% endfor %}
+                                    </div>
+                                {% endfor %}
+                            </div>
+
+                            {% if result %}
+                                <div class="score">
+                                    <table>
+                                        <tr>
+                                            {% for set in result.sets %}
+                                                <td class="{{ set[0] > set[1] ? 'won' }}">{{ set[0] }}</td>
+                                            {% endfor %}
+                                        </tr>
+                                        <tr>
+                                            {% for set in result.sets %}
+                                                <td class="{{ set[1] > set[0] ? 'won' }}">{{ set[1] }}</td>
+                                            {% endfor %}
+                                        </tr>
+                                    </table>
+                                </div>
+                            {% elseif match.booking %}
+                                <div class="time">
+                                    <span class="nowrap">{{ match.timeRange }}</span>
+                                </div>
+                            {% else %}
+                                <div></div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
