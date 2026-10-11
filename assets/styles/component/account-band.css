@@ -1,0 +1,90 @@
+@layer components {
+
+    /* Band on top of the account area (templates/layout/menu/_account_band.html.twig) */
+    #account-band {
+        /* theme colour, lightly: the account area is told apart from the public pages */
+        background-color: color-mix(in srgb, var(--color-theme) 7%, var(--color-white));
+        border-bottom: 1px solid color-mix(in srgb, var(--color-theme) 20%, var(--color-white));
+    }
+
+    .account-band-title {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding-top: 14px;
+        color: var(--color-theme-darker);
+
+        svg {
+            width: 20px;
+            height: 20px;
+        }
+        .account-band-name {
+            font-weight: 700;
+        }
+        .account-band-player {
+            color: var(--color-gray-600);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    }
+
+    .account-tabs {
+        display: flex;
+        gap: 4px;
+        margin-top: 6px;
+        /* many tabs on a narrow screen: scroll instead of wrapping */
+        overflow-x: auto;
+        scrollbar-width: none;
+        @media (min-width: theme(--breakpoint-md)) {
+            gap: 12px;
+        }
+    }
+
+    .account-tab {
+        flex: 0 0 auto;
+        padding: 8px 10px 10px;
+        border-bottom: 3px solid transparent;
+        color: var(--color-gray-600);
+        font-weight: 500;
+        white-space: nowrap;
+        transition: color 0.15s, border-color 0.15s;
+
+        &:hover {
+            color: var(--color-gray-900);
+        }
+        &.current {
+            color: var(--color-theme-darker);
+            border-bottom-color: var(--color-theme);
+            font-weight: 600;
+        }
+
+        .account-tab-long {
+            display: none;
+        }
+        @media (min-width: theme(--breakpoint-sm)) {
+            .account-tab-long {
+                display: inline;
+            }
+            .account-tab-short {
+                display: none;
+            }
+        }
+    }
+
+    /* account icon of the top menu, while in the account area */
+    #account-menu.current .dropdown-button {
+        display: grid;
+        place-items: center;
+        margin-top: -6px;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background-color: color-mix(in srgb, var(--color-theme) 12%, var(--color-white));
+        color: var(--color-theme-darker);
+
+        svg {
+            height: 22px;
+        }
+    }
+}

@@ -36,6 +36,7 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
     {
         return [
             new TwigFunction('is_current_page', [AppExtensionRuntime::class, 'isCurrentPage']),
+            new TwigFunction('is_account_area', [AppExtensionRuntime::class, 'isAccountArea']),
             new TwigFunction('group_color', [GroupColorRuntime::class, 'groupColor']),
             new TwigFunction('availability_summary', [AvailabilityRuntime::class, 'availabilitySummary']),
         ];

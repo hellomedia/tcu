@@ -46,6 +46,17 @@
         }
     }
 
+    /* current section: full white and bold label, the others slightly faded */
+    .bottom-menu-link {
+        opacity: 0.75;
+        &.active {
+            opacity: 1;
+            .bottom-menu-label {
+                font-weight: 700;
+            }
+        }
+    }
+
     .bottom-menu-label {
         @apply text-sm;
         @apply pt-1;

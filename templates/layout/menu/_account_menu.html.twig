@@ -1,10 +1,11 @@
 <div id="account-menu"
 	data-controller="dropdown"
-	class="dropdown-container h-6"
+	class="dropdown-container h-6 {{ is_account_area() ? 'current' }}"
 >
 	<button type="button"
 		class="dropdown-button"
 		data-action="dropdown#toggle"
+		title="Mon TCU"
 	>
 		<twig:ux:icon name="account" class="h-6"/>
 	</button>
@@ -12,7 +13,7 @@
 	<div data-dropdown-target="menu" class="dropdown-menu" style="right: -30px; left: auto;">
 		<div class="dropdown-inner">
 			<a href="{{ path('dashboard') }}" class="dropdown-link" data-action="dropdown#toggle">
-				{{ 'Dashboard'|trans }}
+				Mon TCU
 			</a>
 			<a href="{{ path('my_matchs') }}" class="dropdown-link" data-action="dropdown#toggle">
 				Mes matchs

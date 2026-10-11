@@ -1,0 +1,29 @@
+{# Band on top of the account area (Mon TCU): where you are + tabs between the account pages #}
+{% set tabs = [
+    {route: 'dashboard', label: 'Accueil', short: 'Accueil'},
+    {route: 'my_matchs', label: 'Mes matchs', short: 'Matchs'},
+    {route: 'my_group', label: 'Ma poule', short: 'Poule'},
+    {route: 'my_availabilities', label: 'Mes disponibilités', short: 'Dispos'},
+] %}
+<div id="account-band">
+    <div class="default-container default-container-xpadding">
+        <div class="account-band-title">
+            <twig:ux:icon name="account" />
+            <span class="account-band-name">Mon TCU</span>
+            {% if app.user.player %}
+                <span class="account-band-player">· {{ app.user.player.firstname }} {{ app.user.player.lastname }}</span>
+            {% endif %}
+        </div>
+        <nav class="account-tabs" aria-label="Mon TCU">
+            {% for tab in tabs %}
+                <a href="{{ path(tab.route) }}"
+                    class="account-tab {{ is_current_page(tab.route) ? 'current' }}"
+                    {{ is_current_page(tab.route) ? 'aria-current="page"' }}
+                >
+                    <span class="account-tab-long">{{ tab.label }}</span>
+                    <span class="account-tab-short">{{ tab.short }}</span>
+                </a>
+            {% endfor %}
+        </nav>
+    </div>
+</div>

@@ -17,7 +17,7 @@ class GroupController extends BaseController
     #[Route('/ma/poule', name: 'my_group')]
     public function index(DateRepository $dateRepository, PlayerRepository $playerRepository, SeasonContext $seasonContext): Response
     {
-        $this->addBreadcrumb('Dashboard', 'dashboard');
+        $this->addBreadcrumb('Mon TCU', 'dashboard');
         $this->addBreadcrumb('Ma poule');
 
         // saison en préparation, pas encore publiée : même page d'attente que le site (InterfacsController)

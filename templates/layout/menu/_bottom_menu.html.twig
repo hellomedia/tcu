@@ -1,18 +1,18 @@
 <div id="bottom-menu">
 	<div id="bottom-menu-inner">
 
-		<a href="{{ path('homepage') }}" class="bottom-menu-link">
+		<a href="{{ path('homepage') }}" class="bottom-menu-link {{ is_current_page('homepage') ? 'active' }}">
             <twig:ux:icon name="home" />
 			<span class="bottom-menu-label">Home</span>
 		</a>
 
-		<a href="{{ path('interfacs') }}" class="bottom-menu-link">
+		<a href="{{ path('interfacs') }}" class="bottom-menu-link {{ app.current_route starts with 'interfacs' ? 'active' }}">
             <twig:ux:icon name="trophy" />
 			<span class="bottom-menu-label">Interfacs</span>
 		</a>
 
 		{% if is_granted('ROLE_USER') %}
-			<a href="{{ path('dashboard') }}" class="bottom-menu-link">
+			<a href="{{ path('dashboard') }}" class="bottom-menu-link {{ is_account_area() ? 'active' }}">
 				<twig:ux:icon name="account" style="height: 28px"/>
 				<span class="bottom-menu-label">Mon TCU</span>
 			</a>

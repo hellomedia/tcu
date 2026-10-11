@@ -35,7 +35,7 @@ class ChoosePasswordController extends BaseController
             return $this->redirectToRoute('dashboard');
         }
 
-        $this->addBreadcrumb('Dashboard', 'dashboard');
+        $this->addBreadcrumb('Mon TCU', 'dashboard');
         $this->addBreadcrumb('Mot de passe');
 
         $form = $this->createForm(ChangePasswordForm::class, $user);
