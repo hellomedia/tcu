@@ -199,6 +199,14 @@ class DateRepository extends ServiceEntityRepository
      * 
      * 1) Use FindDatesByGroups(). It hydrates everything with full data.
      * 2) Use Date::hasMatchFromGroup() and Date::getMatchsByGroup() to filter
+     *
+     * HEADS-UP: the fetch-joined Date::$slots collections are PARTIAL (only the slots
+     * booked by these groups). Do not run another query that fetch-joins slots or
+     * bookings of the same dates in the same request (eg. findUpcomingDates(),
+     * findFutureDates(), SlotRepository::findByDateWithBookings()): Doctrine would skip
+     * the slots missing from the partial collections but still hydrate their bookings,
+     * with Booking::$slot left null (see getFutureDatesWithAvailableSlotsQueryBuilder()).
+     * Callers (2026-10): the public poules page and "Ma poule", which run nothing else.
      */
     public function findDatesByGroups(array $groups): array
     {
