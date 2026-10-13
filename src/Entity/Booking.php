@@ -26,9 +26,9 @@ class Booking implements EntityInterface
     #[ORM\JoinColumn(nullable: true)]
     private ?InterfacMatch $match = null;
 
-    public function __toString()
+    public function __toString(): string
     {
-        return $this->slot;
+        return (string) $this->slot;
     }
 
     public function getId(): ?int

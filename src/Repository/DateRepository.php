@@ -6,6 +6,7 @@ use App\Entity\Booking;
 use App\Entity\Date;
 use App\Entity\Group;
 use App\Entity\Season;
+use App\Entity\Slot;
 use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Types\Types;
@@ -131,21 +132,26 @@ class DateRepository extends ServiceEntityRepository
     /**
      * @param Date|null $includeDate date always listed, even without free slot
      *                                (date of the booking being moved)
+     *
+     * Subqueries on purpose, no fetch join: selecting only the free slots would
+     * hydrate a partial Date::$slots collection, and a later query on the same dates
+     * (eg. findUpcomingDates()) would then hydrate the bookings of the other slots
+     * without their slot (see the comment on findDatesByGroup()).
      */
     public function getFutureDatesWithAvailableSlotsQueryBuilder(?Date $includeDate = null): QueryBuilder
     {
         $qb = $this->createQueryBuilder('d')
-            ->innerJoin('d.slots', 's')->addSelect('s')
             ->andWhere('d.date >= CURRENT_DATE()')
             ->orderBy('d.date', 'ASC')
         ;
 
-        $free = 'NOT EXISTS (SELECT 1 FROM ' . Booking::class . ' b WHERE b.slot = s)';
+        $hasFreeSlot = 'EXISTS (SELECT 1 FROM ' . Slot::class . ' s WHERE s.date = d'
+            . ' AND NOT EXISTS (SELECT 1 FROM ' . Booking::class . ' b WHERE b.slot = s))';
 
         if ($includeDate === null) {
-            $qb->andWhere($free);
+            $qb->andWhere($hasFreeSlot);
         } else {
-            $qb->andWhere($free . ' OR d = :includeDate')
+            $qb->andWhere($hasFreeSlot . ' OR d = :includeDate')
                 ->setParameter('includeDate', $includeDate);
         }
 
