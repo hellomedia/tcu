@@ -6,8 +6,10 @@ use Admin\Filter\RankingOrderFilter;
 use Admin\Form\PlayerType;
 use App\Entity\Player;
 use App\Entity\Registration;
+use App\Entity\Season;
 use App\Enum\RankingSource;
 use App\Enum\RegistrationStatus;
+use App\Repository\RegistrationRepository;
 use App\Service\PlayerAccountManager;
 use App\Service\SeasonContext;
 use Doctrine\ORM\EntityManagerInterface;
@@ -47,7 +49,9 @@ use Symfony\Component\Validator\Constraints\Valid;
  * (sauf avec le filtre Statut) et peut être rétablie.
  *
  * Le formulaire "Nouvelle inscription" a deux modes (paramètre d'URL "joueur") :
- * - joueur existant (par défaut) : autocomplete, avec un lien vers le mode nouveau joueur
+ * - joueur existant (par défaut) : autocomplete, avec un lien vers le mode nouveau joueur.
+ *   Si le joueur a une inscription écartée pour la saison (masquée dans la liste), elle est rétablie
+ *   avec les valeurs du formulaire au lieu d'en créer une deuxième (une inscription par joueur et saison).
  * - nouveau joueur : le joueur est créé avec son inscription (PlayerType)
  */
 class RegistrationCrudController extends AbstractCrudController
@@ -58,6 +62,11 @@ class RegistrationCrudController extends AbstractCrudController
     private const PLAYER_MODE_NEW = 'nouveau';
     // nom tapé dans l'autocomplete, repris pour pré-remplir le nouveau joueur (new_player_link_controller.js)
     private const PLAYER_NAME_PARAM = 'nom';
+    // nom du formulaire EasyAdmin : le nom court de l'entité (EntityDto::getName())
+    private const FORM_NAME = 'Registration';
+
+    // inscription écartée réutilisée par le formulaire "Nouvelle inscription" (createEntity())
+    private ?Registration $restoredRegistration = null;
 
     public function __construct(
         private SeasonContext $seasonContext,
@@ -65,6 +74,7 @@ class RegistrationCrudController extends AbstractCrudController
         private CsrfTokenManagerInterface $csrfTokenManager,
         private RequestStack $requestStack,
         private PlayerAccountManager $accountManager,
+        private RegistrationRepository $registrationRepository,
     )
     {
     }
@@ -270,8 +280,18 @@ class RegistrationCrudController extends AbstractCrudController
 
     public function createEntity(string $entityFqcn): Registration
     {
+        $season = $this->seasonContext->getSelected();
+
+        // joueur écarté de la saison : son inscription écartée reprend les valeurs du formulaire
+        $dismissed = $this->findDismissedRegistration($season);
+        if ($dismissed !== null) {
+            $this->restoredRegistration = $dismissed;
+
+            return $dismissed;
+        }
+
         $registration = (new Registration())
-            ->setSeason($this->seasonContext->getSelected());
+            ->setSeason($season);
 
         if ($this->isNewPlayerMode()) {
             $player = (new Player())
@@ -287,6 +307,37 @@ class RegistrationCrudController extends AbstractCrudController
         // nouveau joueur avec un email : son compte est créé aussi
         $this->accountManager->sync($entityInstance->getPlayer());
         parent::persistEntity($entityManager, $entityInstance);
+
+        if ($entityInstance === $this->restoredRegistration) {
+            $this->addFlash('success', sprintf('%s : l\'inscription écartée pour cette saison a été reprise.', $entityInstance->getPlayer()->getName()));
+        }
+    }
+
+    /**
+     * Inscription écartée, pour la saison sélectionnée, du joueur soumis par le formulaire "Nouvelle inscription"
+     *
+     * Une inscription écartée n'apparaît pas dans la liste : l'admin ne la voit pas et ajoute une "nouvelle"
+     * inscription, refusée par la contrainte d'unicité joueur + saison. On la réutilise à la place.
+     */
+    private function findDismissedRegistration(?Season $season): ?Registration
+    {
+        $request = $this->requestStack->getCurrentRequest();
+
+        if ($season === null || $request === null || !$request->isMethod('POST') || $this->isNewPlayerMode()) {
+            return null;
+        }
+
+        // champ autocomplete d'EasyAdmin (CrudAutocompleteType) : l'id du joueur est dans un sous-champ "autocomplete"
+        $playerId = $request->request->all()[self::FORM_NAME]['player']['autocomplete'] ?? null;
+        if (!is_numeric($playerId)) {
+            return null;
+        }
+
+        return $this->registrationRepository->findOneBy([
+            'player' => (int) $playerId,
+            'season' => $season,
+            'status' => RegistrationStatus::DISMISSED,
+        ]);
     }
 
     /**
