@@ -24,12 +24,15 @@ class DateRepository extends ServiceEntityRepository
     }
 
     /**
+    * @param int $daysBefore also the dates of the last days (ex: 1 = yesterday too)
+    *
     * @return Date[] Returns an array of Date objects
     */
-    public function findFutureDates(): array
+    public function findFutureDates(int $daysBefore = 0): array
     {
         return $this->withMatchs($this->createQueryBuilder('d'))
-            ->andWhere('d.date >= CURRENT_DATE()')
+            ->andWhere('d.date >= :since')
+            ->setParameter('since', new \DateTimeImmutable("today -$daysBefore days"), Types::DATE_IMMUTABLE)
             ->orderBy('d.date', 'ASC')
             ->getQuery()
             ->getResult()

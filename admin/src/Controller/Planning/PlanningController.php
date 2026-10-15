@@ -17,7 +17,8 @@ class PlanningController extends BaseController
     #[Route('/planning', name: 'admin_planning', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
     public function planning(DateRepository $dateRepository, CourtRepository $courtRepository, GroupRepository $groupRepository, SeasonContext $seasonContext): Response
     {
-        $dates = $dateRepository->findFutureDates();
+        // yesterday too: scores are often encoded the day after
+        $dates = $dateRepository->findFutureDates(daysBefore: 1);
         $courts = $courtRepository->findAll();
         $groups = $groupRepository->findBySeason($seasonContext->getSelected());
         // légende : nombre de matchs à programmer par poule
