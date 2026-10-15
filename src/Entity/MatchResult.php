@@ -69,6 +69,8 @@ class MatchResult
     {
         $this->set1A = $set1A;
 
+        $this->updatePoints();
+
         return $this;
     }
 
@@ -80,6 +82,8 @@ class MatchResult
     public function setSet1B(?int $set1B): static
     {
         $this->set1B = $set1B;
+
+        $this->updatePoints();
 
         return $this;
     }
@@ -93,6 +97,8 @@ class MatchResult
     {
         $this->set2A = $set2A;
 
+        $this->updatePoints();
+
         return $this;
     }
 
@@ -104,6 +110,8 @@ class MatchResult
     public function setSet2B(?int $set2B): static
     {
         $this->set2B = $set2B;
+
+        $this->updatePoints();
 
         return $this;
     }
@@ -117,6 +125,8 @@ class MatchResult
     {
         $this->set3A = $set3A;
 
+        $this->updatePoints();
+
         return $this;
     }
 
@@ -129,6 +139,8 @@ class MatchResult
     {
         $this->set3B = $set3B;
 
+        $this->updatePoints();
+
         return $this;
     }
 
@@ -137,24 +149,11 @@ class MatchResult
         return $this->pointsA;
     }
 
-    public function setPointsA(?int $pointsA): static
-    {
-        $this->pointsA = $pointsA;
-
-        return $this;
-    }
-
     public function getPointsB(): ?int
     {
         return $this->pointsB;
     }
 
-    public function setPointsB(?int $pointsB): static
-    {
-        $this->pointsB = $pointsB;
-
-        return $this;
-    }
     /**
      * Sets played, as [games A, games B]
      *
@@ -189,6 +188,46 @@ class MatchResult
             $setsA > $setsB => Side::A,
             $setsB > $setsA => Side::B,
             default => null,
+        };
+    }
+
+    /**
+     * Points of each side, summed over the sets (the match may have been stopped when the time was over):
+     * - set won 7/6: 2 points for the winner, 1 for the loser
+     * - set won with any other score: 2 points for the winner
+     * - unfinished set, led by 2 games or more: 1 point for the leader
+     * - unfinished set, tied: 1 point each
+     */
+    private function updatePoints(): void
+    {
+        $this->pointsA = $this->pointsB = 0;
+
+        foreach ($this->getSets() as [$a, $b]) {
+            [$pointsA, $pointsB] = self::setPoints($a, $b);
+            $this->pointsA += $pointsA;
+            $this->pointsB += $pointsB;
+        }
+    }
+
+    /**
+     * @return array{int, int} points of A and B for a set
+     */
+    private static function setPoints(int $a, int $b): array
+    {
+        if ($a < $b) {
+            return array_reverse(self::setPoints($b, $a));
+        }
+
+        // A leads or tied: a set is won at 6 games with 2 games ahead, or at 7 games (7/5, 7/6)
+        // (also covers a super tie-break, 10/8)
+        if ($a >= 6 && ($a - $b >= 2 || $a === 7)) {
+            return [2, $a === 7 && $b === 6 ? 1 : 0];
+        }
+
+        return match (true) {
+            $a === $b => [1, 1],
+            $a - $b >= 2 => [1, 0],
+            default => [0, 0],
         };
     }
 }

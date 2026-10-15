@@ -53,18 +53,6 @@ final class MatchResultForm extends AbstractType
                 'tabindex' => '6',
             ],
         ]);
-        $builder->add('pointsA', IntegerType::class, [
-            'label' => 'Points',
-            'attr' => [
-                'tabindex' => '7',
-            ],
-        ]);
-        $builder->add('pointsB', IntegerType::class, [
-            'label' => 'Points',
-            'attr' => [
-                'tabindex' => '8',
-            ],
-        ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void

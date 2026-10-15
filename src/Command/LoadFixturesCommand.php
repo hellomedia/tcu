@@ -491,7 +491,7 @@ class LoadFixturesCommand extends Command
     }
 
     /**
-     * Le joueur le mieux classé gagne le plus souvent. Vainqueur : 2 points, perdant : 1 point.
+     * Le joueur le mieux classé gagne le plus souvent (points calculés par MatchResult).
      */
     private function addResult(InterfacMatch $match): void
     {
@@ -520,8 +520,6 @@ class LoadFixturesCommand extends Command
             $result->{'setSet' . ($i + 1) . 'A'}($aWins ? $winner : $loser);
             $result->{'setSet' . ($i + 1) . 'B'}($aWins ? $loser : $winner);
         }
-        $result->setPointsA($aWins ? 2 : 1);
-        $result->setPointsB($aWins ? 1 : 2);
 
         $match->setResult($result);
     }
