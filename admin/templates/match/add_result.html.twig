@@ -5,18 +5,6 @@
 
 {% extends '@admin/base.html.twig' %}
 
-{% block head_stylesheets %}
-    {{ parent() }}
-    <style>
-        th {
-            text-align: center;
-        }
-        td {
-            padding: 5px 10px;
-        }
-    </style>
-{% endblock %}
-
 {% block content_title %}Encoder le résultat du match {{ match }}{% endblock %}
 
 {% block page_actions %}
@@ -30,44 +18,15 @@
 {% block main %}
 
 
-    {{ form_start(form) }}
+    {{ form_start(form, {'attr': {'data-controller': 'score-entry'}}) }}
 
-        <table>
-            <tr>
-                <th>Joueur</th>
-                <th></th>
-                <th>Set 1</th>
-                <th>Set 2</th>
-                <th>Set 3</th>
-            </tr>
-            <tr>
-                <td>A</td>
-                <td>
-                    {% for player in match.playersForSide(enum('App\\Enum\\Side').A) %}
-                        {{ player }}
-                    {% endfor %}
-                </td>
-                <td>{{ form_widget(form.set1A) }}</td>
-                <td>{{ form_widget(form.set2A) }}</td>
-                <td>{{ form_widget(form.set3A) }}</td>
-            </tr>
-            <tr>
-                <td>B</td>
-                <td>
-                    {% for player in match.playersForSide(enum('App\\Enum\\Side').B) %}
-                        {{ player }}
-                    {% endfor %}
-                </td>
-                <td>{{ form_widget(form.set1B) }}</td>
-                <td>{{ form_widget(form.set2B) }}</td>
-                <td>{{ form_widget(form.set3B) }}</td>
-            </tr>
-        </table>
+        {% include '@admin/match/_result_table.html.twig' %}
 
         {{ form_rest(form) }}
         
         {% embed 'form/_form_actions.html.twig' %}
             {% block cancel_url path('admin_planning_groups') %}
+            {% block submit_attributes %}data-score-entry-target="submit"{% endblock %}
         {% endembed %}
 
     </form>

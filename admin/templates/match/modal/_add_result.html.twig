@@ -5,53 +5,20 @@
 
 <turbo-frame id="modal-frame" data-turbo="true">{# data-turbo=true for easy-admin #}
 
-    <style>
-        th {
-            text-align: center;
-        }
-        td {
-            padding: 5px 5px;
-        }
-    </style>
-
     {{ form_start(form, {
         'attr': {
             'action': path('admin_match_add_result', {'id': match.id}),
+            'data-controller': 'score-entry',
         }
     }) }}
 
-        <table>
-            <tr>
-                <th></th>
-                <th>Set 1</th>
-                <th>Set 2</th>
-                <th>Set 3</th>
-            </tr>
-            <tr>
-                <td>
-                    {% for player in match.playersForSide(enum('App\\Enum\\Side').A) %}
-                        {{ player }}
-                    {% endfor %}
-                </td>
-                <td>{{ form_widget(form.set1A) }}</td>
-                <td>{{ form_widget(form.set2A) }}</td>
-                <td>{{ form_widget(form.set3A) }}</td>
-            </tr>
-            <tr>
-                <td>
-                    {% for player in match.playersForSide(enum('App\\Enum\\Side').B) %}
-                        {{ player }}
-                    {% endfor %}
-                </td>
-                <td>{{ form_widget(form.set1B) }}</td>
-                <td>{{ form_widget(form.set2B) }}</td>
-                <td>{{ form_widget(form.set3B) }}</td>
-            </tr>
-        </table>
+        {% include '@admin/match/_result_table.html.twig' %}
 
         {{ form_rest(form) }}
 
-        {% include 'component/modal/_actions.html.twig' %}
+        {% embed 'component/modal/_actions.html.twig' %}
+            {% block submit_attributes %}data-score-entry-target="submit"{% endblock %}
+        {% endembed %}
     
     </form>
 

@@ -1,0 +1,64 @@
+{# Score grid of MatchResultForm (modal and page), see score_entry_controller.js #}
+<style>
+    .result-table {
+        th {
+            text-align: center;
+            font-weight: 500;
+        }
+        td {
+            padding: 4px;
+        }
+        .players {
+            padding-left: 0;
+            font-size: 0.9rem;
+        }
+        input {
+            width: 3.2rem;
+            /* 16px at least: iOS zooms in on smaller inputs */
+            font-size: 1.15rem;
+            text-align: center;
+            padding-inline: 4px;
+            /* no spin buttons */
+            appearance: textfield;
+            &::-webkit-inner-spin-button,
+            &::-webkit-outer-spin-button {
+                appearance: none;
+                margin: 0;
+            }
+        }
+        .points {
+            min-width: 3rem;
+            text-align: center;
+            font-size: 1.15rem;
+            font-weight: 600;
+        }
+    }
+    .result-help {
+        margin-top: 10px;
+        color: #6c757d;
+        font-size: 0.8rem;
+    }
+</style>
+
+<table class="result-table">
+    <tr>
+        <th></th>
+        <th>Set 1</th>
+        <th>Set 2</th>
+        <th>Set 3</th>
+        <th>Points</th>
+    </tr>
+    {% for side in ['A', 'B'] %}
+        <tr>
+            <td class="players">
+                {{ match.playersForSide(constant('App\\Enum\\Side::' ~ side))|join(' - ') }}
+            </td>
+            {% for set in 1..3 %}
+                <td>{{ form_widget(form['set' ~ set ~ side]) }}</td>
+            {% endfor %}
+            <td class="points" data-score-entry-target="points" data-side="{{ side }}">–</td>
+        </tr>
+    {% endfor %}
+</table>
+
+<p class="result-help">Points calculés à partir du score.</p>

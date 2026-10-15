@@ -8,51 +8,36 @@ use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Score only: the points are computed by MatchResult.
+ * Fields in entry order (set 1 A, set 1 B, set 2 A...), see score_entry_controller.js
+ */
 final class MatchResultForm extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder->add('set1A', IntegerType::class, [
-            'label' => 'Set 1',
-            'attr' => [
-                'tabindex' => '1',
-            ],
-        ]);
-        $builder->add('set1B', IntegerType::class, [
-            'label' => 'Set 1',
-            'attr' => [
-                'tabindex' => '2',
-            ],
-        ]);
-        $builder->add('set2A', IntegerType::class, [
-            'label' => 'Set 2',
-            'required' => false,
-            'attr' => [
-                'tabindex' => '3',
-            ],
-        ]);
-        $builder->add('set2B', IntegerType::class, [
-            'label' => 'Set 2',
-            'required' => false,
-            'attr' => [
-                'tabindex' => '4',
-            ],
-        ]);
-        $builder->add('set3A', IntegerType::class, [
-            'label' => 'Set 3',
-            'required' => false,
-            'attr' => [
-                'tabindex' => '5',
-            ],
+        $tabindex = 1;
 
-        ]);
-        $builder->add('set3B', IntegerType::class, [
-            'label' => 'Set 3',
-            'required' => false,
-            'attr' => [
-                'tabindex' => '6',
-            ],
-        ]);
+        foreach ([1, 2, 3] as $set) {
+            foreach (['A', 'B'] as $side) {
+                $builder->add("set$set$side", IntegerType::class, [
+                    'label' => "Set $set",
+                    'required' => $set === 1,
+                    'attr' => [
+                        'tabindex' => (string) $tabindex++,
+                        // numeric keypad on phones
+                        'inputmode' => 'numeric',
+                        'pattern' => '[0-9]*',
+                        'min' => 0,
+                        'autocomplete' => 'off',
+                        'data-score-entry-target' => 'game',
+                        'data-set' => $set,
+                        'data-side' => $side,
+                        'data-action' => 'input->score-entry#next focus->score-entry#select',
+                    ],
+                ]);
+            }
+        }
     }
 
     public function configureOptions(OptionsResolver $resolver): void
