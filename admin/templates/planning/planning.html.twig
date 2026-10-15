@@ -250,9 +250,31 @@
         .slot-row {
             display: grid;
             gap: 5px;
-            grid-template-columns: 50px minmax(230px, 1fr) 30px;
+            grid-template-columns: 42px minmax(0, 1fr);
             &.slot-row-placeholder {
-                grid-template-columns: minmax(230px, 1fr);
+                grid-template-columns: minmax(0, 1fr);
+            }
+        }
+        @media (max-width: 767.98px) {
+            .date {
+                padding: 10px;
+            }
+            .slot-row {
+                height: auto;
+                min-height: 60px;
+            }
+            .slot-content-inner.with-match {
+                gap: 10px;
+                padding: 6px 10px;
+            }
+            /* the menu is a fixed popover: its containers take no grid cell */
+            .slot-actions,
+            .slot-actions-inner,
+            .planning-slot-actions {
+                display: contents;
+            }
+            .slot-menu-button {
+                display: none;
             }
         }
         @media (min-width: 768px) {
@@ -280,7 +302,8 @@
                 .btn {
                     visibility: hidden;
                 }
-                &:hover {
+                &:hover,
+                &.menu-open {
                     .btn {
                         visibility: visible;
                     }
@@ -295,6 +318,74 @@
                 &.court-count-2 {
                     grid-template-columns: repeat(2, 1fr);
                 }
+            }
+        }
+
+        /* SLOT MENU : native popover (slot_menu_controller.js) */
+        .slot-row.menu-open .slot-content {
+            background: #f1f5f9;
+        }
+        .slot-menu {
+            /* desktop: placed by the controller (fixed, top / left) */
+            inset: auto;
+            margin: 0;
+            padding: 0;
+            border: 1px solid var(--border-color, #ddd);
+            border-radius: 6px;
+            background: white;
+            color: inherit;
+            box-shadow: 0 10px 25px rgb(0 0 0 / 0.15);
+            /* a dimmed row hides its actions: not the menu opened from it */
+            visibility: visible;
+        }
+        .slot-menu-header {
+            display: none;
+        }
+        @media (max-width: 767.98px) {
+            .slot-row.booked .slot-content {
+                cursor: pointer;
+            }
+            /* bottom sheet */
+            .slot-menu {
+                inset: auto 0 0 0;
+                width: 100%;
+                max-width: none;
+                max-height: 85vh;
+                border: 0;
+                border-radius: 14px 14px 0 0;
+                padding-bottom: env(safe-area-inset-bottom);
+                &:popover-open {
+                    animation: slot-menu-up 0.18s ease-out;
+                }
+                &::backdrop {
+                    background: rgb(0 0 0 / 0.35);
+                }
+                .hk-dropdown-inner {
+                    padding: 8px 12px 12px;
+                    align-items: stretch;
+                }
+                .hk-dropdown-link {
+                    padding: 12px 8px;
+                    font-size: 1rem;
+                }
+            }
+            .slot-menu-header {
+                display: block;
+                padding: 16px 20px 12px;
+                border-bottom: 1px solid #eee;
+                .slot-menu-match {
+                    font-weight: 600;
+                }
+                .slot-menu-slot,
+                .slot-menu-score {
+                    color: #6c757d;
+                    font-size: 0.85rem;
+                }
+            }
+        }
+        @keyframes slot-menu-up {
+            from {
+                transform: translateY(100%);
             }
         }
     </style>

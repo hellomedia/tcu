@@ -20,6 +20,9 @@ import { Controller } from "@hotwired/stimulus";
  *   (it posts to the same route with ?modal=1 and shows the usual success modal + streams).
  *
  * Events are delegated from the planning root, so rows replaced by turbo streams keep working.
+ *
+ * Not on phones: dragging along a long scrolling page is impractical (the menu has "Déplacer"),
+ * and a tap on the strip opens the menu (slot_menu_controller.js).
  */
 export default class extends Controller {
     static values = {
@@ -46,6 +49,11 @@ export default class extends Controller {
     onDragStart(event) {
         const row = event.target.closest?.(".slot-row.booked");
         if (!row) return;
+
+        if (window.matchMedia("(max-width: 767.98px)").matches) {
+            event.preventDefault();
+            return;
+        }
 
         this.source = row;
         row.classList.add("dragging");

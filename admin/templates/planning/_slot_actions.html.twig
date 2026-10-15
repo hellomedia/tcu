@@ -1,17 +1,35 @@
-<div class="planning-slot-actions hk-dropdown-container"
-	data-controller="dropdown"
->
+{# Menu of a booked slot (slot_menu_controller.js): native popover, out of the .date overflow.
+   Desktop: anchored to the dots. Phone: bottom sheet opened by a tap on the strip. #}
+<div class="planning-slot-actions">
 	<button type="button"
-		class="btn hk-dropdown-button"
-		data-action="dropdown#toggle"
+		class="btn slot-menu-button"
+		data-slot-menu-target="button"
+		data-action="pointerdown->slot-menu#rememberState slot-menu#toggle"
+		aria-haspopup="menu"
+		aria-expanded="false"
+		aria-controls="slot-menu-{{ slot.id }}"
+		title="Actions"
 	>
 		<twig:ux:icon name="dots"/>
 	</button>
 
-	<div data-dropdown-target="menu"
-        class="hk-dropdown-menu"
-        style="right: 35px;top:-18px">
-		
+	<div popover
+		id="slot-menu-{{ slot.id }}"
+		class="slot-menu"
+		data-slot-menu-target="menu"
+		data-action="beforetoggle->slot-menu#beforeToggle click->slot-menu#closeOnItem"
+	>
+            {# phone only: the sheet hides the row, recall which match it is #}
+            <div class="slot-menu-header">
+                <div class="slot-menu-match">{{ slot.match }}</div>
+                <div class="slot-menu-slot">{{ slot }}</div>
+                {% if slot.match.result %}
+                    <div class="slot-menu-score">
+                        {% for set in slot.match.result.sets %}{{ set[0] }}/{{ set[1] }} {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
             <div class="hk-dropdown-inner">
 
                 {% if slot.match.result is empty %}

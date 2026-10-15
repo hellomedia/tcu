@@ -10,12 +10,15 @@
         data-match-label="{{ slot.match }}"
         data-has-confirmations="{{ slot.match.confirmationInfos is not empty ? 1 : 0 }}"
     {% endif %}
+    {% if slot.booking is not empty %}data-controller="slot-menu"{% endif %}
     {% if group %}data-group-id="{{ group.id }}" style="--group-color: {{ group_color(group) }}"{% endif %}
 >
 	<div class="slot-time">
 		{{ slot.startsAt|date('H:i') }}
 	</div>
-	<div class="slot-content" {% if group %}title="{{ group }}" draggable="true"{% endif %}>
+	<div class="slot-content" {% if group %}title="{{ group }}" draggable="true"{% endif %}
+		{% if slot.booking is not empty %}data-action="click->slot-menu#openFromStrip"{% endif %}
+	>
 		<div class="slot-content-inner {{ slot.match ? 'with-match' }}">
 			{# <div class="placeholder"></div> #}
             {% if slot.match is empty %}
@@ -64,16 +67,13 @@
                                 {% endif %}
                             </tr>
                         </table>
-                            </a>
                     {% endif %}
                 </div>
 			{% endif %}
 		</div>
 	</div>
 	<div class="slot-actions">
-		<div class="slot-actions-inner hk-dropdown-container"
-            data-controller="dropdown"
-        >
+		<div class="slot-actions-inner">
 			{% if slot.booking is not empty %}
 				{% include "@admin/planning/_slot_actions.html.twig" %}
 			{% endif %}
