@@ -312,15 +312,28 @@
         gap: 3px;
         margin-left: 6px;
         vertical-align: middle;
+        /* the symbol inside tells the statuses apart without relying on the colours;
+           drawn as SVG: a text glyph sits above the centre (room kept for descenders) */
         .dot {
-            width: 9px;
-            height: 9px;
+            display: inline-block;
+            box-sizing: border-box;
+            width: 14px;
+            height: 14px;
             border-radius: 50%;
             border: 1px solid transparent;
+            background-repeat: no-repeat;
+            background-size: 100% 100%;
         }
-        .dot-yes { background: #2f855a; }
-        .dot-no { background: #b45309; }
-        .dot-unknown { background: #e9ecef; border-color: #adb5bd; }
+        .dot-yes { background-color: #2f855a; }
+        .dot-no {
+            background-color: #c53030;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M3.5 3.5l5 5M8.5 3.5l-5 5' stroke='%23fff' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E");
+        }
+        .dot-unknown {
+            background-color: #e9ecef;
+            border-color: #adb5bd;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Ctext x='6' y='9.3' text-anchor='middle' font-family='Arial,Helvetica,sans-serif' font-size='9' font-weight='700' fill='%23495057'%3E%3F%3C/text%3E%3C/svg%3E");
+        }
     }
 
     .same-day-info {
