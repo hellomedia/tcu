@@ -196,7 +196,7 @@ class MatchResult
      * - set won 7/6: 2 points for the winner, 1 for the loser
      * - set won with any other score: 2 points for the winner
      * - unfinished set, led by 2 games or more: 1 point for the leader
-     * - unfinished set, tied: 1 point each
+     * - unfinished set, tied or led by 1 game only (players should not stop there, but it happens): 1 point each
      */
     private function updatePoints(): void
     {
@@ -225,9 +225,8 @@ class MatchResult
         }
 
         return match (true) {
-            $a === $b => [1, 1],
             $a - $b >= 2 => [1, 0],
-            default => [0, 0],
+            default => [1, 1],
         };
     }
 }

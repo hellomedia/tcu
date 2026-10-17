@@ -74,9 +74,8 @@ export default class extends Controller {
             return [2, a === 7 && b === 6 ? 1 : 0];
         }
 
-        if (a === b) return [1, 1];
-
-        return a - b >= 2 ? [1, 0] : [0, 0];
+        // unfinished set: led by 2 games or more, otherwise tied or led by 1 game only
+        return a - b >= 2 ? [1, 0] : [1, 1];
     }
 
     _orderedGames() {
