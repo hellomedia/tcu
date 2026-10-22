@@ -8,7 +8,9 @@
         {% elseif summary.status == 'complete' %}
             {{ label|default(false) ? 'toutes renseignées' : 'Toutes les dates sont renseignées' }}
         {% else %}
-            {{ summary.answered }} date{{ summary.answered > 1 ? 's' }} sur {{ summary.total }} renseignée{{ summary.answered > 1 ? 's' }}{{ summary.partial > 0 ? ', ' ~ summary.partial ~ ' partielle' ~ (summary.partial > 1 ? 's') }}
+            {# a partial date was answered before slots were added: counted as answered, its new slots mentioned apart #}
+            {% set done = summary.answered + summary.partial %}
+            {{ done }} date{{ done > 1 ? 's' }} sur {{ summary.total }} renseignée{{ done > 1 ? 's' }}{{ summary.partial > 0 ? ', dont ' ~ summary.partial ~ ' avec un nouveau créneau' }}
         {% endif %}
     </span>
     <span class="avail-legend">

@@ -197,7 +197,7 @@
             }
         }
         /* answered and not checked = not available */
-        .avail-date[data-answered="1"] &:not(:has(input:checked)) {
+        &[data-answered="1"]:not(:has(input:checked)) {
             background: var(--avail-no-bg);
             border-color: #f5cf8a;
             color: var(--avail-no);
@@ -209,6 +209,79 @@
                 background-position: center;
                 background-repeat: no-repeat;
             }
+        }
+    }
+    /* slot added after the player answered the date: stays "not filled in", flagged until answered */
+    .avail-new-tag {
+        padding: 1px 6px;
+        border-radius: 999px;
+        background: var(--avail-accent);
+        color: #fff;
+        font-size: 0.7rem;
+        font-weight: 700;
+        .avail-time[data-answered="1"] & {
+            display: none;
+        }
+    }
+    .avail-time.new[data-answered="0"] {
+        border-color: var(--avail-accent);
+        border-style: dashed;
+    }
+    .avail-new-prompt {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 4px 8px;
+        margin-top: 8px;
+        font-size: 0.8rem;
+        color: var(--avail-accent);
+        .avail-date:not(:has(.avail-time.new[data-answered="0"])) & {
+            display: none;
+        }
+    }
+    .avail-new-no {
+        all: unset;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        padding: 3px 8px;
+        border: 1px solid var(--avail-border);
+        border-radius: 6px;
+        background: #fff;
+        color: var(--avail-muted);
+        font-weight: 600;
+        cursor: pointer;
+        &:hover {
+            border-color: var(--avail-accent);
+        }
+        &:focus-visible {
+            outline: 2px solid var(--avail-accent);
+            outline-offset: 2px;
+        }
+        .avail-icon {
+            width: 14px;
+            height: 14px;
+            background-size: 11px;
+        }
+    }
+    /* page notice: new slots on dates already answered, hidden once they all have an answer */
+    .avail-news {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 10px 16px;
+        margin-bottom: 20px;
+        padding: 12px 14px;
+        border: 1px solid #bfd3fb;
+        border-left: 4px solid var(--avail-accent);
+        border-radius: 8px;
+        background: #eef4ff;
+        .avail-grid:not(:has(.avail-time.new[data-answered="0"])) & {
+            display: none;
+        }
+        p {
+            flex: 1 1 280px;
+            margin: 0;
         }
     }
     .avail-date-status {
@@ -323,8 +396,8 @@
 {% set later = sections ? grid.dates|filter(item => item.later) : [] %}
 
 <form method="post" action="{{ action }}" class="avail-grid"
+    data-controller="availability-grid{{ autosave ? ' availability-autosave' }}"
     {% if autosave %}
-        data-controller="availability-autosave"
         data-action="availability-date:changed->availability-autosave#schedule"
     {% endif %}
 >
@@ -334,6 +407,20 @@
         {% include 'availability/_grid_summary.html.twig' with {summary: sections.near, label: 'Prochaines dates'} %}
     {% else %}
         {% include 'availability/_grid_summary.html.twig' with {summary: grid.summary} %}
+    {% endif %}
+
+    {# slots added after the player answered: they stay "not filled in" (AvailabilityGrid::build news) #}
+    {% if grid.news.dates > 0 %}
+        <div class="avail-news" role="status">
+            <p>
+                <strong>{{ grid.news.labels|length > 1 ? 'Nouveaux créneaux' : 'Nouveau créneau' }} {{ grid.news.labels|join(', ', ' et ') }}</strong>
+                sur {{ grid.news.dates }} date{{ grid.news.dates > 1 ? 's' }} que tu avais déjà renseignée{{ grid.news.dates > 1 ? 's' }}.
+                Ils sont marqués « Nouveau » : coche ceux où tu peux jouer.
+            </p>
+            <button type="button" class="avail-new-no" data-action="availability-grid#newNotAvailable">
+                <span class="avail-icon avail-icon-no"></span> Pas dispo sur les nouveaux créneaux
+            </button>
+        </div>
     {% endif %}
 
     {% if grid.dates is empty %}

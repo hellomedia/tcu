@@ -89,6 +89,7 @@ class AvailabilityController extends BaseController
     public function save(Registration $registration, Request $request, AvailabilityGrid $grid): Response
     {
         $grid->save($registration, $grid->parseSubmission(
+            $registration,
             $request->request->all('answered'),
             $request->request->all('avail'),
         ));

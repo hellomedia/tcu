@@ -20,6 +20,8 @@ use Doctrine\ORM\EntityManagerInterface;
  *
  * Une date est "renseignée" quand toutes ses heures ont une réponse, "partielle" si certaines seulement
  * (créneau ajouté après la réponse du joueur), "non renseignée" sinon.
+ * Les heures sans réponse d'une date partielle sont des "nouveaux créneaux" : le joueur a déjà répondu pour
+ * cette date sans les voir, ils restent "pas renseigné" (jamais "pas disponible" par défaut).
  */
 class AvailabilityGrid
 {
@@ -107,9 +109,10 @@ class AvailabilityGrid
      * null quand il n'y a pas de quoi faire deux groupes
      *
      * @return array{
-     *     dates: list<array{date: Date, status: string, times: list<array{key: string, label: string, startsAt: \DateTimeImmutable, status: string}>, available: int, answered: int, later: bool}>,
-     *     summary: array{status: string, answered: int, partial: int, total: int, missingNear: int, missingSoon: int, missingPlanning: int},
-     *     sections: array{near: array{status: string, answered: int, partial: int, total: int}, later: array{status: string, answered: int, partial: int, total: int}}|null
+     *     dates: list<array{date: Date, status: string, times: list<array{key: string, label: string, startsAt: \DateTimeImmutable, status: string, new: bool}>, available: int, answered: int, new: int, later: bool}>,
+     *     summary: array{status: string, answered: int, partial: int, total: int, missingNear: int, missingSoon: int, missingPlanning: int, partialNear: int},
+     *     sections: array{near: array{status: string, answered: int, partial: int, total: int}, later: array{status: string, answered: int, partial: int, total: int}}|null,
+     *     news: array{dates: int, labels: list<string>, first: ?Date}
      * }
      */
     public function build(Registration $registration): array
@@ -119,6 +122,7 @@ class AvailabilityGrid
         $missingNear = 0;
         $missingSoon = 0;
         $missingPlanning = 0;
+        $partialNear = 0;
         $today = new \DateTimeImmutable('today');
         $soonLimit = $today->modify(self::SOON);
         $planningLimit = $this->getPlanningStart($registration->getSeason())->modify(self::PLANNING);
@@ -148,7 +152,15 @@ class AvailabilityGrid
                 default => 'none',
             };
 
+            // nouveaux créneaux : heures sans réponse d'une date déjà renseignée en partie
+            $new = 0;
+            foreach ($times as $i => $time) {
+                $times[$i]['new'] = $dateStatus === 'partial' && $time['status'] === self::UNKNOWN;
+                $new += $times[$i]['new'] ? 1 : 0;
+            }
+
             $missing = $times !== [] && $dateStatus !== 'answered';
+            $partialNear += $dateStatus === 'partial' && $date->getDate() <= $laterLimit ? 1 : 0;
             $missingNear += $missing && $date->getDate() <= $laterLimit ? 1 : 0;
             $missingSoon += $missing && $date->getDate() <= $soonLimit ? 1 : 0;
             $missingPlanning += $missing && $date->getDate() < $planningLimit ? 1 : 0;
@@ -159,20 +171,36 @@ class AvailabilityGrid
                 'times' => $times,
                 'available' => $available,
                 'answered' => $answered,
+                'new' => $new,
                 'later' => $date->getDate() > $laterLimit,
             ];
         }
 
         $near = array_values(array_filter($dates, fn (array $item) => !$item['later']));
         $later = array_values(array_filter($dates, fn (array $item) => $item['later']));
+        $news = array_values(array_filter($dates, fn (array $item) => $item['new'] > 0));
+        $newLabels = [];
+        foreach ($news as $item) {
+            foreach ($item['times'] as $time) {
+                if ($time['new']) {
+                    $newLabels[$time['key']] = $time['label'];
+                }
+            }
+        }
+        ksort($newLabels);
 
         return [
             'dates' => $dates,
-            'summary' => $this->summarize($dates) + ['missingNear' => $missingNear, 'missingSoon' => $missingSoon, 'missingPlanning' => $missingPlanning],
+            'summary' => $this->summarize($dates) + ['missingNear' => $missingNear, 'missingSoon' => $missingSoon, 'missingPlanning' => $missingPlanning, 'partialNear' => $partialNear],
             'sections' => $near !== [] && $later !== [] ? [
                 'near' => $this->summarize($near),
                 'later' => $this->summarize($later),
             ] : null,
+            'news' => [
+                'dates' => \count($news),
+                'labels' => array_values($newLabels),
+                'first' => $news[0]['date'] ?? null,
+            ],
         ];
     }
 
@@ -203,7 +231,7 @@ class AvailabilityGrid
     /**
      * Résumé seul (liste des inscriptions, dashboard)
      *
-     * @return array{status: string, answered: int, partial: int, total: int, missingNear: int, missingSoon: int, missingPlanning: int}
+     * @return array{status: string, answered: int, partial: int, total: int, missingNear: int, missingSoon: int, missingPlanning: int, partialNear: int}
      */
     public function summary(Registration $registration): array
     {
@@ -225,8 +253,8 @@ class AvailabilityGrid
     /**
      * Enregistre les réponses soumises.
      *
-     * @param array<int, array<string, bool>> $submitted [dateId => [H:i => available]] pour les dates renseignées
-     *                                                   (une date absente du tableau n'est pas modifiée)
+     * @param array<int, array<string, bool>> $submitted [dateId => [H:i => available]] pour les créneaux renseignés
+     *                                                   (un créneau absent du tableau n'est pas modifié)
      */
     public function save(Registration $registration, array $submitted): void
     {
@@ -241,7 +269,11 @@ class AvailabilityGrid
             }
 
             foreach ($this->getTimes($date) as $hm => $time) {
-                $available = (bool) ($submitted[$date->getId()][$hm] ?? false);
+                if (!\array_key_exists($hm, $submitted[$date->getId()])) {
+                    continue;
+                }
+
+                $available = $submitted[$date->getId()][$hm];
                 $key = Availability::key($date, $time['startsAt']);
 
                 if (isset($existing[$key])) {
@@ -265,34 +297,33 @@ class AvailabilityGrid
     /**
      * Réponses soumises par le formulaire (templates/availability/_grid.html.twig)
      *
-     * @param array<int|string, mixed> $answered  answered[dateId] = 1 pour les dates renseignées
+     * @param array<int|string, mixed> $answered  answered[dateId][H:i] = 1 pour les créneaux renseignés
+     *                                            (answered[dateId] = 1 : toute la date, formulaire d'avant les réponses par créneau)
      * @param array<int|string, mixed> $available avail[dateId][H:i] = 1 pour les créneaux cochés
      *
      * @return array<int, array<string, bool>> [dateId => [H:i => available]], voir save()
      */
-    public function parseSubmission(array $answered, array $available): array
+    public function parseSubmission(Registration $registration, array $answered, array $available): array
     {
         $submitted = [];
 
-        foreach ($available as $dateId => $times) {
-            if (!\is_array($times)) {
-                continue;
-            }
-            foreach ($times as $hm => $value) {
-                // un créneau coché vaut réponse, même sans le marqueur "answered" (sans JS)
-                $submitted[(int) $dateId][(string) $hm] = (bool) $value;
-            }
-        }
+        foreach ($this->getUpcomingDates($registration->getSeason()) as $date) {
+            $id = $date->getId();
+            $marker = $answered[$id] ?? null;
 
-        foreach ($answered as $dateId => $value) {
-            if ((string) $value === '1') {
-                $submitted[(int) $dateId] ??= [];
+            foreach ($this->getTimes($date) as $hm => $time) {
+                $checked = (bool) ($available[$id][$hm] ?? false);
+                $slotAnswered = (string) (\is_array($marker) ? $marker[$hm] ?? '' : $marker) === '1';
+
+                // un créneau coché vaut réponse, même sans le marqueur "answered" (sans JS)
+                if ($checked || $slotAnswered) {
+                    $submitted[$id][$hm] = $checked;
+                }
             }
         }
 
         return $submitted;
     }
-
     /**
      * Charge d'un coup les réponses de tous les inscrits de la saison (modales de planning)
      */

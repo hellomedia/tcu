@@ -144,12 +144,24 @@
 						</a>
 					{% endif %}
 					{% if missing_dates > 0 %}
+						{# partialNear: dates already answered, with slots added since (AvailabilityGrid::build news) #}
+						{% set new_slot_dates = availabilities.partialNear %}
+						{% set unanswered_dates = missing_dates - new_slot_dates %}
 						<a class="dash-todo" href="{{ path('my_availabilities') }}">
 							<twig:ux:icon name="calendar" />
 							<span class="dash-todo-text">
-								{{ availabilities.answered > 0 ? 'Compléter' : 'Renseigner' }} mes disponibilités
+								{% if new_slot_dates > 0 and unanswered_dates == 0 %}
+									Nouveaux créneaux dans mes disponibilités
+								{% else %}
+									{{ availabilities.answered > 0 or new_slot_dates > 0 ? 'Compléter' : 'Renseigner' }} mes disponibilités
+								{% endif %}
 								<span class="dash-todo-detail">
-									{{ missing_dates }} date{{ missing_dates > 1 ? 's' }} sans réponse{% if availabilities.missingSoon < missing_dates %}, dont {{ availabilities.missingSoon }} dans les deux prochains mois{% endif %}
+									{% if new_slot_dates > 0 %}
+										{{- unanswered_dates > 0 ? unanswered_dates ~ ' date' ~ (unanswered_dates > 1 ? 's') ~ ' sans réponse, ' -}}
+										{{ new_slot_dates }} date{{ new_slot_dates > 1 ? 's' }} avec un nouveau créneau à renseigner
+									{% else %}
+										{{ missing_dates }} date{{ missing_dates > 1 ? 's' }} sans réponse{% if availabilities.missingSoon < missing_dates %}, dont {{ availabilities.missingSoon }} dans les deux prochains mois{% endif %}
+									{% endif %}
 								</span>
 							</span>
 							<span class="dash-todo-cta">Renseigner ›</span>
@@ -204,7 +216,8 @@
 					<span class="dash-link-title">Mes disponibilités</span>
 					{% if availabilities and availabilities.total > 0 %}
 						<span class="dash-link-status">
-							{{ availabilities.status == 'complete' ? 'Toutes les dates sont renseignées' : availabilities.answered ~ ' date' ~ (availabilities.answered > 1 ? 's') ~ ' sur ' ~ availabilities.total ~ ' renseignée' ~ (availabilities.answered > 1 ? 's') }}
+							{% set done = availabilities.answered + availabilities.partial %}
+							{{ availabilities.status == 'complete' ? 'Toutes les dates sont renseignées' : done ~ ' date' ~ (done > 1 ? 's') ~ ' sur ' ~ availabilities.total ~ ' renseignée' ~ (done > 1 ? 's') ~ (availabilities.partial > 0 ? ', dont ' ~ availabilities.partial ~ ' avec un nouveau créneau') }}
 						</span>
 					{% endif %}
 				</span>

@@ -14,7 +14,8 @@
         {% if summary.status == 'complete' %}
             toutes renseignées
         {% elseif summary.status == 'partial' %}
-            {{ summary.answered }} sur {{ summary.total }} renseignée{{ summary.answered > 1 ? 's' }}
+            {% set done = summary.answered + summary.partial %}
+            {{ done }} sur {{ summary.total }} renseignée{{ done > 1 ? 's' }}{{ summary.partial > 0 ? ', ' ~ summary.partial ~ ' avec un nouveau créneau' }}
         {% else %}
             pas encore renseignées
         {% endif %}

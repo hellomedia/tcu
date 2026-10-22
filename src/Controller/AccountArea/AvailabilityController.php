@@ -51,6 +51,7 @@ class AvailabilityController extends BaseController
         }
 
         $grid->save($registration, $grid->parseSubmission(
+            $registration,
             $request->request->all('answered'),
             $request->request->all('avail'),
         ));

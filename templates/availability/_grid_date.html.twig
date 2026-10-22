@@ -1,27 +1,24 @@
 {# One date of the availability grid (availability/_grid) #}
 {# vars: item (AvailabilityGrid::build dates) #}
 {% set date = item.date %}
-{% set answered = item.status != 'none' ? 1 : 0 %}
-<div class="avail-date {{ item.status }}"
+{% set all_answered = item.status == 'answered' %}
+<div class="avail-date {{ item.status }}" id="avail-date-{{ date.id }}"
     data-controller="availability-date"
-    data-answered="{{ answered }}"
-    data-availability-date-answered-value="{{ answered }}"
+    data-action="availability-grid:new-not-available@window->availability-date#setNewNotAvailable"
 >
-    <input type="hidden" name="answered[{{ date.id }}]" value="{{ answered }}" data-availability-date-target="answered">
-
     <div class="avail-date-header">
         <span class="avail-date-label">{{ date }}</span>
         <span class="avail-badge {{ item.status }}" data-availability-date-target="badge">
-            {{ item.status == 'answered' ? 'renseigné' : (item.status == 'partial' ? 'partiel' : 'pas renseigné') }}
+            {{ item.status == 'answered' ? 'renseigné' : (item.status == 'partial' ? 'à compléter' : 'pas renseigné') }}
         </span>
     </div>
 
     <div class="avail-quick">
-        <button type="button" class="avail-quick-btn avail-quick-yes {{ item.status != 'none' and item.available == item.times|length and item.times is not empty ? 'active' }}"
+        <button type="button" class="avail-quick-btn avail-quick-yes {{ all_answered and item.available == item.times|length and item.times is not empty ? 'active' }}"
             data-availability-date-target="allBtn" data-action="availability-date#setAll" title="Disponible sur tous les créneaux de la journée">
             <span class="avail-icon avail-icon-yes"></span> Toute la journée
         </button>
-        <button type="button" class="avail-quick-btn avail-quick-no {{ item.status != 'none' and item.available == 0 ? 'active' }}"
+        <button type="button" class="avail-quick-btn avail-quick-no {{ all_answered and item.available == 0 ? 'active' }}"
             data-availability-date-target="noneBtn" data-action="availability-date#setNone" title="Pas disponible ce jour-là">
             <span class="avail-icon avail-icon-no"></span> Pas dispo ce jour
         </button>
@@ -29,7 +26,10 @@
 
     <div class="avail-times">
         {% for time in item.times %}
-            <label class="avail-time" title="{{ time.status == 'yes' ? 'Disponible' : (time.status == 'no' ? 'Pas disponible' : 'Pas renseigné') }}">
+            {# answered[date][time] = 1 once the slot has an answer: unchecked then means "not available", as opposed to "not filled in" #}
+            <label class="avail-time {{ time.new ? 'new' }}" data-answered="{{ time.status != 'unknown' ? 1 : 0 }}"
+                title="{{ time.status == 'yes' ? 'Disponible' : (time.status == 'no' ? 'Pas disponible' : (time.new ? 'Nouveau créneau, pas encore renseigné' : 'Pas renseigné')) }}">
+                <input type="hidden" name="answered[{{ date.id }}][{{ time.key }}]" value="{{ time.status != 'unknown' ? 1 : 0 }}" data-availability-date-target="answered">
                 <input type="checkbox"
                     name="avail[{{ date.id }}][{{ time.key }}]"
                     value="1"
@@ -38,6 +38,7 @@
                     data-action="availability-date#changeTime"
                 >
                 {{ time.label }}
+                {% if time.new %}<span class="avail-new-tag">Nouveau</span>{% endif %}
             </label>
         {% endfor %}
     </div>
@@ -46,9 +47,19 @@
         {% if item.status == 'none' %}
             Coche les créneaux où tu peux jouer
         {% elseif item.available == 0 %}
-            Pas disponible ce jour-là
+            {{ item.new > 0 ? 'Pas disponible sur les autres créneaux' : 'Pas disponible ce jour-là' }}
         {% else %}
             Disponible sur {{ item.available }} créneau{{ item.available > 1 ? 'x' }} sur {{ item.times|length }}
         {% endif %}
     </div>
+
+    {# new slots of a date already answered: hidden by CSS once they all have an answer #}
+    {% if item.new > 0 %}
+        <div class="avail-new-prompt">
+            <span>{{ item.new > 1 ? 'Nouveaux créneaux : coche-les' : 'Nouveau créneau : coche-le' }} si tu peux jouer, ou</span>
+            <button type="button" class="avail-new-no" data-action="availability-date#setNewNotAvailable">
+                <span class="avail-icon avail-icon-no"></span> Pas dispo
+            </button>
+        </div>
+    {% endif %}
 </div>
