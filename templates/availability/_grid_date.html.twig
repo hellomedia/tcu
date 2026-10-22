@@ -4,7 +4,6 @@
 {% set all_answered = item.status == 'answered' %}
 <div class="avail-date {{ item.status }}" id="avail-date-{{ date.id }}"
     data-controller="availability-date"
-    data-action="availability-grid:new-not-available@window->availability-date#setNewNotAvailable"
 >
     <div class="avail-date-header">
         <span class="avail-date-label">{{ date }}</span>

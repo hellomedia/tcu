@@ -396,8 +396,8 @@
 {% set later = sections ? grid.dates|filter(item => item.later) : [] %}
 
 <form method="post" action="{{ action }}" class="avail-grid"
-    data-controller="availability-grid{{ autosave ? ' availability-autosave' }}"
     {% if autosave %}
+        data-controller="availability-autosave"
         data-action="availability-date:changed->availability-autosave#schedule"
     {% endif %}
 >
@@ -415,11 +415,8 @@
             <p>
                 <strong>{{ grid.news.labels|length > 1 ? 'Nouveaux créneaux' : 'Nouveau créneau' }} {{ grid.news.labels|join(', ', ' et ') }}</strong>
                 sur {{ grid.news.dates }} date{{ grid.news.dates > 1 ? 's' }} que tu avais déjà renseignée{{ grid.news.dates > 1 ? 's' }}.
-                Ils sont marqués « Nouveau » : coche ceux où tu peux jouer.
+                Renseigne tes dispos pour {{ grid.news.dates > 1 or grid.news.labels|length > 1 ? 'ces créneaux' : 'ce créneau' }}.
             </p>
-            <button type="button" class="avail-new-no" data-action="availability-grid#newNotAvailable">
-                <span class="avail-icon avail-icon-no"></span> Pas dispo sur les nouveaux créneaux
-            </button>
         </div>
     {% endif %}
 

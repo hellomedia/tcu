@@ -32,7 +32,8 @@ export default class extends Controller {
     }
 
     /**
-     * New slots of the date still unanswered: not available (the other slots keep their answer)
+     * "Pas dispo" of the new slots prompt: the new slots of the date still unanswered are not available
+     * (the other slots keep their answer)
      */
     setNewNotAvailable() {
         const unanswered = this.timeTargets.filter((input, i) =>
