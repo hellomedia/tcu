@@ -227,43 +227,6 @@
         border-color: var(--avail-accent);
         border-style: dashed;
     }
-    .avail-new-prompt {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        gap: 4px 8px;
-        margin-top: 8px;
-        font-size: 0.8rem;
-        color: var(--avail-accent);
-        .avail-date:not(:has(.avail-time.new[data-answered="0"])) & {
-            display: none;
-        }
-    }
-    .avail-new-no {
-        all: unset;
-        display: inline-flex;
-        align-items: center;
-        gap: 5px;
-        padding: 3px 8px;
-        border: 1px solid var(--avail-border);
-        border-radius: 6px;
-        background: #fff;
-        color: var(--avail-muted);
-        font-weight: 600;
-        cursor: pointer;
-        &:hover {
-            border-color: var(--avail-accent);
-        }
-        &:focus-visible {
-            outline: 2px solid var(--avail-accent);
-            outline-offset: 2px;
-        }
-        .avail-icon {
-            width: 14px;
-            height: 14px;
-            background-size: 11px;
-        }
-    }
     /* page notice: new slots on dates already answered, hidden once they all have an answer */
     .avail-news {
         display: flex;

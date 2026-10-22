@@ -51,14 +51,4 @@
             Disponible sur {{ item.available }} créneau{{ item.available > 1 ? 'x' }} sur {{ item.times|length }}
         {% endif %}
     </div>
-
-    {# new slots of a date already answered: hidden by CSS once they all have an answer #}
-    {% if item.new > 0 %}
-        <div class="avail-new-prompt">
-            <span>{{ item.new > 1 ? 'Nouveaux créneaux : coche-les' : 'Nouveau créneau : coche-le' }} si tu peux jouer, ou</span>
-            <button type="button" class="avail-new-no" data-action="availability-date#setNewNotAvailable">
-                <span class="avail-icon avail-icon-no"></span> Pas dispo
-            </button>
-        </div>
-    {% endif %}
 </div>

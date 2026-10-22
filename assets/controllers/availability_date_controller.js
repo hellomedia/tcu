@@ -8,7 +8,8 @@ import { Controller } from "@hotwired/stimulus";
  *   as opposed to an unanswered slot which means "not filled in"
  * - on an untouched date, any interaction answers the whole date (unchecked slots = not available)
  * - on a date already answered in part (slots added since), touching a slot answers that slot only:
- *   the new slots stay "not filled in" until the player checks them or clicks "Pas dispo"
+ *   the new slots stay "not filled in" until the player clicks them (unchecking one then means "not available")
+ *   or uses a quick button
  * - the quick buttons, the badge and the status line follow the state
  * - each change dispatches "availability-date:changed" (autosave on the player page)
  */
@@ -28,22 +29,6 @@ export default class extends Controller {
     setNone() {
         this.timeTargets.forEach((input) => (input.checked = false));
         this.answerAll();
-        this.changed();
-    }
-
-    /**
-     * "Pas dispo" of the new slots prompt: the new slots of the date still unanswered are not available
-     * (the other slots keep their answer)
-     */
-    setNewNotAvailable() {
-        const unanswered = this.timeTargets.filter((input, i) =>
-            this.answeredTargets[i].value !== "1" && input.closest(".avail-time").classList.contains("new"));
-        if (unanswered.length === 0) return;
-
-        unanswered.forEach((input) => {
-            input.checked = false;
-            this.answer(input);
-        });
         this.changed();
     }
 
