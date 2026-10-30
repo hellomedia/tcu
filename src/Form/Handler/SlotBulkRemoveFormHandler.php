@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\FlashBagAwareSessionInterface;
 
 /**
- * Removes the slots of a date range within a time window.
+ * Removes the slots of a date range (only on the chosen weekdays) within a time window.
  * Booked slots are kept: removing them would silently unschedule the matches.
  */
 class SlotBulkRemoveFormHandler
@@ -30,12 +30,13 @@ class SlotBulkRemoveFormHandler
     {
         $date = $form->getConfig()->getOption('date');
 
-        // every date of the range, whatever its weekday (unlike the bulk add, which steps week by week from the start date)
         if ($date) {
             $startDate = $endDate = $date->getDate();
+            $weekdays = null;
         } else {
             $startDate = $form->get('startDate')->getData();
             $endDate = $form->get('endDate')->getData();
+            $weekdays = $form->get('weekdays')->getData();
         }
 
         $slots = $this->slotRepository->findInWindow(
@@ -49,6 +50,10 @@ class SlotBulkRemoveFormHandler
         $removed = $booked = [];
 
         foreach ($slots as $slot) {
+            if ($weekdays !== null && !\in_array((int) $slot->getDate()->getDate()->format('N'), $weekdays, true)) {
+                continue;
+            }
+
             if ($slot->getBooking()) {
                 $booked[] = $slot;
                 continue;

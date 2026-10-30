@@ -234,6 +234,25 @@ class DateRepository extends ServiceEntityRepository
         ;
     }
 
+    /**
+     * @return int[] ISO-8601 weekdays (1 = Monday) of the dates from today
+     */
+    public function findFutureWeekdays(): array
+    {
+        $dates = $this->createQueryBuilder('d')
+            ->select('d.date')
+            ->andWhere('d.date >= :today')
+            ->setParameter('today', new \DateTimeImmutable('today'), Types::DATE_IMMUTABLE)
+            ->getQuery()
+            ->getSingleColumnResult()
+        ;
+
+        $weekdays = array_unique(array_map(fn (string $date) => (int) (new \DateTimeImmutable($date))->format('N'), $dates));
+        sort($weekdays);
+
+        return $weekdays;
+    }
+
     /** @return array<string, Date> keyed by 'Y-m-d' */
     public function findByYmd(array $ymds): array
     {
