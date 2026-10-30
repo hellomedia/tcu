@@ -2,12 +2,16 @@
 
 namespace Admin\Controller;
 
+use Admin\Filter\MatchSeasonFilter;
+use App\Entity\Group;
 use App\Entity\InterfacMatch;
 use App\Entity\Player;
 use App\Enum\MatchFormat;
 use App\Enum\Side;
 use Closure;
+use Doctrine\ORM\EntityRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
@@ -17,6 +21,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\Field;
 use EasyCorp\Bundle\EasyAdminBundle\Field\FormField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
+use EasyCorp\Bundle\EasyAdminBundle\Filter\EntityFilter;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormError;
@@ -38,6 +43,21 @@ class InterfacMatchCrudController extends AbstractCrudController
             ->setEntityLabelInSingular('Match')
             ->setEntityLabelInPlural('Matchs')
             ->setSearchFields(['id', 'participants.player.firstname', 'participants.player.lastname', 'group.name'])
+        ;
+    }
+
+    public function configureFilters(Filters $filters): Filters
+    {
+        return $filters
+            ->add(MatchSeasonFilter::new())
+            ->add(EntityFilter::new('group', 'Poule')
+                ->setFormTypeOption('value_type_options.query_builder', fn (EntityRepository $repository) => $repository->createQueryBuilder('g')
+                    ->innerJoin('g.season', 's')->addSelect('s')
+                    ->orderBy('s.startsOn', 'DESC')
+                    ->addOrderBy('g.displayOrder', 'ASC')
+                    ->addOrderBy('g.name', 'ASC'))
+                // group names repeat from one season to the next
+                ->setFormTypeOption('value_type_options.choice_label', fn (Group $group) => $group . ' (' . $group->getSeason() . ')'))
         ;
     }
 
