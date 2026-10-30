@@ -60,11 +60,10 @@
             <div class="matchs">
                 {% for match in date.matchsByGroup(group) %}
                     {% set result = match.result %}
-                    {% set winner = result ? result.winner : null %}
                     <div class="match {{ result ? 'with-result' }} {{ me and match.sideOf(me) ? 'mine' }}">
                         <div class="sides">
                             {% for side in [side_a, side_b] %}
-                                <div class="side {{ winner == side ? 'winner' }}">
+                                <div class="side">
                                     {% for player in match.playersForSide(side) %}
                                         {{ loop.index == 2 ? ' - ' }}
                                         <span class="player">{{ player }}</span>
