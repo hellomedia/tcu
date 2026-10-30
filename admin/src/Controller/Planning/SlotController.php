@@ -5,6 +5,7 @@ namespace Admin\Controller\Planning;
 use Admin\Controller\DashboardController;
 use Admin\Exception\InvalidWindowException;
 use App\Form\Handler\SlotBulkAddFormHandler;
+use App\Form\Handler\SlotBulkRemoveFormHandler;
 use App\Controller\BaseController;
 use App\Entity\Booking;
 use App\Entity\Group;
@@ -13,6 +14,7 @@ use App\Entity\Slot;
 use App\Enum\BookingType;
 use App\Form\SlotBookingForm;
 use App\Form\SlotBulkAddType;
+use App\Form\SlotBulkRemoveType;
 use App\Repository\CourtRepository;
 use App\Repository\DateRepository;
 use App\Repository\GroupRepository;
@@ -81,6 +83,26 @@ class SlotController extends BaseController
         }
 
         return $this->render('@admin/slot/bulk_add.html.twig', [
+            'form' => $form,
+        ]);
+    }
+
+    #[Route('/planning/slot/bulk-remove', name: 'admin_planning_slot_bulk_remove', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
+    public function bulkRemove(Request $request, SlotBulkRemoveFormHandler $handler): Response
+    {
+        $form = $this->createForm(SlotBulkRemoveType::class);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $handler->processForm($form);
+
+            $this->entityManager->flush();
+
+            return $this->redirectToRoute('admin_planning_slots');
+        }
+
+        return $this->render('@admin/slot/bulk_remove.html.twig', [
             'form' => $form,
         ]);
     }

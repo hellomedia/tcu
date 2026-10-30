@@ -7,7 +7,9 @@ use Admin\Exception\InvalidWindowException;
 use App\Controller\BaseController;
 use App\Entity\Date;
 use App\Form\Handler\SlotBulkAddFormHandler;
+use App\Form\Handler\SlotBulkRemoveFormHandler;
 use App\Form\SlotBulkAddType;
+use App\Form\SlotBulkRemoveType;
 use Doctrine\ORM\EntityManager;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use Symfony\Component\HttpFoundation\Request;
@@ -73,6 +75,28 @@ class DateController extends BaseController
         }
 
         return $this->render('@admin/date/add_slots.html.twig', [
+            'form' => $form,
+            'date' => $date,
+        ]);
+    }
+    #[Route('/planning/date/{id:date}/remove-slots', name: 'admin_planning_date_remove_slots', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
+    public function removeSlots(Date $date, Request $request, SlotBulkRemoveFormHandler $handler): Response
+    {
+        $form = $this->createForm(SlotBulkRemoveType::class, options: [
+            'date' => $date
+        ]);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $handler->processForm($form);
+
+            $this->entityManager->flush();
+
+            return $this->redirectToRoute('admin_planning_slots');
+        }
+
+        return $this->render('@admin/date/remove_slots.html.twig', [
             'form' => $form,
             'date' => $date,
         ]);

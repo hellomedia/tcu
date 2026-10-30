@@ -3,9 +3,11 @@
 namespace App\Repository;
 
 use App\Entity\Booking;
+use App\Entity\Court;
 use App\Entity\Date;
 use App\Entity\Slot;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -43,6 +45,37 @@ class SlotRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+
+    /**
+     * Slots of these dates and courts lying entirely within the time window, with their booking
+     *
+     * @param Date[]  $dates
+     * @param Court[] $courts
+     * @return Slot[]
+     */
+    public function findInWindow(array $dates, array $courts, \DateTimeImmutable $startTime, \DateTimeImmutable $endTime): array
+    {
+        if (!$dates || !$courts) {
+            return [];
+        }
+
+        return $this->createQueryBuilder('s')
+            ->innerJoin('s.date', 'd')->addSelect('d')
+            ->leftJoin('s.booking', 'b')->addSelect('b')
+            ->andWhere('s.date IN (:dates)')
+            ->andWhere('s.court IN (:courts)')
+            ->andWhere('s.startsAt >= :startTime')
+            ->andWhere('s.endsAt <= :endTime')
+            ->setParameter('dates', $dates)
+            ->setParameter('courts', $courts)
+            ->setParameter('startTime', $startTime, Types::TIME_IMMUTABLE)
+            ->setParameter('endTime', $endTime, Types::TIME_IMMUTABLE)
+            ->addOrderBy('d.date', 'ASC')
+            ->addOrderBy('s.startsAt', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 
     /**
      * All slots of a date, with their booking (match, players) : for the time x court grid

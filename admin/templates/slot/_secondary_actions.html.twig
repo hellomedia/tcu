@@ -19,6 +19,13 @@
                 Ajouter des créneaux
             </a>
 
+            <a class="hk-dropdown-link"
+                href="{{ path('admin_planning_date_remove_slots', {'id': date.id}) }}"
+            >
+                <twig:ux:icon name="delete" />
+                Supprimer des créneaux
+            </a>
+
             <button type="button"
                 class="hk-dropdown-link"
                 formaction="{{ path('admin_planning_date_delete', {'id': date.id}) }}"

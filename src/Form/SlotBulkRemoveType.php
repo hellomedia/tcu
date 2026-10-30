@@ -1,0 +1,57 @@
+<?php
+
+namespace App\Form;
+
+use App\Entity\Court;
+use App\Entity\Date;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\TimeType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
+class SlotBulkRemoveType extends AbstractType
+{
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
+        $date = $options['date'];
+
+        $builder
+            ->add('courts', EntityType::class, [
+                'label' => 'Terrains',
+                'class' => Court::class,
+                'multiple' => true,
+                'expanded' => false,
+                'autocomplete' => true,
+            ]);
+
+        if ($date == null) {
+            $builder->add('startDate', DateType::class, [
+                'label' => 'Date de début',
+            ])
+            ->add('endDate', DateType::class, [
+                'label' => 'Date de fin (inclue)',
+            ]);
+        }
+
+        $builder
+            ->add('startTime', TimeType::class, [
+                'label' => 'Heure de début',
+            ])
+            ->add('endTime', TimeType::class, [
+                'label' => 'Heure de fin',
+                'help' => 'Les créneaux compris entièrement entre ces deux heures sont supprimés',
+            ])
+        ;
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'date' => null,
+        ]);
+
+        $resolver->addAllowedTypes('date', ['null', Date::class]);
+    }
+}
