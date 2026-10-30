@@ -37,6 +37,7 @@ class InterfacMatchCrudController extends AbstractCrudController
         return $crud
             ->setEntityLabelInSingular('Match')
             ->setEntityLabelInPlural('Matchs')
+            ->setSearchFields(['id', 'participants.player.firstname', 'participants.player.lastname', 'group.name'])
         ;
     }
 
