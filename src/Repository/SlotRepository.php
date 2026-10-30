@@ -47,26 +47,26 @@ class SlotRepository extends ServiceEntityRepository
     //    }
 
     /**
-     * Slots of these dates and courts lying entirely within the time window, with their booking
+     * Slots of these courts, between these dates (included), lying entirely within the time window, with their booking
      *
-     * @param Date[]  $dates
      * @param Court[] $courts
      * @return Slot[]
      */
-    public function findInWindow(array $dates, array $courts, \DateTimeImmutable $startTime, \DateTimeImmutable $endTime): array
+    public function findInWindow(\DateTimeImmutable $startDate, \DateTimeImmutable $endDate, array $courts, \DateTimeImmutable $startTime, \DateTimeImmutable $endTime): array
     {
-        if (!$dates || !$courts) {
+        if (!$courts) {
             return [];
         }
 
         return $this->createQueryBuilder('s')
             ->innerJoin('s.date', 'd')->addSelect('d')
             ->leftJoin('s.booking', 'b')->addSelect('b')
-            ->andWhere('s.date IN (:dates)')
+            ->andWhere('d.date BETWEEN :startDate AND :endDate')
             ->andWhere('s.court IN (:courts)')
             ->andWhere('s.startsAt >= :startTime')
             ->andWhere('s.endsAt <= :endTime')
-            ->setParameter('dates', $dates)
+            ->setParameter('startDate', $startDate, Types::DATE_IMMUTABLE)
+            ->setParameter('endDate', $endDate, Types::DATE_IMMUTABLE)
             ->setParameter('courts', $courts)
             ->setParameter('startTime', $startTime, Types::TIME_IMMUTABLE)
             ->setParameter('endTime', $endTime, Types::TIME_IMMUTABLE)

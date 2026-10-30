@@ -32,6 +32,7 @@ class SlotBulkRemoveType extends AbstractType
             ])
             ->add('endDate', DateType::class, [
                 'label' => 'Date de fin (inclue)',
+                'help' => 'Toutes les dates entre ces deux dates',
             ]);
         }
 
