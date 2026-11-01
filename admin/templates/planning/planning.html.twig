@@ -159,9 +159,6 @@
             font-size: 0.8rem;
             color: #6c757d;
         }
-        .slot-row.free .btn-practice {
-            margin-left: 6px;
-        }
 
         /* TOOLBAR : free slots only, poule legend / focus */
         .planning-toolbar {
@@ -384,7 +381,8 @@
             display: none;
         }
         @media (max-width: 767.98px) {
-            .slot-row.booked .slot-content {
+            /* a tap on the strip opens the menu : booked slot (actions) or free slot (match / entraînement) */
+            .slot-row .slot-content {
                 cursor: pointer;
             }
             /* bottom sheet */

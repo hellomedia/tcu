@@ -16,14 +16,14 @@
         {# poule focus (planning_filter_controller): a practice can belong to several poules #}
         data-group-ids="{{ practice.groups|map(g => g.id)|join(' ') }}"
     {% endif %}
-    {% if slot.booking is not empty %}data-controller="slot-menu"{% endif %}
+    data-controller="slot-menu"
     {% if group %}data-group-id="{{ group.id }}" style="--group-color: {{ group_color(group) }}"{% endif %}
 >
 	<div class="slot-time">
 		{{ slot.startsAt|date('H:i') }}
 	</div>
 	<div class="slot-content" {% if slot.match and group %}title="{{ group }}" draggable="true"{% elseif practice %}title="Entraînement {{ practice.label }}"{% endif %}
-		{% if slot.booking is not empty %}data-action="click->slot-menu#openFromStrip"{% endif %}
+		data-action="click->slot-menu#openFromStrip"
 	>
 		<div class="slot-content-inner {{ slot.booking ? 'with-match' }}">
 			{# <div class="placeholder"></div> #}
@@ -34,14 +34,6 @@
                 >
 					<twig:ux:icon name="add"/>
 					Match
-				</a>
-				<a class="btn btn-default btn-practice"
-                    href="{{ path('admin_practice_new', {'slot': slot.id}) }}"
-                    data-action="modal-remote-form#open"
-                    title="Programmer un entraînement sur ce créneau"
-                >
-					<twig:ux:icon name="add"/>
-					Entraînement
 				</a>
             {% elseif practice %}
                 <div class="practice-info">
@@ -111,6 +103,8 @@
 				{% include "@admin/planning/_slot_actions_practice.html.twig" %}
 			{% elseif slot.booking is not empty %}
 				{% include "@admin/planning/_slot_actions.html.twig" %}
+			{% else %}
+				{% include "@admin/planning/_slot_actions_free.html.twig" %}
 			{% endif %}
 		</div>
 	</div>

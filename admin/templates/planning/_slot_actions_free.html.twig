@@ -1,0 +1,45 @@
+{# Menu of a free slot (slot_menu_controller.js) : the secondary actions. "Match" stays as the visible button.
+   Desktop: dots on hover. Phone: a tap on the strip opens the bottom sheet. #}
+<div class="planning-slot-actions">
+	<button type="button"
+		class="btn slot-menu-button"
+		data-slot-menu-target="button"
+		data-action="pointerdown->slot-menu#rememberState slot-menu#toggle"
+		aria-haspopup="menu"
+		aria-expanded="false"
+		aria-controls="slot-menu-{{ slot.id }}"
+		title="Actions"
+	>
+		<twig:ux:icon name="dots"/>
+	</button>
+
+	<div popover
+		id="slot-menu-{{ slot.id }}"
+		class="slot-menu"
+		data-slot-menu-target="menu"
+		data-action="beforetoggle->slot-menu#beforeToggle click->slot-menu#closeOnItem"
+	>
+            {# phone only: the sheet hides the row, recall which slot it is #}
+            <div class="slot-menu-header">
+                <div class="slot-menu-match">Créneau libre</div>
+                <div class="slot-menu-slot">{{ slot }}</div>
+            </div>
+
+            <div class="hk-dropdown-inner">
+                <a class="hk-dropdown-link"
+                    href="{{ path('admin_planning_slot_add_booking', {'id': slot.id}) }}"
+                    data-action="modal-remote-form#open"
+                >
+                    <twig:ux:icon name="add"/>
+                    Programmer un match
+                </a>
+                <a class="hk-dropdown-link"
+                    href="{{ path('admin_practice_new', {'slot': slot.id}) }}"
+                    data-action="modal-remote-form#open"
+                >
+                    <twig:ux:icon name="add"/>
+                    Programmer un entraînement
+                </a>
+            </div>
+	</div>
+</div>
