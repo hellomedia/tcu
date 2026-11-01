@@ -3,6 +3,8 @@
 namespace App\Controller\AccountArea;
 
 use App\Controller\BaseController;
+use App\Entity\Date;
+use App\Entity\InterfacMatch;
 use App\Entity\Practice;
 use App\Repository\PlayerRepository;
 use App\Repository\PracticeRepository;
@@ -52,9 +54,25 @@ class DashboardController extends BaseController
         $practices = $player ? $practiceRepository->findUpcomingForPlayer($player) : [];
         $practicesToAnswer = \count(array_filter($practices, fn (Practice $practice) => !$practice->isCancelled() && $practice->getAnswerOf($player) === null));
 
+        // agenda : matchs et entraînements à venir ensemble, par jour puis par heure
+        $agenda = [];
+        foreach ($upcoming ?? [] as $match) {
+            \assert($match instanceof InterfacMatch);
+            $agenda[$match->getDate()->getDate()->format('Y-m-d')][] = ['type' => 'match', 'match' => $match, 'time' => $match->startsAt()->format('H:i')];
+        }
+        foreach ($practices as $practice) {
+            $agenda[$practice->getDay()->format('Y-m-d')][] = ['type' => 'practice', 'practice' => $practice, 'time' => substr((string) $practice->getTimeRange(), 0, 5)];
+        }
+        ksort($agenda);
+        $days = [];
+        foreach ($agenda as $ymd => $items) {
+            usort($items, fn (array $a, array $b) => $a['time'] <=> $b['time']);
+            $days[] = ['label' => Date::formatDay(new \DateTimeImmutable($ymd)), 'items' => $items];
+        }
+
         return $this->render('account_area/dashboard/dashboard.html.twig', [
             'player' => $player,
-            'next_match' => $upcoming?->first() ?: null,
+            'agenda' => $days,
             'upcoming' => $upcoming?->count() ?? 0,
             'to_confirm' => $player?->getUnconfirmedUpcomingMatchs()->count() ?? 0,
             'practices' => $practices,

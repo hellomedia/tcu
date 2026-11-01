@@ -70,6 +70,43 @@
 			color: var(--color-gray-500);
 		}
 
+		/* agenda : one block per day, cards below the day */
+		.dash-agenda {
+			display: grid;
+			gap: 22px;
+		}
+		.dash-day-title {
+			margin: 0 0 8px;
+			font-size: 15px;
+			font-weight: 600;
+			color: var(--color-gray-600);
+		}
+		.dash-day-items {
+			display: grid;
+			gap: 10px;
+		}
+		/* the day heading already says the date : the cards only keep the time and the court */
+		.dash-day-items .match-card-date,
+		.dash-day-items .practice-card-date {
+			display: none;
+		}
+		/* confirmed chip of the match card (see my_matchs) */
+		.confirmed {
+			display: inline-flex;
+			align-items: center;
+			gap: 5px;
+			padding: 4px 10px;
+			border-radius: 999px;
+			font-size: 14px;
+			font-weight: 600;
+			background-color: var(--color-green-100);
+			color: var(--color-green-800);
+			svg {
+				width: 16px;
+				height: 16px;
+			}
+		}
+
 		/* links to the pages */
 		.dash-links {
 			display: grid;
@@ -130,7 +167,7 @@
 	{# shown once a date within 2 months is missing (AvailabilityGrid::SOON), then counts every date before "Plus tard" (AvailabilityGrid::LATER) #}
 	{% set missing_dates = availabilities and availabilities.missingSoon > 0 ? availabilities.missingNear : 0 %}
 
-	<div class="dash">
+	<div class="dash" data-controller="modal modal-confirm">
 
 		{% if player %}
 			<p class="dash-hello">Salut {{ player.firstname }} 👋</p>
@@ -154,7 +191,7 @@
 							<twig:ux:icon name="lessons" />
 							<span class="dash-todo-text">
 								{{ practices_to_answer > 1 ? practices_to_answer ~ ' entraînements attendent' : '1 entraînement attend' }} ta réponse
-								<span class="dash-todo-detail">Dis-nous si tu viens, pour que les autres sachent avec qui ils joueront</span>
+								<span class="dash-todo-detail">Dis-nous si tu viens, pour que les autres sachent qui sera là</span>
 							</span>
 							<span class="dash-todo-cta">Répondre ›</span>
 						</a>
@@ -188,32 +225,42 @@
 		{% endif %}
 
 		{% if player %}
-			<section>
-				<h2 class="dash-title">Prochain match</h2>
-				{% if next_match %}
-					{% include 'interfacs/match/_card.html.twig' with {match: next_match} %}
-				{% else %}
+			{# agenda : matchs et entraînements à venir, ensemble, par jour #}
+			<section id="entrainements">
+				<h2 class="dash-title">À venir</h2>
+				{% if agenda is empty %}
 					<p class="dash-empty">Aucun match programmé pour l'instant.</p>
 					{% if first_match_pending and availabilities and availabilities.missingPlanning > 0 %}
 						<p class="dash-empty">
 							Pour qu'on puisse planifier tes matchs, <a href="{{ path('my_availabilities') }}">renseigne tes disponibilités</a>, au moins pour les quatre prochaines semaines.
 						</p>
 					{% endif %}
+				{% else %}
+					{% if practices is not empty %}
+						<p class="dash-intro">Un entraînement : des créneaux réservés pour jouer librement entre joueurs de ta poule. Dis si tu viens, les autres voient qui sera là.</p>
+					{% endif %}
+					<div class="dash-agenda">
+						{% for day in agenda %}
+							<div class="dash-day">
+								<h3 class="dash-day-title">{{ day.label }}</h3>
+								<div class="dash-day-items">
+									{% for item in day.items %}
+										{% if item.type == 'match' %}
+											{% include 'interfacs/match/_card.html.twig' with {match: item.match, player: player, confirmable: true} %}
+										{% else %}
+											{% include 'account_area/interfacs/practice/_card.html.twig' with {practice: item.practice, player: player, answerable: true} %}
+										{% endif %}
+									{% endfor %}
+								</div>
+							</div>
+						{% endfor %}
+					</div>
 				{% endif %}
 			</section>
 		{% endif %}
 
-		{% if practices is not empty %}
-			<section id="entrainements">
-				<h2 class="dash-title">{{ practices|length > 1 ? 'Entraînements' : 'Entraînement' }}</h2>
-				<p class="dash-intro">Des créneaux réservés pour jouer librement entre joueurs de ta poule. Dis si tu viens : les autres voient qui sera là.</p>
-				<div class="practice-cards">
-					{% for practice in practices %}
-						{% include 'account_area/interfacs/practice/_card.html.twig' with {practice: practice, player: player, answerable: true} %}
-					{% endfor %}
-				</div>
-			</section>
-		{% endif %}
+		{% include 'component/modal/_modal.html.twig' %}
+		{% include 'component/modal/_icons_templates.html.twig' %}
 
 		<nav class="dash-links" aria-label="Mon espace">
 			<a class="dash-link" href="{{ path('my_matchs') }}">
