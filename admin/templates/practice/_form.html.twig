@@ -23,10 +23,6 @@
             {% if slot %}
                 <twig:ux:icon name="calendar"/>
                 {{ slot.date }}
-                <span class="sep">•</span>
-                {{ slot.timeRange }}
-                <span class="sep">•</span>
-                {{ slot.court }}
             {% else %}
                 {{ practice.season }}
             {% endif %}
@@ -51,8 +47,6 @@
                     {{ form_errors(form.date) }}
                     {{ form_widget(form.date) }}
                 </div>
-            {% else %}
-                <p class="booking-note">Un seul créneau. Pour en réserver plusieurs (deux terrains, deux heures qui se suivent), modifiez l'entraînement ensuite.</p>
             {% endif %}
 
             {% if form.slots is defined %}

@@ -34,8 +34,8 @@ use Symfonycasts\DynamicForms\DynamicFormBuilder;
  * Les créneaux ne sont pas mappés : le contrôleur les convertit en réservations (Practice::$bookings).
  *
  * Options:
- *  - slot: créneau cliqué dans le planning (nouvel entraînement) : il est fixé, pas de choix de date ni de créneaux
- *    (pour en réserver plusieurs : modifier l'entraînement ensuite)
+ *  - slot: créneau cliqué dans le planning (nouvel entraînement) : la date est fixée, les créneaux de cette date
+ *    sont proposés avec celui-là coché
  */
 final class PracticeForm extends AbstractType
 {
@@ -61,19 +61,21 @@ final class PracticeForm extends AbstractType
 
         if ($fixedSlot === null) {
             $this->addScheduleFields($builder, $practice, $currentSlots, $currentDate);
+        } else {
+            $this->addSlotsField($builder, $practice, $fixedSlot->getDate(), [$fixedSlot], []);
         }
 
         $this->addDetailFields($builder, $practice);
 
-        // les créneaux cochés (ou le créneau fixé) deviennent les réservations de l'entraînement, avant la validation (priorité > 0)
-        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use ($fixedSlot) {
+        // les créneaux cochés deviennent les réservations de l'entraînement, avant la validation (priorité > 0)
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
             $form = $event->getForm();
             $submit = $form->get('save');
             \assert($submit instanceof ClickableInterface);
             if (!$submit->isClicked()) {
                 return; // changement de date : le formulaire est seulement réaffiché
             }
-            $selected = $form->has('slots') ? $form->get('slots')->getData() : [$fixedSlot];
+            $selected = $form->get('slots')->getData();
             $this->syncBookings($event->getData(), array_values(array_filter(\is_iterable($selected) ? [...$selected] : [])));
         }, 10);
     }
@@ -114,24 +116,7 @@ final class PracticeForm extends AbstractType
             if ($selectedDate === null) {
                 return;
             }
-            $field->add(EntityType::class, [
-                'label' => 'Créneaux',
-                'class' => Slot::class,
-                'mapped' => false,
-                'query_builder' => function (SlotRepository $repo) use ($selectedDate, $practice): QueryBuilder {
-                    return $repo->getAvailableSlotsForPracticeQueryBuilder($selectedDate, $practice);
-                },
-                'multiple' => true,
-                'expanded' => true,
-                'data' => $currentSlots !== [] && $currentSlots[0]->getDate() === $selectedDate ? $currentSlots : [],
-                'choice_label' => function (Slot $slot) {
-                    return $slot->getTimeRange() . ' - ' . $slot->getCourt();
-                },
-                // ChoiceExtraExtension
-                'choice_extra' => function (Slot $slot) use ($currentSlots): array {
-                    return ['current' => \in_array($slot, $currentSlots, true)];
-                },
-            ]);
+            $this->addSlotsField($field, $practice, $selectedDate, $currentSlots !== [] && $currentSlots[0]->getDate() === $selectedDate ? $currentSlots : [], $currentSlots);
         });
 
         // changement de date : les créneaux cochés appartiennent à l'ancienne date, ils ne sont plus des choix valides
@@ -142,6 +127,39 @@ final class PracticeForm extends AbstractType
                 $event->setData($data);
             }
         });
+    }
+
+    /**
+     * Créneaux d'une date, libres ou déjà réservés par cet entraînement, plusieurs cochables
+     *
+     * @param Slot[] $checked créneaux cochés à l'ouverture
+     * @param Slot[] $currentSlots créneaux actuels de l'entraînement ("Réservé")
+     */
+    private function addSlotsField(DynamicFormBuilder|DependentField $builder, Practice $practice, Date $date, array $checked, array $currentSlots): void
+    {
+        $options = [
+            'label' => 'Créneaux',
+            'class' => Slot::class,
+            'mapped' => false,
+            'query_builder' => function (SlotRepository $repo) use ($date, $practice): QueryBuilder {
+                return $repo->getAvailableSlotsForPracticeQueryBuilder($date, $practice);
+            },
+            'multiple' => true,
+            'expanded' => true,
+            'data' => $checked,
+            'choice_label' => function (Slot $slot) {
+                return $slot->getTimeRange() . ' - ' . $slot->getCourt();
+            },
+            // ChoiceExtraExtension
+            'choice_extra' => function (Slot $slot) use ($currentSlots): array {
+                return ['current' => \in_array($slot, $currentSlots, true)];
+            },
+        ];
+
+        // un champ dépendant est déjà nommé
+        $builder instanceof DependentField
+            ? $builder->add(EntityType::class, $options)
+            : $builder->add('slots', EntityType::class, $options);
     }
 
     /**
@@ -222,7 +240,7 @@ final class PracticeForm extends AbstractType
             return;
         }
 
-        $date = $form->get('date')->getData();
+        $date = $form->has('date') ? $form->get('date')->getData() : $options['slot']?->getDate();
 
         if (!$date instanceof Date) {
             return;
