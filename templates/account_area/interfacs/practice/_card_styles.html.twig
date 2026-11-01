@@ -11,8 +11,8 @@
         justify-content: space-between;
         gap: 12px 20px;
         padding: 14px 18px;
-        /* hatched background : an entraînement is told apart from a match without the colours */
-        background: repeating-linear-gradient(135deg, #fff, #fff 8px, var(--color-gray-50) 8px, var(--color-gray-50) 16px);
+        /* light grey : an entraînement is told apart from a match (white) by the badge and the tint, no stripes here */
+        background-color: var(--color-gray-50);
         border: 1px solid var(--color-gray-200);
         border-left: 5px solid var(--group-color, var(--color-gray-300));
         border-radius: 6px;
@@ -40,7 +40,9 @@
     }
     .practice-card-kind {
         display: inline-block;
+        margin-right: 4px;
         padding: 1px 8px;
+        vertical-align: 1px;
         border-radius: 4px;
         background: var(--color-gray-700);
         color: #fff;

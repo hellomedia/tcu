@@ -13,14 +13,15 @@
 
 <article class="practice-card {{ practice.cancelled ? 'practice-card--cancelled' }}" id="practice-{{ practice.id }}" style="--group-color: {{ firstGroup ? group_color(firstGroup) : 'var(--color-gray-300)' }}">
     <div class="practice-card-body">
+        {# same first line as the match card (date, time, court) : the agenda is easy to scan #}
         <div class="practice-card-when">
-            <span class="practice-card-kind {{ practice.cancelled ? 'cancelled' }}">{{ practice.cancelled ? 'Annulé' : 'Entraînement' }}</span>
             <span class="practice-card-date">{{ practice.dayLabel }}</span>
             <span class="practice-card-time">{{ practice.timeRange }}</span>
             <span class="practice-card-court">{{ practice.courtsLabel }}</span>
         </div>
 
         <div class="practice-card-label">
+            <span class="practice-card-kind {{ practice.cancelled ? 'cancelled' }}">{{ practice.cancelled ? 'Annulé' : 'Entraînement' }}</span>
             {{ practice.label }}
             {% if practice.title and practice.groups is not empty %}
                 <span class="practice-card-groups">· {% for group in practice.groups %}{{ group }}{{ not loop.last ? ', ' }}{% endfor %}</span>
