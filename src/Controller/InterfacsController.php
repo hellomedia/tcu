@@ -15,12 +15,12 @@ use Symfony\Component\Routing\Attribute\Route;
 class InterfacsController extends BaseController
 {
     /**
-     * Pas de page d'accueil : les pages interfacs ont une bande d'onglets (Poules, Planning, Mes interfacs)
+     * Pas de page d'accueil : les pages interfacs ont une bande d'onglets (Planning, Poules, Mes interfacs) ; le planning est l'entrée de la section
      */
     #[Route('/interfacs', name: 'interfacs')]
     public function homepage(): Response
     {
-        return $this->redirectToRoute('interfacs_groups');
+        return $this->redirectToRoute('interfacs_planning');
     }
 
     /**

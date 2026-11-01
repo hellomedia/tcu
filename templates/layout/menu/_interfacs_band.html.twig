@@ -7,8 +7,8 @@
     icon: 'trophy',
     title: 'Interfacs',
     tabs: [
-        {url: path('interfacs_groups'), label: 'Poules', short: 'Poules', current: app.current_route == 'interfacs_groups'},
         {url: path('interfacs_planning'), label: 'Planning', short: 'Planning', current: is_current_page('interfacs_planning')},
+        {url: path('interfacs_groups'), label: 'Poules', short: 'Poules', current: app.current_route == 'interfacs_groups'},
         {url: path('dashboard'), label: 'Mes interfacs', short: 'Mes interfacs', current: false, icon: 'account'},
     ],
 } only %}
