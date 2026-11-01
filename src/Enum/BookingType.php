@@ -14,7 +14,7 @@ enum BookingType: string implements TranslatableInterface
     // Condition::cases() returns an array of cases, in order of declaration.
     case MATCH = 'Match';
     case LESSON = 'Cours';
-    case PRACTICE = 'Entrainement';
+    case PRACTICE = 'Entraînement';
 
     public function trans(TranslatorInterface $translator, ?string $locale = null): string
     {

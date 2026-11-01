@@ -11,6 +11,8 @@ use App\Entity\InterfacMatch;
 use App\Entity\MatchParticipant;
 use App\Entity\MatchResult;
 use App\Entity\Player;
+use App\Entity\Practice;
+use App\Entity\PracticeParticipant;
 use App\Entity\Registration;
 use App\Entity\Season;
 use App\Entity\Slot;
@@ -142,7 +144,9 @@ class LoadFixturesCommand extends Command
         $this->loadWinterRegistrations($winter);
         $groups = $this->loadGroups($winter, $this->findInterfacsPlayers($winter));
         $this->entityManager->flush();
-        $this->loadCurrentMatchs($groups, $winter);
+        $freeSlots = $this->loadCurrentMatchs($groups, $winter);
+        $this->entityManager->flush();
+        $this->loadPractices($groups, $winter, $freeSlots);
         $this->entityManager->flush();
         $this->loadAvailabilities($winter);
 
@@ -167,6 +171,7 @@ class LoadFixturesCommand extends Command
         // NB: pas de TRUNCATE ... CASCADE : user_ référence player, les utilisateurs seraient supprimés
         // même avec --keep-users. Toutes les tables liées sont listées dans la même commande.
         $tables = [
+            'practice_participant', 'practice_group', 'practice',
             'participant_confirmation_info', 'match_result', 'match_participant', 'booking', 'interfac_match',
             'availability', 'slot', 'date', 'court', 'group_player', '"group"', 'registration', 'season',
         ];
@@ -366,8 +371,10 @@ class LoadFixturesCommand extends Command
      * - le reste n'est pas programmé
      *
      * @param Group[] $groups
+     *
+     * @return Slot[] créneaux à venir restés libres
      */
-    private function loadCurrentMatchs(array $groups, Season $season): void
+    private function loadCurrentMatchs(array $groups, Season $season): array
     {
         $today = new \DateTimeImmutable('today');
 
@@ -388,6 +395,70 @@ class LoadFixturesCommand extends Command
                 }
                 // sinon : match non programmé
             }
+        }
+
+        return array_values($futureSlots);
+    }
+
+    /**
+     * Entraînements à venir : un pour la première poule sur deux terrains (quelques réponses),
+     * un pour les deux poules avec un intitulé et une note, un annulé
+     *
+     * @param Group[] $groups
+     * @param Slot[] $freeSlots créneaux à venir libres, par date puis heure
+     */
+    private function loadPractices(array $groups, Season $season, array $freeSlots): void
+    {
+        if (\count($groups) < 2 || $freeSlots === []) {
+            return;
+        }
+
+        // créneaux libres par date, puis par heure : on prend ceux d'une même heure (plusieurs terrains)
+        $byDate = [];
+        foreach ($freeSlots as $slot) {
+            $byDate[$slot->getDate()->getDate()->format('Y-m-d')][$slot->getStartsAt()->format('H:i')][] = $slot;
+        }
+        $days = array_keys($byDate);
+
+        $pick = function (int $dayIndex, int $count) use ($byDate, $days): array {
+            $day = $days[$dayIndex] ?? null;
+            foreach ($day !== null ? $byDate[$day] : [] as $slots) {
+                if (\count($slots) >= $count) {
+                    return \array_slice($slots, 0, $count);
+                }
+            }
+
+            return [];
+        };
+
+        $book = function (Practice $practice, array $slots): void {
+            foreach ($slots as $slot) {
+                $booking = (new Booking())->setType(BookingType::PRACTICE)->setSlot($slot);
+                $slot->setBooking($booking);
+                $practice->addBooking($booking);
+            }
+            $this->entityManager->persist($practice);
+        };
+
+        // Poule 1, deux terrains, dans deux semaines : 2 joueurs viennent, 1 ne vient pas
+        if ($slots = $pick(1, 2)) {
+            $practice = (new Practice())->setSeason($season)->addGroup($groups[0])->setNote('Apportez des balles');
+            $book($practice, $slots);
+            foreach (\array_slice($groups[0]->getPlayers()->toArray(), 0, 3) as $i => $player) {
+                $practice->addParticipant((new PracticeParticipant())->setPlayer($player)->answer($i < 2));
+            }
+        }
+
+        // les deux poules, un terrain, dans quatre semaines
+        if ($slots = $pick(3, 1)) {
+            $practice = (new Practice())->setSeason($season)->addGroup($groups[0])->addGroup($groups[1])->setTitle('Entraînement libre')->setNote('Doubles tournants, tout le monde joue');
+            $book($practice, $slots);
+        }
+
+        // Poule 2, annulé
+        if ($slots = $pick(2, 1)) {
+            $practice = (new Practice())->setSeason($season)->addGroup($groups[1])->cancel();
+            $book($practice, $slots);
         }
     }
 

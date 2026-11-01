@@ -26,6 +26,13 @@ class Booking implements EntityInterface
     #[ORM\JoinColumn(nullable: true)]
     private ?InterfacMatch $match = null;
 
+    /**
+     * Entraînement : plusieurs réservations (créneaux) pour un même entraînement
+     */
+    #[ORM\ManyToOne(inversedBy: 'bookings')]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?Practice $practice = null;
+
     public function __toString(): string
     {
         return (string) $this->slot;
@@ -68,6 +75,18 @@ class Booking implements EntityInterface
     public function setMatch(?InterfacMatch $match): static
     {
         $this->match = $match;
+
+        return $this;
+    }
+
+    public function getPractice(): ?Practice
+    {
+        return $this->practice;
+    }
+
+    public function setPractice(?Practice $practice): static
+    {
+        $this->practice = $practice;
 
         return $this;
     }
