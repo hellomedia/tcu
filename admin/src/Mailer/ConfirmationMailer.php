@@ -4,6 +4,7 @@ namespace Admin\Mailer;
 
 use App\Entity\InterfacMatch;
 use App\Entity\Player;
+use App\Entity\Practice;
 use App\Entity\Season;
 use App\Mailer\BaseMailer;
 use App\Service\MatchNotifications;
@@ -43,14 +44,37 @@ class ConfirmationMailer extends BaseMailer
         $cancelled = array_map(fn (array $item) => $this->describe($item['match'], $player, $item['info']->getNotifiedLabel()), $collected['cancelled']);
         $unconfirmed = array_map(fn (array $item) => $this->describe($item['match'], $player), $collected['unconfirmed']);
 
+        // entraînements des poules du joueur : pas de confirmation, le joueur dit s'il vient (sur le site)
+        $practices = $collected['practices'];
+        $newPractices = array_map(fn (array $item) => $this->describePractice($item['practice'], $player), $practices['new']);
+        $changedPractices = array_map(fn (array $item) => $this->describePractice($item['practice'], $player, $item['participant']->getNotifiedLabel()), $practices['changed']);
+        $cancelledPractices = array_map(fn (array $item) => $this->describePractice($item['practice'], $player, $item['participant']->getNotifiedLabel()), $practices['cancelled']);
+        $practicesToAnswer = \count(array_filter([...$newPractices, ...$changedPractices], fn (array $item) => $item['answer'] === null));
+
         $toConfirm = \count(array_filter($new, fn (array $item) => !$item['confirmed'])) + \count($changed) + \count($unconfirmed);
-        $onlyCancellations = $new === [] && $changed === [] && $unconfirmed === [];
+        $hasMatchs = $collected['pendingMatchs'] > 0 || $unconfirmed !== [];
+        $onlyCancellations = $new === [] && $changed === [] && $unconfirmed === [] && $newPractices === [] && $changedPractices === [];
 
         $subject = match (true) {
+            !$hasMatchs && $onlyCancellations => 'Entraînement Interfacs annulé',
+            !$hasMatchs && $changedPractices !== [] && $newPractices === [] => 'Horaire d\'entraînement Interfacs modifié',
+            !$hasMatchs => \count($newPractices) > 1 ? 'Entraînements Interfacs' : 'Entraînement Interfacs',
             $onlyCancellations => 'Match Interfacs annulé',
             \count($changed) > 0 && \count($new) === 0 => 'Horaire Interfacs modifié',
             default => 'Matchs Interfacs programmés',
         };
+
+        // bouton : confirmer les horaires (Mes matchs) ; sinon, dire si on vient (tableau de bord)
+        if ($toConfirm > 0) {
+            $link = $this->confirmationLink($player, 'my_matchs');
+            $label = $toConfirm > 1 ? 'Confirmer mes horaires' : 'Confirmer mon horaire';
+        } elseif ($practicesToAnswer > 0) {
+            $link = $this->confirmationLink($player, 'dashboard');
+            $label = 'Dire si je viens';
+        } else {
+            $link = null;
+            $label = null;
+        }
 
         $email = (new TemplatedEmail())
             ->subject($subject)
@@ -59,14 +83,24 @@ class ConfirmationMailer extends BaseMailer
             ->htmlTemplate('email/schedule_notification.html.twig')
             ->context([
                 'name' => $user->getName(),
-                'title' => $onlyCancellations ? 'Match annulé' : 'Tes matchs Interfacs',
+                'title' => match (true) {
+                    !$hasMatchs && $onlyCancellations => 'Entraînement annulé',
+                    !$hasMatchs => 'Tes entraînements Interfacs',
+                    $onlyCancellations => 'Match annulé',
+                    default => 'Tes matchs Interfacs',
+                },
                 'new_matchs' => $new,
                 'changed_matchs' => $changed,
                 'cancelled_matchs' => $cancelled,
                 'unconfirmed_matchs' => $unconfirmed,
                 'to_confirm' => $toConfirm,
-                'confirmation_link' => $toConfirm === 0 ? null : $this->confirmationLink($player),
-                'confirmation_label' => $toConfirm > 1 ? 'Confirmer mes horaires' : 'Confirmer mon horaire',
+                'has_matchs' => $hasMatchs,
+                'new_practices' => $newPractices,
+                'changed_practices' => $changedPractices,
+                'cancelled_practices' => $cancelledPractices,
+                'practices_to_answer' => $practicesToAnswer,
+                'confirmation_link' => $link,
+                'confirmation_label' => $label,
             ]);
 
         $this->send($email);
@@ -104,7 +138,7 @@ class ConfirmationMailer extends BaseMailer
                 'name' => $user->getName(),
                 'title' => 'Petit rappel',
                 'unconfirmed_matchs' => $unconfirmed,
-                'confirmation_link' => $this->confirmationLink($player),
+                'confirmation_link' => $this->confirmationLink($player, 'my_matchs'),
                 'confirmation_label' => \count($unconfirmed) > 1 ? 'Confirmer mes horaires' : 'Confirmer mon horaire',
             ]);
 
@@ -114,16 +148,38 @@ class ConfirmationMailer extends BaseMailer
     }
 
     /**
-     * Lien de connexion automatique vers "Mes matchs"
+     * Lien de connexion automatique vers une page de Mon TCU (Mes matchs, tableau de bord)
      */
-    private function confirmationLink(Player $player): string
+    private function confirmationLink(Player $player, string $route): string
     {
         $loginLinkUrl = $this->loginLinkHandler->createLoginLink($player->getUser(), lifetime: self::LOGIN_LINK_LIFETIME)->getUrl();
         // goto must be relative path, not absolute url (see loginLinkSuccessHandler)
-        $goto = $this->router->generate('my_matchs');
+        $goto = $this->router->generate($route);
         $link = $loginLinkUrl . (str_contains($loginLinkUrl, '?') ? '&' : '?') . 'goto=' . rawurlencode($goto);
 
         return $this->fixLoginLinkHost($link);
+    }
+
+    /**
+     * Données sérialisables d'un entraînement pour le template
+     *
+     * @return array{date: ?string, time: ?string, court: ?string, label: string, titled: bool, note: ?string, previous: ?string, answer: ?bool, coming: int}
+     */
+    private function describePractice(Practice $practice, Player $player, ?string $previous = null): array
+    {
+        $date = $practice->getDate();
+
+        return [
+            'date' => $date ? (string) $date : null,
+            'time' => $practice->getTimeRange(),
+            'court' => $practice->getCourtsLabel(),
+            'label' => $practice->getLabel(),
+            'titled' => $practice->getTitle() !== null, // sinon le label est le nom des poules
+            'note' => $practice->getNote(),
+            'previous' => $previous,
+            'answer' => $practice->getAnswerOf($player), // déjà répondu sur le site
+            'coming' => \count($practice->getComingPlayers()),
+        ];
     }
 
     /**

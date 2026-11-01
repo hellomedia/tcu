@@ -5,7 +5,20 @@
 {% endblock %}
 
 {% block paragraphs %}
-    {% if cancelled_matchs is not empty and new_matchs is empty and changed_matchs is empty %}
+    {% set has_practices = new_practices is not empty or changed_practices is not empty or cancelled_practices is not empty %}
+    {% if not (has_matchs ?? true) %}
+        {# practices only #}
+        {% embed "email/includes/_paragraph.html.twig" %}
+            {% block text %}
+                {%- if new_practices is empty and changed_practices is empty -%}
+                    {{ name }}, {{ cancelled_practices|length > 1 ? 'ces entraînements sont annulés' : 'cet entraînement est annulé' }}.
+                {%- else -%}
+                    {{ name }}, {{ new_practices|length + changed_practices|length > 1 ? 'des entraînements sont prévus' : 'un entraînement est prévu' }} pour ta poule : des créneaux réservés pour jouer librement entre vous.
+                    {% if practices_to_answer > 0 %} Dis-nous si tu viens, pour que les autres sachent avec qui ils joueront.{% endif %}
+                {%- endif -%}
+            {% endblock %}
+        {% endembed %}
+    {% elseif cancelled_matchs is not empty and new_matchs is empty and changed_matchs is empty %}
         {% embed "email/includes/_paragraph.html.twig" %}
             {% block text %}{{ name }}, {{ cancelled_matchs|length > 1 ? 'ces matchs ne sont plus programmés' : 'ce match n\'est plus programmé' }} : un nouvel horaire te sera communiqué.{% endblock %}
         {% endembed %}
@@ -47,6 +60,33 @@
         {% include "email/includes/_subtitle.html.twig" with { text: 'Toujours à confirmer' } %}
         {% for item in unconfirmed_matchs %}
             {% include "email/includes/_match_line.html.twig" with { item: item, kind: 'unconfirmed' } %}
+        {% endfor %}
+    {% endif %}
+
+    {# entraînements : pas de confirmation, le joueur dit s'il vient sur le site #}
+    {% if changed_practices is not empty %}
+        {% include "email/includes/_subtitle.html.twig" with { text: changed_practices|length > 1 ? 'Entraînements déplacés' : 'Entraînement déplacé' } %}
+        {% for item in changed_practices %}
+            {% include "email/includes/_practice_line.html.twig" with { item: item, kind: 'changed' } %}
+        {% endfor %}
+    {% endif %}
+
+    {% if new_practices is not empty %}
+        {% include "email/includes/_subtitle.html.twig" with { text: new_practices|length > 1 ? 'Entraînements' : 'Entraînement' } %}
+        {% if has_matchs ?? true %}
+            {% embed "email/includes/_paragraph.html.twig" %}
+                {% block text %}Des créneaux réservés pour jouer librement entre joueurs de ta poule.{% if practices_to_answer > 0 %} Dis-nous si tu viens, depuis Mes interfacs.{% endif %}{% endblock %}
+            {% endembed %}
+        {% endif %}
+        {% for item in new_practices %}
+            {% include "email/includes/_practice_line.html.twig" with { item: item, kind: 'new' } %}
+        {% endfor %}
+    {% endif %}
+
+    {% if cancelled_practices is not empty %}
+        {% include "email/includes/_subtitle.html.twig" with { text: cancelled_practices|length > 1 ? 'Entraînements annulés' : 'Entraînement annulé' } %}
+        {% for item in cancelled_practices %}
+            {% include "email/includes/_practice_line.html.twig" with { item: item, kind: 'cancelled' } %}
         {% endfor %}
     {% endif %}
 {% endblock %}

@@ -6,22 +6,31 @@ use App\Entity\InterfacMatch;
 use App\Entity\MatchParticipant;
 use App\Entity\ParticipantConfirmationInfo;
 use App\Entity\Player;
+use App\Entity\Practice;
+use App\Entity\PracticeParticipant;
 use App\Entity\Season;
 use App\Repository\GroupRepository;
+use App\Repository\PracticeRepository;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
  * Ce qu'un joueur doit encore apprendre par email sur ses matchs d'interfacs de la saison,
- * à partir de ParticipantConfirmationInfo (créneau communiqué lors du dernier email).
+ * à partir de ParticipantConfirmationInfo (créneau communiqué lors du dernier email),
+ * et sur les entraînements de ses poules, à partir de PracticeParticipant (même principe).
  *
  * Les emails ne partent jamais automatiquement : l'admin décide quand notifier (page Notifications,
  * modale de confirmation d'un match). Un email reprend tout ce qui est en attente pour le joueur :
- * nouveaux matchs, horaires modifiés, matchs annulés, plus les matchs déjà communiqués à confirmer.
+ * nouveaux matchs, horaires modifiés, matchs annulés, plus les matchs déjà communiqués à confirmer,
+ * et les entraînements nouveaux, déplacés ou annulés (pas de confirmation pour ceux-là : le joueur dit s'il vient).
  */
 class MatchNotifications
 {
+    /** @var array<int, Practice[]> entraînements par saison (page Notifications : un joueur après l'autre) */
+    private array $practicesBySeason = [];
+
     public function __construct(
         private GroupRepository $groupRepository,
+        private PracticeRepository $practiceRepository,
         private EntityManagerInterface $entityManager,
     ) {
     }
@@ -54,14 +63,28 @@ class MatchNotifications
      *     changed: list<array{match: InterfacMatch, participant: MatchParticipant, info: ParticipantConfirmationInfo}>,
      *     cancelled: list<array{match: InterfacMatch, participant: MatchParticipant, info: ParticipantConfirmationInfo}>,
      *     unconfirmed: list<array{match: InterfacMatch, participant: MatchParticipant, info: ParticipantConfirmationInfo}>,
+     *     practices: array{
+     *         new: list<array{practice: Practice, participant: ?PracticeParticipant}>,
+     *         changed: list<array{practice: Practice, participant: PracticeParticipant}>,
+     *         cancelled: list<array{practice: Practice, participant: PracticeParticipant}>
+     *     },
      *     pending: int,
+     *     pendingMatchs: int,
+     *     pendingPractices: int,
+     *     player: Player,
      *     lastEmailAt: ?\DateTimeImmutable,
      *     remindedAt: ?\DateTimeImmutable
      * }
      */
     public function collect(Player $player, Season $season): array
     {
-        $result = ['new' => [], 'changed' => [], 'cancelled' => [], 'unconfirmed' => [], 'pending' => 0, 'lastEmailAt' => null, 'remindedAt' => null];
+        $result = [
+            'new' => [], 'changed' => [], 'cancelled' => [], 'unconfirmed' => [],
+            'practices' => ['new' => [], 'changed' => [], 'cancelled' => []],
+            'pending' => 0, 'pendingMatchs' => 0, 'pendingPractices' => 0,
+            'lastEmailAt' => null, 'remindedAt' => null,
+            'player' => $player,
+        ];
 
         foreach ($player->getMatchs($season) as $match) {
             $participant = $this->participantOf($match, $player);
@@ -102,14 +125,37 @@ class MatchNotifications
             }
         }
 
-        $result['pending'] = \count($result['new']) + \count($result['changed']) + \count($result['cancelled']);
+        foreach ($this->practicesOf($player, $season) as $practice) {
+            $participant = $practice->getParticipant($player);
+            $item = ['practice' => $practice, 'participant' => $participant];
+
+            if ($participant?->getEmailSentAt() && $participant->getEmailSentAt() > $result['lastEmailAt']) {
+                $result['lastEmailAt'] = $participant->getEmailSentAt();
+            }
+
+            switch (PracticeParticipant::pendingNotification($practice, $participant)) {
+                case PracticeParticipant::PENDING_NEW:
+                    $result['practices']['new'][] = $item;
+                    break;
+                case PracticeParticipant::PENDING_CHANGED:
+                    $result['practices']['changed'][] = $item;
+                    break;
+                case PracticeParticipant::PENDING_CANCELLED:
+                    $result['practices']['cancelled'][] = $item;
+                    break;
+            }
+        }
+
+        $result['pendingMatchs'] = \count($result['new']) + \count($result['changed']) + \count($result['cancelled']);
+        $result['pendingPractices'] = \count($result['practices']['new']) + \count($result['practices']['changed']) + \count($result['practices']['cancelled']);
+        $result['pending'] = $result['pendingMatchs'] + $result['pendingPractices'];
 
         return $result;
     }
 
     /**
      * Après l'envoi de l'email : chaque match en attente est désormais communiqué avec son créneau actuel
-     * (ou son annulation). Les infos manquantes sont créées.
+     * (ou son annulation). Les infos manquantes sont créées. Idem pour les entraînements.
      *
      * @param array<string, mixed> $collected voir collect()
      *
@@ -142,6 +188,20 @@ class MatchNotifications
         // the matchs still to confirm were listed again in the email : counts as a reminder
         foreach ($collected['unconfirmed'] as $item) {
             $item['info']->setRemindedAt($now);
+        }
+
+        foreach (['new', 'changed', 'cancelled'] as $kind) {
+            foreach ($collected['practices'][$kind] as $item) {
+                $participant = $item['participant'];
+
+                if ($participant === null) {
+                    $participant = (new PracticeParticipant())->setPlayer($collected['player']);
+                    $item['practice']->addParticipant($participant);
+                    $this->entityManager->persist($participant);
+                }
+
+                $participant->markNotified($now);
+            }
         }
 
         return $participants;
@@ -180,6 +240,21 @@ class MatchNotifications
         }
 
         return $rows;
+    }
+
+    /**
+     * Entraînements des poules du joueur pour la saison (chargés une fois par saison)
+     *
+     * @return Practice[]
+     */
+    private function practicesOf(Player $player, Season $season): array
+    {
+        $this->practicesBySeason[$season->getId()] ??= $this->practiceRepository->findBySeason($season);
+
+        return array_values(array_filter(
+            $this->practicesBySeason[$season->getId()],
+            fn (Practice $practice) => $practice->concerns($player),
+        ));
     }
 
     private function participantOf(InterfacMatch $match, Player $player): ?MatchParticipant

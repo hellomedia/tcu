@@ -53,6 +53,7 @@
             &.cancelled { background: #f8d7da; color: #842029; }
             &.unconfirmed { background: #e7f0fe; color: #1d4ed8; }
             &.ok { background: #f1f3f5; color: #6c757d; }
+            &.practice { border: 1px dashed currentColor; }
         }
         .notif-muted {
             color: #6c757d;
@@ -81,7 +82,8 @@
     <p class="notif-intro">
         Les emails ne partent jamais automatiquement. Un envoi reprend tout ce que le joueur doit apprendre :
         nouveaux matchs, horaires modifiés et annulations depuis son dernier email, plus les matchs déjà
-        communiqués qu'il n'a pas confirmés. Un rappel ne concerne que les matchs communiqués et non confirmés.
+        communiqués qu'il n'a pas confirmés, et les entraînements de ses poules (nouveaux, déplacés, annulés).
+        Un rappel ne concerne que les matchs communiqués et non confirmés.
     </p>
 
     <div class="notif-actions">
@@ -124,6 +126,10 @@
                         {% if c.new is not empty %}<span class="notif-tag new">{{ c.new|length }} nouveau{{ c.new|length > 1 ? 'x' }}</span>{% endif %}
                         {% if c.changed is not empty %}<span class="notif-tag changed">{{ c.changed|length }} modifié{{ c.changed|length > 1 ? 's' }}</span>{% endif %}
                         {% if c.cancelled is not empty %}<span class="notif-tag cancelled">{{ c.cancelled|length }} annulé{{ c.cancelled|length > 1 ? 's' }}</span>{% endif %}
+                        {% set p = c.practices %}
+                        {% if p.new is not empty %}<span class="notif-tag new practice" title="entraînements">{{ p.new|length }} entraînement{{ p.new|length > 1 ? 's' }}</span>{% endif %}
+                        {% if p.changed is not empty %}<span class="notif-tag changed practice" title="entraînements déplacés">{{ p.changed|length }} entraînement{{ p.changed|length > 1 ? 's' }} déplacé{{ p.changed|length > 1 ? 's' }}</span>{% endif %}
+                        {% if p.cancelled is not empty %}<span class="notif-tag cancelled practice" title="entraînements annulés">{{ p.cancelled|length }} entraînement{{ p.cancelled|length > 1 ? 's' }} annulé{{ p.cancelled|length > 1 ? 's' }}</span>{% endif %}
                         {% if c.pending == 0 %}<span class="notif-tag ok">à jour</span>{% endif %}
                     </td>
                     <td class="notif-muted">
