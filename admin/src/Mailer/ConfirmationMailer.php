@@ -64,12 +64,12 @@ class ConfirmationMailer extends BaseMailer
             default => 'Matchs Interfacs programmés',
         };
 
-        // bouton : confirmer les horaires (Mes matchs) ; sinon, dire si on vient (tableau de bord)
+        // bouton vers le tableau de bord, où tout se confirme (matchs et entraînements)
         if ($toConfirm > 0) {
-            $link = $this->confirmationLink($player, 'my_matchs');
+            $link = $this->confirmationLink($player);
             $label = $toConfirm > 1 ? 'Confirmer mes horaires' : 'Confirmer mon horaire';
         } elseif ($practicesToAnswer > 0) {
-            $link = $this->confirmationLink($player, 'dashboard');
+            $link = $this->confirmationLink($player);
             $label = 'Dire si je viens';
         } else {
             $link = null;
@@ -138,7 +138,7 @@ class ConfirmationMailer extends BaseMailer
                 'name' => $user->getName(),
                 'title' => 'Petit rappel',
                 'unconfirmed_matchs' => $unconfirmed,
-                'confirmation_link' => $this->confirmationLink($player, 'my_matchs'),
+                'confirmation_link' => $this->confirmationLink($player),
                 'confirmation_label' => \count($unconfirmed) > 1 ? 'Confirmer mes horaires' : 'Confirmer mon horaire',
             ]);
 
@@ -148,13 +148,14 @@ class ConfirmationMailer extends BaseMailer
     }
 
     /**
-     * Lien de connexion automatique vers une page de Mon TCU (Mes matchs, tableau de bord)
+     * Lien de connexion automatique vers le tableau de bord de Mon TCU : tout ce qui est à venir
+     * s'y confirme (horaires des matchs, présence aux entraînements)
      */
-    private function confirmationLink(Player $player, string $route): string
+    private function confirmationLink(Player $player): string
     {
         $loginLinkUrl = $this->loginLinkHandler->createLoginLink($player->getUser(), lifetime: self::LOGIN_LINK_LIFETIME)->getUrl();
         // goto must be relative path, not absolute url (see loginLinkSuccessHandler)
-        $goto = $this->router->generate($route);
+        $goto = $this->router->generate('dashboard');
         $link = $loginLinkUrl . (str_contains($loginLinkUrl, '?') ? '&' : '?') . 'goto=' . rawurlencode($goto);
 
         return $this->fixLoginLinkHost($link);

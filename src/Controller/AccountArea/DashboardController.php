@@ -74,7 +74,6 @@ class DashboardController extends BaseController
             'player' => $player,
             'agenda' => $days,
             'upcoming' => $upcoming?->count() ?? 0,
-            'to_confirm' => $player?->getUnconfirmedUpcomingMatchs()->count() ?? 0,
             'practices' => $practices,
             'practices_to_answer' => $practicesToAnswer,
             'groups' => $groups,

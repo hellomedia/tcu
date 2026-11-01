@@ -23,7 +23,10 @@
 			color: var(--color-gray-900);
 		}
 
-		/* À faire : one row per action */
+		/* À faire : one row per action ; nothing left to do : the section goes */
+		.dash-todo-section:not(:has(.dash-todo)) {
+			display: none;
+		}
 		.dash-todos {
 			display: grid;
 			gap: 10px;
@@ -173,21 +176,14 @@
 			<p class="dash-hello">Salut {{ player.firstname }} 👋</p>
 		{% endif %}
 
-		{% if to_confirm > 0 or missing_dates > 0 or practices_to_answer > 0 %}
-			<section>
+		{# hidden by CSS once every nudge is gone (the match nudge is refreshed in place after a confirmation) #}
+		{% if player %}
+			<section class="dash-todo-section">
 				<h2 class="dash-title">À faire</h2>
 				<div class="dash-todos">
-					{% if to_confirm > 0 %}
-						<a class="dash-todo" href="{{ path('my_matchs') }}">
-							<twig:ux:icon name="check" />
-							<span class="dash-todo-text">
-								{{ to_confirm > 1 ? to_confirm ~ ' horaires de match attendent' : '1 horaire de match attend' }} ta confirmation
-							</span>
-							<span class="dash-todo-cta">Confirmer ›</span>
-						</a>
-					{% endif %}
+					{% include 'account_area/dashboard/_todo_confirm.html.twig' %}
 					{% if practices_to_answer > 0 %}
-						<a class="dash-todo" href="#entrainements">
+						<a class="dash-todo" href="#a-venir">
 							<twig:ux:icon name="lessons" />
 							<span class="dash-todo-text">
 								{{ practices_to_answer > 1 ? practices_to_answer ~ ' entraînements attendent' : '1 entraînement attend' }} ta réponse
@@ -226,7 +222,7 @@
 
 		{% if player %}
 			{# agenda : matchs et entraînements à venir, ensemble, par jour #}
-			<section id="entrainements">
+			<section id="a-venir">
 				<h2 class="dash-title">À venir</h2>
 				{% if agenda is empty %}
 					<p class="dash-empty">Aucun match programmé pour l'instant.</p>

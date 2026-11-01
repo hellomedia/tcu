@@ -1,0 +1,13 @@
+{# "À faire" nudge for the match schedules to confirm (dashboard). Refreshed by a turbo stream after a confirmation. #}
+{% set to_confirm = app.user.player ? app.user.player.unconfirmedUpcomingMatchs|length : 0 %}
+<div id="todo-confirm" style="display: contents">
+    {% if to_confirm > 0 %}
+        <a class="dash-todo" href="#a-venir">
+            <twig:ux:icon name="check" />
+            <span class="dash-todo-text">
+                {{ to_confirm > 1 ? to_confirm ~ ' horaires de match attendent' : '1 horaire de match attend' }} ta confirmation
+            </span>
+            <span class="dash-todo-cta">Confirmer ›</span>
+        </a>
+    {% endif %}
+</div>
