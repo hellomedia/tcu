@@ -75,7 +75,7 @@
         {% include "email/includes/_subtitle.html.twig" with { text: new_practices|length > 1 ? 'Entraînements' : 'Entraînement' } %}
         {% if has_matchs ?? true %}
             {% embed "email/includes/_paragraph.html.twig" %}
-                {% block text %}Des créneaux réservés pour jouer librement entre joueurs de ta poule.{% if practices_to_answer > 0 %} Dis-nous si tu viens, depuis Mes interfacs.{% endif %}{% endblock %}
+                {% block text %}Des créneaux réservés pour jouer librement entre joueurs de ta poule.{% if practices_to_answer > 0 %} Dis-nous si tu viens.{% endif %}{% endblock %}
             {% endembed %}
         {% endif %}
         {% for item in new_practices %}
