@@ -34,7 +34,8 @@ use Symfonycasts\DynamicForms\DynamicFormBuilder;
  * Les créneaux ne sont pas mappés : le contrôleur les convertit en réservations (Practice::$bookings).
  *
  * Options:
- *  - slot: créneau cliqué dans le planning (date pré-sélectionnée, créneau pré-coché)
+ *  - slot: créneau cliqué dans le planning (nouvel entraînement) : il est fixé, pas de choix de date ni de créneaux
+ *    (pour en réserver plusieurs : modifier l'entraînement ensuite)
  */
 final class PracticeForm extends AbstractType
 {
@@ -56,10 +57,37 @@ final class PracticeForm extends AbstractType
         $preselectedSlot = $options['slot'];
         \assert($preselectedSlot === null || $preselectedSlot instanceof Slot);
 
-        // date pré-sélectionnée : celle de l'entraînement, du créneau cliqué, sinon la première date avec un créneau libre
+        $fixedSlot = $practice->getId() === null ? $preselectedSlot : null;
+
+        if ($fixedSlot === null) {
+            $this->addScheduleFields($builder, $practice, $currentSlots, $currentDate);
+        }
+
+        $this->addDetailFields($builder, $practice);
+
+        // les créneaux cochés (ou le créneau fixé) deviennent les réservations de l'entraînement, avant la validation (priorité > 0)
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) use ($fixedSlot) {
+            $form = $event->getForm();
+            $submit = $form->get('save');
+            \assert($submit instanceof ClickableInterface);
+            if (!$submit->isClicked()) {
+                return; // changement de date : le formulaire est seulement réaffiché
+            }
+            $selected = $form->has('slots') ? $form->get('slots')->getData() : [$fixedSlot];
+            $this->syncBookings($event->getData(), array_values(array_filter(\is_iterable($selected) ? [...$selected] : [])));
+        }, 10);
+    }
+
+    /**
+     * Date, puis créneaux de cette date (champ dépendant)
+     *
+     * @param Slot[] $currentSlots
+     */
+    private function addScheduleFields(DynamicFormBuilder $builder, Practice $practice, array $currentSlots, ?Date $currentDate): void
+    {
+        // date pré-sélectionnée : celle de l'entraînement, sinon la première date avec un créneau libre
         // (la grille des créneaux dépend de la date : elle s'affiche dès l'ouverture)
         $defaultDate = $currentDate
-            ?? $preselectedSlot?->getDate()
             ?? $this->dateRepository->getFutureDatesWithAvailableSlotsQueryBuilder()->setMaxResults(1)->getQuery()->getOneOrNullResult();
 
         $builder->add('date', EntityType::class, [
@@ -82,7 +110,7 @@ final class PracticeForm extends AbstractType
             },
         ]);
 
-        $builder->addDependent('slots', 'date', function (DependentField $field, ?Date $selectedDate) use ($practice, $currentSlots, $preselectedSlot) {
+        $builder->addDependent('slots', 'date', function (DependentField $field, ?Date $selectedDate) use ($practice, $currentSlots) {
             if ($selectedDate === null) {
                 return;
             }
@@ -95,9 +123,7 @@ final class PracticeForm extends AbstractType
                 },
                 'multiple' => true,
                 'expanded' => true,
-                'data' => $currentSlots !== [] && $currentSlots[0]->getDate() === $selectedDate
-                    ? $currentSlots
-                    : ($preselectedSlot !== null && $preselectedSlot->getDate() === $selectedDate ? [$preselectedSlot] : []),
+                'data' => $currentSlots !== [] && $currentSlots[0]->getDate() === $selectedDate ? $currentSlots : [],
                 'choice_label' => function (Slot $slot) {
                     return $slot->getTimeRange() . ' - ' . $slot->getCourt();
                 },
@@ -108,6 +134,21 @@ final class PracticeForm extends AbstractType
             ]);
         });
 
+        // changement de date : les créneaux cochés appartiennent à l'ancienne date, ils ne sont plus des choix valides
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
+            $data = $event->getData();
+            if (\is_array($data) && !isset($data['save'])) {
+                unset($data['slots']);
+                $event->setData($data);
+            }
+        });
+    }
+
+    /**
+     * Poules, intitulé, note, bouton
+     */
+    private function addDetailFields(DynamicFormBuilder $builder, Practice $practice): void
+    {
         $builder->add('groups', EntityType::class, [
             'label' => 'Poules',
             'class' => Group::class,
@@ -143,27 +184,6 @@ final class PracticeForm extends AbstractType
         $builder->add('save', SubmitType::class, [
             'label' => $practice->getId() === null ? 'Programmer' : 'Enregistrer',
         ]);
-
-        // changement de date : les créneaux cochés appartiennent à l'ancienne date, ils ne sont plus des choix valides
-        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
-            $data = $event->getData();
-            if (\is_array($data) && !isset($data['save'])) {
-                unset($data['slots']);
-                $event->setData($data);
-            }
-        });
-
-        // les créneaux cochés deviennent les réservations de l'entraînement, avant la validation (priorité > 0)
-        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
-            $form = $event->getForm();
-            $submit = $form->get('save');
-            \assert($submit instanceof ClickableInterface);
-            if (!$submit->isClicked()) {
-                return; // changement de date : le formulaire est seulement réaffiché
-            }
-            $selected = $form->has('slots') ? $form->get('slots')->getData() : [];
-            $this->syncBookings($event->getData(), \is_iterable($selected) ? [...$selected] : []);
-        }, 10);
     }
 
     /**

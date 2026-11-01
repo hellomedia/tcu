@@ -1,5 +1,5 @@
 {# Practice form (new / edit), shared by the modal and the full page #}
-{# vars: practice, form, modal (bool) #}
+{# vars: practice, form, modal (bool), slot (fixed slot when opened from the planning, else null) #}
 
 {# Important: Note the syntax with [] and only #}
 {# Ignore global themes; use only EasyAdmin #}
@@ -20,7 +20,16 @@
             {{ practice.id ? 'Modifier l\'entraînement' : 'Programmer un entraînement' }}
         </h3>
         <div class="booking-context">
-            {{ practice.season }}
+            {% if slot %}
+                <twig:ux:icon name="calendar"/>
+                {{ slot.date }}
+                <span class="sep">•</span>
+                {{ slot.timeRange }}
+                <span class="sep">•</span>
+                {{ slot.court }}
+            {% else %}
+                {{ practice.season }}
+            {% endif %}
         </div>
     </div>
 
@@ -36,11 +45,15 @@
 
             {{ form_errors(form) }}
 
-            <div class="booking-section">
-                <div class="booking-section-title">Date</div>
-                {{ form_errors(form.date) }}
-                {{ form_widget(form.date) }}
-            </div>
+            {% if form.date is defined %}
+                <div class="booking-section">
+                    <div class="booking-section-title">Date</div>
+                    {{ form_errors(form.date) }}
+                    {{ form_widget(form.date) }}
+                </div>
+            {% else %}
+                <p class="booking-note">Un seul créneau. Pour en réserver plusieurs (deux terrains, deux heures qui se suivent), modifiez l'entraînement ensuite.</p>
+            {% endif %}
 
             {% if form.slots is defined %}
                 <div class="booking-section">

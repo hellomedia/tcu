@@ -109,10 +109,13 @@ class PracticeController extends BaseController
             return $this->redirectToRoute('admin_practices');
         }
 
-        return $this->renderForm($request, $practice, $form);
+        return $this->renderForm($request, $practice, $form, $slot);
     }
 
-    private function renderForm(Request $request, Practice $practice, FormInterface $form): Response
+    /**
+     * @param Slot|null $slot créneau fixé (nouvel entraînement depuis le planning)
+     */
+    private function renderForm(Request $request, Practice $practice, FormInterface $form, ?Slot $slot): Response
     {
         $template = $request->query->get('modal')
             ? '@admin/practice/modal/_form.html.twig'
@@ -121,6 +124,7 @@ class PracticeController extends BaseController
         return $this->render($template, [
             'practice' => $practice,
             'form' => $form,
+            'slot' => $slot,
         ]);
     }
 

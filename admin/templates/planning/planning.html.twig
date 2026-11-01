@@ -380,10 +380,21 @@
         .slot-menu-header {
             display: none;
         }
+        .slot-free-hint {
+            display: none;
+            color: #adb5bd;
+            font-size: 0.85rem;
+        }
         @media (max-width: 767.98px) {
             /* a tap on the strip opens the menu : booked slot (actions) or free slot (match / entraînement) */
             .slot-row .slot-content {
                 cursor: pointer;
+            }
+            .slot-row.free .slot-content .btn {
+                display: none;
+            }
+            .slot-free-hint {
+                display: inline;
             }
             /* bottom sheet */
             .slot-menu {
