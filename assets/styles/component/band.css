@@ -108,19 +108,19 @@
         }
     }
 
-    /* account icon of the top menu, while in the account area */
+    /* account icon of the top menu, while in the account area : the tint fills the icon's own circle.
+       The glyph is a user inside a 1/16 ring (qlementine user-16) : the disc stops at 95% of the radius,
+       under the ring, so no tint shows outside it */
     #account-menu.current .dropdown-button {
-        display: grid;
-        place-items: center;
-        margin-top: -6px;
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        background-color: color-mix(in srgb, var(--color-theme) 12%, var(--color-white));
         color: var(--color-theme-darker);
 
         svg {
-            height: 22px;
+            border-radius: 50%;
+            background: radial-gradient(
+                circle closest-side,
+                color-mix(in srgb, var(--color-theme) 12%, var(--color-white)) 0 95%,
+                transparent 96%
+            );
         }
     }
 }
