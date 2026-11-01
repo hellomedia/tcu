@@ -26,7 +26,8 @@
             </div>
 
             <div class="hk-dropdown-inner">
-                <a class="hk-dropdown-link"
+                {# phone only : on desktop the "+ Match" button is on the row #}
+                <a class="hk-dropdown-link phone-only"
                     href="{{ path('admin_planning_slot_add_booking', {'id': slot.id}) }}"
                     data-action="modal-remote-form#open"
                 >

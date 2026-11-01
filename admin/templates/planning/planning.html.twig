@@ -380,7 +380,8 @@
         .slot-menu-header {
             display: none;
         }
-        .slot-free-hint {
+        .slot-free-hint,
+        .slot-menu .phone-only {
             display: none;
             color: #adb5bd;
             font-size: 0.85rem;
@@ -395,6 +396,11 @@
             }
             .slot-free-hint {
                 display: inline;
+            }
+            .slot-menu .phone-only {
+                display: flex;
+                color: inherit;
+                font-size: inherit;
             }
             /* bottom sheet */
             .slot-menu {
