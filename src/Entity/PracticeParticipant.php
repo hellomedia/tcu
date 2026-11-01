@@ -139,7 +139,7 @@ class PracticeParticipant
 
         $practice = $this->practice;
 
-        if ($practice === null || $practice->isCancelled() || !$practice->isScheduled()) {
+        if ($practice === null || $practice->isCancelled() || !$practice->hasSchedule()) {
             $this->notifiedOn = null;
             $this->notifiedTimeRange = null;
             $this->notifiedCourts = null;
@@ -147,7 +147,7 @@ class PracticeParticipant
             return $this;
         }
 
-        $this->notifiedOn = \DateTimeImmutable::createFromInterface($practice->getDate()->getDate());
+        $this->notifiedOn = $practice->getDay();
         $this->notifiedTimeRange = $practice->getTimeRange();
         $this->notifiedCourts = mb_substr($practice->getCourtsLabel(), 0, 100);
 
@@ -173,11 +173,11 @@ class PracticeParticipant
     {
         $practice = $this->practice;
 
-        if ($practice === null || !$practice->isScheduled() || $this->notifiedOn === null) {
+        if ($practice === null || !$practice->hasSchedule() || $this->notifiedOn === null) {
             return false;
         }
 
-        return $this->notifiedOn->format('Y-m-d') !== $practice->getDate()->getDate()->format('Y-m-d')
+        return $this->notifiedOn->format('Y-m-d') !== $practice->getDay()->format('Y-m-d')
             || $this->notifiedTimeRange !== $practice->getTimeRange();
     }
 
@@ -198,7 +198,7 @@ class PracticeParticipant
      */
     public static function pendingNotification(?Practice $practice, ?self $participant): ?string
     {
-        if ($practice === null || !$practice->isScheduled()) {
+        if ($practice === null || !$practice->hasSchedule()) {
             return null;
         }
 

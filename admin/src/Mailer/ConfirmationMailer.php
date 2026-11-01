@@ -167,10 +167,8 @@ class ConfirmationMailer extends BaseMailer
      */
     private function describePractice(Practice $practice, Player $player, ?string $previous = null): array
     {
-        $date = $practice->getDate();
-
         return [
-            'date' => $date ? (string) $date : null,
+            'date' => $practice->getDayLabel(),
             'time' => $practice->getTimeRange(),
             'court' => $practice->getCourtsLabel(),
             'label' => $practice->getLabel(),

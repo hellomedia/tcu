@@ -28,12 +28,11 @@ class PracticeRepository extends ServiceEntityRepository
      */
     public function findBySeason(Season $season): array
     {
-        return $this->withEverything($this->createQueryBuilder('p'))
+        return $this->sortByDay($this->withEverything($this->createQueryBuilder('p'))
             ->andWhere('p.season = :season')
             ->setParameter('season', $season)
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult());
     }
 
     /**
@@ -60,16 +59,16 @@ class PracticeRepository extends ServiceEntityRepository
             return [];
         }
 
-        return $this->withEverything($this->createQueryBuilder('p'))
+        return $this->sortByDay($this->withEverything($this->createQueryBuilder('p'))
             ->andWhere('p.id IN (:ids)')
             ->setParameter('ids', $ids)
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult());
     }
 
     /**
-     * Entraînements à venir (non annulés ou annulés) d'un joueur, toutes saisons : espace joueur
+     * Entraînements à venir d'un joueur, toutes saisons, annulés compris (ils n'ont plus de créneau :
+     * leur jour est celui mémorisé à l'annulation) : espace joueur
      *
      * @return Practice[]
      */
@@ -79,11 +78,11 @@ class PracticeRepository extends ServiceEntityRepository
             ->select('DISTINCT p.id')
             ->innerJoin('p.groups', 'g')
             ->innerJoin('g.players', 'pl')
-            ->innerJoin('p.bookings', 'b')
-            ->innerJoin('b.slot', 's')
-            ->innerJoin('s.date', 'd')
+            ->leftJoin('p.bookings', 'b')
+            ->leftJoin('b.slot', 's')
+            ->leftJoin('s.date', 'd')
             ->andWhere('pl = :player')
-            ->andWhere('d.date >= CURRENT_DATE()')
+            ->andWhere('d.date >= CURRENT_DATE() OR p.cancelledOn >= CURRENT_DATE()')
             ->setParameter('player', $player)
             ->getQuery()
             ->getSingleColumnResult()
@@ -93,12 +92,25 @@ class PracticeRepository extends ServiceEntityRepository
             return [];
         }
 
-        return $this->withEverything($this->createQueryBuilder('p'))
+        return $this->sortByDay($this->withEverything($this->createQueryBuilder('p'))
             ->andWhere('p.id IN (:ids)')
             ->setParameter('ids', $ids)
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult());
+    }
+
+    /**
+     * Par jour puis heure (les entraînements annulés n'ont plus de créneau : tri en php sur Practice::getDay())
+     *
+     * @param Practice[] $practices
+     *
+     * @return Practice[]
+     */
+    private function sortByDay(array $practices): array
+    {
+        usort($practices, fn (Practice $a, Practice $b) => [$a->getDay(), $a->getTimeRange(), $a->getId()] <=> [$b->getDay(), $b->getTimeRange(), $b->getId()]);
+
+        return $practices;
     }
 
     /**

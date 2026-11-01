@@ -41,14 +41,14 @@
                         class="hk-dropdown-link"
                         formaction="{{ path('admin_practice_cancel', {'id': practice.id}) }}"
                         data-action="modal-confirm#open"
-                        data-title="{{ practice.cancelled ? 'Rétablir l\'entraînement' : 'Annuler l\'entraînement' }}"
-                        data-html="<p><b>{{ practice.label|e }}</b><br>{{ practice.scheduleLabel }}</p>{{ practice.cancelled ? '<p>Il est à nouveau affiché aux joueurs.</p>' : '<p>Il reste affiché aux joueurs comme annulé ; les créneaux restent réservés.</p>' }}"
-                        data-button-label="{{ practice.cancelled ? 'Rétablir' : 'Annuler l\'entraînement' }}"
-                        data-variant="{{ practice.cancelled ? 'info' : 'warning' }}"
+                        data-title="Annuler l'entraînement"
+                        data-html="<p><b>{{ practice.label|e }}</b><br>{{ practice.scheduleLabel }}</p><p>Il reste affiché aux joueurs comme annulé et {{ practice.slots|length > 1 ? 'ses ' ~ practice.slots|length ~ ' créneaux sont libérés' : 'le créneau est libéré' }}. Définitif.</p>"
+                        data-button-label="Annuler l'entraînement"
+                        data-variant="warning"
                         data-csrf="{{ csrf_token('practice-cancel') }}"
                     >
-                        <twig:ux:icon name="{{ practice.cancelled ? 'refresh' : 'cross' }}" />
-                        {{ practice.cancelled ? 'Rétablir l\'entraînement' : 'Annuler l\'entraînement' }}
+                        <twig:ux:icon name="cross" />
+                        Annuler l'entraînement
                     </button>
 
                     <hr>
@@ -61,7 +61,7 @@
                     data-title="Supprimer l'entraînement"
                     data-html="<p><b>{{ practice.label|e }}</b><br>{{ practice.scheduleLabel }}</p><p>Il disparaît sans trace et {{ practice.slots|length > 1 ? 'ses ' ~ practice.slots|length ~ ' créneaux sont libérés' : 'le créneau est libéré' }}.{% if notified > 0 %}<br><b>{{ notified }} joueur{{ notified > 1 ? 's ont' : ' a' }} déjà été prévenu{{ notified > 1 ? 's' }} par email</b> : préférer l'annulation, qui leur sera communiquée.{% endif %}</p>"
                     data-button-label="Supprimer"
-                    data-variant="danger"
+                    data-variant="warning"
                     data-csrf="{{ csrf_token('practice-delete') }}"
                 >
                     <twig:ux:icon name="delete" />

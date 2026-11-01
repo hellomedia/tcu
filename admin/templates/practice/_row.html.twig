@@ -5,8 +5,8 @@
 {% set notified = practice.countNotifiedPlayers %}
 <tr id="practice-{{ practice.id }}" class="{{ practice.cancelled ? 'cancelled' }}">
     <td class="when">
-        {% if practice.scheduled %}
-            <span class="date">{{ practice.date }}</span>
+        {% if practice.hasSchedule %}
+            <span class="date">{{ practice.dayLabel }}</span>
             <span class="time">{{ practice.timeRange }}</span>
             <span class="courts">{{ practice.courtsLabel }}</span>
         {% else %}
@@ -38,7 +38,7 @@
         {% endif %}
     </td>
     <td class="actions">
-        {% if not practice.past %}
+        {% if not practice.past and not practice.cancelled %}
             <a class="btn btn-default btn-sm" href="{{ path('admin_practice_edit', {'id': practice.id}) }}" title="Modifier">
                 <twig:ux:icon name="edit"/>
             </a>
@@ -46,14 +46,14 @@
                 class="btn btn-default btn-sm"
                 formaction="{{ path('admin_practice_cancel', {'id': practice.id}) }}"
                 data-action="modal-confirm#open"
-                data-title="{{ practice.cancelled ? 'Rétablir l\'entraînement' : 'Annuler l\'entraînement' }}"
-                data-html="<p><b>{{ practice.label|e }}</b><br>{{ practice.scheduleLabel }}</p>{{ practice.cancelled ? '<p>Il est à nouveau affiché aux joueurs.</p>' : '<p>Il reste affiché aux joueurs comme annulé ; les créneaux restent réservés.</p>' }}"
-                data-button-label="{{ practice.cancelled ? 'Rétablir' : 'Annuler l\'entraînement' }}"
-                data-variant="{{ practice.cancelled ? 'info' : 'warning' }}"
+                data-title="Annuler l'entraînement"
+                data-html="<p><b>{{ practice.label|e }}</b><br>{{ practice.scheduleLabel }}</p><p>Il reste affiché aux joueurs comme annulé et {{ practice.slots|length > 1 ? 'ses créneaux sont libérés' : 'son créneau est libéré' }}. Définitif.</p>"
+                data-button-label="Annuler l'entraînement"
+                data-variant="warning"
                 data-csrf="{{ csrf_token('practice-cancel') }}"
-                title="{{ practice.cancelled ? 'Rétablir' : 'Annuler' }}"
+                title="Annuler"
             >
-                <twig:ux:icon name="{{ practice.cancelled ? 'refresh' : 'cross' }}"/>
+                <twig:ux:icon name="cross"/>
             </button>
         {% endif %}
         <button type="button"
@@ -61,9 +61,9 @@
             formaction="{{ path('admin_practice_delete', {'id': practice.id}) }}"
             data-action="modal-confirm#open"
             data-title="Supprimer l'entraînement"
-            data-html="<p><b>{{ practice.label|e }}</b><br>{{ practice.scheduleLabel }}</p><p>Il disparaît sans trace et les créneaux sont libérés.{% if notified > 0 %}<br><b>{{ notified }} joueur{{ notified > 1 ? 's ont' : ' a' }} déjà été prévenu{{ notified > 1 ? 's' }} par email</b> : préférer l'annulation, qui leur sera communiquée.{% endif %}</p>"
+            data-html="<p><b>{{ practice.label|e }}</b><br>{{ practice.scheduleLabel }}</p><p>Il disparaît sans trace{{ practice.cancelled ? '' : ' et les créneaux sont libérés' }}.{% if notified > 0 %}<br><b>{{ notified }} joueur{{ notified > 1 ? 's ont' : ' a' }} déjà été prévenu{{ notified > 1 ? 's' }} par email</b> : préférer l'annulation, qui leur sera communiquée.{% endif %}</p>"
             data-button-label="Supprimer"
-            data-variant="danger"
+            data-variant="warning"
             data-csrf="{{ csrf_token('practice-delete') }}"
             title="Supprimer"
         >

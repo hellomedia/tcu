@@ -455,10 +455,12 @@ class LoadFixturesCommand extends Command
             $book($practice, $slots);
         }
 
-        // Poule 2, annulé
+        // Poule 2, annulé : l'horaire est mémorisé, le créneau est libéré
         if ($slots = $pick(2, 1)) {
-            $practice = (new Practice())->setSeason($season)->addGroup($groups[1])->cancel();
+            $practice = (new Practice())->setSeason($season)->addGroup($groups[1]);
             $book($practice, $slots);
+            $this->entityManager->flush();
+            $practice->cancel();
         }
     }
 

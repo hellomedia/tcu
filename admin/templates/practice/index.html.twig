@@ -84,8 +84,7 @@
 
 {% block page_actions %}
     <a class="btn btn-primary" href="{{ path('admin_practice_new') }}">
-        <twig:ux:icon name="add"/>
-        Programmer un entraînement
+        + Programmer un entraînement
     </a>
 {% endblock %}
 
@@ -94,7 +93,7 @@
         Un entraînement réserve un ou plusieurs créneaux d'une même date pour que les joueurs d'une ou plusieurs poules
         jouent librement. Il n'apparaît pas dans le planning public : seuls les joueurs des poules liées le voient dans
         Mes interfacs, où ils disent s'ils viennent. Les emails de notification (page Notifications) le reprennent avec les matchs.
-        <br>Un entraînement <b>annulé</b> reste affiché barré aux joueurs ; un entraînement <b>supprimé</b> disparaît sans trace.
+        <br>Un entraînement <b>annulé</b> reste affiché barré aux joueurs et ses créneaux sont libérés ; un entraînement <b>supprimé</b> disparaît sans trace.
         Le planning permet aussi d'en programmer un depuis un créneau libre.
     </p>
 

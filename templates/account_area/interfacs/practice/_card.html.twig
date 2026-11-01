@@ -15,7 +15,7 @@
     <div class="practice-card-body">
         <div class="practice-card-when">
             <span class="practice-card-kind {{ practice.cancelled ? 'cancelled' }}">{{ practice.cancelled ? 'Annulé' : 'Entraînement' }}</span>
-            <span class="practice-card-date">{{ practice.date }}</span>
+            <span class="practice-card-date">{{ practice.dayLabel }}</span>
             <span class="practice-card-time">{{ practice.timeRange }}</span>
             <span class="practice-card-court">{{ practice.courtsLabel }}</span>
         </div>

@@ -125,21 +125,22 @@ class PracticeController extends BaseController
     }
 
     /**
-     * Annuler : reste affiché "annulé" aux joueurs (et en attente de notification pour ceux déjà prévenus) ;
-     * les créneaux restent réservés. Rétablir : l'inverse.
+     * Annuler : reste affiché "annulé" aux joueurs (et en attente de notification pour ceux déjà prévenus),
+     * les créneaux sont libérés. Définitif : pour revenir en arrière, programmer un nouvel entraînement.
      */
     #[IsCsrfTokenValid('practice-cancel', tokenKey: 'token')]
     #[Route('/planning/practice/{id:practice}/cancel', name: 'admin_practice_cancel', methods: ['POST'], defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
     public function cancel(Practice $practice): Response
     {
-        $practice->isCancelled() ? $practice->restore() : $practice->cancel();
+        $slots = $practice->getSlots(); // libérés par l'annulation : lignes du planning à rafraîchir
+        $practice->cancel();
 
         $this->entityManager->flush();
 
         return $this->render('@admin/practice/modal/save_success.html.twig', [
-            'feedback' => $practice->isCancelled() ? 'Entraînement annulé' : 'Entraînement rétabli',
+            'feedback' => 'Entraînement annulé',
             'practice' => $practice,
-            'slots' => $practice->getSlots(),
+            'slots' => $slots,
         ]);
     }
 

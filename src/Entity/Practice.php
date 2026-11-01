@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Entity\Interface\EntityInterface;
+use App\Helper\DateHelper;
 use App\Repository\PracticeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -17,7 +18,8 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
  * - Occupe un ou plusieurs créneaux d'une même date (plusieurs terrains et/ou heures qui se suivent) : voir $bookings
  * - Visible seulement dans l'espace des joueurs des poules liées, pas dans le planning public (pour l'instant)
  * - Les joueurs répondent "j'y serai / je ne viens pas" (PracticeParticipant, créé à la demande)
- * - Annulé : reste affiché barré ; supprimé : disparaît sans trace
+ * - Annulé : les créneaux sont libérés, l'horaire est copié ($cancelledOn...) pour rester affiché barré aux joueurs ;
+ *   supprimé : disparaît sans trace
  */
 #[ORM\Entity(repositoryClass: PracticeRepository::class)]
 class Practice implements EntityInterface
@@ -55,6 +57,18 @@ class Practice implements EntityInterface
 
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $cancelledAt = null;
+
+    /**
+     * Horaire au moment de l'annulation (copie : les créneaux sont libérés, ils peuvent être réservés par un match)
+     */
+    #[ORM\Column(type: Types::DATE_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $cancelledOn = null;
+
+    #[ORM\Column(length: 20, nullable: true)]
+    private ?string $cancelledTimeRange = null;
+
+    #[ORM\Column(length: 100, nullable: true)]
+    private ?string $cancelledCourts = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
@@ -178,16 +192,23 @@ class Practice implements EntityInterface
         return $this->cancelledAt !== null;
     }
 
+    /**
+     * Annuler : l'horaire est mémorisé pour l'affichage (et l'email), les créneaux sont libérés. Définitif.
+     */
     public function cancel(): static
     {
-        $this->cancelledAt ??= new \DateTimeImmutable();
+        if ($this->cancelledAt !== null) {
+            return $this;
+        }
 
-        return $this;
-    }
+        $this->cancelledOn = $this->getDay();
+        $this->cancelledTimeRange = $this->getTimeRange();
+        $this->cancelledCourts = mb_substr($this->getCourtsLabel(), 0, 100);
+        $this->cancelledAt = new \DateTimeImmutable();
 
-    public function restore(): static
-    {
-        $this->cancelledAt = null;
+        foreach ($this->bookings->toArray() as $booking) {
+            $this->removeBooking($booking); // orphanRemoval : le créneau est libre
+        }
 
         return $this;
     }
@@ -254,7 +275,7 @@ class Practice implements EntityInterface
                 ->addViolation();
         }
 
-        if ($this->bookings->isEmpty()) {
+        if ($this->bookings->isEmpty() && !$this->isCancelled()) {
             $context->buildViolation('Choisissez au moins un créneau.')
                 ->atPath('bookings')
                 ->addViolation();
@@ -279,9 +300,20 @@ class Practice implements EntityInterface
         }
     }
 
+    /**
+     * A des créneaux (un entraînement annulé n'en a plus : voir hasSchedule())
+     */
     public function isScheduled(): bool
     {
         return !$this->bookings->isEmpty();
+    }
+
+    /**
+     * A un horaire à afficher : ses créneaux, ou l'horaire mémorisé à l'annulation
+     */
+    public function hasSchedule(): bool
+    {
+        return $this->getDay() !== null;
     }
 
     public function getDate(): ?Date
@@ -289,6 +321,26 @@ class Practice implements EntityInterface
         $slots = $this->getSlots();
 
         return $slots === [] ? null : $slots[0]->getDate();
+    }
+
+    /**
+     * Jour de l'entraînement : celui de ses créneaux, ou celui mémorisé à l'annulation
+     */
+    public function getDay(): ?\DateTimeImmutable
+    {
+        $date = $this->getDate();
+
+        return $date !== null ? \DateTimeImmutable::createFromInterface($date->getDate()) : $this->cancelledOn;
+    }
+
+    /**
+     * "Samedi 14/11/26"
+     */
+    public function getDayLabel(): ?string
+    {
+        $day = $this->getDay();
+
+        return $day === null ? null : Date::formatDay($day);
     }
 
     public function startsAt(): ?\DateTimeImmutable
@@ -317,7 +369,7 @@ class Practice implements EntityInterface
     {
         $start = $this->startsAt();
 
-        return $start === null ? null : $start->format('H:i') . '-' . $this->endsAt()->format('H:i');
+        return $start === null ? $this->cancelledTimeRange : $start->format('H:i') . '-' . $this->endsAt()->format('H:i');
     }
 
     /**
@@ -340,7 +392,9 @@ class Practice implements EntityInterface
      */
     public function getCourtsLabel(): string
     {
-        return implode(' et ', array_map(fn (Court $court) => (string) $court, $this->getCourts()));
+        $courts = $this->getCourts();
+
+        return $courts === [] ? ($this->cancelledCourts ?? '') : implode(' et ', array_map(fn (Court $court) => (string) $court, $courts));
     }
 
     /**
@@ -348,19 +402,23 @@ class Practice implements EntityInterface
      */
     public function getScheduleLabel(): ?string
     {
-        $date = $this->getDate();
+        $day = $this->getDayLabel();
 
-        return $date === null ? null : $date . ' • ' . $this->getTimeRange() . ' • ' . $this->getCourtsLabel();
+        return $day === null ? null : $day . ' • ' . $this->getTimeRange() . ' • ' . $this->getCourtsLabel();
     }
 
     public function isUpcoming(): bool
     {
-        return (bool) $this->getDate()?->isFuture();
+        $day = $this->getDay();
+
+        return $day !== null && DateHelper::isFuture($day);
     }
 
     public function isPast(): bool
     {
-        return (bool) $this->getDate()?->isPast();
+        $day = $this->getDay();
+
+        return $day !== null && DateHelper::isPast($day);
     }
 
     /**
