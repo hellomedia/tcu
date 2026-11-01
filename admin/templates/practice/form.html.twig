@@ -1,0 +1,13 @@
+{% extends '@admin/base.html.twig' %}
+
+{% block content_title %}{{ practice.id ? 'Modifier l\'entraînement ' ~ practice : 'Programmer un entraînement' }}{% endblock %}
+
+{% block page_actions %}
+    <a class="btn btn-default" href="{{ path('admin_practices')}}">
+        Retour
+    </a>
+{% endblock %}
+
+{% block main %}
+    {% include '@admin/practice/_form.html.twig' with {'modal': false} %}
+{% endblock %}

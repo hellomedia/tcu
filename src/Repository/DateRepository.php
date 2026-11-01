@@ -78,6 +78,10 @@ class DateRepository extends ServiceEntityRepository
             ->leftJoin('part.confirmationInfo', 'info')->addSelect('info')
             ->leftJoin('part.player', 'player')->addSelect('player')
             ->leftJoin('player.user', 'u')->addSelect('u')
+            // entraînements : poules (couleur, filtre) et réponses (compteurs)
+            ->leftJoin('b.practice', 'pr')->addSelect('pr')
+            ->leftJoin('pr.groups', 'prg')->addSelect('prg')
+            ->leftJoin('pr.participants', 'prp')->addSelect('prp')
         ;
     }
 

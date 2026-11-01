@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Booking;
 use App\Entity\Court;
 use App\Entity\Date;
+use App\Entity\Practice;
 use App\Entity\Slot;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Types\Types;
@@ -90,6 +91,8 @@ class SlotRepository extends ServiceEntityRepository
             ->leftJoin('b.match', 'm')->addSelect('m')
             ->leftJoin('m.participants', 'part')->addSelect('part')
             ->leftJoin('part.player', 'player')->addSelect('player')
+            ->leftJoin('b.practice', 'pr')->addSelect('pr')
+            ->leftJoin('pr.groups', 'prg')->addSelect('prg')
             ->andWhere('s.date = :date')
             ->setParameter('date', $date)
             ->addOrderBy('s.startsAt', 'ASC')
@@ -98,6 +101,30 @@ class SlotRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult()
         ;
+    }
+
+    /**
+     * Créneaux d'une date libres ou déjà occupés par cet entraînement (formulaire d'un entraînement)
+     */
+    public function getAvailableSlotsForPracticeQueryBuilder(Date $date, Practice $practice): QueryBuilder
+    {
+        $qb = $this->createQueryBuilder('s')
+            ->innerJoin('s.date', 'd')->addSelect('d')
+            ->innerJoin('s.court', 'c')->addSelect('c')
+            ->andWhere('s.date = :date')
+            ->setParameter('date', $date)
+            ->addOrderBy('s.startsAt', 'ASC')
+            ->addOrderBy('c.name', 'ASC')
+        ;
+
+        if ($practice->getId() === null) {
+            $qb->andWhere('NOT EXISTS (SELECT 1 FROM ' . Booking::class . ' b WHERE b.slot = s)');
+        } else {
+            $qb->andWhere('NOT EXISTS (SELECT 1 FROM ' . Booking::class . ' b WHERE b.slot = s AND (b.practice IS NULL OR b.practice != :practice))')
+                ->setParameter('practice', $practice);
+        }
+
+        return $qb;
     }
 
     /**

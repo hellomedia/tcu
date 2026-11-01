@@ -1,0 +1,15 @@
+{# vars: feedback, practice_id, slots (now free) #}
+{% embed 'component/modal/success.html.twig' %}
+	{% block streams %}
+		{# planning page #}
+		{% for slot in slots %}
+			<turbo-stream action="replace" target="slot-{{ slot.id }}">
+				<template>
+					{% include '@admin/planning/_slot_row.html.twig' %}
+				</template>
+			</turbo-stream>
+		{% endfor %}
+		{# practices page #}
+		<turbo-stream action="remove" target="practice-{{ practice_id }}"></turbo-stream>
+	{% endblock %}
+{% endembed %}

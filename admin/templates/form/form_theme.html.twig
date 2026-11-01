@@ -233,3 +233,102 @@
 		</div>
 	{% endif %}
 {% endblock %}
+
+{# ========================================================= #}
+{#  Practice form : date pills, slot grid with checkboxes,     #}
+{#  poule pills with checkboxes                               #}
+{# ========================================================= #}
+
+{# hidden checkbox input of a pill / cell #}
+{% macro booking_checkbox(child) %}
+	<input type="checkbox"
+		id="{{ child.vars.id }}"
+		name="{{ child.vars.full_name }}"
+		value="{{ child.vars.value }}"
+		{{ child.vars.checked ? 'checked' }}
+		{{ child.vars.disabled ? 'disabled' }}
+	>
+{% endmacro %}
+
+{# Practice : dates as pills (same as the match -> slot form) #}
+{% block _practice_form_date_widget %}
+	{{ block('_booking_for_match_form_date_widget') }}
+{% endblock %}
+
+{# Practice : time x court grid (grid var set in PracticeForm::finishView), several free slots can be checked #}
+{% block _practice_form_slots_widget %}
+	{% if grid is defined and grid.rows is not empty %}
+		<div {{ block('widget_container_attributes') }} class="slot-grid-wrapper">
+			<table class="slot-grid">
+				<thead>
+					<tr>
+						<th></th>
+						{% for court in grid.courts %}
+							<th>{{ court }}</th>
+						{% endfor %}
+					</tr>
+				</thead>
+				<tbody>
+					{% for row in grid.rows %}
+						<tr>
+							<th>{{ row.label }}</th>
+							{% for court in grid.courts %}
+								{% set cell = row.cells[court.id] ?? null %}
+								<td>
+									{% if cell is null %}
+										<div class="slot-cell slot-none">—</div>
+									{% elseif cell.choice %}
+										{% set child = cell.choice %}
+										<label class="slot-cell slot-free {{ child.vars.extra.current ? 'slot-current' }}" for="{{ child.vars.id }}">
+											{{ _self.booking_checkbox(child) }}
+											<span class="slot-free-label">{{ child.vars.extra.current ? 'Réservé' : 'Libre' }}</span>
+										</label>
+									{% elseif cell.slot.practice %}
+										<div class="slot-cell slot-booked slot-practice" title="Entraînement {{ cell.slot.practice.label }}">
+											<span class="slot-player">Entraînement</span>
+											<span class="slot-player">{{ cell.slot.practice.label }}</span>
+										</div>
+									{% else %}
+										{% set cellGroup = cell.slot.match.group %}
+										<div class="slot-cell slot-booked" title="{{ cell.slot.match }}{{ cellGroup ? ' (' ~ cellGroup ~ ')' }}" {% if cellGroup %}style="--group-color: {{ group_color(cellGroup) }}"{% endif %}>
+											{% for player in cell.slot.match.players %}
+												<span class="slot-player">{{ player }}</span>
+											{% endfor %}
+										</div>
+									{% endif %}
+								</td>
+							{% endfor %}
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	{% else %}
+		<div {{ block('widget_container_attributes') }} class="pills pills-grid">
+			{% for child in form %}
+				<label class="pill {{ child.vars.extra.current ? 'pill-current' }}" for="{{ child.vars.id }}">
+					{{ _self.booking_checkbox(child) }}
+					<span>{{ child.vars.label }}</span>
+				</label>
+			{% else %}
+				<div class="booking-empty">Aucun créneau libre à cette date</div>
+			{% endfor %}
+		</div>
+	{% endif %}
+{% endblock %}
+
+{# Practice : poules as pills, several can be checked #}
+{% block _practice_form_groups_widget %}
+	<div {{ block('widget_container_attributes') }} class="pills">
+		{% for child in form %}
+			<label class="pill pill-group" for="{{ child.vars.id }}">
+				{{ _self.booking_checkbox(child) }}
+				<span class="group-swatch" style="background: {{ child.vars.extra.color }}"></span>
+				{{ child.vars.label }}
+				<span class="count" title="joueurs">{{ child.vars.extra.players }}</span>
+			</label>
+		{% else %}
+			<div class="booking-empty">Aucune poule dans cette saison</div>
+		{% endfor %}
+	</div>
+{% endblock %}

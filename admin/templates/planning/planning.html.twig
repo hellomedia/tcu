@@ -2,6 +2,7 @@
 
 {% block head_stylesheets %}
     {{ parent() }}
+    {% include '@admin/practice/_styles.html.twig' %}
     <style>
         .placeholder {
             visibility: hidden;
@@ -119,6 +120,47 @@
         /* POULE COLOUR : stripe on the left of a booked slot (confirmation dots are next to the names) */
         .slot-row.booked .slot-content {
             border-left: 5px solid var(--group-color, #ccc);
+        }
+
+        /* PRACTICE : hatched strip + "Entraînement" badge, so it is told apart from a match without the colours */
+        .slot-row.practice .slot-content {
+            background: repeating-linear-gradient(135deg, #fff, #fff 7px, #f1f5f9 7px, #f1f5f9 14px);
+            border-style: solid;
+            border-color: #cbd5e1;
+        }
+        .slot-row.practice.cancelled .slot-content {
+            opacity: 0.6;
+        }
+        .slot-row.practice.cancelled .practice-label {
+            text-decoration: line-through;
+        }
+        .practice-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            min-width: 0;
+        }
+        .practice-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            min-width: 0;
+            .practice-label {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+        }
+        .practice-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px 12px;
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+        .slot-row.free .btn-practice {
+            margin-left: 6px;
         }
 
         /* TOOLBAR : free slots only, poule legend / focus */

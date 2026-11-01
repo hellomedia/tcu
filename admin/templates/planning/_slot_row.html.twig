@@ -1,5 +1,6 @@
-{% set group = slot.match ? slot.match.group : null %}
-<div class="slot-row {{ slot.match ? 'booked' : 'free' }}"
+{% set practice = slot.practice %}
+{% set group = slot.match ? slot.match.group : (practice and practice.groups is not empty ? practice.groups|first : null) %}
+<div class="slot-row {{ slot.booking ? 'booked' : 'free' }} {{ practice ? 'practice' }} {{ practice and practice.cancelled ? 'cancelled' }}"
     id="slot-{{ slot.id }}"
     data-slot-id="{{ slot.id }}"
     data-date-id="{{ slot.date.id }}"
@@ -10,18 +11,23 @@
         data-match-label="{{ slot.match }}"
         data-has-confirmations="{{ slot.match.confirmationInfos is not empty ? 1 : 0 }}"
     {% endif %}
+    {% if practice %}
+        data-practice-id="{{ practice.id }}"
+        {# poule focus (planning_filter_controller): a practice can belong to several poules #}
+        data-group-ids="{{ practice.groups|map(g => g.id)|join(' ') }}"
+    {% endif %}
     {% if slot.booking is not empty %}data-controller="slot-menu"{% endif %}
     {% if group %}data-group-id="{{ group.id }}" style="--group-color: {{ group_color(group) }}"{% endif %}
 >
 	<div class="slot-time">
 		{{ slot.startsAt|date('H:i') }}
 	</div>
-	<div class="slot-content" {% if group %}title="{{ group }}" draggable="true"{% endif %}
+	<div class="slot-content" {% if slot.match and group %}title="{{ group }}" draggable="true"{% elseif practice %}title="Entraînement {{ practice.label }}"{% endif %}
 		{% if slot.booking is not empty %}data-action="click->slot-menu#openFromStrip"{% endif %}
 	>
-		<div class="slot-content-inner {{ slot.match ? 'with-match' }}">
+		<div class="slot-content-inner {{ slot.booking ? 'with-match' }}">
 			{# <div class="placeholder"></div> #}
-            {% if slot.match is empty %}
+            {% if slot.booking is empty %}
 				<a class="btn btn-default"
                     href="{{ path('admin_planning_slot_add_booking', {'id': slot.id}) }}"
                     data-action="modal-remote-form#open"
@@ -29,6 +35,33 @@
 					<twig:ux:icon name="add"/>
 					Match
 				</a>
+				<a class="btn btn-default btn-practice"
+                    href="{{ path('admin_practice_new', {'slot': slot.id}) }}"
+                    data-action="modal-remote-form#open"
+                    title="Programmer un entraînement sur ce créneau"
+                >
+					<twig:ux:icon name="add"/>
+					Entraînement
+				</a>
+            {% elseif practice %}
+                <div class="practice-info">
+                    <div class="practice-title">
+                        <span class="practice-kind {{ practice.cancelled ? 'cancelled' }}">{{ practice.cancelled ? 'Annulé' : 'Entraînement' }}</span>
+                        <span class="practice-label">{{ practice.label }}</span>
+                    </div>
+                    <div class="practice-details">
+                        {% if practice.slots|length > 1 %}
+                            <span>{{ practice.timeRange }} · {{ practice.courtsLabel }}</span>
+                        {% endif %}
+                        {% if practice.players is not empty %}
+                            {% set coming = practice.comingPlayers|length %}
+                            {% set notComing = practice.notComingPlayers|length %}
+                            <span class="practice-answers" title="{{ practice.comingPlayers|join(', ') ?: 'personne n\'a encore dit venir' }}">
+                                {{ coming }} ✓ · {{ notComing }} ✕ · {{ practice.players|length - coming - notComing }} ?
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
             {% else %}
                 <div class="sides">
                     <div class="side">
@@ -74,7 +107,9 @@
 	</div>
 	<div class="slot-actions">
 		<div class="slot-actions-inner">
-			{% if slot.booking is not empty %}
+			{% if practice %}
+				{% include "@admin/planning/_slot_actions_practice.html.twig" %}
+			{% elseif slot.booking is not empty %}
 				{% include "@admin/planning/_slot_actions.html.twig" %}
 			{% endif %}
 		</div>

@@ -1,0 +1,92 @@
+{# Practice form (new / edit), shared by the modal and the full page #}
+{# vars: practice, form, modal (bool) #}
+
+{# Important: Note the syntax with [] and only #}
+{# Ignore global themes; use only EasyAdmin #}
+{% form_theme form with ['@admin/form/form_theme.html.twig'] only %}
+
+{% include '@admin/booking/_styles.html.twig' %}
+{% include '@admin/practice/_styles.html.twig' %}
+
+{% set action = practice.id
+    ? path('admin_practice_edit', {'id': practice.id, 'modal': modal ? 1 : null})
+    : path('admin_practice_new', {'slot': app.request.query.get('slot'), 'modal': modal ? 1 : null}) %}
+
+<div class="booking-form practice-form">
+
+    <div class="booking-header">
+        <h3>
+            <span class="practice-kind">Entraînement</span>
+            {{ practice.id ? 'Modifier l\'entraînement' : 'Programmer un entraînement' }}
+        </h3>
+        <div class="booking-context">
+            {{ practice.season }}
+        </div>
+    </div>
+
+    {# Dependent field (slots depend on date) is handled by the 'ajax' controller #}
+    {# (data-action="change->ajax#submitOnChange" on the date field) #}
+    {# Final submit: regular form submit (turbo frame in the modal) #}
+    {{ form_start(form, {'attr': {
+        'action': action,
+        'data-controller': 'ajax',
+    }}) }}
+
+        <div data-ajax-target="container">
+
+            {{ form_errors(form) }}
+
+            <div class="booking-section">
+                <div class="booking-section-title">Date</div>
+                {{ form_errors(form.date) }}
+                {{ form_widget(form.date) }}
+            </div>
+
+            {% if form.slots is defined %}
+                <div class="booking-section">
+                    <div class="booking-section-title">
+                        Créneaux
+                        <span class="hint">— un ou plusieurs créneaux de cette date : plusieurs terrains, plusieurs heures qui se suivent</span>
+                    </div>
+                    {{ form_errors(form.slots) }}
+                    {{ form_widget(form.slots) }}
+                </div>
+            {% endif %}
+
+            <div class="booking-section">
+                <div class="booking-section-title">
+                    Poules
+                    <span class="hint">— les joueurs de ces poules voient l'entraînement dans Mes interfacs et disent s'ils viennent</span>
+                </div>
+                {{ form_errors(form.groups) }}
+                {{ form_widget(form.groups) }}
+            </div>
+
+            <div class="practice-fields">
+                {{ form_row(form.title) }}
+                {{ form_row(form.note) }}
+            </div>
+
+            {% set submitBtn = form_widget(form.save) %}
+
+            {{ form_rest(form) }}
+        </div>
+
+        {% if modal %}
+            {% embed 'component/modal/_actions.html.twig' %}
+                {% block submit_button %}
+                    {{ submitBtn|raw }}
+                {% endblock %}
+            {% endembed %}
+        {% else %}
+            {% embed 'form/_form_actions.html.twig' %}
+                {% block cancel_url path('admin_practices') %}
+                {% block submit_button %}
+                    {{ submitBtn|raw }}
+                {% endblock %}
+            {% endembed %}
+        {% endif %}
+
+    </form>
+
+</div>

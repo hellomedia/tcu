@@ -1,0 +1,137 @@
+{% extends '@admin/base.html.twig' %}
+
+{% block head_stylesheets %}
+    {{ parent() }}
+    {% include '@admin/practice/_styles.html.twig' %}
+    <style>
+        .practice-intro {
+            color: #6c757d;
+            margin-bottom: 16px;
+            max-width: 900px;
+        }
+        .practice-section-title {
+            margin: 28px 0 10px;
+            font-size: 1.1rem;
+        }
+        .practice-table {
+            width: 100%;
+            border-collapse: collapse;
+            th, td {
+                padding: 8px 10px;
+                border-bottom: 1px solid #e9ecef;
+                vertical-align: top;
+                text-align: left;
+            }
+            th {
+                font-size: 0.8rem;
+                text-transform: uppercase;
+                letter-spacing: 0.04em;
+                color: #6c757d;
+            }
+            tr.cancelled td .label,
+            tr.cancelled td .when {
+                text-decoration: line-through;
+                color: #6c757d;
+            }
+            td.when {
+                white-space: nowrap;
+                .date { font-weight: 600; display: block; }
+                .time { margin-right: 8px; }
+                .courts { color: #6c757d; }
+            }
+            td .label {
+                font-weight: 600;
+                margin-right: 6px;
+            }
+            td .note {
+                margin-top: 2px;
+                font-style: italic;
+            }
+            td.actions {
+                text-align: right;
+                white-space: nowrap;
+                .btn svg { width: 16px; height: 16px; }
+            }
+            .muted {
+                color: #6c757d;
+                font-size: 0.85rem;
+            }
+            .group-dot {
+                display: inline-block;
+                width: 10px;
+                height: 10px;
+                border-radius: 2px;
+                margin-left: 4px;
+                background: var(--group-color);
+                vertical-align: -1px;
+            }
+            .answer {
+                display: inline-block;
+                padding: 1px 8px;
+                border-radius: 999px;
+                font-size: 0.8rem;
+                font-weight: 600;
+                margin-right: 4px;
+                &.yes { background: #e6f4ea; color: #2f855a; }
+                &.no { background: #fff4e0; color: #b45309; }
+                &.unknown { background: #f1f3f5; color: #6c757d; }
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block content_title %}Entraînements - {{ season }}{% endblock %}
+
+{% block page_actions %}
+    <a class="btn btn-primary" href="{{ path('admin_practice_new') }}">
+        <twig:ux:icon name="add"/>
+        Programmer un entraînement
+    </a>
+{% endblock %}
+
+{% block main %}
+    <p class="practice-intro">
+        Un entraînement réserve un ou plusieurs créneaux d'une même date pour que les joueurs d'une ou plusieurs poules
+        jouent librement. Il n'apparaît pas dans le planning public : seuls les joueurs des poules liées le voient dans
+        Mes interfacs, où ils disent s'ils viennent. Les emails de notification (page Notifications) le reprennent avec les matchs.
+        <br>Un entraînement <b>annulé</b> reste affiché barré aux joueurs ; un entraînement <b>supprimé</b> disparaît sans trace.
+        Le planning permet aussi d'en programmer un depuis un créneau libre.
+    </p>
+
+    <div data-controller="modal modal-confirm">
+
+        <h2 class="practice-section-title">À venir</h2>
+        <table class="practice-table">
+            <thead>
+                <tr>
+                    <th>Quand</th>
+                    <th>Entraînement</th>
+                    <th>Réponses</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for practice in upcoming %}
+                    {% include '@admin/practice/_row.html.twig' %}
+                {% else %}
+                    <tr><td colspan="4" class="muted">Aucun entraînement à venir.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {% if past is not empty %}
+            <h2 class="practice-section-title">Passés</h2>
+            <table class="practice-table">
+                <tbody>
+                    {% for practice in past %}
+                        {% include '@admin/practice/_row.html.twig' %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+
+        {% include 'component/modal/_modal.html.twig' %}
+        {% include 'component/modal/_icons_templates.html.twig' %}
+
+    </div>
+{% endblock %}

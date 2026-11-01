@@ -93,7 +93,9 @@ export default class extends Controller {
 
                 if (booked) {
                     // poule focus hides the other poules ; "free only" alone hides every booked slot
-                    const focused = groupId === "mine" ? row.classList.contains("mine") : row.dataset.groupId === groupId;
+                    // a practice row lists every poule it belongs to (data-group-ids="1 2"), a match row its poule (data-group-id)
+                    const groupIds = (row.dataset.groupIds ?? row.dataset.groupId ?? "").split(" ");
+                    const focused = groupId === "mine" ? row.classList.contains("mine") : groupIds.includes(groupId);
                     dimmed = groupId ? !focused : freeOnly;
                 } else {
                     // free slots stay visible with "free only", even when focusing on a poule :

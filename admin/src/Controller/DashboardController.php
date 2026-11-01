@@ -127,6 +127,8 @@ class DashboardController extends AbstractDashboardController
             ->setPermission('ROLE_EDITOR');
         yield MenuItem::linkToUrl('Matchs passés', 'fa fa-calendar', $this->urlGenerator->generate('admin_planning_past'))
             ->setPermission('ROLE_EDITOR');
+        yield MenuItem::linkToUrl('Entraînements', 'fa fa-table-tennis-paddle-ball', $this->urlGenerator->generate('admin_practices'))
+            ->setPermission('ROLE_EDITOR');
         yield MenuItem::linkToUrl('Notifications', 'fa fa-envelope', $this->urlGenerator->generate('admin_planning_notifications'))
             ->setPermission('ROLE_EDITOR');
         yield MenuItem::linkToUrl('Dispos', 'fa fa-calendar-check', $this->urlGenerator->generate('admin_availabilities'))

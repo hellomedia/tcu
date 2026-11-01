@@ -1,0 +1,15 @@
+{# Turbo streams after saving / cancelling a practice. vars: practice, slots #}
+{# planning page #}
+{% for slot in slots %}
+	<turbo-stream action="replace" target="slot-{{ slot.id }}">
+		<template>
+			{% include '@admin/planning/_slot_row.html.twig' %}
+		</template>
+	</turbo-stream>
+{% endfor %}
+{# practices page #}
+<turbo-stream action="replace" target="practice-{{ practice.id }}">
+	<template>
+		{% include '@admin/practice/_row.html.twig' %}
+	</template>
+</turbo-stream>

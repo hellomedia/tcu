@@ -1,0 +1,73 @@
+{# One practice of the Entraînements page; replaced by turbo streams after a change. vars: practice #}
+{% set coming = practice.comingPlayers %}
+{% set notComing = practice.notComingPlayers %}
+{% set players = practice.players %}
+{% set notified = practice.countNotifiedPlayers %}
+<tr id="practice-{{ practice.id }}" class="{{ practice.cancelled ? 'cancelled' }}">
+    <td class="when">
+        {% if practice.scheduled %}
+            <span class="date">{{ practice.date }}</span>
+            <span class="time">{{ practice.timeRange }}</span>
+            <span class="courts">{{ practice.courtsLabel }}</span>
+        {% else %}
+            <span class="muted">pas de créneau</span>
+        {% endif %}
+    </td>
+    <td>
+        {% if practice.cancelled %}<span class="practice-kind cancelled">Annulé</span>{% endif %}
+        <span class="label">{{ practice.label }}</span>
+        {% if practice.title and practice.groups is not empty %}
+            <span class="muted">{% for group in practice.groups %}{{ group }}{{ not loop.last ? ', ' }}{% endfor %}</span>
+        {% endif %}
+        {% for group in practice.groups %}
+            <span class="group-dot" style="--group-color: {{ group_color(group) }}" title="{{ group }}"></span>
+        {% endfor %}
+        {% if practice.note %}
+            <div class="muted note">{{ practice.note }}</div>
+        {% endif %}
+    </td>
+    <td class="answers">
+        {% if players is empty %}
+            <span class="muted">aucune poule : personne n'est prévenu</span>
+        {% else %}
+            <span class="answer yes" title="{{ coming|join(', ') }}">{{ coming|length }} ✓</span>
+            <span class="answer no" title="{{ notComing|join(', ') }}">{{ notComing|length }} ✕</span>
+            <span class="answer unknown" title="sans réponse">{{ players|length - coming|length - notComing|length }} ?</span>
+            <span class="muted">sur {{ players|length }}</span>
+            <div class="muted">{{ notified }} prévenu{{ notified > 1 ? 's' }} par email</div>
+        {% endif %}
+    </td>
+    <td class="actions">
+        {% if not practice.past %}
+            <a class="btn btn-default btn-sm" href="{{ path('admin_practice_edit', {'id': practice.id}) }}" title="Modifier">
+                <twig:ux:icon name="edit"/>
+            </a>
+            <button type="button"
+                class="btn btn-default btn-sm"
+                formaction="{{ path('admin_practice_cancel', {'id': practice.id}) }}"
+                data-action="modal-confirm#open"
+                data-title="{{ practice.cancelled ? 'Rétablir l\'entraînement' : 'Annuler l\'entraînement' }}"
+                data-html="<p><b>{{ practice.label|e }}</b><br>{{ practice.scheduleLabel }}</p>{{ practice.cancelled ? '<p>Il est à nouveau affiché aux joueurs.</p>' : '<p>Il reste affiché aux joueurs comme annulé ; les créneaux restent réservés.</p>' }}"
+                data-button-label="{{ practice.cancelled ? 'Rétablir' : 'Annuler l\'entraînement' }}"
+                data-variant="{{ practice.cancelled ? 'info' : 'warning' }}"
+                data-csrf="{{ csrf_token('practice-cancel') }}"
+                title="{{ practice.cancelled ? 'Rétablir' : 'Annuler' }}"
+            >
+                <twig:ux:icon name="{{ practice.cancelled ? 'refresh' : 'cross' }}"/>
+            </button>
+        {% endif %}
+        <button type="button"
+            class="btn btn-default btn-sm"
+            formaction="{{ path('admin_practice_delete', {'id': practice.id}) }}"
+            data-action="modal-confirm#open"
+            data-title="Supprimer l'entraînement"
+            data-html="<p><b>{{ practice.label|e }}</b><br>{{ practice.scheduleLabel }}</p><p>Il disparaît sans trace et les créneaux sont libérés.{% if notified > 0 %}<br><b>{{ notified }} joueur{{ notified > 1 ? 's ont' : ' a' }} déjà été prévenu{{ notified > 1 ? 's' }} par email</b> : préférer l'annulation, qui leur sera communiquée.{% endif %}</p>"
+            data-button-label="Supprimer"
+            data-variant="danger"
+            data-csrf="{{ csrf_token('practice-delete') }}"
+            title="Supprimer"
+        >
+            <twig:ux:icon name="delete"/>
+        </button>
+    </td>
+</tr>

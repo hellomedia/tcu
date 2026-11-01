@@ -40,5 +40,8 @@ class BookingCrudController extends AbstractCrudController
         
         yield AssociationField::new('match', 'Match')
             ->hideOnForm();
+
+        yield AssociationField::new('practice', 'Entraînement')
+            ->hideOnForm();
     }
 }

@@ -1,0 +1,6 @@
+{# vars: feedback, practice, slots (slot rows to refresh on the planning page: current slots, and the former ones when edited) #}
+{% embed 'component/modal/success.html.twig' %}
+	{% block streams %}
+		{% include '@admin/practice/_streams.html.twig' %}
+	{% endblock %}
+{% endembed %}

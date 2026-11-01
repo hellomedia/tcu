@@ -1,0 +1,60 @@
+{# Styles of the practice form and of the practice rows (planning, list) #}
+<style>
+    /* "Entraînement" badge : the word is the symbol, readable without the colours */
+    .practice-kind {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        padding: 1px 8px;
+        border-radius: 4px;
+        background: #334155;
+        color: #fff;
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        vertical-align: middle;
+        white-space: nowrap;
+    }
+    .practice-kind.cancelled {
+        background: #9ca3af;
+        text-decoration: line-through;
+    }
+
+    /* FORM */
+    .practice-form .pill.pill-group {
+        gap: 8px;
+        .count {
+            color: var(--booking-muted);
+            font-weight: 400;
+            font-size: 0.8rem;
+        }
+    }
+    /* checkbox pills / cells : same look as the radios, a check mark when selected */
+    .practice-form .pill input[type="checkbox"],
+    .practice-form .slot-cell input[type="checkbox"] {
+        position: absolute;
+        opacity: 0;
+        width: 1px;
+        height: 1px;
+        pointer-events: none;
+    }
+    .practice-form .slot-free:has(input:checked) .slot-free-label::before,
+    .practice-form .pill-group:has(input:checked)::before {
+        content: '✓ ';
+        font-weight: 700;
+    }
+    .practice-form .slot-free:has(input:checked) .slot-free-label {
+        color: var(--booking-accent);
+        font-weight: 600;
+    }
+    .practice-form .slot-booked.slot-practice {
+        background: repeating-linear-gradient(135deg, #f1f3f5, #f1f3f5 6px, #e2e8f0 6px, #e2e8f0 12px);
+    }
+    .practice-fields {
+        display: grid;
+        gap: 10px;
+        max-width: 640px;
+        margin-bottom: 10px;
+    }
+</style>
