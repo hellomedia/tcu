@@ -40,6 +40,7 @@ final class PracticeForm extends AbstractType
 {
     public function __construct(
         private SlotRepository $slotRepository,
+        private DateRepository $dateRepository,
         private GroupColors $groupColors,
     ) {
     }
@@ -55,6 +56,12 @@ final class PracticeForm extends AbstractType
         $preselectedSlot = $options['slot'];
         \assert($preselectedSlot === null || $preselectedSlot instanceof Slot);
 
+        // date pré-sélectionnée : celle de l'entraînement, du créneau cliqué, sinon la première date avec un créneau libre
+        // (la grille des créneaux dépend de la date : elle s'affiche dès l'ouverture)
+        $defaultDate = $currentDate
+            ?? $preselectedSlot?->getDate()
+            ?? $this->dateRepository->getFutureDatesWithAvailableSlotsQueryBuilder()->setMaxResults(1)->getQuery()->getOneOrNullResult();
+
         $builder->add('date', EntityType::class, [
             'label' => 'Date',
             'class' => Date::class,
@@ -64,7 +71,7 @@ final class PracticeForm extends AbstractType
             'multiple' => false,
             'expanded' => true,
             'mapped' => false,
-            'data' => $currentDate ?? $preselectedSlot?->getDate(),
+            'data' => $defaultDate,
             'placeholder' => false,
             'attr' => [
                 'data-action' => 'change->ajax#submitOnChange',
@@ -136,6 +143,15 @@ final class PracticeForm extends AbstractType
         $builder->add('save', SubmitType::class, [
             'label' => $practice->getId() === null ? 'Programmer' : 'Enregistrer',
         ]);
+
+        // changement de date : les créneaux cochés appartiennent à l'ancienne date, ils ne sont plus des choix valides
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
+            $data = $event->getData();
+            if (\is_array($data) && !isset($data['save'])) {
+                unset($data['slots']);
+                $event->setData($data);
+            }
+        });
 
         // les créneaux cochés deviennent les réservations de l'entraînement, avant la validation (priorité > 0)
         $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
@@ -223,6 +239,13 @@ final class PracticeForm extends AbstractType
         $resolver->setDefaults([
             'data_class' => Practice::class,
             'slot' => null,
+            // un changement de date réaffiche le formulaire : pas de validation avant le bouton Programmer
+            'validation_groups' => function (FormInterface $form): array|false {
+                $submit = $form->get('save');
+                \assert($submit instanceof ClickableInterface);
+
+                return $submit->isClicked() ? ['Default'] : false;
+            },
         ]);
 
         $resolver->setAllowedTypes('slot', ['null', Slot::class]);

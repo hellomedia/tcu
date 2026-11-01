@@ -48,7 +48,11 @@ class Booking implements EntityInterface
         return $this->slot;
     }
 
-    public function setSlot(Slot $slot): static
+    /**
+     * null : le temps d'un changement de date dans le formulaire de déplacement (BookingForMatchForm),
+     * jamais enregistré (colonne non nullable)
+     */
+    public function setSlot(?Slot $slot): static
     {
         $this->slot = $slot;
 

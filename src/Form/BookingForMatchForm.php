@@ -14,6 +14,8 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -96,6 +98,15 @@ final class BookingForMatchForm extends AbstractType
         $builder->add('save', SubmitType::class, [
             'label' => $currentSlot === null ? 'Programmer' : 'Déplacer',
         ]);
+
+        // changement de date : le créneau choisi appartient à l'ancienne date, il n'est plus un choix valide
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
+            $data = $event->getData();
+            if (\is_array($data) && !isset($data['save'])) {
+                unset($data['slot']);
+                $event->setData($data);
+            }
+        });
     }
 
     /**

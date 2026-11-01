@@ -199,6 +199,11 @@
 												<span class="slot-free-label">Libre</span>
 											{% endif %}
 										</label>
+									{% elseif cell.slot.practice %}
+										<div class="slot-cell slot-booked slot-practice" title="Entraînement {{ cell.slot.practice.label }}">
+											<span class="slot-player">Entraînement</span>
+											<span class="slot-player">{{ cell.slot.practice.label }}</span>
+										</div>
 									{% else %}
 										{% set cellGroup = cell.slot.match.group %}
 										<div class="slot-cell slot-booked" title="{{ cell.slot.match }}{{ cellGroup ? ' (' ~ cellGroup ~ ')' }}" {% if cellGroup %}style="--group-color: {{ group_color(cellGroup) }}"{% endif %}>
