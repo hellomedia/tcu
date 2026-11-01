@@ -44,6 +44,9 @@
                         <span class="practice-label">{{ practice.label }}</span>
                     </div>
                     <div class="practice-details">
+                        {% if practice.individualPlayers is not empty %}
+                            <span title="joueurs invités individuellement">{{ practice.individualPlayers|join(', ') }}</span>
+                        {% endif %}
                         {% if practice.slots|length > 1 %}
                             <span>{{ practice.timeRange }} · {{ practice.courtsLabel }}</span>
                         {% endif %}

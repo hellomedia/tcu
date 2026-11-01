@@ -2,6 +2,7 @@
 
 namespace Admin\Mailer;
 
+use App\Entity\Group;
 use App\Entity\InterfacMatch;
 use App\Entity\Player;
 use App\Entity\Practice;
@@ -174,6 +175,11 @@ class ConfirmationMailer extends BaseMailer
             'court' => $practice->getCourtsLabel(),
             'label' => $practice->getLabel(),
             'titled' => $practice->getTitle() !== null, // sinon le label est le nom des poules
+            // invités : les poules (sauf quand elles sont le label) et les joueurs liés un par un (sauf le destinataire)
+            'with' => implode(', ', [
+                ...($practice->getTitle() !== null ? $practice->getGroups()->map(fn (Group $group) => (string) $group)->toArray() : []),
+                ...$practice->getIndividualPlayers()->filter(fn (Player $invited) => $invited !== $player)->map(fn (Player $invited) => $invited->getName())->toArray(),
+            ]) ?: null,
             'note' => $practice->getNote(),
             'previous' => $previous,
             'answer' => $practice->getAnswerOf($player), // déjà répondu sur le site

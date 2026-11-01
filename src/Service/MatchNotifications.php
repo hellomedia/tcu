@@ -36,7 +36,7 @@ class MatchNotifications
     }
 
     /**
-     * Joueurs des poules de la saison, triés par nom
+     * Joueurs des poules de la saison, plus ceux liés individuellement à un entraînement de la saison, triés par nom
      *
      * @return Player[]
      */
@@ -46,6 +46,14 @@ class MatchNotifications
 
         foreach ($this->groupRepository->findBySeason($season) as $group) {
             foreach ($group->getPlayers() as $player) {
+                $players[$player->getId()] = $player;
+            }
+        }
+
+        // un joueur hors poule ne reçoit un email que pour les entraînements où il est lié individuellement
+        $this->practicesBySeason[$season->getId()] ??= $this->practiceRepository->findBySeason($season);
+        foreach ($this->practicesBySeason[$season->getId()] as $practice) {
+            foreach ($practice->getIndividualPlayers() as $player) {
                 $players[$player->getId()] = $player;
             }
         }

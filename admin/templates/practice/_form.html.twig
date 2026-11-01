@@ -69,6 +69,17 @@
                 {{ form_widget(form.groups) }}
             </div>
 
+            <div class="booking-section">
+                <div class="booking-section-title">
+                    Joueurs
+                    <span class="hint">— en plus des poules, ou à leur place : des joueurs choisis un par un (liste fixe, la poule suit ses changements)</span>
+                </div>
+                {{ form_errors(form.players) }}
+                <div class="practice-players">
+                    {{ form_widget(form.players) }}
+                </div>
+            </div>
+
             <div class="practice-fields">
                 {{ form_row(form.title) }}
                 {{ form_row(form.note) }}

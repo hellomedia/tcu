@@ -46,7 +46,18 @@ class Practice implements EntityInterface
     private Collection $groups;
 
     /**
-     * Intitulé libre, à la place des noms des poules (obligatoire sans poule)
+     * Joueurs liés individuellement, en plus des poules ou à leur place
+     * (liste fixe, alors qu'une poule est dynamique : un joueur ajouté à la poule voit l'entraînement)
+     *
+     * @var Collection<int, Player>
+     */
+    #[ORM\ManyToMany(targetEntity: Player::class)]
+    #[ORM\JoinTable(name: 'practice_player')]
+    #[ORM\OrderBy(['lastname' => 'ASC', 'firstname' => 'ASC'])]
+    private Collection $players;
+
+    /**
+     * Intitulé libre, à la place des noms des poules (obligatoire sans poule, donc toujours avec des joueurs seuls)
      */
     #[ORM\Column(length: 100, nullable: true)]
     #[Assert\Length(max: 100)]
@@ -88,6 +99,7 @@ class Practice implements EntityInterface
     public function __construct()
     {
         $this->groups = new ArrayCollection();
+        $this->players = new ArrayCollection();
         $this->bookings = new ArrayCollection();
         $this->participants = new ArrayCollection();
         $this->createdAt = new \DateTimeImmutable();
@@ -142,6 +154,32 @@ class Practice implements EntityInterface
     public function hasGroup(Group $group): bool
     {
         return $this->groups->contains($group);
+    }
+
+    /**
+     * Joueurs liés individuellement (tous les joueurs concernés : getPlayers())
+     *
+     * @return Collection<int, Player>
+     */
+    public function getIndividualPlayers(): Collection
+    {
+        return $this->players;
+    }
+
+    public function addPlayer(Player $player): static
+    {
+        if (!$this->players->contains($player)) {
+            $this->players->add($player);
+        }
+
+        return $this;
+    }
+
+    public function removePlayer(Player $player): static
+    {
+        $this->players->removeElement($player);
+
+        return $this;
     }
 
     /**
@@ -422,7 +460,8 @@ class Practice implements EntityInterface
     }
 
     /**
-     * Joueurs des poules liées, sans doublon (un joueur peut être dans deux poules), par nom
+     * Joueurs concernés : ceux des poules liées et les joueurs liés individuellement, sans doublon
+     * (un joueur peut être dans deux poules, ou dans une poule et lié en plus), par nom
      *
      * @return Player[]
      */
@@ -434,6 +473,9 @@ class Practice implements EntityInterface
                 $players[$player->getId()] = $player;
             }
         }
+        foreach ($this->players as $player) {
+            $players[$player->getId()] = $player;
+        }
 
         usort($players, fn (Player $a, Player $b) => [$a->getLastname(), $a->getFirstname()] <=> [$b->getLastname(), $b->getFirstname()]);
 
@@ -442,6 +484,10 @@ class Practice implements EntityInterface
 
     public function concerns(Player $player): bool
     {
+        if ($this->players->contains($player)) {
+            return true;
+        }
+
         foreach ($this->groups as $group) {
             if ($group->getPlayers()->contains($player)) {
                 return true;

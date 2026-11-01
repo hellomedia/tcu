@@ -171,7 +171,7 @@ class LoadFixturesCommand extends Command
         // NB: pas de TRUNCATE ... CASCADE : user_ référence player, les utilisateurs seraient supprimés
         // même avec --keep-users. Toutes les tables liées sont listées dans la même commande.
         $tables = [
-            'practice_participant', 'practice_group', 'practice',
+            'practice_participant', 'practice_player', 'practice_group', 'practice',
             'participant_confirmation_info', 'match_result', 'match_participant', 'booking', 'interfac_match',
             'availability', 'slot', 'date', 'court', 'group_player', '"group"', 'registration', 'season',
         ];
@@ -452,6 +452,23 @@ class LoadFixturesCommand extends Command
         // les deux poules, un terrain, dans quatre semaines
         if ($slots = $pick(3, 1)) {
             $practice = (new Practice())->setSeason($season)->addGroup($groups[0])->addGroup($groups[1])->setTitle('Entraînement libre')->setNote('Doubles tournants, tout le monde joue');
+            $book($practice, $slots);
+        }
+
+        // sans poule, des joueurs choisis un par un (2 de chaque poule, plus un inscrit hors poule s'il y en a) : intitulé obligatoire
+        if ($slots = $pick(4, 1)) {
+            $practice = (new Practice())->setSeason($season)->setTitle('Passerelle poules 1 et 2')->setNote('Pour voir si le niveau passe');
+            foreach ([...\array_slice($groups[0]->getPlayers()->toArray(), -2), ...\array_slice($groups[1]->getPlayers()->toArray(), 0, 2)] as $player) {
+                $practice->addPlayer($player);
+            }
+            // (Player::$groups n'est pas à jour avant le flush : on passe par les poules)
+            $inGroups = array_merge(...array_map(fn (Group $group) => $group->getPlayers()->toArray(), $groups));
+            foreach ($this->entityManager->getRepository(Registration::class)->findBy(['season' => $season], ['id' => 'ASC']) as $registration) {
+                if (!\in_array($registration->getPlayer(), $inGroups, true)) {
+                    $practice->addPlayer($registration->getPlayer());
+                    break;
+                }
+            }
             $book($practice, $slots);
         }
 

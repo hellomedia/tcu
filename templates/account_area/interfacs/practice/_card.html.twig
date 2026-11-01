@@ -23,8 +23,10 @@
         <div class="practice-card-label">
             <span class="practice-card-kind {{ practice.cancelled ? 'cancelled' }}">{{ practice.cancelled ? 'Annulé' : 'Entraînement' }}</span>
             {{ practice.label }}
-            {% if practice.title and practice.groups is not empty %}
-                <span class="practice-card-groups">· {% for group in practice.groups %}{{ group }}{{ not loop.last ? ', ' }}{% endfor %}</span>
+            {# who is invited : the poules (unless they are the label) and the players invited one by one (not the reader) #}
+            {% set invited = (practice.title ? practice.groups|map(g => '' ~ g) : [])|merge(practice.individualPlayers|filter(p => p != player)|map(p => '' ~ p)) %}
+            {% if invited is not empty %}
+                <span class="practice-card-groups">· {{ invited|join(', ') }}</span>
             {% endif %}
         </div>
 

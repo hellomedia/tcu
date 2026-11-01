@@ -5,11 +5,13 @@ namespace App\Form;
 use App\Entity\Booking;
 use App\Entity\Date;
 use App\Entity\Group;
+use App\Entity\Player;
 use App\Entity\Practice;
 use App\Entity\Slot;
 use App\Enum\BookingType;
 use App\Repository\DateRepository;
 use App\Repository\GroupRepository;
+use App\Repository\PlayerRepository;
 use App\Repository\SlotRepository;
 use App\Service\GroupColors;
 use Doctrine\ORM\QueryBuilder;
@@ -29,7 +31,8 @@ use Symfonycasts\DynamicForms\DependentField;
 use Symfonycasts\DynamicForms\DynamicFormBuilder;
 
 /**
- * Entraînement : choisir une date, puis un ou plusieurs créneaux libres de cette date, les poules, un intitulé, une note.
+ * Entraînement : choisir une date, puis un ou plusieurs créneaux libres de cette date, les poules et/ou des joueurs,
+ * un intitulé, une note.
  *
  * Les créneaux ne sont pas mappés : le contrôleur les convertit en réservations (Practice::$bookings).
  *
@@ -163,7 +166,7 @@ final class PracticeForm extends AbstractType
     }
 
     /**
-     * Poules, intitulé, note, bouton
+     * Poules, joueurs, intitulé, note, bouton
      */
     private function addDetailFields(DynamicFormBuilder $builder, Practice $practice): void
     {
@@ -184,6 +187,26 @@ final class PracticeForm extends AbstractType
                     'players' => $group->getPlayers()->count(),
                 ];
             },
+        ]);
+
+        // joueurs liés individuellement : inscrits de la saison, "Prénom Nom · Poule" (ux-autocomplete, choix préchargés)
+        $builder->add('players', EntityType::class, [
+            'label' => 'Joueurs',
+            'class' => Player::class,
+            'query_builder' => function (PlayerRepository $repo) use ($practice): QueryBuilder {
+                return $repo->getRegisteredQueryBuilder($practice->getSeason());
+            },
+            'choice_label' => function (Player $player) use ($practice): string {
+                $groups = $player->getGroupsForSeason($practice->getSeason())->map(fn (Group $group) => (string) $group)->toArray();
+
+                return $groups === [] ? $player->getName() : $player->getName() . ' · ' . implode(', ', $groups);
+            },
+            'multiple' => true,
+            'required' => false,
+            'by_reference' => false,
+            'autocomplete' => true,
+            'placeholder' => 'Ajouter un joueur…',
+            'max_results' => 500,
         ]);
 
         $builder->add('title', TextType::class, [

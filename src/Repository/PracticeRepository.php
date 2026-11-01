@@ -36,8 +36,8 @@ class PracticeRepository extends ServiceEntityRepository
     }
 
     /**
-     * Entraînements d'un joueur : ceux liés à une de ses poules de la saison (une seule fois,
-     * même quand deux de ses poules sont liées au même entraînement)
+     * Entraînements d'un joueur : ceux liés à une de ses poules de la saison ou à lui directement (une seule fois,
+     * même quand deux de ses poules sont liées au même entraînement, ou sa poule et lui)
      *
      * @return Practice[]
      */
@@ -45,9 +45,10 @@ class PracticeRepository extends ServiceEntityRepository
     {
         $ids = $this->createQueryBuilder('p')
             ->select('DISTINCT p.id')
-            ->innerJoin('p.groups', 'g')
-            ->innerJoin('g.players', 'pl')
-            ->andWhere('pl = :player')
+            ->leftJoin('p.groups', 'g')
+            ->leftJoin('g.players', 'pl')
+            ->leftJoin('p.players', 'ip')
+            ->andWhere('pl = :player OR ip = :player')
             ->andWhere('p.season = :season')
             ->setParameter('player', $player)
             ->setParameter('season', $season)
@@ -76,12 +77,13 @@ class PracticeRepository extends ServiceEntityRepository
     {
         $ids = $this->createQueryBuilder('p')
             ->select('DISTINCT p.id')
-            ->innerJoin('p.groups', 'g')
-            ->innerJoin('g.players', 'pl')
+            ->leftJoin('p.groups', 'g')
+            ->leftJoin('g.players', 'pl')
+            ->leftJoin('p.players', 'ip')
             ->leftJoin('p.bookings', 'b')
             ->leftJoin('b.slot', 's')
             ->leftJoin('s.date', 'd')
-            ->andWhere('pl = :player')
+            ->andWhere('pl = :player OR ip = :player')
             ->andWhere('d.date >= CURRENT_DATE() OR p.cancelledOn >= CURRENT_DATE()')
             ->setParameter('player', $player)
             ->getQuery()
@@ -130,7 +132,7 @@ class PracticeRepository extends ServiceEntityRepository
     }
 
     /**
-     * Créneaux (avec date et terrain), poules (avec joueurs et leur compte), réponses : tout en une requête.
+     * Créneaux (avec date et terrain), poules (avec joueurs et leur compte), joueurs liés, réponses : tout en une requête.
      * Tri par date puis heure (les entraînements sans créneau en dernier).
      */
     private function withEverything(QueryBuilder $qb): QueryBuilder
@@ -143,6 +145,8 @@ class PracticeRepository extends ServiceEntityRepository
             ->leftJoin('p.groups', 'g')->addSelect('g')
             ->leftJoin('g.players', 'gp')->addSelect('gp')
             ->leftJoin('gp.user', 'gpu')->addSelect('gpu')
+            ->leftJoin('p.players', 'ip')->addSelect('ip')
+            ->leftJoin('ip.user', 'ipu')->addSelect('ipu')
             ->leftJoin('p.participants', 'part')->addSelect('part')
             ->leftJoin('part.player', 'partPlayer')->addSelect('partPlayer')
             ->addOrderBy('d.date', 'ASC')

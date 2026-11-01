@@ -22,13 +22,17 @@
         {% for group in practice.groups %}
             <span class="group-dot" style="--group-color: {{ group_color(group) }}" title="{{ group }}"></span>
         {% endfor %}
+        {% if practice.individualPlayers is not empty %}
+            {# joueurs liés individuellement, en plus des poules #}
+            <div class="muted players" title="joueurs invités individuellement">{{ practice.individualPlayers|join(', ') }}</div>
+        {% endif %}
         {% if practice.note %}
             <div class="muted note">{{ practice.note }}</div>
         {% endif %}
     </td>
     <td class="answers">
         {% if players is empty %}
-            <span class="muted">aucune poule : personne n'est prévenu</span>
+            <span class="muted">ni poule ni joueur : personne n'est prévenu</span>
         {% else %}
             <span class="answer yes" title="{{ coming|join(', ') }}">{{ coming|length }} ✓</span>
             <span class="answer no" title="{{ notComing|join(', ') }}">{{ notComing|length }} ✕</span>

@@ -5,7 +5,10 @@ namespace App\Repository;
 use App\Entity\Group;
 use App\Entity\Player;
 use App\Entity\Registration;
+use App\Entity\Season;
+use App\Enum\RegistrationStatus;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -38,6 +41,25 @@ class PlayerRepository extends ServiceEntityRepository
         }
 
         return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * Inscrits de la saison (pas les inscriptions écartées), par nom, avec leurs poules
+     * (choix des joueurs d'un entraînement : le libellé indique la poule de la saison)
+     */
+    public function getRegisteredQueryBuilder(?Season $season): QueryBuilder
+    {
+        return $this->createQueryBuilder('p')
+            ->innerJoin('p.registrations', 'r')
+            // toutes les poules du joueur (pas de condition) : Player::$groups reste complète
+            ->leftJoin('p.groups', 'g')->addSelect('g')
+            ->andWhere('r.season = :season')
+            ->andWhere('r.status != :dismissed')
+            ->setParameter('season', $season)
+            ->setParameter('dismissed', RegistrationStatus::DISMISSED)
+            ->addOrderBy('p.lastname', 'ASC')
+            ->addOrderBy('p.firstname', 'ASC')
+        ;
     }
 
     //    /**
