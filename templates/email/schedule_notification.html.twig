@@ -14,7 +14,7 @@
                     {{ name }}, {{ cancelled_practices|length > 1 ? 'ces entraînements sont annulés' : 'cet entraînement est annulé' }}.
                 {%- else -%}
                     {{ name }}, {{ new_practices|length + changed_practices|length > 1 ? 'des entraînements sont prévus' : 'un entraînement est prévu' }} pour ta poule : des créneaux réservés pour jouer librement entre vous.
-                    {% if practices_to_answer > 0 %} Dis-nous si tu viens, pour que les autres sachent avec qui ils joueront.{% endif %}
+                    {% if practices_to_answer > 0 %} Dis-nous si tu viens, pour que les autres sachent qui sera là.{% endif %}
                 {%- endif -%}
             {% endblock %}
         {% endembed %}
