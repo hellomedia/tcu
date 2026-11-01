@@ -1,0 +1,133 @@
+{# styles of account_area/interfacs/practice/_card, included once per page #}
+<style>
+    .practice-cards {
+        display: grid;
+        gap: 12px;
+    }
+    .practice-card {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px 20px;
+        padding: 14px 18px;
+        /* hatched background : an entraînement is told apart from a match without the colours */
+        background: repeating-linear-gradient(135deg, #fff, #fff 8px, var(--color-gray-50) 8px, var(--color-gray-50) 16px);
+        border: 1px solid var(--color-gray-200);
+        border-left: 5px solid var(--group-color, var(--color-gray-300));
+        border-radius: 6px;
+    }
+    .practice-card--cancelled {
+        opacity: 0.75;
+        .practice-card-date,
+        .practice-card-time,
+        .practice-card-court,
+        .practice-card-label {
+            text-decoration: line-through;
+            color: var(--color-gray-500);
+        }
+    }
+    .practice-card-body {
+        display: grid;
+        gap: 4px;
+        min-width: 0;
+    }
+    .practice-card-when {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        column-gap: 10px;
+    }
+    .practice-card-kind {
+        display: inline-block;
+        padding: 1px 8px;
+        border-radius: 4px;
+        background: var(--color-gray-700);
+        color: #fff;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        &.cancelled {
+            background: var(--color-gray-400);
+        }
+    }
+    .practice-card-date,
+    .practice-card-time {
+        font-weight: bold;
+        color: var(--color-gray-900);
+    }
+    .practice-card-time {
+        white-space: nowrap;
+    }
+    .practice-card-court {
+        color: var(--color-gray-500);
+        white-space: nowrap;
+    }
+    .practice-card-label {
+        font-weight: 600;
+        color: var(--color-gray-800);
+    }
+    .practice-card-groups {
+        font-weight: normal;
+        color: var(--color-gray-500);
+    }
+    .practice-card-note {
+        font-style: italic;
+        color: var(--color-gray-600);
+    }
+    .practice-card-who {
+        font-size: 14px;
+        color: var(--color-gray-700);
+    }
+    .practice-card-who-label,
+    .practice-card-absent {
+        color: var(--color-gray-500);
+    }
+    .practice-card-aside {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px 12px;
+        margin-left: auto;
+    }
+    .practice-card-question {
+        font-weight: 600;
+        color: var(--color-gray-800);
+    }
+    .practice-card-answers {
+        display: flex;
+        gap: 8px;
+    }
+    .practice-answer {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        border: 1px solid var(--color-gray-300);
+        border-radius: 999px;
+        background: #fff;
+        color: var(--color-gray-700);
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        white-space: nowrap;
+        svg {
+            width: 14px;
+            height: 14px;
+        }
+        &:hover {
+            border-color: var(--color-gray-500);
+        }
+        &.yes.selected {
+            border-color: var(--color-green-600);
+            background-color: var(--color-green-100);
+            color: var(--color-green-800);
+        }
+        &.no.selected {
+            border-color: var(--color-gray-500);
+            background-color: var(--color-gray-200);
+            color: var(--color-gray-800);
+        }
+    }
+</style>

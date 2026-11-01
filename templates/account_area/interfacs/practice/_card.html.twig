@@ -1,0 +1,67 @@
+{#
+    One practice seen by one player: when / where, poules, note, who is coming, and the player's answer.
+    vars:
+      - practice
+      - player: point of view (answer)
+      - answerable: show the answer buttons (upcoming, not cancelled)
+#}
+{% set answer = practice.answerOf(player) %}
+{% set coming = practice.comingPlayers %}
+{% set notComing = practice.notComingPlayers %}
+{% set others = coming|filter(p => p != player) %}
+{% set firstGroup = practice.groups|first %}
+
+<article class="practice-card {{ practice.cancelled ? 'practice-card--cancelled' }}" id="practice-{{ practice.id }}" style="--group-color: {{ firstGroup ? group_color(firstGroup) : 'var(--color-gray-300)' }}">
+    <div class="practice-card-body">
+        <div class="practice-card-when">
+            <span class="practice-card-kind {{ practice.cancelled ? 'cancelled' }}">{{ practice.cancelled ? 'Annulé' : 'Entraînement' }}</span>
+            <span class="practice-card-date">{{ practice.date }}</span>
+            <span class="practice-card-time">{{ practice.timeRange }}</span>
+            <span class="practice-card-court">{{ practice.courtsLabel }}</span>
+        </div>
+
+        <div class="practice-card-label">
+            {{ practice.label }}
+            {% if practice.title and practice.groups is not empty %}
+                <span class="practice-card-groups">· {% for group in practice.groups %}{{ group }}{{ not loop.last ? ', ' }}{% endfor %}</span>
+            {% endif %}
+        </div>
+
+        {% if practice.note %}
+            <div class="practice-card-note">{{ practice.note }}</div>
+        {% endif %}
+
+        {% if not practice.cancelled %}
+            <div class="practice-card-who">
+                {% if others is not empty %}
+                    <span class="practice-card-who-label">{{ answer is same as(true) ? 'Avec' : 'Partants :' }}</span>
+                    {% for other in others %}<span class="nowrap">{{ other }}</span>{{ not loop.last ? ', ' }}{% endfor %}
+                {% elseif answer is same as(true) %}
+                    <span class="practice-card-who-label">Tu es le premier à répondre présent.</span>
+                {% else %}
+                    <span class="practice-card-who-label">Personne n'a encore répondu présent.</span>
+                {% endif %}
+                {% if notComing is not empty %}
+                    <span class="practice-card-absent" title="{{ notComing|join(', ') }}">· {{ notComing|length }} absent{{ notComing|length > 1 ? 's' }}</span>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+
+    {% if answerable|default(false) and not practice.cancelled and practice.upcoming %}
+        <form class="practice-card-aside" method="post" action="{{ path('my_practice_answer', {id: practice.id}) }}">
+            <input type="hidden" name="token" value="{{ csrf_token('practice-answer') }}">
+            {% if answer is null %}
+                <span class="practice-card-question">Tu viens ?</span>
+            {% endif %}
+            <div class="practice-card-answers">
+                <button type="submit" name="coming" value="yes" class="practice-answer yes {{ answer is same as(true) ? 'selected' }}" {{ answer is same as(true) ? 'aria-pressed="true"' }}>
+                    <twig:ux:icon name="check" /> J'y serai
+                </button>
+                <button type="submit" name="coming" value="no" class="practice-answer no {{ answer is same as(false) ? 'selected' }}" {{ answer is same as(false) ? 'aria-pressed="true"' }}>
+                    <twig:ux:icon name="cross" /> Je ne viens pas
+                </button>
+            </div>
+        </form>
+    {% endif %}
+</article>

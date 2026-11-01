@@ -3,7 +3,9 @@
 namespace App\Controller\AccountArea;
 
 use App\Controller\BaseController;
+use App\Entity\Practice;
 use App\Repository\PlayerRepository;
+use App\Repository\PracticeRepository;
 use App\Service\AvailabilityGrid;
 use App\Service\SeasonContext;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,7 +16,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class DashboardController extends BaseController
 {
     #[Route('/dashboard', name: 'dashboard')]
-    public function index(SeasonContext $seasonContext, AvailabilityGrid $availabilityGrid, PlayerRepository $playerRepository): Response
+    public function index(SeasonContext $seasonContext, AvailabilityGrid $availabilityGrid, PlayerRepository $playerRepository, PracticeRepository $practiceRepository): Response
     {
         $this->addBreadcrumb('Mes interfacs', 'dashboard');
 
@@ -46,11 +48,17 @@ class DashboardController extends BaseController
         $playerRepository->loadMatchs($player);
         $upcoming = $player?->getUpcomingMatchs();
 
+        // entraînements à venir des poules du joueur (annulés compris : ils restent affichés barrés)
+        $practices = $player ? $practiceRepository->findUpcomingForPlayer($player) : [];
+        $practicesToAnswer = \count(array_filter($practices, fn (Practice $practice) => !$practice->isCancelled() && $practice->getAnswerOf($player) === null));
+
         return $this->render('account_area/dashboard/dashboard.html.twig', [
             'player' => $player,
             'next_match' => $upcoming?->first() ?: null,
             'upcoming' => $upcoming?->count() ?? 0,
             'to_confirm' => $player?->getUnconfirmedUpcomingMatchs()->count() ?? 0,
+            'practices' => $practices,
+            'practices_to_answer' => $practicesToAnswer,
             'groups' => $groups,
             'availabilities' => $availabilities,
             // aucun match planifié cette saison : le joueur attend son premier match

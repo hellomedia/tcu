@@ -3,6 +3,7 @@
 {% block content %}
 
 	{% include 'interfacs/match/_card_styles.html.twig' %}
+	{% include 'account_area/interfacs/practice/_card_styles.html.twig' %}
 
 	<style>
 		.dash {
@@ -61,6 +62,11 @@
 		}
 
 		.dash-empty {
+			color: var(--color-gray-500);
+		}
+		.dash-intro {
+			margin: -6px 0 12px;
+			font-size: 14px;
 			color: var(--color-gray-500);
 		}
 
@@ -130,7 +136,7 @@
 			<p class="dash-hello">Salut {{ player.firstname }} 👋</p>
 		{% endif %}
 
-		{% if to_confirm > 0 or missing_dates > 0 %}
+		{% if to_confirm > 0 or missing_dates > 0 or practices_to_answer > 0 %}
 			<section>
 				<h2 class="dash-title">À faire</h2>
 				<div class="dash-todos">
@@ -141,6 +147,16 @@
 								{{ to_confirm > 1 ? to_confirm ~ ' horaires de match attendent' : '1 horaire de match attend' }} ta confirmation
 							</span>
 							<span class="dash-todo-cta">Confirmer ›</span>
+						</a>
+					{% endif %}
+					{% if practices_to_answer > 0 %}
+						<a class="dash-todo" href="#entrainements">
+							<twig:ux:icon name="lessons" />
+							<span class="dash-todo-text">
+								{{ practices_to_answer > 1 ? practices_to_answer ~ ' entraînements attendent' : '1 entraînement attend' }} ta réponse
+								<span class="dash-todo-detail">Dis-nous si tu viens, pour que les autres sachent avec qui ils joueront</span>
+							</span>
+							<span class="dash-todo-cta">Répondre ›</span>
 						</a>
 					{% endif %}
 					{% if missing_dates > 0 %}
@@ -184,6 +200,18 @@
 						</p>
 					{% endif %}
 				{% endif %}
+			</section>
+		{% endif %}
+
+		{% if practices is not empty %}
+			<section id="entrainements">
+				<h2 class="dash-title">{{ practices|length > 1 ? 'Entraînements' : 'Entraînement' }}</h2>
+				<p class="dash-intro">Des créneaux réservés pour jouer librement entre joueurs de ta poule. Dis si tu viens : les autres voient qui sera là.</p>
+				<div class="practice-cards">
+					{% for practice in practices %}
+						{% include 'account_area/interfacs/practice/_card.html.twig' with {practice: practice, player: player, answerable: true} %}
+					{% endfor %}
+				</div>
 			</section>
 		{% endif %}
 

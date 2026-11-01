@@ -51,6 +51,36 @@
             background-color: color-mix(in srgb, var(--group-color) 8%, #fff);
         }
 
+        /* PRACTICE (players of its poules only) : hatched strip + "Entraînement" badge */
+        .slot-row.practice .slot-content {
+            background: repeating-linear-gradient(135deg, #fff, #fff 7px, color-mix(in srgb, var(--group-color) 10%, #fff) 7px, color-mix(in srgb, var(--group-color) 10%, #fff) 14px);
+        }
+        .slot-row.practice .slot-content-inner {
+            gap: 2px;
+        }
+        .practice-kind {
+            display: inline-block;
+            padding: 0 6px;
+            border-radius: 4px;
+            background: var(--color-gray-700);
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            &.cancelled {
+                background: var(--color-gray-400);
+            }
+        }
+        .slot-row.practice.cancelled .practice-label {
+            text-decoration: line-through;
+            color: var(--color-gray-500);
+        }
+        .practice-label {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
         /* POULE LEGEND : click a poule to see only its matchs (planning_filter_controller) */
         .group-legend {
             display: flex;
@@ -171,7 +201,8 @@
     </style>
 
     {% set me = app.user ? app.user.player : null %}
-    {% set my_slots = me ? dates|reduce((count, date) => count + date.slots|filter(slot => slot.match and slot.match.sideOf(me))|length, 0) : 0 %}
+    {# a practice is only shown to the players of its poules (not public for now) : for the others the slot looks free #}
+    {% set my_slots = me ? dates|reduce((count, date) => count + date.slots|filter(slot => (slot.match and slot.match.sideOf(me)) or (slot.practice and slot.practice.concerns(me)))|length, 0) : 0 %}
 
     {# filters are not remembered: the planning always opens with every poule #}
     <div data-controller="planning-filter">
@@ -220,17 +251,26 @@
                             </div>
                             <div class="slots">
                                 {% for slot in slots %}
-                                    {% set group = slot.match ? slot.match.group : null %}
-                                    <div class="slot-row {{ group ? 'booked' }} {{ me and group and slot.match.sideOf(me) ? 'mine' }}" {% if group %}data-group-id="{{ group.id }}" style="--group-color: {{ group_color(group) }}" title="{{ group }}"{% endif %}>
+                                    {% set practice = me and slot.practice and slot.practice.concerns(me) ? slot.practice : null %}
+                                    {% set group = slot.match ? slot.match.group : (practice ? practice.groups|first : null) %}
+                                    <div class="slot-row {{ group ? 'booked' }} {{ practice ? 'practice mine' }} {{ practice and practice.cancelled ? 'cancelled' }} {{ me and slot.match and slot.match.sideOf(me) ? 'mine' }}"
+                                        {% if practice %}data-group-ids="{{ practice.groups|map(g => g.id)|join(' ') }}"{% endif %}
+                                        {% if group %}data-group-id="{{ group.id }}" style="--group-color: {{ group_color(group) }}" title="{{ practice ? 'Entraînement ' ~ practice.label : group }}"{% endif %}
+                                    >
                                         <div class="slot-time">
                                             {{ slot.startsAt|date('H:i') }}
                                         </div>
                                         <div class="slot-content">
                                             <div class="slot-content-inner">
                                                 {# <div class="placeholder"></div> #}
-                                                {% for player in slot.players %}
-                                                    <span class="player">{{ player }}</span>
-                                                {% endfor %}
+                                                {% if practice %}
+                                                    <span class="practice-kind {{ practice.cancelled ? 'cancelled' }}">{{ practice.cancelled ? 'Annulé' : 'Entraînement' }}</span>
+                                                    <span class="practice-label">{{ practice.label }}</span>
+                                                {% else %}
+                                                    {% for player in slot.players %}
+                                                        <span class="player">{{ player }}</span>
+                                                    {% endfor %}
+                                                {% endif %}
                                             </div>
                                         </div>
                                     </div>
