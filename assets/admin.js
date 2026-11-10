@@ -43,7 +43,7 @@ import 'chartjs-adapter-luxon';
 // and import stimulus controllers:
 // - from Symfony UX
 // - custom controllers
-import './bootstrap.js';
+import './stimulus_bootstrap.js';
 
 // messages flash (EasyAdmin, #flash-messages) : disparaissent après 5s, avec une barre de temps ;
 // voir styles/admin/admin.css
