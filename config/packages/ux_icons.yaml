@@ -41,3 +41,8 @@ ux_icons:
         check: 'mingcute:check-fill'
         cross: 'maki:cross'
         send-email: 'streamline:send-email'
+
+when@prod:
+    ux_icons:
+        # Suppress exceptions for missing icons in production
+        ignore_not_found: true
