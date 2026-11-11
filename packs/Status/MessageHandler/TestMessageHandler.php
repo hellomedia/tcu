@@ -7,6 +7,7 @@ use Pack\Status\Message\TestMessage;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManager;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
@@ -20,6 +21,7 @@ final class TestMessageHandler
 {
     public function __construct(
         private EntityManager $entityManager,
+        #[Target('messenger_audit')]
         private LoggerInterface $messengerAuditLogger,
     )
     {
