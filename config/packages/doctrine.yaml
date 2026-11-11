@@ -7,7 +7,6 @@ doctrine:
         #server_version: '16'
 
         profiling_collect_backtrace: '%kernel.debug%'
-        use_savepoints: true
 
         # Assigns type to SQL query
         mapping_types:
@@ -18,10 +17,6 @@ doctrine:
             citext: Pack\Security\Doctrine\Types\CiText
         
     orm:
-        # PHP 8.4 native lazy objects instead of generated proxy classes (var-exporter 8 removes LazyGhostTrait)
-        # https://www.doctrine-project.org/projects/doctrine-orm/en/3.5/reference/advanced-configuration.html#native-lazy-objects-optional
-        enable_native_lazy_objects: true
-        report_fields_where_declared: true
         validate_xml_mapping: true
         naming_strategy: doctrine.orm.naming_strategy.underscore_number_aware
         identity_generation_preferences:
@@ -33,24 +28,19 @@ doctrine:
                 is_bundle: false
                 dir: '%kernel.project_dir%/src/Entity'
                 prefix: 'App\Entity'
-                alias: App
             Status:
                 type: attribute
                 is_bundle: false
                 dir: '%kernel.project_dir%/packs/Status/Entity'
                 prefix: 'Pack\Status\Entity'
-                alias: App # simpler to just re-use App which does not have to be unique
             Security:
                 type: attribute
                 is_bundle: false
                 dir: '%kernel.project_dir%/packs/Security/Entity'
                 prefix: 'Pack\Security\Entity'
-                alias: App # simpler to just re-use App which does not have to be unique
         dql:
             string_functions:
                 cast: App\Doctrine\Functions\Cast
-        controller_resolver:
-            auto_mapping: false
 
 when@test:
     doctrine:
