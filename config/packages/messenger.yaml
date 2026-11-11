@@ -1,0 +1,62 @@
+# https://symfony.com/doc/current/messenger.html
+#
+# Emails and other messages go through Doctrine queues (table messenger_messages),
+# consumed by bin/runqueue.sh (one worker per priority):
+#     php bin/console messenger:consume async_priority_high
+# Emails are rendered before they are queued (BaseMailer::send), so the worker only delivers them.
+#
+# Workers keep the code they started with: restart them after each deploy
+#     php bin/console messenger:stop-workers   (they exit, the process manager restarts them)
+#
+# Failed messages (after retries) land in the "failed" queue:
+#     php bin/console messenger:failed:show / messenger:failed:retry
+framework:
+    messenger:
+        failure_transport: failed
+
+        transports:
+            async_priority_high:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                options:
+                    queue_name: high
+                retry_strategy:
+                    max_retries: 3
+                    multiplier: 2
+            async_priority_medium:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                options:
+                    queue_name: medium
+                retry_strategy:
+                    max_retries: 3
+                    multiplier: 2
+            async_priority_low:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                options:
+                    queue_name: low
+                retry_strategy:
+                    max_retries: 3
+                    multiplier: 2
+            failed:
+                dsn: '%env(MESSENGER_TRANSPORT_DSN)%'
+                options:
+                    queue_name: failed
+            sync: 'sync://'
+
+        routing:
+            # every email (Mailer::send() dispatches it): high, someone may be waiting for it (login link, password reset)
+            Symfony\Component\Mailer\Messenger\SendEmailMessage: async_priority_high
+            App\Message\Interface\HighPriorityMessageInterface: async_priority_high
+            App\Message\Interface\MediumPriorityMessageInterface: async_priority_medium
+            App\Message\Interface\LowPriorityMessageInterface: async_priority_low
+            App\Message\Interface\SyncMessageInterface: sync
+
+# No worker runs in dev: handle everything during the request, as before
+# (emails also stay visible in the profiler's mailer panel).
+# To try the queues in dev, comment this out and run bin/runqueue.sh in the php container.
+when@dev:
+    framework:
+        messenger:
+            transports:
+                async_priority_high: 'sync://'
+                async_priority_medium: 'sync://'
+                async_priority_low: 'sync://'
