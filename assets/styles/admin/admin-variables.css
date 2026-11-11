@@ -15,3 +15,9 @@ html {
     /* breakpoint-lg =  64rem = 1024px = breakpoint for tablets */
     --breakpoint-ls: 1024px;
 }
+
+/* EasyAdmin 5.9+ uses the text color for links: keep them in the primary color, as before */
+:root, .ea-dark-scheme {
+    --link-color: var(--ea-primary-text);
+    --link-hover-color: var(--ea-primary-strong);
+}

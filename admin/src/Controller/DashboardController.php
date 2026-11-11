@@ -13,6 +13,9 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Option\Font;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Option\GrayScale;
+use EasyCorp\Bundle\EasyAdminBundle\Config\Theme;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 
 use Symfony\Component\HttpFoundation\Response;
@@ -38,6 +41,14 @@ class DashboardController extends AbstractDashboardController
     {
         return Dashboard::new()
             ->setTitle('Interfacs')
+            // the look of EasyAdmin before its 5.9 redesign (blue, slate grays, system font);
+            // links keep the primary color in admin-variables.css
+            // https://github.com/EasyCorp/EasyAdminBundle/blob/5.x/UPGRADE.md
+            ->setTheme(Theme::new()
+                ->primaryColor('hsl(230, 61%, 58%)', dark: 'hsl(224, 84%, 49%)')
+                ->grays(GrayScale::SLATE, dark: GrayScale::NEUTRAL)
+                ->radius('xs')
+                ->font(base: Font::System, monospace: Font::System))
         ;
     }
 
