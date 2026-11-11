@@ -43,8 +43,3 @@
 @import "./component/flashes.css";
 @import "./component/table.css";
 @import "./component/band.css";
-
-/* path processing only works from app.css */
-#chat-box-container {
-    /* background-image: url('../icons/gridicons/chat.svg'); */
-}
