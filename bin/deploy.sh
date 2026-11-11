@@ -147,7 +147,8 @@ rsync_local () {
         "$@" \
         --exclude /.git \
         --exclude /.hg \
-        --exclude /node_modules \
+        --exclude '/var/tailwind/v*' \
+        --exclude /docker \
         --exclude /var/cache \
         --exclude /assets \
         --exclude /.env\*local\* \
