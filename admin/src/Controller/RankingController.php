@@ -10,7 +10,7 @@ use App\Service\Ranking\RankingProposal;
 use App\Service\Ranking\RankingUpdater;
 use App\Service\SeasonContext;
 use Doctrine\ORM\EntityManagerInterface;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -40,7 +40,7 @@ class RankingController extends BaseController
 
     private const MODES = ['previsionnel' => true, 'officiel' => false];
 
-    #[Route('/rankings/{mode}', name: 'admin_rankings', requirements: ['mode' => 'previsionnel|officiel'], methods: ['GET'], defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
+    #[AdminRoute('/rankings/{mode}', name: 'rankings', options: ['requirements' => ['mode' => 'previsionnel|officiel'], 'methods' => ['GET']])]
     public function index(string $mode, Request $request, RegistrationRepository $repository, SeasonContext $seasonContext): Response
     {
         $season = $seasonContext->getSelected();

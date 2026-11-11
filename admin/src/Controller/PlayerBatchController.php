@@ -11,10 +11,9 @@ use App\Repository\UserRepository;
 use App\Service\PlayerAccountManager;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManagerInterface;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -32,7 +31,7 @@ class PlayerBatchController extends BaseController
 {
     private const FILTERS = ['tel', 'email', 'affiliation'];
 
-    #[Route('/players/batch', name: 'admin_players_batch', methods: ['GET', 'POST'], defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
+    #[AdminRoute('/players/batch', name: 'players_batch', options: ['methods' => ['GET', 'POST']])]
     public function batch(Request $request, PlayerRepository $playerRepository, UserRepository $userRepository, EntityManagerInterface $entityManager, PlayerAccountManager $accountManager, CsrfTokenManagerInterface $csrfTokenManager): Response
     {
         $filters = $this->getFilters($request);

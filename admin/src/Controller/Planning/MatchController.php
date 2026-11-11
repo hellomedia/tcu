@@ -2,7 +2,6 @@
 
 namespace Admin\Controller\Planning;
 
-use Admin\Controller\DashboardController;
 use App\Controller\BaseController;
 use App\Entity\Booking;
 use App\Entity\InterfacMatch;
@@ -17,14 +16,13 @@ use App\Form\MatchResultForm;
 use App\Form\Model\MatchConfirmationInfo;
 use App\Repository\ParticipantConfirmationInfoRepository;
 use Doctrine\ORM\EntityManager;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use Symfony\Component\Form\ClickableInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
-use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
 
 class MatchController extends BaseController
@@ -38,7 +36,7 @@ class MatchController extends BaseController
     /**
      * Add booking for existing match = schedule a match
      */
-    #[Route('/match/{id:match}/add-booking', name: 'admin_match_add_booking', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
+    #[AdminRoute('/match/{id:match}/add-booking', name: 'match_add_booking')]
     public function addBooking(InterfacMatch $match, Request $request): Response
     {
         if ($match->isScheduled()) {
@@ -96,7 +94,7 @@ class MatchController extends BaseController
      * Player confirmations are reset when the date or the time changes
      * (they are kept when only the court changes)
      */
-    #[Route('/match/{id:match}/move-booking', name: 'admin_match_move_booking', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
+    #[AdminRoute('/match/{id:match}/move-booking', name: 'match_move_booking')]
     public function moveBooking(InterfacMatch $match, Request $request): Response
     {
         $booking = $match->getBooking();
@@ -155,7 +153,7 @@ class MatchController extends BaseController
      * - otherwise (direct fetch) : turbo streams only
      */
     #[IsCsrfTokenValid('move-booking', tokenKey: 'token')]
-    #[Route('/match/{id:match}/move-booking-to/{slot}', name: 'admin_match_move_booking_to', methods: ['POST'], defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
+    #[AdminRoute('/match/{id:match}/move-booking-to/{slot}', name: 'match_move_booking_to', options: ['methods' => ['POST']])]
     public function moveBookingTo(
         InterfacMatch $match,
         #[MapEntity(mapping: ['slot' => 'id'])]
@@ -254,7 +252,7 @@ class MatchController extends BaseController
         ]);
     }
 
-    #[Route('/match/{id:match}/add-result', name: 'admin_match_add_result', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
+    #[AdminRoute('/match/{id:match}/add-result', name: 'match_add_result')]
     public function addResult(InterfacMatch $match, Request $request): Response
     {
         $result = $match->getResult() ?? new MatchResult();
@@ -299,7 +297,7 @@ class MatchController extends BaseController
         ]);
     }
 
-    #[Route('/match/{id:match}/confirmation-info', name: 'admin_match_confirmation_info', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
+    #[AdminRoute('/match/{id:match}/confirmation-info', name: 'match_confirmation_info')]
     public function confirmationInfo(InterfacMatch $match, Request $request, EntityManager $entityManager, ParticipantConfirmationInfoRepository $repository): Response
     {
         // Ensure an info row exists for each participant

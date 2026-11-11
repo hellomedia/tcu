@@ -2,20 +2,19 @@
 
 namespace Admin\Controller\Planning;
 
-use Admin\Controller\DashboardController;
 use Admin\Factory\MatchFactory;
 use App\Controller\BaseController;
 use App\Entity\Group;
 use App\Repository\GroupRepository;
 use App\Service\SeasonContext;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
 
 class GroupController extends BaseController
 {
-    #[Route('/planning/groups', name: 'admin_planning_groups', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
+    #[AdminRoute('/planning/groups', name: 'planning_groups')]
     public function groups(GroupRepository $repository, SeasonContext $seasonContext): Response
     {
         $season = $seasonContext->getSelected();

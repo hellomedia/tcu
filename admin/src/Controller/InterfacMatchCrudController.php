@@ -82,7 +82,7 @@ class InterfacMatchCrudController extends AbstractCrudController
         yield AssociationField::new('group');
 
         // your match fields (date, status, etc.) …
-        yield FormField::addPanel('Joueurs');
+        yield FormField::addFieldset('Joueurs');
 
         // These are UNMAPPED; we’ll handle them in the form builder below.
         yield Field::new('playerA1', 'Joueur A')
@@ -135,7 +135,7 @@ class InterfacMatchCrudController extends AbstractCrudController
                 'row_attr' => ['data-match-format-target' => 'doublesOnly'],
         ]);
 
-        yield FormField::addPanel('Programmation')
+        yield FormField::addFieldset('Programmation')
             ->hideOnForm();
 
         yield AssociationField::new('booking', 'Créneau')

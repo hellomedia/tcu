@@ -9,7 +9,6 @@ use App\Service\SeasonContext;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
@@ -124,7 +123,7 @@ class GroupCrudController extends AbstractCrudController
         }
 
         // Retour à la page d'où l'on vient (page Poules ou planning par poules), sinon page Poules
-        $referrer = $context->getRequest()->query->get(EA::REFERRER);
+        $referrer = $context->getRequest()->query->get('referrer');
         if (is_string($referrer) && str_starts_with($referrer, '/') && !str_starts_with($referrer, '//')) {
             return new RedirectResponse($referrer);
         }

@@ -2,7 +2,6 @@
 
 namespace Admin\Controller\Planning;
 
-use Admin\Controller\DashboardController;
 use Admin\Mailer\ConfirmationMailer;
 use App\Controller\BaseController;
 use App\Entity\Player;
@@ -10,7 +9,7 @@ use App\Service\MatchNotifications;
 use App\Service\SeasonContext;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManager;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
@@ -29,7 +28,7 @@ class NotificationController extends BaseController
     ) {
     }
 
-    #[Route('/planning/notifications', name: 'admin_planning_notifications', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
+    #[AdminRoute('/planning/notifications', name: 'planning_notifications')]
     public function index(): Response
     {
         $season = $this->seasonContext->getSelected();

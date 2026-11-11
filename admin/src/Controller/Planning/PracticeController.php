@@ -2,7 +2,6 @@
 
 namespace Admin\Controller\Planning;
 
-use Admin\Controller\DashboardController;
 use App\Controller\BaseController;
 use App\Entity\Practice;
 use App\Entity\Slot;
@@ -11,12 +10,11 @@ use App\Repository\PracticeRepository;
 use App\Repository\SlotRepository;
 use App\Service\SeasonContext;
 use Doctrine\ORM\EntityManager;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use Symfony\Component\Form\ClickableInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
 
 /**
@@ -34,7 +32,7 @@ class PracticeController extends BaseController
     ) {
     }
 
-    #[Route('/planning/practices', name: 'admin_practices', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
+    #[AdminRoute('/planning/practices', name: 'practices')]
     public function index(PracticeRepository $repository): Response
     {
         $season = $this->seasonContext->getSelected();
@@ -60,7 +58,7 @@ class PracticeController extends BaseController
     /**
      * Nouvel entraînement, depuis la page Entraînements ou depuis un créneau libre du planning (?slot=, ?modal=1)
      */
-    #[Route('/planning/practice/new', name: 'admin_practice_new', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
+    #[AdminRoute('/planning/practice/new', name: 'practice_new')]
     public function new(Request $request, SlotRepository $slotRepository): Response
     {
         $practice = (new Practice())->setSeason($this->seasonContext->getSelected());
@@ -69,7 +67,7 @@ class PracticeController extends BaseController
         return $this->handleForm($request, $practice, $slot);
     }
 
-    #[Route('/planning/practice/{id:practice}/edit', name: 'admin_practice_edit', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
+    #[AdminRoute('/planning/practice/{id:practice}/edit', name: 'practice_edit')]
     public function edit(Practice $practice, Request $request): Response
     {
         return $this->handleForm($request, $practice, null);
@@ -133,7 +131,7 @@ class PracticeController extends BaseController
      * les créneaux sont libérés. Définitif : pour revenir en arrière, programmer un nouvel entraînement.
      */
     #[IsCsrfTokenValid('practice-cancel', tokenKey: 'token')]
-    #[Route('/planning/practice/{id:practice}/cancel', name: 'admin_practice_cancel', methods: ['POST'], defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
+    #[AdminRoute('/planning/practice/{id:practice}/cancel', name: 'practice_cancel', options: ['methods' => ['POST']])]
     public function cancel(Practice $practice): Response
     {
         $slots = $practice->getSlots(); // libérés par l'annulation : lignes du planning à rafraîchir
@@ -152,7 +150,7 @@ class PracticeController extends BaseController
      * Supprimer : disparaît sans trace, les créneaux sont libérés
      */
     #[IsCsrfTokenValid('practice-delete', tokenKey: 'token')]
-    #[Route('/planning/practice/{id:practice}/delete', name: 'admin_practice_delete', methods: ['POST'], defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
+    #[AdminRoute('/planning/practice/{id:practice}/delete', name: 'practice_delete', options: ['methods' => ['POST']])]
     public function delete(Practice $practice): Response
     {
         $slots = $practice->getSlots();

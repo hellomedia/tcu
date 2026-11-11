@@ -2,19 +2,17 @@
 
 namespace Admin\Controller\Planning;
 
-use Admin\Controller\DashboardController;
 use App\Controller\BaseController;
 use App\Repository\CourtRepository;
 use App\Repository\DateRepository;
 use App\Repository\GroupRepository;
 use App\Service\SeasonContext;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 
 class PlanningController extends BaseController
 {
-    #[Route('/planning', name: 'admin_planning', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
+    #[AdminRoute('/planning', name: 'planning')]
     public function planning(DateRepository $dateRepository, CourtRepository $courtRepository, GroupRepository $groupRepository, SeasonContext $seasonContext): Response
     {
         // yesterday too: scores are often encoded the day after
@@ -31,7 +29,7 @@ class PlanningController extends BaseController
         ]);
     }
 
-    #[Route('/planning/past', name: 'admin_planning_past', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
+    #[AdminRoute('/planning/past', name: 'planning_past')]
     public function planningPast(DateRepository $dateRepository, CourtRepository $courtRepository, GroupRepository $groupRepository, SeasonContext $seasonContext): Response
     {
         $season = $seasonContext->getSelected();

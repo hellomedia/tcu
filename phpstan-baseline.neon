@@ -25,18 +25,6 @@ parameters:
 			path: admin/src/Controller/DashboardController.php
 
 		-
-			message: '#^Parameter \#1 \$icon of method EasyCorp\\Bundle\\EasyAdminBundle\\Config\\Action\:\:setIcon\(\) expects string\|null, false given\.$#'
-			identifier: argument.type
-			count: 1
-			path: admin/src/Controller/DashboardController.php
-
-		-
-			message: '#^Parameter \#1 \$maxResultsPerPage of method EasyCorp\\Bundle\\EasyAdminBundle\\Config\\Crud\:\:setPaginatorPageSize\(\) expects int, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: admin/src/Controller/DashboardController.php
-
-		-
 			message: '#^Class Admin\\Controller\\DateCrudController extends generic class EasyCorp\\Bundle\\EasyAdminBundle\\Controller\\AbstractCrudController but does not specify its types\: TEntity$#'
 			identifier: missingType.generics
 			count: 1
@@ -44,12 +32,6 @@ parameters:
 
 		-
 			message: '#^Class Admin\\Controller\\GroupCrudController extends generic class EasyCorp\\Bundle\\EasyAdminBundle\\Controller\\AbstractCrudController but does not specify its types\: TEntity$#'
-			identifier: missingType.generics
-			count: 1
-			path: admin/src/Controller/GroupCrudController.php
-
-		-
-			message: '#^Method Admin\\Controller\\GroupCrudController\:\:getRedirectResponseAfterSave\(\) has parameter \$context with generic class EasyCorp\\Bundle\\EasyAdminBundle\\Context\\AdminContext but does not specify its types\: TEntity$#'
 			identifier: missingType.generics
 			count: 1
 			path: admin/src/Controller/GroupCrudController.php
@@ -157,19 +139,7 @@ parameters:
 			path: admin/src/Controller/RegistrationCrudController.php
 
 		-
-			message: '#^Method Admin\\Controller\\RegistrationCrudController\:\:getRedirectResponseAfterSave\(\) has parameter \$context with generic class EasyCorp\\Bundle\\EasyAdminBundle\\Context\\AdminContext but does not specify its types\: TEntity$#'
-			identifier: missingType.generics
-			count: 1
-			path: admin/src/Controller/RegistrationCrudController.php
-
-		-
 			message: '#^Class Admin\\Controller\\SeasonCrudController extends generic class EasyCorp\\Bundle\\EasyAdminBundle\\Controller\\AbstractCrudController but does not specify its types\: TEntity$#'
-			identifier: missingType.generics
-			count: 1
-			path: admin/src/Controller/SeasonCrudController.php
-
-		-
-			message: '#^Method Admin\\Controller\\SeasonCrudController\:\:getRedirectResponseAfterSave\(\) has parameter \$context with generic class EasyCorp\\Bundle\\EasyAdminBundle\\Context\\AdminContext but does not specify its types\: TEntity$#'
 			identifier: missingType.generics
 			count: 1
 			path: admin/src/Controller/SeasonCrudController.php

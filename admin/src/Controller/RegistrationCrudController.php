@@ -14,6 +14,7 @@ use App\Service\PlayerAccountManager;
 use App\Service\SeasonContext;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FieldCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Collection\FilterCollection;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
@@ -384,6 +385,7 @@ class RegistrationCrudController extends AbstractCrudController
     /**
      * Confirmer / écarter / rétablir une inscription depuis la liste
      */
+    #[AdminRoute('/{entityId}/change-status', name: 'change_status')]
     public function changeStatus(AdminContext $context, EntityManagerInterface $entityManager): Response
     {
         $request = $context->getRequest();
@@ -407,11 +409,13 @@ class RegistrationCrudController extends AbstractCrudController
         return $this->redirect($this->getIndexUrl());
     }
 
+    #[AdminRoute('/batch-confirm', name: 'batch_confirm', options: ['methods' => ['POST']])]
     public function confirmBatch(BatchActionDto $batchActionDto, EntityManagerInterface $entityManager): Response
     {
         return $this->changeStatusBatch($batchActionDto, $entityManager, RegistrationStatus::CONFIRMED);
     }
 
+    #[AdminRoute('/batch-dismiss', name: 'batch_dismiss', options: ['methods' => ['POST']])]
     public function dismissBatch(BatchActionDto $batchActionDto, EntityManagerInterface $entityManager): Response
     {
         return $this->changeStatusBatch($batchActionDto, $entityManager, RegistrationStatus::DISMISSED);
@@ -419,6 +423,13 @@ class RegistrationCrudController extends AbstractCrudController
 
     private function changeStatusBatch(BatchActionDto $batchActionDto, EntityManagerInterface $entityManager, RegistrationStatus $status): Response
     {
+        // EasyAdmin leaves these checks to the batch action (https://symfony.com/bundles/EasyAdminBundle/current/actions.html#batch-actions)
+        if ($batchActionDto->getEntityFqcn() !== Registration::class
+            || !$this->isCsrfTokenValid('ea-batch-action-' . $batchActionDto->getName() . '-' . $batchActionDto->getEntityFqcn(), $batchActionDto->getCsrfToken())
+        ) {
+            throw $this->createAccessDeniedException();
+        }
+
         $count = 0;
 
         foreach ($batchActionDto->getEntityIds() as $id) {
@@ -441,7 +452,8 @@ class RegistrationCrudController extends AbstractCrudController
             default => sprintf('%d inscriptions %s.', $count, self::statusVerb($status, plural: true)),
         });
 
-        return $this->redirect($batchActionDto->getReferrerUrl());
+        // back to the list as it was (filters, sort, page)
+        return $this->redirect($this->requestStack->getCurrentRequest()?->headers->get('referer') ?? $this->getIndexUrl());
     }
 
     private static function statusVerb(RegistrationStatus $status, bool $plural = false): string

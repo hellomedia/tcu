@@ -2,7 +2,6 @@
 
 namespace Admin\Controller\Planning;
 
-use Admin\Controller\DashboardController;
 use Admin\Exception\InvalidWindowException;
 use App\Form\Handler\SlotBulkAddFormHandler;
 use App\Form\Handler\SlotBulkRemoveFormHandler;
@@ -20,7 +19,7 @@ use App\Repository\DateRepository;
 use App\Repository\GroupRepository;
 use App\Service\SeasonContext;
 use Doctrine\ORM\EntityManager;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use Symfony\Component\Form\ClickableInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
@@ -40,7 +39,7 @@ class SlotController extends BaseController
         
     }
 
-    #[Route('/planning/slots', name: 'admin_planning_slots', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
+    #[AdminRoute('/planning/slots', name: 'planning_slots')]
     public function slots(DateRepository $dateRepository, CourtRepository $courtRepository): Response
     {
         $dates = $dateRepository->findFutureDates();
@@ -52,7 +51,7 @@ class SlotController extends BaseController
         ]);
     }
 
-    #[Route('/planning/slot/bulk-add', name: 'admin_planning_slot_bulk_add', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
+    #[AdminRoute('/planning/slot/bulk-add', name: 'planning_slot_bulk_add')]
     public function bulkAdd(Request $request): Response
     {
         $form = $this->createForm(SlotBulkAddType::class);
@@ -87,7 +86,7 @@ class SlotController extends BaseController
         ]);
     }
 
-    #[Route('/planning/slot/bulk-remove', name: 'admin_planning_slot_bulk_remove', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
+    #[AdminRoute('/planning/slot/bulk-remove', name: 'planning_slot_bulk_remove')]
     public function bulkRemove(Request $request, SlotBulkRemoveFormHandler $handler): Response
     {
         $form = $this->createForm(SlotBulkRemoveType::class);
@@ -110,7 +109,7 @@ class SlotController extends BaseController
     /**
      * Add booking for a slot = schedule a match
      */
-    #[Route('/planning/slot/{id:slot}/add-booking', name: 'admin_planning_slot_add_booking', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
+    #[AdminRoute('/planning/slot/{id:slot}/add-booking', name: 'planning_slot_add_booking')]
     public function addBooking(Slot $slot, Request $request, GroupRepository $groupRepository, SeasonContext $seasonContext): Response
     {
         $booking = new Booking();

@@ -11,7 +11,7 @@ use App\Repository\SeasonRepository;
 use App\Service\RegistrationPrefiller;
 use App\Service\SeasonContext;
 use Doctrine\ORM\EntityManagerInterface;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -21,7 +21,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class SeasonController extends BaseController
 {
     #[IsGranted('ROLE_EDITOR')]
-    #[Route('/seasons', name: 'admin_seasons', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
+    #[AdminRoute('/seasons', name: 'seasons')]
     public function seasons(
         SeasonRepository $seasonRepository,
         GroupRepository $groupRepository,

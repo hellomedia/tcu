@@ -8,7 +8,7 @@ use App\Entity\Group;
 use App\Repository\GroupRepository;
 use App\Service\SeasonContext;
 use Doctrine\ORM\EntityManagerInterface;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
@@ -22,7 +22,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class GroupController extends BaseController
 {
     #[IsGranted('ROLE_EDITOR')]
-    #[Route('/groups', name: 'admin_groups', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
+    #[AdminRoute('/groups', name: 'groups')]
     public function index(GroupRepository $repository, SeasonContext $seasonContext): Response
     {
         $season = $seasonContext->getSelected();

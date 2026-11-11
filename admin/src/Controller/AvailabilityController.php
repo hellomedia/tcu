@@ -8,10 +8,9 @@ use App\Repository\GroupRepository;
 use App\Repository\RegistrationRepository;
 use App\Service\AvailabilityGrid;
 use App\Service\SeasonContext;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
 
 /**
@@ -26,7 +25,7 @@ class AvailabilityController extends BaseController
     /**
      * Inscrits aux interfacs de la saison sélectionnée, par poule, avec l'état de leurs dispos
      */
-    #[Route('/availabilities', name: 'admin_availabilities', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
+    #[AdminRoute('/availabilities', name: 'availabilities')]
     public function index(SeasonContext $seasonContext, RegistrationRepository $registrationRepository, GroupRepository $groupRepository, AvailabilityGrid $grid): Response
     {
         $season = $seasonContext->getSelected();
@@ -71,7 +70,7 @@ class AvailabilityController extends BaseController
         ]);
     }
 
-    #[Route('/registration/{id:registration}/availabilities', name: 'admin_registration_availabilities', methods: ['GET'], defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
+    #[AdminRoute('/registration/{id:registration}/availabilities', name: 'registration_availabilities', options: ['methods' => ['GET']])]
     public function edit(Registration $registration, Request $request, AvailabilityGrid $grid): Response
     {
         $from = $this->from($request);
@@ -85,7 +84,7 @@ class AvailabilityController extends BaseController
     }
 
     #[IsCsrfTokenValid('availabilities', tokenKey: 'token')]
-    #[Route('/registration/{id:registration}/availabilities', name: 'admin_registration_availabilities_save', methods: ['POST'], defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
+    #[AdminRoute('/registration/{id:registration}/availabilities', name: 'registration_availabilities_save', options: ['methods' => ['POST']])]
     public function save(Registration $registration, Request $request, AvailabilityGrid $grid): Response
     {
         $grid->save($registration, $grid->parseSubmission(

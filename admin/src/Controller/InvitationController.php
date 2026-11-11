@@ -10,10 +10,9 @@ use App\Repository\SeasonRepository;
 use App\Repository\UserRepository;
 use App\Service\SeasonContext;
 use Doctrine\ORM\EntityManagerInterface;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -37,7 +36,7 @@ class InvitationController extends BaseController
      * Inscrits aux interfacs de la saison sélectionnée, par état de leur compte :
      * à inviter, invités sans mot de passe choisi, actifs, sans compte (pas d'email)
      */
-    #[Route('/invitations', name: 'admin_invitations', methods: ['GET'], defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
+    #[AdminRoute('/invitations', name: 'invitations', options: ['methods' => ['GET']])]
     public function index(SeasonContext $seasonContext, RegistrationRepository $registrationRepository, CsrfTokenManagerInterface $csrfTokenManager): Response
     {
         $season = $seasonContext->getSelected();
@@ -73,7 +72,7 @@ class InvitationController extends BaseController
     /**
      * Un joueur, même déjà invité (lien expiré, email corrigé)
      */
-    #[Route('/players/{id:player}/invite', name: 'admin_player_invite', requirements: ['id' => '\d+'], methods: ['GET'], defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
+    #[AdminRoute('/players/{id:player}/invite', name: 'player_invite', options: ['requirements' => ['id' => '\d+'], 'methods' => ['GET']])]
     public function invite(Player $player, Request $request, InvitationMailer $mailer, EntityManagerInterface $entityManager, SeasonContext $seasonContext): Response
     {
         $this->checkToken($request);
@@ -95,7 +94,7 @@ class InvitationController extends BaseController
     /**
      * Tous les comptes de joueurs pas encore invités, ou ceux des inscrits aux interfacs d'une saison (?season=, page Invitations)
      */
-    #[Route('/players/invite-pending', name: 'admin_players_invite_pending', methods: ['GET'], defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
+    #[AdminRoute('/players/invite-pending', name: 'players_invite_pending', options: ['methods' => ['GET']])]
     public function invitePending(Request $request, UserRepository $userRepository, SeasonRepository $seasonRepository, SeasonContext $seasonContext, InvitationMailer $mailer, EntityManagerInterface $entityManager): Response
     {
         $this->checkToken($request);

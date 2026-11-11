@@ -2,18 +2,16 @@
 
 namespace Admin\Controller\Planning;
 
-use Admin\Controller\DashboardController;
 use App\Controller\BaseController;
 use App\Entity\Court;
 use App\Entity\Date;
 use App\Entity\InterfacMatch;
 use App\Form\MatchType;
 use Doctrine\ORM\EntityManager;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Option\EA;
+use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 
 class BookingController extends BaseController
 {
@@ -30,7 +28,7 @@ class BookingController extends BaseController
      * 
      * STATUS: buggy, unused
      */
-    #[Route('/booking/add-match-booking/{date}/{court}', name: 'admin_match_booking_add', defaults: [EA::DASHBOARD_CONTROLLER_FQCN => DashboardController::class])]
+    #[AdminRoute('/booking/add-match-booking/{date}/{court}', name: 'match_booking_add')]
     public function addMatchBooking(
         Request $request,
         #[MapEntity(mapping: ['court' => 'id'])]

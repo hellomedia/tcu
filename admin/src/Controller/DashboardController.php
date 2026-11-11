@@ -2,15 +2,7 @@
 
 namespace Admin\Controller;
 
-use App\Entity\Booking;
-use App\Entity\Court;
-use App\Entity\Date;
 use App\Entity\Interface\EntityInterface;
-use App\Entity\InterfacMatch;
-use App\Entity\Player;
-use App\Entity\Registration;
-use App\Entity\Slot;
-use App\Entity\User;
 use App\Repository\SeasonRepository;
 use App\Service\SeasonContext;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
@@ -24,7 +16,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
 
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 #[AdminDashboard(routePath: '/', routeName: 'admin')]
@@ -38,9 +29,6 @@ class DashboardController extends AbstractDashboardController
     ) {
     }
 
-    // route attribute here is deprecated and should be removed in next version
-    // but at the moment, removing it cause error: 'missing admin_dashboard' route
-    #[Route('/', name: 'admin_dashboard')]
     public function index(): Response
     {        
         return $this->render('@admin/dashboard.html.twig', []);
@@ -57,7 +45,7 @@ class DashboardController extends AbstractDashboardController
     {
         return Crud::new()
             ->setDateTimeFormat('d/MM/yy HH:mm') // https://unicode-org.github.io/icu/userguide/format_parse/datetime/
-            ->setPaginatorPageSize('100')
+            ->setPaginatorPageSize(100)
             ->setDefaultSort(['id' => 'DESC'])
             ->setAutofocusSearch()
             ->showEntityActionsInlined()
@@ -114,7 +102,7 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::subMenu($selected ? (string) $selected : 'Aucune saison', 'fa fa-sun')
             ->setPermission('ROLE_EDITOR')
             ->setSubItems($seasonItems);
-        yield MenuItem::linkToCrud('Inscriptions', 'fa fa-clipboard-list', Registration::class)
+        yield MenuItem::linkTo(RegistrationCrudController::class, 'Inscriptions', 'fa fa-clipboard-list')
             ->setPermission('ROLE_EDITOR');
 
         yield MenuItem::section('Interfacs')
@@ -138,31 +126,29 @@ class DashboardController extends AbstractDashboardController
 
         yield MenuItem::section('Club')
             ->setPermission('ROLE_EDITOR');
-        yield MenuItem::linkToCrud('Joueurs', 'fa fa-user', Player::class)
+        yield MenuItem::linkTo(PlayerCrudController::class, 'Joueurs', 'fa fa-user')
             ->setPermission('ROLE_EDITOR');
 
         yield MenuItem::section('Admin')
             ->setPermission('ROLE_MANAGER');
         yield MenuItem::linkToUrl('Plages horaires', 'fa fa-calendar', $this->urlGenerator->generate('admin_planning_slots'))
             ->setPermission('ROLE_MANAGER');
-        yield MenuItem::linkToCrud('Dates', 'fa fa-calendar-day', Date::class)
+        yield MenuItem::linkTo(DateCrudController::class, 'Dates', 'fa fa-calendar-day')
             ->setPermission('ROLE_MANAGER');
-        yield MenuItem::linkToCrud('Terrains', 'fa fa-calendar-day', Court::class)
+        yield MenuItem::linkTo(CourtCrudController::class, 'Terrains', 'fa fa-calendar-day')
             ->setPermission('ROLE_MANAGER');
-        yield MenuItem::linkToCrud('Admins', 'fa fa-user', User::class)
-            ->setController(AdminCrudController::class)
+        yield MenuItem::linkTo(AdminCrudController::class, 'Admins', 'fa fa-user')
             ->setPermission('ROLE_MANAGER');
         
         yield MenuItem::section('Dev Admin')
             ->setPermission('ROLE_SUPER_ADMIN');
-        yield MenuItem::linkToCrud('Matchs', 'fa fa-trophy', InterfacMatch::class)
+        yield MenuItem::linkTo(InterfacMatchCrudController::class, 'Matchs', 'fa fa-trophy')
             ->setPermission('ROLE_SUPER_ADMIN');
-        yield MenuItem::linkToCrud('Réservations', 'fa fa-calendar', Booking::class)
+        yield MenuItem::linkTo(BookingCrudController::class, 'Réservations', 'fa fa-calendar')
             ->setPermission('ROLE_SUPER_ADMIN');
-        yield MenuItem::linkToCrud('Créneaux', 'fa fa-calendar', Slot::class)
+        yield MenuItem::linkTo(SlotCrudController::class, 'Créneaux', 'fa fa-calendar')
             ->setPermission('ROLE_SUPER_ADMIN');
-        yield MenuItem::linkToCrud('Users', 'fa fa-user', User::class)
-            ->setController(UserCrudController::class)
+        yield MenuItem::linkTo(UserCrudController::class, 'Users', 'fa fa-user')
             ->setPermission('ROLE_SUPER_ADMIN');
     }
 
@@ -187,7 +173,7 @@ class DashboardController extends AbstractDashboardController
             })
             ->add(Crud::PAGE_EDIT, Action::SAVE_AND_CONTINUE)
             ->update(Crud::PAGE_EDIT, Action::SAVE_AND_CONTINUE, function (Action $action) {
-                return $action->setLabel('Sauver → Edit')->setIcon(false);
+                return $action->setLabel('Sauver → Edit')->setIcon(null);
             })
             ->add(Crud::PAGE_EDIT, Action::INDEX)
             ->add(Crud::PAGE_EDIT, Action::DETAIL)
