@@ -85,4 +85,13 @@ class Kernel extends BaseKernel
         return $this->getProjectDir() . '/var/cache/' . $dir . '/' . $this->environment;
     }
 
+    /**
+     * Environments this app runs in: dev (local) and prod. Symfony 8 refuses to boot any other APP_ENV.
+     *
+     * @return list<string>
+     */
+    private function getAllowedEnvs(): array
+    {
+        return ['prod', 'dev'];
+    }
 }
