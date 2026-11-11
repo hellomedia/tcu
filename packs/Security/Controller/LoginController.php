@@ -21,7 +21,7 @@ class LoginController extends BaseController
         $forceFullAuthentication = $session->has('force_full_authentication');
 
         if ($this->isGranted('IS_AUTHENTICATED') && !$forceFullAuthentication) {
-            return $this->redirectToRoute('admin_dashboard');
+            return $this->redirectToRoute('dashboard');
         }
 
         // force target path from query
