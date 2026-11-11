@@ -38,3 +38,9 @@ framework:
 when@prod:
     framework:
         error_controller: 'Pack\Security\Controller\ExceptionController::show'
+
+when@test:
+    framework:
+        test: true
+        session:
+            storage_factory_id: session.storage.factory.mock_file

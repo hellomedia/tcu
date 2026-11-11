@@ -1665,7 +1665,6 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *     twig_extra?: TwigExtraConfig,
  *     symfonycasts_tailwind?: SymfonycastsTailwindConfig,
  *     ux_icons?: UxIconsConfig,
- *     sentry?: SentryConfig,
  *     "when@dev"?: array{
  *         imports?: ImportsConfig,
  *         parameters?: ParametersConfig,
@@ -1706,6 +1705,25 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         symfonycasts_tailwind?: SymfonycastsTailwindConfig,
  *         ux_icons?: UxIconsConfig,
  *         sentry?: SentryConfig,
+ *     },
+ *     "when@test"?: array{
+ *         imports?: ImportsConfig,
+ *         parameters?: ParametersConfig,
+ *         services?: ServicesConfig,
+ *         framework?: FrameworkConfig,
+ *         doctrine?: DoctrineConfig,
+ *         doctrine_migrations?: DoctrineMigrationsConfig,
+ *         monolog?: MonologConfig,
+ *         security?: SecurityConfig,
+ *         stimulus?: StimulusConfig,
+ *         twig?: TwigConfig,
+ *         twig_component?: TwigComponentConfig,
+ *         symfonycasts_reset_password?: SymfonycastsResetPasswordConfig,
+ *         symfonycasts_verify_email?: SymfonycastsVerifyEmailConfig,
+ *         twig_extra?: TwigExtraConfig,
+ *         web_profiler?: WebProfilerConfig,
+ *         symfonycasts_tailwind?: SymfonycastsTailwindConfig,
+ *         ux_icons?: UxIconsConfig,
  *     },
  *     ...<string, ExtensionType|array{ // extra keys must follow the when@%env% pattern or match an extension alias
  *         imports?: ImportsConfig,
@@ -1791,6 +1809,7 @@ namespace Symfony\Component\Routing\Loader\Configurator;
  * @psalm-type RoutesConfig = array{
  *     "when@dev"?: array<string, RouteConfig|ImportConfig|AliasConfig>,
  *     "when@prod"?: array<string, RouteConfig|ImportConfig|AliasConfig>,
+ *     "when@test"?: array<string, RouteConfig|ImportConfig|AliasConfig>,
  *     ...<string, RouteConfig|ImportConfig|AliasConfig>
  * }
  */
