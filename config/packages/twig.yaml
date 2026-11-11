@@ -19,8 +19,6 @@ twig:
     debug: '%kernel.debug%'
     strict_variables: '%kernel.debug%'
 
-    # deprecated. use "error_controller" under "framework" instead
-    exception_controller: null
 
 when@test:
     twig:
