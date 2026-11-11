@@ -1,7 +1,4 @@
 {
-    "babdev/pagerfanta-bundle": {
-        "version": "v4.5.0"
-    },
     "doctrine/deprecations": {
         "version": "1.1",
         "recipe": {
@@ -48,22 +45,6 @@
         },
         "files": [
             "config/routes/easyadmin.yaml"
-        ]
-    },
-    "knplabs/knp-time-bundle": {
-        "version": "v2.4.0"
-    },
-    "liip/imagine-bundle": {
-        "version": "2.13",
-        "recipe": {
-            "repo": "github.com/symfony/recipes-contrib",
-            "branch": "main",
-            "version": "1.8",
-            "ref": "d1227d002b70d1a1f941d91845fcd7ac7fbfc929"
-        },
-        "files": [
-            "config/packages/liip_imagine.yaml",
-            "config/routes/liip_imagine.yaml"
         ]
     },
     "phpstan/phpstan": {
@@ -363,18 +344,6 @@
         "files": [
             "assets/icons/symfony.svg",
             "config/packages/ux_icons.yaml"
-        ]
-    },
-    "symfony/ux-turbo": {
-        "version": "2.36",
-        "recipe": {
-            "repo": "github.com/symfony/recipes",
-            "branch": "main",
-            "version": "2.20",
-            "ref": "eaff62fc37864d355804c778309a226ae539831f"
-        },
-        "files": [
-            "config/packages/ux_turbo.yaml"
         ]
     },
     "symfony/ux-twig-component": {

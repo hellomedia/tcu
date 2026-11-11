@@ -1,4 +1,3 @@
-
 !.gitkeep
 
 pg_upgrade_internal.log
@@ -7,11 +6,6 @@ pg_upgrade_server.log
 pg_upgrade_utility.log
 
 /public/uploads/
-
-###> liip/imagine-bundle ###
-/public/media/cache/
-###< liip/imagine-bundle ###
-
 ###> symfony/framework-bundle ###
 /.env.local
 /.env.local.php

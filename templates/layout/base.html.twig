@@ -44,7 +44,6 @@
 
     {% block body %}
 
-        {# apply theme class to body, not html, because turbo watches changes the body, not html element #}
         <body class="flex flex-col with-bottom-menu {{ theme }} {% block body_extra_classes '' %}">
 
             <div id="viewport"

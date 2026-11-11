@@ -45,6 +45,10 @@ import 'chartjs-adapter-luxon';
 // - custom controllers
 import './stimulus_bootstrap.js';
 
+// Turbo for the modals (turbo-frames with data-turbo="true") and turbo-streams.
+// Drive stays off: EasyAdmin sets data-turbo="false" on <html>.
+import '@hotwired/turbo';
+
 // messages flash (EasyAdmin, #flash-messages) : disparaissent après 5s, avec une barre de temps ;
 // voir styles/admin/admin.css
 const flashMessages = document.getElementById('flash-messages');

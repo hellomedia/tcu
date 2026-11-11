@@ -7,7 +7,11 @@ framework:
 
     # enables csrf tokens in general
     # so that services like CsrfTokenManagerInterface are available
-    csrf_protection: true
+    csrf_protection:
+        enabled: true
+        # accept the token sent in a header, as Turbo form submissions do (forms in turbo-frames:
+        # csrf_protection_controller.js adds it on turbo:submit-start)
+        check_header: true
 
     # new system
     # csrf_protection:
