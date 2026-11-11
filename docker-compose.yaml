@@ -35,8 +35,8 @@ services:
       DATABASE_USER: hellomedia
     volumes:
       - "./:/data/www"
-      - "./docker/php/php-fpm.conf:/etc/php/8.3/fpm/pool.d/www.conf" # mounts php-fpm settings into the container
-      - "./docker/php/80-xdebug.ini:/etc/php/8.3/fpm/conf.d/80-xdebug.ini" # mounts xdebug settings into the container
+      - "./docker/php/php-fpm.conf:/etc/php/8.5/fpm/pool.d/www.conf" # mounts php-fpm settings into the container
+      - "./docker/php/80-xdebug.ini:/etc/php/8.5/fpm/conf.d/80-xdebug.ini" # mounts xdebug settings into the container
 
   database:
     build: docker/postgres

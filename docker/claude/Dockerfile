@@ -2,7 +2,7 @@ FROM node:22-bookworm-slim
 RUN apt-get update \
  && apt-get install -y --no-install-recommends git ca-certificates curl \
  && rm -rf /var/lib/apt/lists/*
-# PHP 8.3 CLI to run bin/<site> console commands, phpunit, phpstan, php-cs-fixer directly.
+# PHP 8.5 CLI to run bin/<site> console commands, phpunit, phpstan, php-cs-fixer directly.
 # Bookworm ships PHP 8.2, so use deb.sury.org (same maintainer as the ppa:ondrej/php the
 # php container uses — setup per https://packages.sury.org/php/README.txt).
 # Extensions mirror the php container (Dockerfile at repo root), minus fpm.
@@ -12,19 +12,18 @@ RUN curl -sSLo /tmp/debsuryorg-archive-keyring.deb https://packages.sury.org/deb
  && echo "deb [signed-by=/usr/share/keyrings/deb.sury.org-php.gpg] https://packages.sury.org/php/ bookworm main" > /etc/apt/sources.list.d/php.list \
  && apt-get update \
  && apt-get install -y --no-install-recommends \
-        php8.3-cli \
-        php8.3-bcmath \
-        php8.3-curl \
-        php8.3-gd \
-        php8.3-imagick \
-        php8.3-intl \
-        php8.3-mbstring \
-        php8.3-pgsql \
-        php8.3-xml \
-        php8.3-zip \
+        php8.5-cli \
+        php8.5-bcmath \
+        php8.5-curl \
+        php8.5-gd \
+        php8.5-intl \
+        php8.5-mbstring \
+        php8.5-pgsql \
+        php8.5-xml \
+        php8.5-zip \
  && rm -rf /var/lib/apt/lists/*
-RUN echo 'date.timezone=Europe/Brussels' >> /etc/php/8.3/cli/conf.d/99-tcu.ini \
- && echo 'memory_limit=1024M' >> /etc/php/8.3/cli/conf.d/99-tcu.ini
+RUN echo 'date.timezone=Europe/Brussels' >> /etc/php/8.5/cli/conf.d/99-tcu.ini \
+ && echo 'memory_limit=1024M' >> /etc/php/8.5/cli/conf.d/99-tcu.ini
 # psql for direct DB inspection + tools for the egress firewall below
 RUN apt-get update \
  && apt-get install -y --no-install-recommends postgresql-client iptables ipset dnsutils jq iproute2 sudo \
