@@ -29,13 +29,21 @@ when@prod: &sentry_prod
         register_error_listener: false
         register_error_handler: false
 
+    # MonologBundle 4 removed the "sentry" handler type: the handler is a service
+    # (Sentry\Monolog\Handler, defined below) plugged in with "type: service".
+    # https://docs.sentry.io/platforms/php/guides/symfony/#monolog-integration
     monolog:
-       handlers:
-           sentry:
-               type: sentry
-               level: !php/const Monolog\Logger::ERROR
-               hub_id: Sentry\State\HubInterface
-               fill_extra_context: true # Enables sending monolog context to Sentry
+        handlers:
+            sentry:
+                type: service
+                id: Sentry\Monolog\Handler
+
+    services:
+        Sentry\Monolog\Handler:
+            arguments:
+                $hub: '@Sentry\State\HubInterface'
+                $level: !php/enum Monolog\Level::Error
+                $fillExtraContext: true # Enables sending monolog context to Sentry
 
 #    Uncomment these lines to register a log message processor that resolves PSR-3 placeholders
 #    https://docs.sentry.io/platforms/php/guides/symfony/#monolog-integration
