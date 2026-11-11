@@ -42,6 +42,12 @@ ux_icons:
         cross: 'maki:cross'
         send-email: 'streamline:send-email'
 
+when@dev:
+    ux_icons:
+        iconify:
+            # Persist each on-demand icon to disk on first render, so you don't forget to commit it before deploying (like `ux:icons:lock`)
+            auto_lock: true
+
 when@prod:
     ux_icons:
         # Suppress exceptions for missing icons in production
