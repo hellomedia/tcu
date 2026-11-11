@@ -79,7 +79,7 @@ class ResetPasswordController extends BaseController
      * Validates and process the reset URL that the user clicked in their email.
      */
     #[Route('/reset/{token}', name: 'password_reset_reset')]
-    public function reset(Request $request, UserPasswordHasherInterface $passwordHasher, Security $security, LoginFormAuthenticator $loginFormAuthenticator, TranslatorInterface $translator, EntityManager $entityManager, string $token = null): Response
+    public function reset(Request $request, UserPasswordHasherInterface $passwordHasher, Security $security, LoginFormAuthenticator $loginFormAuthenticator, TranslatorInterface $translator, EntityManager $entityManager, ?string $token = null): Response
     {
         if ($token) {
             // We store the token in session and remove it from the URL, to avoid the URL being

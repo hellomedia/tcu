@@ -18,7 +18,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
  */
 class ExceptionController extends AbstractController
 {
-    public function show(FlattenException $exception, DebugLoggerInterface $logger = null): Response
+    public function show(FlattenException $exception, ?DebugLoggerInterface $logger = null): Response
     {
         $statusCode = $exception->getStatusCode();
 
