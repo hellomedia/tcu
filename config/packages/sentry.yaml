@@ -56,8 +56,6 @@ services:
         class: 'App\Service\Sentry'
         factory: [ '@App\Service\Sentry', 'getBeforeSend' ]
 
-when@staging: *sentry_prod
-
 ######## DEBUGGING SENTRY #############
 # - Toggle between configs below
 # ( Sentry needs to be enabled for dev in bundles.php )
