@@ -1,0 +1,1150 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Class Admin\\Controller\\AdminCrudController extends generic class EasyCorp\\Bundle\\EasyAdminBundle\\Controller\\AbstractCrudController but does not specify its types\: TEntity$#'
+			identifier: missingType.generics
+			count: 1
+			path: admin/src/Controller/AdminCrudController.php
+
+		-
+			message: '#^Class Admin\\Controller\\BookingCrudController extends generic class EasyCorp\\Bundle\\EasyAdminBundle\\Controller\\AbstractCrudController but does not specify its types\: TEntity$#'
+			identifier: missingType.generics
+			count: 1
+			path: admin/src/Controller/BookingCrudController.php
+
+		-
+			message: '#^Class Admin\\Controller\\CourtCrudController extends generic class EasyCorp\\Bundle\\EasyAdminBundle\\Controller\\AbstractCrudController but does not specify its types\: TEntity$#'
+			identifier: missingType.generics
+			count: 1
+			path: admin/src/Controller/CourtCrudController.php
+
+		-
+			message: '#^Binary operation "\." between ''Modifier '' and App\\Entity\\Interface\\EntityInterface results in an error\.$#'
+			identifier: binaryOp.invalid
+			count: 1
+			path: admin/src/Controller/DashboardController.php
+
+		-
+			message: '#^Parameter \#1 \$icon of method EasyCorp\\Bundle\\EasyAdminBundle\\Config\\Action\:\:setIcon\(\) expects string\|null, false given\.$#'
+			identifier: argument.type
+			count: 1
+			path: admin/src/Controller/DashboardController.php
+
+		-
+			message: '#^Parameter \#1 \$maxResultsPerPage of method EasyCorp\\Bundle\\EasyAdminBundle\\Config\\Crud\:\:setPaginatorPageSize\(\) expects int, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: admin/src/Controller/DashboardController.php
+
+		-
+			message: '#^Class Admin\\Controller\\DateCrudController extends generic class EasyCorp\\Bundle\\EasyAdminBundle\\Controller\\AbstractCrudController but does not specify its types\: TEntity$#'
+			identifier: missingType.generics
+			count: 1
+			path: admin/src/Controller/DateCrudController.php
+
+		-
+			message: '#^Class Admin\\Controller\\GroupCrudController extends generic class EasyCorp\\Bundle\\EasyAdminBundle\\Controller\\AbstractCrudController but does not specify its types\: TEntity$#'
+			identifier: missingType.generics
+			count: 1
+			path: admin/src/Controller/GroupCrudController.php
+
+		-
+			message: '#^Method Admin\\Controller\\GroupCrudController\:\:getRedirectResponseAfterSave\(\) has parameter \$context with generic class EasyCorp\\Bundle\\EasyAdminBundle\\Context\\AdminContext but does not specify its types\: TEntity$#'
+			identifier: missingType.generics
+			count: 1
+			path: admin/src/Controller/GroupCrudController.php
+
+		-
+			message: '#^Class Admin\\Controller\\InterfacMatchCrudController extends generic class EasyCorp\\Bundle\\EasyAdminBundle\\Controller\\AbstractCrudController but does not specify its types\: TEntity$#'
+			identifier: missingType.generics
+			count: 1
+			path: admin/src/Controller/InterfacMatchCrudController.php
+
+		-
+			message: '#^Method Admin\\Controller\\InterfacMatchCrudController\:\:createEditFormBuilder\(\) return type with generic interface Symfony\\Component\\Form\\FormBuilderInterface does not specify its types\: TData$#'
+			identifier: missingType.generics
+			count: 1
+			path: admin/src/Controller/InterfacMatchCrudController.php
+
+		-
+			message: '#^Method Admin\\Controller\\InterfacMatchCrudController\:\:createNewFormBuilder\(\) return type with generic interface Symfony\\Component\\Form\\FormBuilderInterface does not specify its types\: TData$#'
+			identifier: missingType.generics
+			count: 1
+			path: admin/src/Controller/InterfacMatchCrudController.php
+
+		-
+			message: '#^Call to function assert\(\) with true will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: admin/src/Controller/Planning/MatchController.php
+
+		-
+			message: '#^Instanceof between App\\Entity\\ParticipantConfirmationInfo and App\\Entity\\ParticipantConfirmationInfo will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: admin/src/Controller/Planning/MatchController.php
+
+		-
+			message: '#^Method Admin\\Controller\\Planning\\MatchController\:\:renderBookingForm\(\) has parameter \$form with generic interface Symfony\\Component\\Form\\FormInterface but does not specify its types\: TData$#'
+			identifier: missingType.generics
+			count: 1
+			path: admin/src/Controller/Planning/MatchController.php
+
+		-
+			message: '#^Method Admin\\Controller\\Planning\\PracticeController\:\:renderForm\(\) has parameter \$form with generic interface Symfony\\Component\\Form\\FormInterface but does not specify its types\: TData$#'
+			identifier: missingType.generics
+			count: 1
+			path: admin/src/Controller/Planning/PracticeController.php
+
+		-
+			message: '#^Method Admin\\Controller\\PlayerBatchController\:\:filter\(\) has parameter \$filters with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: admin/src/Controller/PlayerBatchController.php
+
+		-
+			message: '#^Method Admin\\Controller\\PlayerBatchController\:\:filterQuery\(\) has parameter \$filters with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: admin/src/Controller/PlayerBatchController.php
+
+		-
+			message: '#^Method Admin\\Controller\\PlayerBatchController\:\:filterQuery\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: admin/src/Controller/PlayerBatchController.php
+
+		-
+			message: '#^Class Admin\\Controller\\PlayerCrudController extends generic class EasyCorp\\Bundle\\EasyAdminBundle\\Controller\\AbstractCrudController but does not specify its types\: TEntity$#'
+			identifier: missingType.generics
+			count: 1
+			path: admin/src/Controller/PlayerCrudController.php
+
+		-
+			message: '#^Method Admin\\Controller\\PlayerCrudController\:\:generateInvitationUrl\(\) has parameter \$parameters with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: admin/src/Controller/PlayerCrudController.php
+
+		-
+			message: '#^Class Admin\\Controller\\RegistrationCrudController extends generic class EasyCorp\\Bundle\\EasyAdminBundle\\Controller\\AbstractCrudController but does not specify its types\: TEntity$#'
+			identifier: missingType.generics
+			count: 1
+			path: admin/src/Controller/RegistrationCrudController.php
+
+		-
+			message: '#^Method Admin\\Controller\\RegistrationCrudController\:\:changeStatus\(\) has parameter \$context with generic class EasyCorp\\Bundle\\EasyAdminBundle\\Context\\AdminContext but does not specify its types\: TEntity$#'
+			identifier: missingType.generics
+			count: 1
+			path: admin/src/Controller/RegistrationCrudController.php
+
+		-
+			message: '#^Method Admin\\Controller\\RegistrationCrudController\:\:changeStatusBatch\(\) has parameter \$batchActionDto with generic class EasyCorp\\Bundle\\EasyAdminBundle\\Dto\\BatchActionDto but does not specify its types\: TEntity$#'
+			identifier: missingType.generics
+			count: 1
+			path: admin/src/Controller/RegistrationCrudController.php
+
+		-
+			message: '#^Method Admin\\Controller\\RegistrationCrudController\:\:confirmBatch\(\) has parameter \$batchActionDto with generic class EasyCorp\\Bundle\\EasyAdminBundle\\Dto\\BatchActionDto but does not specify its types\: TEntity$#'
+			identifier: missingType.generics
+			count: 1
+			path: admin/src/Controller/RegistrationCrudController.php
+
+		-
+			message: '#^Method Admin\\Controller\\RegistrationCrudController\:\:dismissBatch\(\) has parameter \$batchActionDto with generic class EasyCorp\\Bundle\\EasyAdminBundle\\Dto\\BatchActionDto but does not specify its types\: TEntity$#'
+			identifier: missingType.generics
+			count: 1
+			path: admin/src/Controller/RegistrationCrudController.php
+
+		-
+			message: '#^Method Admin\\Controller\\RegistrationCrudController\:\:getRedirectResponseAfterSave\(\) has parameter \$context with generic class EasyCorp\\Bundle\\EasyAdminBundle\\Context\\AdminContext but does not specify its types\: TEntity$#'
+			identifier: missingType.generics
+			count: 1
+			path: admin/src/Controller/RegistrationCrudController.php
+
+		-
+			message: '#^Class Admin\\Controller\\SeasonCrudController extends generic class EasyCorp\\Bundle\\EasyAdminBundle\\Controller\\AbstractCrudController but does not specify its types\: TEntity$#'
+			identifier: missingType.generics
+			count: 1
+			path: admin/src/Controller/SeasonCrudController.php
+
+		-
+			message: '#^Method Admin\\Controller\\SeasonCrudController\:\:getRedirectResponseAfterSave\(\) has parameter \$context with generic class EasyCorp\\Bundle\\EasyAdminBundle\\Context\\AdminContext but does not specify its types\: TEntity$#'
+			identifier: missingType.generics
+			count: 1
+			path: admin/src/Controller/SeasonCrudController.php
+
+		-
+			message: '#^Class Admin\\Controller\\SlotCrudController extends generic class EasyCorp\\Bundle\\EasyAdminBundle\\Controller\\AbstractCrudController but does not specify its types\: TEntity$#'
+			identifier: missingType.generics
+			count: 1
+			path: admin/src/Controller/SlotCrudController.php
+
+		-
+			message: '#^Class Admin\\Controller\\UserCrudController extends generic class EasyCorp\\Bundle\\EasyAdminBundle\\Controller\\AbstractCrudController but does not specify its types\: TEntity$#'
+			identifier: missingType.generics
+			count: 1
+			path: admin/src/Controller/UserCrudController.php
+
+		-
+			message: '#^Offset ''B_0''\|''B_2''\|''B_4''\|''B_M15''\|''B_M15_1''\|''B_M15_2''\|''B_M15_4''\|''B_M2''\|''B_M4''\|''C_15''\|''C_15_1''\|''C_15_2''\|''C_15_3''\|''C_15_4''\|''C_15_5''\|''C_30''\|''C_30_1''\|''C_30_2''\|''C_30_3''\|''C_30_4''\|''C_30_5''\|''C_30_6''\|''NC'' on array\{NC\: 0, C_30_6\: 1, C_30_5\: 2, C_30_4\: 3, C_30_3\: 4, C_30_2\: 5, C_30_1\: 6, C_30\: 7, \.\.\.\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: admin/src/Filter/RankingOrderFilter.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between 0\|1\|2\|3\|4\|5\|6\|7\|8\|9\|10\|11\|12\|13\|14\|15\|16\|17\|18\|19\|20\|21\|22 and null will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: admin/src/Filter/RankingOrderFilter.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between string and null will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: admin/src/Filter/RankingOrderFilter.php
+
+		-
+			message: '#^Class Admin\\Form\\PlayerBatchRowType extends generic class Symfony\\Component\\Form\\AbstractType but does not specify its types\: TData$#'
+			identifier: missingType.generics
+			count: 1
+			path: admin/src/Form/PlayerBatchRowType.php
+
+		-
+			message: '#^Class Admin\\Form\\PlayerBatchType extends generic class Symfony\\Component\\Form\\AbstractType but does not specify its types\: TData$#'
+			identifier: missingType.generics
+			count: 1
+			path: admin/src/Form/PlayerBatchType.php
+
+		-
+			message: '#^Class Admin\\Form\\PlayerType extends generic class Symfony\\Component\\Form\\AbstractType but does not specify its types\: TData$#'
+			identifier: missingType.generics
+			count: 1
+			path: admin/src/Form/PlayerType.php
+
+		-
+			message: '#^Match expression does not handle remaining value\: non\-falsy\-string$#'
+			identifier: match.unhandled
+			count: 1
+			path: packs/Chart/BaseChartProvider.php
+
+		-
+			message: '#^Match expression does not handle remaining value\: string$#'
+			identifier: match.unhandled
+			count: 2
+			path: packs/Chart/BaseChartProvider.php
+
+		-
+			message: '#^Match expression does not handle remaining values\: string\|null$#'
+			identifier: match.unhandled
+			count: 1
+			path: packs/Chart/BaseChartProvider.php
+
+		-
+			message: '#^Method Pack\\Chart\\BaseChartProvider\:\:_convertToBytes\(\) should return int but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: packs/Chart/BaseChartProvider.php
+
+		-
+			message: '#^Method Pack\\Chart\\BaseChartProvider\:\:_setBarChartOptions\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: packs/Chart/BaseChartProvider.php
+
+		-
+			message: '#^Method Pack\\Chart\\BaseChartProvider\:\:_setLineChartOptions\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: packs/Chart/BaseChartProvider.php
+
+		-
+			message: '#^Method Pack\\Chart\\BaseChartProvider\:\:_setLineChartOptions\(\) has parameter \$showAxes with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: packs/Chart/BaseChartProvider.php
+
+		-
+			message: '#^Method Pack\\Chart\\BaseChartProvider\:\:beginAtZero\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packs/Chart/BaseChartProvider.php
+
+		-
+			message: '#^Method Pack\\Chart\\BaseChartProvider\:\:createBarChart\(\) has parameter \$datasets with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packs/Chart/BaseChartProvider.php
+
+		-
+			message: '#^Method Pack\\Chart\\BaseChartProvider\:\:createLineChart\(\) has parameter \$datasets with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packs/Chart/BaseChartProvider.php
+
+		-
+			message: '#^Method Pack\\Chart\\BaseChartProvider\:\:createSingleDatasetBarChart\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packs/Chart/BaseChartProvider.php
+
+		-
+			message: '#^Method Pack\\Chart\\BaseChartProvider\:\:createSingleDatasetLineChart\(\) has parameter \$data with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packs/Chart/BaseChartProvider.php
+
+		-
+			message: '#^Method Pack\\Chart\\BaseChartProvider\:\:getTimeScaleOptions\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packs/Chart/BaseChartProvider.php
+
+		-
+			message: '#^Property Pack\\Chart\\BaseChartProvider\:\:\$colors type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packs/Chart/BaseChartProvider.php
+
+		-
+			message: '#^Method Pack\\Security\\BotDetector\:\:__construct\(\) has parameter \$environment with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: packs/Security/BotDetector.php
+
+		-
+			message: '#^Method Pack\\Security\\BotDetector\:\:_isSuspiciousRegistrationForm\(\) has parameter \$form with generic interface Symfony\\Component\\Form\\FormInterface but does not specify its types\: TData$#'
+			identifier: missingType.generics
+			count: 1
+			path: packs/Security/BotDetector.php
+
+		-
+			message: '#^Method Pack\\Security\\BotDetector\:\:detectBotOnRegistrationForm\(\) has parameter \$form with generic interface Symfony\\Component\\Form\\FormInterface but does not specify its types\: TData$#'
+			identifier: missingType.generics
+			count: 1
+			path: packs/Security/BotDetector.php
+
+		-
+			message: '#^Negated boolean expression is always false\.$#'
+			identifier: booleanNot.alwaysFalse
+			count: 1
+			path: packs/Security/Command/ChangeUserEmailCommand.php
+
+		-
+			message: '#^Method Pack\\Security\\Controller\\LoginController\:\:showRegistrationLink\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: packs/Security/Controller/LoginController.php
+
+		-
+			message: '#^Method Pack\\Security\\Controller\\RegistrationController\:\:checkYourEmail\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: packs/Security/Controller/RegistrationController.php
+
+		-
+			message: '#^Method Pack\\Security\\Controller\\RegistrationController\:\:checkYourEmailForBots\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: packs/Security/Controller/RegistrationController.php
+
+		-
+			message: '#^Property App\\Entity\\User\:\:\$roles \(list\<string\>\) on left side of \?\? is not nullable\.$#'
+			identifier: nullCoalesce.property
+			count: 2
+			path: packs/Security/Entity/Trait/UserSecurityTrait.php
+
+		-
+			message: '#^Class Pack\\Security\\Form\\ChangePasswordForm extends generic class Symfony\\Component\\Form\\AbstractType but does not specify its types\: TData$#'
+			identifier: missingType.generics
+			count: 1
+			path: packs/Security/Form/ChangePasswordForm.php
+
+		-
+			message: '#^Class Pack\\Security\\Form\\Field\\HoneypotField extends generic class Symfony\\Component\\Form\\AbstractType but does not specify its types\: TData$#'
+			identifier: missingType.generics
+			count: 1
+			path: packs/Security/Form/Field/HoneypotField.php
+
+		-
+			message: '#^Class Pack\\Security\\Form\\RegistrationForm extends generic class Symfony\\Component\\Form\\AbstractType but does not specify its types\: TData$#'
+			identifier: missingType.generics
+			count: 1
+			path: packs/Security/Form/RegistrationForm.php
+
+		-
+			message: '#^Class Pack\\Security\\Form\\ResetPasswordRequestForm extends generic class Symfony\\Component\\Form\\AbstractType but does not specify its types\: TData$#'
+			identifier: missingType.generics
+			count: 1
+			path: packs/Security/Form/ResetPasswordRequestForm.php
+
+		-
+			message: '#^Method Pack\\Security\\Mailer\\SecurityMailer\:\:sendRegistrationValidationLink\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: packs/Security/Mailer/SecurityMailer.php
+
+		-
+			message: '#^Method Pack\\Security\\Mailer\\SecurityMailer\:\:sendResetPasswordEmail\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: packs/Security/Mailer/SecurityMailer.php
+
+		-
+			message: '#^Class Pack\\Security\\Repository\\ResetPasswordRequestRepository has PHPDoc tag @method for method findBy\(\) parameter \#1 \$criteria with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packs/Security/Repository/ResetPasswordRequestRepository.php
+
+		-
+			message: '#^Class Pack\\Security\\Repository\\ResetPasswordRequestRepository has PHPDoc tag @method for method findBy\(\) parameter \#2 \$orderBy with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packs/Security/Repository/ResetPasswordRequestRepository.php
+
+		-
+			message: '#^Class Pack\\Security\\Repository\\ResetPasswordRequestRepository has PHPDoc tag @method for method findOneBy\(\) parameter \#1 \$criteria with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packs/Security/Repository/ResetPasswordRequestRepository.php
+
+		-
+			message: '#^Class Pack\\Security\\Repository\\ResetPasswordRequestRepository has PHPDoc tag @method for method findOneBy\(\) parameter \#2 \$orderBy with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packs/Security/Repository/ResetPasswordRequestRepository.php
+
+		-
+			message: '#^Class Pack\\Security\\UserProvider implements generic interface Symfony\\Component\\Security\\Core\\User\\UserProviderInterface but does not specify its types\: TUser$#'
+			identifier: missingType.generics
+			count: 1
+			path: packs/Security/UserProvider.php
+
+		-
+			message: '#^Method Pack\\Security\\UserProvider\:\:loadUserByIdentifier\(\) has parameter \$email with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: packs/Security/UserProvider.php
+
+		-
+			message: '#^Method Pack\\Security\\UserProvider\:\:supportsClass\(\) has parameter \$class with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: packs/Security/UserProvider.php
+
+		-
+			message: '#^Method Pack\\Status\\Controller\\OpcacheStatusController\:\:checkOpcache\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: packs/Status/Controller/OpcacheStatusController.php
+
+		-
+			message: '#^Property Pack\\Status\\Controller\\OpcacheStatusController\:\:\$environment is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: packs/Status/Controller/OpcacheStatusController.php
+
+		-
+			message: '#^Property Pack\\Status\\Controller\\OpcacheStatusController\:\:\$issues type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packs/Status/Controller/OpcacheStatusController.php
+
+		-
+			message: '#^Ternary operator condition is always false\.$#'
+			identifier: ternary.alwaysFalse
+			count: 1
+			path: packs/Status/Controller/OpcacheStatusController.php
+
+		-
+			message: '#^Match expression does not handle remaining value\: string$#'
+			identifier: match.unhandled
+			count: 1
+			path: packs/Status/Controller/PhpStatusController.php
+
+		-
+			message: '#^Method Pack\\Status\\Controller\\PhpStatusController\:\:_convertToBytes\(\) should return int but returns string\.$#'
+			identifier: return.type
+			count: 1
+			path: packs/Status/Controller/PhpStatusController.php
+
+		-
+			message: '#^Method Pack\\Status\\Controller\\PhpStatusController\:\:checkPhpConfig\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: packs/Status/Controller/PhpStatusController.php
+
+		-
+			message: '#^Property Pack\\Status\\Controller\\PhpStatusController\:\:\$environment is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: packs/Status/Controller/PhpStatusController.php
+
+		-
+			message: '#^Property Pack\\Status\\Controller\\PhpStatusController\:\:\$issues type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packs/Status/Controller/PhpStatusController.php
+
+		-
+			message: '#^Property Pack\\Status\\Controller\\PhpStatusController\:\:\$projectDir is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: packs/Status/Controller/PhpStatusController.php
+
+		-
+			message: '#^Method Pack\\Status\\Controller\\SentryCheckController\:\:checkSentryLogging\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: packs/Status/Controller/SentryCheckController.php
+
+		-
+			message: '#^Method Pack\\Status\\Entity\\TestMessageLog\:\:getId\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: packs/Status/Entity/TestMessageLog.php
+
+		-
+			message: '#^Method Pack\\Status\\Mailer\\StatusMailer\:\:sendTestEmail\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: packs/Status/Mailer/StatusMailer.php
+
+		-
+			message: '#^Method Pack\\Status\\Mailer\\StatusMailer\:\:sendTestHtmlEmail\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: packs/Status/Mailer/StatusMailer.php
+
+		-
+			message: '#^Method Pack\\Status\\MessageHandler\\TestEmailHandler\:\:__invoke\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: packs/Status/MessageHandler/TestEmailHandler.php
+
+		-
+			message: '#^Property Pack\\Status\\MessageHandler\\TestEmailHandler\:\:\$entityManager is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: packs/Status/MessageHandler/TestEmailHandler.php
+
+		-
+			message: '#^Method Pack\\Status\\MessageHandler\\TestErrorHandler\:\:__invoke\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: packs/Status/MessageHandler/TestErrorHandler.php
+
+		-
+			message: '#^Call to function assert\(\) with true will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: packs/Status/MessageHandler/TestMessageHandler.php
+
+		-
+			message: '#^Instanceof between Pack\\Status\\Entity\\TestMessageLog and Pack\\Status\\Entity\\TestMessageLog will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: packs/Status/MessageHandler/TestMessageHandler.php
+
+		-
+			message: '#^Method Pack\\Status\\MessageHandler\\TestMessageHandler\:\:__invoke\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: packs/Status/MessageHandler/TestMessageHandler.php
+
+		-
+			message: '#^Property Pack\\Status\\MessageHandler\\TestMessageHandler\:\:\$messengerAuditLogger is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: packs/Status/MessageHandler/TestMessageHandler.php
+
+		-
+			message: '#^Method Pack\\Status\\Model\\OpCacheStatus\:\:_arrayPset\(\) has parameter \$array with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: packs/Status/Model/OpCacheStatus.php
+
+		-
+			message: '#^Method Pack\\Status\\Model\\OpCacheStatus\:\:_arrayPset\(\) has parameter \$key with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: packs/Status/Model/OpCacheStatus.php
+
+		-
+			message: '#^Method Pack\\Status\\Model\\OpCacheStatus\:\:_arrayPset\(\) has parameter \$value with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: packs/Status/Model/OpCacheStatus.php
+
+		-
+			message: '#^Method Pack\\Status\\Model\\OpCacheStatus\:\:_arrayPset\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packs/Status/Model/OpCacheStatus.php
+
+		-
+			message: '#^Method Pack\\Status\\Model\\OpCacheStatus\:\:_formatValue\(\) has parameter \$value with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: packs/Status/Model/OpCacheStatus.php
+
+		-
+			message: '#^Method Pack\\Status\\Model\\OpCacheStatus\:\:_processPartition\(\) has parameter \$name with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: packs/Status/Model/OpCacheStatus.php
+
+		-
+			message: '#^Method Pack\\Status\\Model\\OpCacheStatus\:\:_processPartition\(\) has parameter \$value with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: packs/Status/Model/OpCacheStatus.php
+
+		-
+			message: '#^Method Pack\\Status\\Model\\OpCacheStatus\:\:_processPartition\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packs/Status/Model/OpCacheStatus.php
+
+		-
+			message: '#^Method Pack\\Status\\Model\\OpCacheStatus\:\:getD3Scripts\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: packs/Status/Model/OpCacheStatus.php
+
+		-
+			message: '#^Method Pack\\Status\\Model\\OpCacheStatus\:\:getHitsStats\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packs/Status/Model/OpCacheStatus.php
+
+		-
+			message: '#^Method Pack\\Status\\Model\\OpCacheStatus\:\:getKeysStats\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packs/Status/Model/OpCacheStatus.php
+
+		-
+			message: '#^Method Pack\\Status\\Model\\OpCacheStatus\:\:getMemoryStats\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packs/Status/Model/OpCacheStatus.php
+
+		-
+			message: '#^Method Pack\\Status\\Model\\OpCacheStatus\:\:getRestartStats\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: packs/Status/Model/OpCacheStatus.php
+
+		-
+			message: '#^Property Pack\\Status\\Model\\OpCacheStatus\:\:\$configuration has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: packs/Status/Model/OpCacheStatus.php
+
+		-
+			message: '#^Property Pack\\Status\\Model\\OpCacheStatus\:\:\$d3Scripts has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: packs/Status/Model/OpCacheStatus.php
+
+		-
+			message: '#^Property Pack\\Status\\Model\\OpCacheStatus\:\:\$status has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: packs/Status/Model/OpCacheStatus.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between true and true will always evaluate to true\.$#'
+			identifier: identical.alwaysTrue
+			count: 2
+			path: packs/Status/Model/OpCacheStatus.php
+
+		-
+			message: '#^Variable \$dirs might not be defined\.$#'
+			identifier: variable.undefined
+			count: 1
+			path: packs/Status/Model/OpCacheStatus.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>value" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 2
+			path: src/Command/FetchRankingsCommand.php
+
+		-
+			message: '#^Call to function assert\(\) with true will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/Controller/AccountArea/DashboardController.php
+
+		-
+			message: '#^Instanceof between App\\Entity\\InterfacMatch and App\\Entity\\InterfacMatch will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: src/Controller/AccountArea/DashboardController.php
+
+		-
+			message: '#^Method App\\Controller\\BaseController\:\:addBreadcrumb\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Controller/BaseController.php
+
+		-
+			message: '#^Method App\\Controller\\BaseController\:\:addBreadcrumb\(\) has parameter \$route with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Controller/BaseController.php
+
+		-
+			message: '#^Method App\\Controller\\BaseController\:\:addBreadcrumb\(\) has parameter \$routeParams with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Controller/BaseController.php
+
+		-
+			message: '#^Method App\\Controller\\BaseController\:\:addFlash\(\) has parameter \$parameters with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Controller/BaseController.php
+
+		-
+			message: '#^Result of method App\\Helper\\BreadcrumbsHelper\:\:addBreadcrumb\(\) \(void\) is used\.$#'
+			identifier: method.void
+			count: 1
+			path: src/Controller/BaseController.php
+
+		-
+			message: '#^Property App\\Doctrine\\Functions\\Cast\:\:\$expr1 has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: src/Doctrine/Functions/Cast.php
+
+		-
+			message: '#^Property App\\Doctrine\\Functions\\Cast\:\:\$expr2 has no type specified\.$#'
+			identifier: missingType.property
+			count: 1
+			path: src/Doctrine/Functions/Cast.php
+
+		-
+			message: '#^Method App\\Doctrine\\Listener\\UserCreatedListener\:\:preCreate\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Doctrine/Listener/UserCreatedListener.php
+
+		-
+			message: '#^Method App\\Doctrine\\Listener\\UserUpdatedListener\:\:update\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Doctrine/Listener/UserUpdatedListener.php
+
+		-
+			message: '#^Parameter \#1 \$date of static method App\\Helper\\DateHelper\:\:isFuture\(\) expects DateTimeImmutable, DateTimeInterface\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Entity/Date.php
+
+		-
+			message: '#^Parameter \#1 \$date of static method App\\Helper\\DateHelper\:\:isPast\(\) expects DateTimeImmutable, DateTimeInterface\|null given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Entity/Date.php
+
+		-
+			message: '#^Property App\\Entity\\Date\:\:\$date type mapping mismatch\: property can contain DateTimeInterface\|null but database expects DateTimeImmutable\.$#'
+			identifier: doctrine.columnType
+			count: 1
+			path: src/Entity/Date.php
+
+		-
+			message: '#^Method App\\Entity\\Player\:\:getMatchs\(\) should return Doctrine\\Common\\Collections\\Collection\<int, App\\Entity\\InterfacMatch\> but returns Doctrine\\Common\\Collections\\ArrayCollection\<int, App\\Entity\\InterfacMatch\|null\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Entity/Player.php
+
+		-
+			message: '#^Parameter \#1 \$array \(list\<App\\Entity\\Slot\|null\>\) of array_values is already a list, call has no effect\.$#'
+			identifier: arrayValues.list
+			count: 1
+			path: src/Entity/Practice.php
+
+		-
+			message: '#^Offset ''B_0''\|''B_2''\|''B_4''\|''B_M15''\|''B_M15_1''\|''B_M15_2''\|''B_M15_4''\|''B_M2''\|''B_M4''\|''C_15''\|''C_15_1''\|''C_15_2''\|''C_15_3''\|''C_15_4''\|''C_15_5''\|''C_30''\|''C_30_1''\|''C_30_2''\|''C_30_3''\|''C_30_4''\|''C_30_5''\|''C_30_6''\|''NC'' on array\{NC\: 0, C_30_6\: 1, C_30_5\: 2, C_30_4\: 3, C_30_3\: 4, C_30_2\: 5, C_30_1\: 6, C_30\: 7, \.\.\.\} on left side of \?\? always exists and is not nullable\.$#'
+			identifier: nullCoalesce.offset
+			count: 1
+			path: src/Entity/Registration.php
+
+		-
+			message: '#^Method App\\Entity\\Slot\:\:getPlayers\(\) return type with generic interface Doctrine\\Common\\Collections\\Collection does not specify its types\: TKey, T$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Entity/Slot.php
+
+		-
+			message: '#^Method App\\Entity\\Slot\:\:getTimeRange\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Entity/Slot.php
+
+		-
+			message: '#^Method App\\Entity\\User\:\:isAccountLocked\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Entity/User.php
+
+		-
+			message: '#^Method App\\Entity\\User\:\:removeRole\(\) has parameter \$role with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Entity/User.php
+
+		-
+			message: '#^Method App\\Enum\\AccountLanguage\:\:getTranslatableChoices\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Enum/AccountLanguage.php
+
+		-
+			message: '#^Method App\\Enum\\Birthyear\:\:getTranslatableChoices\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Enum/Birthyear.php
+
+		-
+			message: '#^Method App\\Enum\\BookingType\:\:getTranslatableChoices\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Enum/BookingType.php
+
+		-
+			message: '#^Method App\\Enum\\Gender\:\:getTranslatableChoices\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Enum/Gender.php
+
+		-
+			message: '#^Method App\\Enum\\MatchFormat\:\:getTranslatableChoices\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Enum/MatchFormat.php
+
+		-
+			message: '#^Method App\\Enum\\Ranking\:\:getTranslatableChoices\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Enum/Ranking.php
+
+		-
+			message: '#^Method App\\Enum\\RankingSource\:\:getTranslatableChoices\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Enum/RankingSource.php
+
+		-
+			message: '#^Method App\\Enum\\RegistrationStatus\:\:getTranslatableChoices\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Enum/RegistrationStatus.php
+
+		-
+			message: '#^Method App\\Enum\\SeasonType\:\:getTranslatableChoices\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Enum/SeasonType.php
+
+		-
+			message: '#^Method App\\Enum\\Side\:\:getTranslatableChoices\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Enum/Side.php
+
+		-
+			message: '#^Method App\\Enum\\SlotDuration\:\:getTranslatableChoices\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Enum/SlotDuration.php
+
+		-
+			message: '#^Property App\\EventSubscriber\\AccountCreatedSubscriber\:\:\$bus is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: src/EventSubscriber/AccountCreatedSubscriber.php
+
+		-
+			message: '#^Property App\\EventSubscriber\\AccountCreatedSubscriber\:\:\$environment is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: src/EventSubscriber/AccountCreatedSubscriber.php
+
+		-
+			message: '#^Property App\\EventSubscriber\\AccountCreatedSubscriber\:\:\$logger is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: src/EventSubscriber/AccountCreatedSubscriber.php
+
+		-
+			message: '#^Method App\\EventSubscriber\\ControllerSubscriber\:\:onKernelController\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/EventSubscriber/ControllerSubscriber.php
+
+		-
+			message: '#^Negated boolean expression is always false\.$#'
+			identifier: booleanNot.alwaysFalse
+			count: 1
+			path: src/EventSubscriber/ControllerSubscriber.php
+
+		-
+			message: '#^Property App\\EventSubscriber\\ControllerSubscriber\:\:\$entityManager is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: src/EventSubscriber/ControllerSubscriber.php
+
+		-
+			message: '#^Property App\\EventSubscriber\\ControllerSubscriber\:\:\$requestStack is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: src/EventSubscriber/ControllerSubscriber.php
+
+		-
+			message: '#^Property App\\EventSubscriber\\ControllerSubscriber\:\:\$security is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: src/EventSubscriber/ControllerSubscriber.php
+
+		-
+			message: '#^Variable \$controller in isset\(\) always exists and is not nullable\.$#'
+			identifier: isset.variable
+			count: 1
+			path: src/EventSubscriber/ControllerSubscriber.php
+
+		-
+			message: '#^Class App\\Form\\BookingForMatchForm extends generic class Symfony\\Component\\Form\\AbstractType but does not specify its types\: TData$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Form/BookingForMatchForm.php
+
+		-
+			message: '#^Method App\\Form\\Handler\\SlotBulkAddFormHandler\:\:checkSlotUniqueness\(\) has no return type specified\.$#'
+			identifier: missingType.return
+			count: 1
+			path: src/Form/Handler/SlotBulkAddFormHandler.php
+
+		-
+			message: '#^Method App\\Form\\Handler\\SlotBulkAddFormHandler\:\:checkSlotUniqueness\(\) has parameter \$slots with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Form/Handler/SlotBulkAddFormHandler.php
+
+		-
+			message: '#^Method App\\Form\\Handler\\SlotBulkAddFormHandler\:\:processForm\(\) has parameter \$form with generic interface Symfony\\Component\\Form\\FormInterface but does not specify its types\: TData$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Form/Handler/SlotBulkAddFormHandler.php
+
+		-
+			message: '#^Method App\\Form\\Handler\\SlotBulkAddFormHandler\:\:processForm\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Form/Handler/SlotBulkAddFormHandler.php
+
+		-
+			message: '#^Method App\\Form\\Handler\\SlotBulkRemoveFormHandler\:\:processForm\(\) has parameter \$form with generic interface Symfony\\Component\\Form\\FormInterface but does not specify its types\: TData$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Form/Handler/SlotBulkRemoveFormHandler.php
+
+		-
+			message: '#^Class App\\Form\\MatchAdminConfirmationForm extends generic class Symfony\\Component\\Form\\AbstractType but does not specify its types\: TData$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Form/MatchAdminConfirmationForm.php
+
+		-
+			message: '#^Class App\\Form\\MatchResultForm extends generic class Symfony\\Component\\Form\\AbstractType but does not specify its types\: TData$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Form/MatchResultForm.php
+
+		-
+			message: '#^Class App\\Form\\MatchType extends generic class Symfony\\Component\\Form\\AbstractType but does not specify its types\: TData$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Form/MatchType.php
+
+		-
+			message: '#^Method App\\Form\\Model\\MatchConfirmationInfo\:\:__construct\(\) has parameter \$infos with no value type specified in iterable type iterable\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Form/Model/MatchConfirmationInfo.php
+
+		-
+			message: '#^Class App\\Form\\PracticeForm extends generic class Symfony\\Component\\Form\\AbstractType but does not specify its types\: TData$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Form/PracticeForm.php
+
+		-
+			message: '#^Class App\\Form\\SlotBookingForm extends generic class Symfony\\Component\\Form\\AbstractType but does not specify its types\: TData$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Form/SlotBookingForm.php
+
+		-
+			message: '#^Class App\\Form\\SlotBulkAddType extends generic class Symfony\\Component\\Form\\AbstractType but does not specify its types\: TData$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Form/SlotBulkAddType.php
+
+		-
+			message: '#^Class App\\Form\\SlotBulkRemoveType extends generic class Symfony\\Component\\Form\\AbstractType but does not specify its types\: TData$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Form/SlotBulkRemoveType.php
+
+		-
+			message: '#^Class App\\Form\\Type\\ParticipantAdminConfirmationType extends generic class Symfony\\Component\\Form\\AbstractType but does not specify its types\: TData$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Form/Type/ParticipantAdminConfirmationType.php
+
+		-
+			message: '#^Method App\\Helper\\BreadcrumbsHelper\:\:addBreadcrumb\(\) has parameter \$routeParams with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Helper/BreadcrumbsHelper.php
+
+		-
+			message: '#^Method App\\Helper\\BreadcrumbsHelper\:\:getBreadcrumbs\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Helper/BreadcrumbsHelper.php
+
+		-
+			message: '#^Property App\\Helper\\BreadcrumbsHelper\:\:\$breadcrumbs type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Helper/BreadcrumbsHelper.php
+
+		-
+			message: '#^Property App\\Helper\\BreadcrumbsHelper\:\:\$requestStack is never read, only written\.$#'
+			identifier: property.onlyWritten
+			count: 1
+			path: src/Helper/BreadcrumbsHelper.php
+
+		-
+			message: '''
+				#^PHPDoc tag @var has invalid value \(\$precision string \<'date'\|'time'\>
+				     'time'   \=\> 
+				        \- difference between yesterday at 4pm and today \('now'\) at 3pm is 0\.
+				        \- difference between yesterday at 4pm and today \('now'\) at 5pm is 1\.
+				     'date' \=\> 
+				        \- difference between yesterday at 4pm \(or any other time, all forced to 00\:00\:\:00\)
+				        and today \('today'\) \(which means today 00\:00\:00\) is 1\.
+				        Thus the difference between any event yesterday and 'today' is 1, when called at any time\.\)\: Unexpected token "\$precision", expected type at offset 52 on line 4$#
+			'''
+			identifier: phpDoc.parseError
+			count: 1
+			path: src/Helper/DateHelper.php
+
+		-
+			message: '#^Method App\\Mailer\\BaseMailer\:\:generateAbsoluteUrl\(\) has parameter \$parameters with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Mailer/BaseMailer.php
+
+		-
+			message: '#^Method App\\Mailer\\BaseMailer\:\:generatePublicSiteAbsoluteUrl\(\) has parameter \$parameters with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Mailer/BaseMailer.php
+
+		-
+			message: '#^Method App\\Repository\\DateRepository\:\:findByYmd\(\) has parameter \$ymds with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Repository/DateRepository.php
+
+		-
+			message: '#^Method App\\Repository\\DateRepository\:\:findDatesByGroups\(\) has parameter \$groups with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Repository/DateRepository.php
+
+		-
+			message: '#^Method App\\Repository\\DateRepository\:\:findDatesByGroups\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Repository/DateRepository.php
+
+		-
+			message: '#^Method App\\Repository\\InterfacMatchRepository\:\:findNonScheduledMatchs\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Repository/InterfacMatchRepository.php
+
+		-
+			message: '#^Method App\\Repository\\InterfacMatchRepository\:\:findUpcomingMatchs\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Repository/InterfacMatchRepository.php
+
+		-
+			message: '#^Method App\\Repository\\PlayerRepository\:\:groupStandings\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Repository/PlayerRepository.php
+
+		-
+			message: '#^Class App\\Security\\Voter\\MatchVoter extends generic class Symfony\\Component\\Security\\Core\\Authorization\\Voter\\Voter but does not specify its types\: TAttribute, TSubject$#'
+			identifier: missingType.generics
+			count: 1
+			path: src/Security/Voter/MatchVoter.php
+
+		-
+			message: '#^Parameter \#2 \$user of method App\\Security\\Voter\\MatchVoter\:\:canEdit\(\) expects App\\Entity\\User, Symfony\\Component\\Security\\Core\\User\\UserInterface given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Security/Voter/MatchVoter.php
+
+		-
+			message: '#^Using nullsafe property access "\?\-\>textContent" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
+			identifier: nullsafe.neverNull
+			count: 2
+			path: src/Service/Ranking/RankingPageParser.php
+
+		-
+			message: '#^Call to function assert\(\) with true will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/Service/Sentry.php
+
+		-
+			message: '#^Instanceof between Sentry\\ExceptionDataBag and Sentry\\ExceptionDataBag will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: src/Service/Sentry.php
+
+		-
+			message: '#^Method App\\Twig\\Component\\Breadcrumbs\\Breadcrumbs\:\:getBreadcrumbs\(\) return type has no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Twig/Component/Breadcrumbs/Breadcrumbs.php
+
+		-
+			message: '#^Method App\\Twig\\Extension\\AppExtension\:\:isInstanceOf\(\) has parameter \$class with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Twig/Extension/AppExtension.php
+
+		-
+			message: '#^Method App\\Twig\\Extension\\AppExtension\:\:isInstanceOf\(\) has parameter \$var with no type specified\.$#'
+			identifier: missingType.parameter
+			count: 1
+			path: src/Twig/Extension/AppExtension.php
+
+		-
+			message: '#^Method App\\Twig\\Runtime\\AppExtensionRuntime\:\:isCurrentPage\(\) has parameter \$parameters with no value type specified in iterable type array\.$#'
+			identifier: missingType.iterableValue
+			count: 1
+			path: src/Twig/Runtime/AppExtensionRuntime.php

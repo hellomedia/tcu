@@ -29,3 +29,7 @@ pg_upgrade_utility.log
 ###< symfony/asset-mapper ###
 
 /bin/webhook.sh
+
+###> phpstan/phpstan ###
+phpstan.neon
+###< phpstan/phpstan ###
