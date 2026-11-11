@@ -46,6 +46,10 @@ TMP_REPO=$(TMPDIR=$(pwd) mktemp -d -t tcu-deploy.XXXXX)
 COMMAND_PREFIX="docker compose -f ../docker-compose.yaml exec --user=www-data php sh -c"
 BUILD_DIR=/data/www/$(basename $TMP_REPO)
 
+# silence composer noise warning: "could not detect the root package version" (releases have no .git)
+# https://getcomposer.org/doc/articles/troubleshooting.md#root-package-version-detection
+COMPOSER="COMPOSER_ROOT_VERSION=1.0.0 ./composer.phar" 
+
 # tailwind binary
 # ATTN: line below expects 1 version folder. When we change the binary version, the old folder should be deleted.
 TAILWIND_BINARY_VERSION_DIR=$(basename $(dirname "$(realpath /home/nicolas/projects/tcu/var/tailwind/*/tailwindcss-linux-x64)"))
@@ -97,9 +101,9 @@ cleanup () {
 }
 
 local_clone () {
-    if [ git rev-parse --show-toplevel ]; then
+    if git -C "$LOCAL_REPO" rev-parse --git-dir >/dev/null 2>&1; then
         git clone "$REPO" "$TMP_REPO" --depth=1 "--branch=$BRANCH" "--reference=$LOCAL_REPO"
-    else
+    else 
         git clone "$REPO" "$TMP_REPO" --depth=1 "--branch=$BRANCH"
     fi
     (
@@ -111,7 +115,7 @@ local_clone () {
 }
 
 local_build () {
-    $COMMAND_PREFIX "cd $BUILD_DIR && ./composer.phar install $COMPOSER_INSTALL_ARGS"
+    $COMMAND_PREFIX "cd $BUILD_DIR && $COMPOSER install $COMPOSER_INSTALL_ARGS"
 
     # APP_ENV in .env.local must be coherent with composer install args ( prod ==> --no-dev  , dev ==> x )
     cp $LOCAL_REPO/.env.local ./
