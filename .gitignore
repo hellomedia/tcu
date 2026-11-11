@@ -24,11 +24,6 @@ yarn-error.log
 ###< symfony/webpack-encore-bundle ###
 
 *.override.yaml
-
-###> phpstan/phpstan ###
-phpstan.neon
-###< phpstan/phpstan ###
-
 # see /docker/nginx/ssl/README.txt
 /docker/nginx/ssl/rootCA.key
 /docker/nginx/ssl/rootCA.crt
