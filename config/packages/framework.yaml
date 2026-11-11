@@ -2,8 +2,6 @@
 framework:
     secret: '%env(APP_SECRET)%'
     http_method_override: true
-    # https://github.com/symfony/symfony/pull/47467#issuecomment-1282578442
-    annotations: false
     handle_all_throwables: true
 
     esi:
