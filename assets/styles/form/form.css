@@ -8,7 +8,8 @@
         --color-form-widget-border: var(--color-gray-300);
         --color-form-widget-border-focus: var(--color-gray-400);
 
-        @apply text-base;
+        font-size: var(--text-base);
+        line-height: var(--text-base--line-height);
         color: var(--color-primary-text);
     }
 
@@ -35,8 +36,8 @@
         border: 1px solid var(--color-form-widget-border);
         background-color: var(--color-form-widget-background);
 
-        @apply rounded-md;
-        @apply p-2.5;
+        border-radius: var(--radius-md);
+        padding: calc(var(--spacing) * 2.5);
     }
 
     input:focus, select:focus, textarea:focus {

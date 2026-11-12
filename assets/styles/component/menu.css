@@ -4,7 +4,7 @@
         position: relative; /* for menu-hover-border */
         background-color: var(--color-menu-background);
         color: var(--color-menu-text);
-        @apply shadow-xs;
+        box-shadow: var(--shadow-xs);
         @media (max-width: theme(--breakpoint-md)) {
             background-color: var(--color-menu-background-mobile);
             color: var(--color-menu-text-mobile);
@@ -41,24 +41,36 @@
             overflow: hidden;
             margin-block: -1px;
             margin-left: calc(var(--spacing) * 6);
-            @apply space-x-3;
+            :where(& > :not(:last-child)) {
+                margin-inline-start: 0;
+                margin-inline-end: calc(var(--spacing) * 3);
+            }
         }
         @media (min-width: theme(--breakpoint-xl)) {
             padding-inline: calc(var(--spacing) * 5);
-            @apply space-x-5;
+            :where(& > :not(:last-child)) {
+                margin-inline-start: 0;
+                margin-inline-end: calc(var(--spacing) * 5);
+            }
         }
     }
         
     .main-menu-item {
-        @apply inline-flex;
-        @apply items-center;
-        @apply border-b-2;
-        @apply border-transparent;
-        @apply px-1;
-        @apply pt-1;
-        @apply text-base;
-        @apply font-medium;
-        @apply hover:text-gray-700;
+        display: inline-flex;
+        align-items: center;
+        border-bottom-style: solid;
+        border-bottom-width: 2px;
+        border-color: transparent;
+        padding-inline: calc(var(--spacing) * 1);
+        padding-top: calc(var(--spacing) * 1);
+        font-size: var(--text-base);
+        line-height: var(--text-base--line-height);
+        font-weight: var(--font-weight-medium);
+        &:hover {
+            @media (hover: hover) {
+                color: var(--color-gray-700);
+            }
+        }
 
         transition: border 0.3s ease;
 

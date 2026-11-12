@@ -2,29 +2,33 @@
 
     body {
         font-family: 'Inter Variable', sans-serif;
-        @apply text-base;
+        font-size: var(--text-base);
+        line-height: var(--text-base--line-height);
     }
 
     h1 {
         font-family: 'Poppins', 'Inter Variable', sans-serif;
-        @apply text-2xl;
-        @apply mt-6;
-        @apply mb-6;
+        font-size: var(--text-2xl);
+        line-height: var(--text-2xl--line-height);
+        margin-top: calc(var(--spacing) * 6);
+        margin-bottom: calc(var(--spacing) * 6);
         color: var(--color-page-title);
     }
 
     h2 {
         font-family: 'Poppins', 'Inter Variable', sans-serif;
-        @apply text-2xl;
-        @apply mt-6;
-        @apply mb-6;
+        font-size: var(--text-2xl);
+        line-height: var(--text-2xl--line-height);
+        margin-top: calc(var(--spacing) * 6);
+        margin-bottom: calc(var(--spacing) * 6);
     }
 
     h3 {
         font-family: 'Poppins', 'Inter Variable', sans-serif;
-        @apply text-xl;
-        @apply mt-10;
-        @apply mb-6;
+        font-size: var(--text-xl);
+        line-height: var(--text-xl--line-height);
+        margin-top: calc(var(--spacing) * 10);
+        margin-bottom: calc(var(--spacing) * 6);
     }
 
     h3:not(nav h3, footer h3) {
@@ -37,9 +41,10 @@
 
     h4 {
         font-family: 'Poppins', 'Inter Variable', sans-serif;
-        @apply text-lg;
-        @apply mt-6;
-        @apply mb-4;
+        font-size: var(--text-lg);
+        line-height: var(--text-lg--line-height);
+        margin-top: calc(var(--spacing) * 6);
+        margin-bottom: calc(var(--spacing) * 4);
     }
 
     .group-header > h4 {
@@ -55,8 +60,8 @@
 
     hr {
         color: var(--color-separator);
-        @apply mt-5;
-        @apply mb-5;
+        margin-top: calc(var(--spacing) * 5);
+        margin-bottom: calc(var(--spacing) * 5);
     }
 
     p {

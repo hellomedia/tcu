@@ -14,40 +14,56 @@
     .breadcrumb-home-svg {
         position: relative;
         top: 3px;
-        @apply w-5;
-        @apply h-5;
-        @apply md:me-2.5;
-        @apply text-gray-500;
-        @apply hover:text-gray-500;
+        width: calc(var(--spacing) * 5);
+        height: calc(var(--spacing) * 5);
+        @media (min-width: 48rem) {
+            margin-inline-end: calc(var(--spacing) * 2.5);
+        }
+        color: var(--color-gray-500);
+        &:hover {
+            @media (hover: hover) {
+                color: var(--color-gray-500);
+            }
+        }
     }
 
     .breadcrumb-separator {
         position: relative;
         top: 1px;
-        @apply rtl:rotate-180;
-        @apply w-3;
-        @apply h-3;
-        @apply text-gray-500;
-        @apply mx-2;
-        @apply md:mx-3;
+        &:where(:dir(rtl), [dir="rtl"], [dir="rtl"] *) {
+            rotate: 180deg;
+        }
+        width: calc(var(--spacing) * 3);
+        height: calc(var(--spacing) * 3);
+        color: var(--color-gray-500);
+        margin-inline: calc(var(--spacing) * 2);
+        @media (min-width: 48rem) {
+            margin-inline: calc(var(--spacing) * 3);
+        }
     }
 
     .breadcrumb-separator-second {
-        @apply hidden;
-        @apply md:inline;
+        display: none;
+        @media (min-width: 48rem) {
+            display: inline;
+        }
     }
 
     .breadcrumb-item, h1.breadcrumb-item {
         margin-bottom: 0;
         margin-top: 0;
-        @apply text-sm;
-        @apply text-gray-500;
-        @apply dark:text-gray-400;
+        font-size: var(--text-sm);
+        line-height: var(--text-sm--line-height);
+        color: var(--color-gray-500);
+        &:where(.dark, .dark *) {
+            color: var(--color-gray-400);
+        }
     }
 
     h1.breadcrumb-item {
         font-family: 'Poppins', 'Inter Variable', sans-serif;
-        @apply text-xl;
+        font-size: var(--text-xl);
+        line-height: var(--text-xl--line-height);
         color: var(--color-page-title);
     }
 
@@ -56,6 +72,12 @@
             color: var(--color-blue-1);
         }
 
-        @apply dark:hover:text-white;
+        &:where(.dark, .dark *) {
+            &:hover {
+                @media (hover: hover) {
+                    color: var(--color-white);
+                }
+            }
+        }
     }
 }

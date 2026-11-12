@@ -41,9 +41,8 @@
         margin-top: calc(var(--spacing)* 5);
         background-color: var(--color-secondary-background);
         border-radius: var(--radius-sm);
-        @apply ring-1;
-        @apply shadow-lg;
-        @apply ring-gray-900/5;
+        /* 1px ring + large shadow */
+        box-shadow: 0 0 0 1px color-mix(in oklab, var(--color-gray-900) 5%, transparent), var(--shadow-lg);
 
         display: none;
         opacity: 0;
@@ -67,8 +66,9 @@
         flex-shrink: 1;
         color: var(--color-primary-text);
         padding: calc(var(--spacing)* 4);
-        @apply text-sm/6;
-        @apply font-semibold;
+        font-size: var(--text-sm);
+        line-height: calc(var(--spacing) * 6);
+        font-weight: var(--font-weight-semibold);
 
         hr {
             width: 100%;
@@ -90,7 +90,8 @@
         gap: calc(var(--spacing)* 3);
         white-space: nowrap;
         padding: calc(var(--spacing)* 2);
-        @apply text-sm/6;
+        font-size: var(--text-sm);
+        line-height: calc(var(--spacing) * 6);
         color: var(--color-secondary-text);
 
         svg {

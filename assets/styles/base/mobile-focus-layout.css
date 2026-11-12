@@ -12,8 +12,10 @@
 
             .default-container-xpadding {
                 /* override layout.css */
-                @apply px-0;
-                @apply sm:px-0;
+                padding-inline: 0;
+                @media (min-width: 40rem) {
+                    padding-inline: 0;
+                }
             }
         }
     }

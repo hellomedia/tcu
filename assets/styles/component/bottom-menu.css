@@ -27,7 +27,7 @@
         display: flex;
         justify-content: space-evenly;
         align-items: center;
-        @apply px-2;
+        padding-inline: calc(var(--spacing) * 2);
         padding-top: 13px;
         padding-bottom: 7px;
     }
@@ -58,7 +58,8 @@
     }
 
     .bottom-menu-label {
-        @apply text-sm;
-        @apply pt-1;
+        font-size: var(--text-sm);
+        line-height: var(--text-sm--line-height);
+        padding-top: calc(var(--spacing) * 1);
     }
 }
