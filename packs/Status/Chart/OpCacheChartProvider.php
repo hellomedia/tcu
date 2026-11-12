@@ -24,15 +24,15 @@ class OpCacheChartProvider extends BaseChartProvider
         $datasets = [
             'used' => [
                 'color' => $usedColor,
-                'data' => [['x' => $xAxisLabel, 'y' => (int) $stats['used']]]
+                'data' => [['x' => $xAxisLabel, 'y' => (int) $stats['used']]],
             ],
             'free' => [
                 'color' => ChartColor::GREEN,
-                'data' => [['x' => $xAxisLabel, 'y' => (int) $stats['free']]]
+                'data' => [['x' => $xAxisLabel, 'y' => (int) $stats['free']]],
             ],
             'wasted' => [
                 'color' => ChartColor::DARK_GREY,
-                'data' => [['x' => $xAxisLabel, 'y' => (int) $stats['wasted']]]
+                'data' => [['x' => $xAxisLabel, 'y' => (int) $stats['wasted']]],
             ],
         ];
 
@@ -58,16 +58,16 @@ class OpCacheChartProvider extends BaseChartProvider
             default => ChartColor::BLUE,
         };
 
-        $xAxisLabel = "Keys (# files cached)";
+        $xAxisLabel = 'Keys (# files cached)';
 
         $datasets = [
             'cached keys' => [
                 'color' => $usedColor,
-                'data' => [['x' => $xAxisLabel, 'y' => $cachedKeys]]
+                'data' => [['x' => $xAxisLabel, 'y' => $cachedKeys]],
             ],
             'remaining' => [
                 'color' => ChartColor::GREEN,
-                'data' => [['x' => $xAxisLabel, 'y' => $remaining]]
+                'data' => [['x' => $xAxisLabel, 'y' => $remaining]],
             ],
         ];
 
@@ -83,16 +83,16 @@ class OpCacheChartProvider extends BaseChartProvider
     {
         $stats = $opCache->getHitsStats();
 
-        $xAxisLabel = "Hits";
+        $xAxisLabel = 'Hits';
 
         $datasets = [
             'hits' => [
                 'color' => ChartColor::BLUE,
-                'data' => [['x' => $xAxisLabel, 'y' => (int) $stats['hits']]]
+                'data' => [['x' => $xAxisLabel, 'y' => (int) $stats['hits']]],
             ],
             'misses' => [
                 'color' => ChartColor::RED,
-                'data' => [['x' => $xAxisLabel, 'y' => (int) $stats['misses']]]
+                'data' => [['x' => $xAxisLabel, 'y' => (int) $stats['misses']]],
             ],
         ];
 
@@ -113,18 +113,18 @@ class OpCacheChartProvider extends BaseChartProvider
         $datasets = [
             'oom (out of memory) restarts' => [
                 'color' => ChartColor::RED,
-                'data' => [['x' => $xAxisLabel, 'y' => (int) $stats['oom']]]
+                'data' => [['x' => $xAxisLabel, 'y' => (int) $stats['oom']]],
             ],
             'manual restarts' => [
                 'color' => ChartColor::BLUE,
-                'data' => [['x' => $xAxisLabel, 'y' => (int) $stats['manual']]]
+                'data' => [['x' => $xAxisLabel, 'y' => (int) $stats['manual']]],
             ],
             'hash restarts' => [
                 'color' => ChartColor::ORANGE,
-                'data' => [['x' => $xAxisLabel, 'y' => (int) $stats['hash']]]
+                'data' => [['x' => $xAxisLabel, 'y' => (int) $stats['hash']]],
             ],
         ];
-        
+
         $chart = $this->createBarChart(
             datasets: $datasets,
             stacked: true,

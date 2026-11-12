@@ -185,5 +185,4 @@ class GroupRepository extends ServiceEntityRepository
             ->addOrderBy('g.name', 'ASC')
         ;
     }
-
 }

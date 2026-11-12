@@ -295,7 +295,7 @@ class Player implements EntityInterface
      */
     public function getMatchs(?Season $season = null): Collection
     {
-        $matchs = $this->matchParticipations->map(function(MatchParticipant $participant) {
+        $matchs = $this->matchParticipations->map(function (MatchParticipant $participant) {
             return $participant->getMatch();
         });
 
@@ -312,6 +312,7 @@ class Player implements EntityInterface
             if ($cmp !== 0) {
                 return $cmp;
             }
+
             // if dates are equal, compare by time
             return $a->startsAt() <=> $b->startsAt();
         });
@@ -322,12 +323,12 @@ class Player implements EntityInterface
     /**
      * Scheduled matchs
      * all: past and future
-     * 
+     *
      * @return Collection<int, InterfacMatch>
      */
     public function getScheduledMatchs(?Season $season = null): Collection
     {
-        return $this->getMatchs($season)->filter(function(InterfacMatch $match) {
+        return $this->getMatchs($season)->filter(function (InterfacMatch $match) {
             return $match->isScheduled();
         });
     }
@@ -344,12 +345,12 @@ class Player implements EntityInterface
 
     /**
      * Upcoming = scheduled + in future
-     * 
+     *
      * @return Collection<int, InterfacMatch>
      */
     public function getUpcomingMatchs(): Collection
     {
-        return $this->getMatchs()->filter(function(InterfacMatch $match) {
+        return $this->getMatchs()->filter(function (InterfacMatch $match) {
             return $match->isUpcoming();
         });
     }
@@ -361,14 +362,14 @@ class Player implements EntityInterface
      */
     public function getScheduledMatchsDates(?Season $season = null): Collection
     {
-        return $this->getScheduledMatchs($season)->map(function(InterfacMatch $match): Date {
+        return $this->getScheduledMatchs($season)->map(function (InterfacMatch $match): Date {
             return $match->getDate();
         });
     }
 
     /**
      * Not confirmed by user or admin
-     * 
+     *
      * @return Collection<int, InterfacMatch>
      */
     public function getUnconfirmedUpcomingMatchs(): Collection
@@ -380,7 +381,7 @@ class Player implements EntityInterface
 
     /**
      * Confirmed by user or by admin
-     * 
+     *
      * @return Collection<int, InterfacMatch>
      */
     public function getConfirmedUpcomingMatchs(): Collection

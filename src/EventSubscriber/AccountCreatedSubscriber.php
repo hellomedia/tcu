@@ -18,15 +18,16 @@ class AccountCreatedSubscriber implements EventSubscriberInterface
         private EntityManager $entityManager,
         private LoggerInterface $logger,
         private string $environment,
-    ) {}
+    ) {
+    }
 
     public static function getSubscribedEvents(): array
     {
         return [
             AccountCreatedEvent::NAME => [
                 ['performChecks', 10],
-                ['hashPassword', 9]
-            ]
+                ['hashPassword', 9],
+            ],
         ];
     }
 

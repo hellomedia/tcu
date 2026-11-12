@@ -135,7 +135,7 @@ final class PracticeForm extends AbstractType
     /**
      * Créneaux d'une date, libres ou déjà réservés par cet entraînement, plusieurs cochables
      *
-     * @param Slot[] $checked créneaux cochés à l'ouverture
+     * @param Slot[] $checked      créneaux cochés à l'ouverture
      * @param Slot[] $currentSlots créneaux actuels de l'entraînement ("Réservé")
      */
     private function addSlotsField(DynamicFormBuilder|DependentField $builder, Practice $practice, Date $date, array $checked, array $currentSlots): void

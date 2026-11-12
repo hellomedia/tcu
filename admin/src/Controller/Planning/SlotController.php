@@ -3,14 +3,14 @@
 namespace Admin\Controller\Planning;
 
 use Admin\Exception\InvalidWindowException;
-use App\Form\Handler\SlotBulkAddFormHandler;
-use App\Form\Handler\SlotBulkRemoveFormHandler;
 use App\Controller\BaseController;
 use App\Entity\Booking;
 use App\Entity\Group;
 use App\Entity\InterfacMatch;
 use App\Entity\Slot;
 use App\Enum\BookingType;
+use App\Form\Handler\SlotBulkAddFormHandler;
+use App\Form\Handler\SlotBulkRemoveFormHandler;
 use App\Form\SlotBookingForm;
 use App\Form\SlotBulkAddType;
 use App\Form\SlotBulkRemoveType;
@@ -34,9 +34,7 @@ class SlotController extends BaseController
     public function __construct(
         private SlotBulkAddFormHandler $formHandler,
         private EntityManager $entityManager,
-    )
-    {
-        
+    ) {
     }
 
     #[AdminRoute('/planning/slots', name: 'planning_slots')]
@@ -59,14 +57,11 @@ class SlotController extends BaseController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            
             try {
                 $slots = $this->formHandler->processForm($form);
 
                 $this->entityManager->flush();
-
             } catch (InvalidWindowException $exception) {
-
                 $this->addFlash('danger', $exception->getMessage());
 
                 return $this->redirectToRoute('admin_planning_slot_bulk_add', [
@@ -129,9 +124,7 @@ class SlotController extends BaseController
 
         /* isClicked() avoids submitting when updating dependent field */
         if ($submitBtn->isClicked() && $form->isSubmitted() && $form->isValid()) {
-
             if ($form->get('match')->getData() == null) {
-
                 $form->get('match')->addError(new FormError('Veuillez sélectionner un match'));
 
                 if ($request->query->get('modal')) {
@@ -210,7 +203,7 @@ class SlotController extends BaseController
     #[IsCsrfTokenValid('delete-booking', tokenKey: 'token')]
     #[Route('/planning/slot/{id:slot}/remove-booking', name: 'admin_planning_slot_remove_booking', methods: ['POST'])]
     public function removeBooking(Slot $slot, Request $request): Response
-    {        
+    {
         $booking = $slot->getBooking();
         $match = $booking->getMatch();
 

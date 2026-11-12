@@ -7,7 +7,6 @@ use App\Repository\SlotRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-
 use Symfony\Bridge\Doctrine\Validator\Constraints;
 
 #[ORM\Entity(repositoryClass: SlotRepository::class)]
@@ -23,7 +22,7 @@ class Slot implements EntityInterface
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'slots')]
-    #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]  // <- DB will delete slots when Date is deleted
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')] // <- DB will delete slots when Date is deleted
     private ?Date $date = null;
 
     #[ORM\Column(type: Types::TIME_IMMUTABLE)]
@@ -33,7 +32,7 @@ class Slot implements EntityInterface
     private ?\DateTimeImmutable $endsAt = null;
 
     #[ORM\ManyToOne]
-    #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")] // <- DB will delete slots when Court is deleted
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')] // <- DB will delete slots when Court is deleted
     private ?Court $court = null;
 
     #[ORM\OneToOne(mappedBy: 'slot')]
@@ -46,7 +45,7 @@ class Slot implements EntityInterface
 
     public function getTimeRange()
     {
-        return $this->startsAt->format('H:i'). '-' . $this->endsAt->format('H:i');
+        return $this->startsAt->format('H:i') . '-' . $this->endsAt->format('H:i');
     }
 
     public function getId(): ?int
@@ -111,7 +110,7 @@ class Slot implements EntityInterface
     {
         if ($booking == null) {
             $this->booking = null;
-            
+
             return $this;
         }
 

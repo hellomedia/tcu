@@ -35,9 +35,9 @@ class BookingCrudController extends AbstractCrudController
             ->hideOnForm();
 
         yield AssociationField::new('slot', 'Créneau horaire');
-        
+
         yield ChoiceField::new('type', 'Type');
-        
+
         yield AssociationField::new('match', 'Match')
             ->hideOnForm();
 

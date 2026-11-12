@@ -49,6 +49,7 @@ class ChangeUserEmailCommand extends Command
 
         if (!$newEmail) {
             $io->error('New email is required');
+
             return Command::FAILURE;
         }
 

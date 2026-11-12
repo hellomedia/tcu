@@ -17,15 +17,14 @@ class BookingController extends BaseController
 {
     public function __construct(
         private EntityManager $entityManager,
-    )
-    { 
+    ) {
     }
 
     /**
      * Add a match booking from scratch
      * -- Creates a match too --
      * For adding a booking for an existing match, see MatchController::addBooking()
-     * 
+     *
      * STATUS: buggy, unused
      */
     #[AdminRoute('/booking/add-match-booking/{date}/{court}', name: 'match_booking_add')]
@@ -35,9 +34,8 @@ class BookingController extends BaseController
         ?Court $court = null,
         #[MapEntity(mapping: ['date' => 'id'])]
         ?Date $date = null,
-    ): Response
-    {
-        $match = new InterfacMatch();        
+    ): Response {
+        $match = new InterfacMatch();
 
         $form = $this->createForm(MatchType::class, $match, [
             'court' => $court,
@@ -47,7 +45,6 @@ class BookingController extends BaseController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            
             $this->entityManager->persist($match->getBooking()); // persist the new booking too
             $this->entityManager->persist($match);
 

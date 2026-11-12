@@ -3,9 +3,9 @@
 namespace Pack\Security;
 
 use App\Entity\User;
-use Pack\Security\Exception\EmailAlreadyVerifiedException;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManager;
+use Pack\Security\Exception\EmailAlreadyVerifiedException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use SymfonyCasts\Bundle\VerifyEmail\Exception\VerifyEmailExceptionInterface;
@@ -17,7 +17,8 @@ class EmailVerifier
         private VerifyEmailHelperInterface $verifyEmailHelper,
         private EntityManager $entityManager,
         private UserRepository $userRepository,
-    ) {}
+    ) {
+    }
 
     public function getSignedUrl(User $user, string $route = 'verify_email'): string
     {

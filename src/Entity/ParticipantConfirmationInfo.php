@@ -59,7 +59,6 @@ class ParticipantConfirmationInfo
     #[ORM\Column(nullable: true)]
     private ?\DateTimeImmutable $remindedAt = null;
 
-
     public function getId(): ?int
     {
         return $this->id;

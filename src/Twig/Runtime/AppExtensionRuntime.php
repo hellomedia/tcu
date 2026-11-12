@@ -19,7 +19,8 @@ class AppExtensionRuntime implements RuntimeExtensionInterface
     public function __construct(
         private RequestStack $requestStack,
         private BreadcrumbsHelper $breadcrumbsHelper,
-    ) {}
+    ) {
+    }
 
     /**
      * Name of the page = last breadcrumb (heading of the account pages, which have no breadcrumbs)

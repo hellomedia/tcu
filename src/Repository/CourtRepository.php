@@ -21,7 +21,7 @@ class CourtRepository extends ServiceEntityRepository
         return parent::findBy(criteria: [], orderBy: [
             'name' => 'ASC',
         ]);
-    } 
+    }
 
     //    /**
     //     * @return Court[] Returns an array of Court objects

@@ -21,8 +21,8 @@ class ChangePasswordForm extends AbstractType
             ->add('email', EmailType::class, [
                 'attr' => ['autocomplete' => 'username'],
                 'row_attr' => [
-                    'style' => "display:none;",
-                ]
+                    'style' => 'display:none;',
+                ],
             ])
             ->add('plainPassword', PasswordType::class, [
                 'mapped' => false,
@@ -44,7 +44,7 @@ class ChangePasswordForm extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => User::class
+            'data_class' => User::class,
         ]);
     }
 }

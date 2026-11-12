@@ -26,7 +26,7 @@ class AddAdminUserCommand extends Command
         $io = new SymfonyStyle($input, $output);
 
         $io->warning('This will create an admin user');
-        
+
         $email = $io->ask('Enter the email: ');
 
         if (!$email) {

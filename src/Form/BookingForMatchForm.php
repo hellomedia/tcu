@@ -3,9 +3,9 @@
 namespace App\Form;
 
 use App\Entity\Booking;
-use App\Entity\Slot;
 use App\Entity\Date;
 use App\Entity\Player;
+use App\Entity\Slot;
 use App\Repository\DateRepository;
 use App\Repository\SlotRepository;
 use App\Service\AvailabilityGrid;
@@ -63,7 +63,7 @@ final class BookingForMatchForm extends AbstractType
             },
         ]);
 
-        $builder->addDependent('slot', 'date', function(DependentField $field, ?Date $selectedDate) use ($currentSlot) {
+        $builder->addDependent('slot', 'date', function (DependentField $field, ?Date $selectedDate) use ($currentSlot) {
             if ($selectedDate === null) {
                 return;
             }

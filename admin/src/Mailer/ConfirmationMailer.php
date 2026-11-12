@@ -10,7 +10,6 @@ use App\Entity\Season;
 use App\Mailer\BaseMailer;
 use App\Service\MatchNotifications;
 use Symfony\Bridge\Twig\Mime\TemplatedEmail;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 /**
  * Emails aux joueurs sur leurs matchs d'interfacs. Toujours déclenchés par l'admin, jamais automatiques.

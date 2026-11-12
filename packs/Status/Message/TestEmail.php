@@ -12,8 +12,7 @@ final class TestEmail implements LowPriorityMessageInterface
     public function __construct(
         private string $recipient,
         private string $subject,
-    )
-    {
+    ) {
     }
 
     public function getRecipient(): string

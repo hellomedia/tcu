@@ -8,7 +8,6 @@ use App\Entity\ParticipantConfirmationInfo;
 use App\Repository\InterfacMatchRepository;
 use App\Repository\PlayerRepository;
 use App\Service\SeasonContext;
-use DateTimeImmutable;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -54,9 +53,9 @@ class MatchController extends BaseController
             $entityManager->persist($confirmationInfo);
             $participant->setConfirmationInfo($confirmationInfo);
         }
-        
+
         $confirmationInfo->setIsConfirmedByPlayer(true);
-        $confirmationInfo->setConfirmedByPlayerAt(new DateTimeImmutable());
+        $confirmationInfo->setConfirmedByPlayerAt(new \DateTimeImmutable());
 
         $entityManager->flush();
 
@@ -66,6 +65,5 @@ class MatchController extends BaseController
             'feedback' => $feedback,
             'match' => $match,
         ]);
-
     }
 }

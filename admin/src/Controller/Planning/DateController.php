@@ -20,8 +20,7 @@ class DateController extends BaseController
 {
     public function __construct(
         private EntityManager $entityManager,
-    )
-    {
+    ) {
     }
 
     #[IsCsrfTokenValid('delete-date', tokenKey: 'token')]
@@ -45,19 +44,17 @@ class DateController extends BaseController
     public function addSlots(Date $date, Request $request, SlotBulkAddFormHandler $handler): Response
     {
         $form = $this->createForm(SlotBulkAddType::class, options: [
-            'date' => $date
+            'date' => $date,
         ]);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
             try {
                 $slots = $handler->processForm($form);
 
                 $this->entityManager->flush();
             } catch (InvalidWindowException $exception) {
-
                 $this->addFlash('danger', $exception->getMessage());
 
                 return $this->redirectToRoute('@admin/date/add_slots.html.twig', [
@@ -78,11 +75,12 @@ class DateController extends BaseController
             'date' => $date,
         ]);
     }
+
     #[AdminRoute('/planning/date/{id:date}/remove-slots', name: 'planning_date_remove_slots')]
     public function removeSlots(Date $date, Request $request, SlotBulkRemoveFormHandler $handler): Response
     {
         $form = $this->createForm(SlotBulkRemoveType::class, options: [
-            'date' => $date
+            'date' => $date,
         ]);
 
         $form->handleRequest($request);

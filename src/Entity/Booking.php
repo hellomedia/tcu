@@ -16,7 +16,7 @@ class Booking implements EntityInterface
     private ?int $id = null;
 
     #[ORM\OneToOne(inversedBy: 'booking')]
-    #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]  // <- DB will delete bookings when Slot is deleted
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')] // <- DB will delete bookings when Slot is deleted
     private ?Slot $slot = null;
 
     #[ORM\Column(enumType: BookingType::class)]

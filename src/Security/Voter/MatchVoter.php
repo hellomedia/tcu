@@ -16,7 +16,8 @@ final class MatchVoter extends Voter
 
     public function __construct(
         private AccessDecisionManagerInterface $accessDecisionManager,
-    ) {}
+    ) {
+    }
 
     protected function supports(string $attribute, mixed $subject): bool
     {
@@ -52,7 +53,7 @@ final class MatchVoter extends Voter
 
         return match ($attribute) {
             self::EDIT => $this->canEdit($match, $user),
-            default => throw new \LogicException('This code should not be reached!')
+            default => throw new \LogicException('This code should not be reached!'),
         };
     }
 

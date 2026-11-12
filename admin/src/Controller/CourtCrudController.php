@@ -22,7 +22,7 @@ class CourtCrudController extends AbstractCrudController
             ->setEntityLabelInSingular('Terrain')
             ->setEntityLabelInPlural('Terrains')
             ->setDefaultSort([
-                'name' => 'ASC'
+                'name' => 'ASC',
             ])
         ;
     }

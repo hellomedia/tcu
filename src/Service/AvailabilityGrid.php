@@ -324,6 +324,7 @@ class AvailabilityGrid
 
         return $submitted;
     }
+
     /**
      * Charge d'un coup les réponses de tous les inscrits de la saison (modales de planning)
      */

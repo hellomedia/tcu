@@ -2,18 +2,17 @@
 
 namespace Pack\Status\Entity;
 
-use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
  * TestMessageLog is a entity for logging when TestMessage messages are processed in the queue,
- * 
+ *
  * In Status\Controller\MessengerCheckController, pinged by uptime robot,
  *    we create a new TestMessage and send it to the queue.
  *    When TestMessage is processed in TestMessageHandler, the older TestMessageLog is updated and becomes the newest.
  *    Data of the latest TestMessageLog is then used to check if the queue is consumed normally.
- * 
+ *
  * NB: We only need the latest TestMessageLog. We keep 10 TestMessageLogs for good measure.
  */
 #[ORM\Table(name: 'test_message_log')]
@@ -29,10 +28,10 @@ class TestMessageLog
     private ?string $messageId = null;
 
     #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE, nullable: true)]
-    private ?DateTimeImmutable $messageCreatedAt = null;
+    private ?\DateTimeImmutable $messageCreatedAt = null;
 
     #[ORM\Column(type: Types::DATETIMETZ_IMMUTABLE, nullable: true)]
-    private ?DateTimeImmutable $messageProcessedAt = null;
+    private ?\DateTimeImmutable $messageProcessedAt = null;
 
     public function getId()
     {
@@ -49,22 +48,22 @@ class TestMessageLog
         return $this->messageId;
     }
 
-    public function setMessageCreatedAt(DateTimeImmutable $messageCreatedAt): void
+    public function setMessageCreatedAt(\DateTimeImmutable $messageCreatedAt): void
     {
         $this->messageCreatedAt = $messageCreatedAt;
     }
 
-    public function getMessageCreatedAt(): ?DateTimeImmutable
+    public function getMessageCreatedAt(): ?\DateTimeImmutable
     {
         return $this->messageCreatedAt;
     }
 
-    public function setMessageProcessedAt(DateTimeImmutable $messageProcessedAt): void
+    public function setMessageProcessedAt(\DateTimeImmutable $messageProcessedAt): void
     {
         $this->messageProcessedAt = $messageProcessedAt;
     }
 
-    public function getMessageProcessedAt(): ?DateTimeImmutable
+    public function getMessageProcessedAt(): ?\DateTimeImmutable
     {
         return $this->messageProcessedAt;
     }

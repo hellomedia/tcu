@@ -17,20 +17,19 @@ use App\Form\Model\MatchConfirmationInfo;
 use App\Repository\ParticipantConfirmationInfoRepository;
 use Doctrine\ORM\EntityManager;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
+use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\Form\ClickableInterface;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use Symfony\Component\Security\Http\Attribute\IsCsrfTokenValid;
 
 class MatchController extends BaseController
 {
     public function __construct(
         private EntityManager $entityManager,
-    )
-    { 
+    ) {
     }
 
     /**
@@ -57,7 +56,6 @@ class MatchController extends BaseController
 
         /* isClicked() avoids submitting when updating dependent field */
         if ($submitBtn->isClicked() && $form->isSubmitted() && $form->isValid()) {
-
             if ($form->get('slot')->getData() == null) {
                 $form->get('slot')->addError(new FormError('Veuillez sélectionner un créneau'));
 
@@ -116,7 +114,6 @@ class MatchController extends BaseController
 
         /* isClicked() avoids submitting when updating dependent field */
         if ($submitBtn->isClicked() && $form->isSubmitted() && $form->isValid()) {
-
             $newSlot = $booking->getSlot();
 
             if ($newSlot === null) {
@@ -264,7 +261,6 @@ class MatchController extends BaseController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
             $this->entityManager->persist($result);
             $this->entityManager->flush();
 
@@ -273,14 +269,15 @@ class MatchController extends BaseController
             if ($request->query->get('modal')) {
                 // sync reverse side
                 $match->setResult($result);
+
                 return $this->render('@admin/match/modal/add_result_success.html.twig', [
                     'feedback' => $feedback,
                     'slot' => $match->getSlot(),
                 ]);
             }
-            
+
             $this->addFlash('success', $feedback);
-        
+
             return $this->redirectToRoute('admin_planning');
         }
 
@@ -345,12 +342,10 @@ class MatchController extends BaseController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
             $admin = $this->getUser();
-            $now  = new \DateTimeImmutable();
+            $now = new \DateTimeImmutable();
 
             foreach ($dto->getInfos() as $index => $info) {
-
                 \assert($info instanceof ParticipantConfirmationInfo);
 
                 // form value
@@ -360,7 +355,7 @@ class MatchController extends BaseController
                 // initial value
                 $oid = spl_object_id($info);
                 $initial = $wasConfirmedByAdmin[$oid] ?? false;
-                    
+
                 if (!$initial && $new) { // changed from false to true
                     $info->setIsConfirmedByAdmin(true);
                     $info->setAdmin($admin);
@@ -370,8 +365,6 @@ class MatchController extends BaseController
                     $info->setAdmin(null);
                     $info->setConfirmedByAdminAt(null);
                 }
-
-    
             }
 
             $this->entityManager->flush();
@@ -379,15 +372,14 @@ class MatchController extends BaseController
             $feedback = '';
 
             if ($request->query->get('modal')) {
-
                 return $this->render('@admin/match/modal/confirmation_info_success.html.twig', [
                     'feedback' => $feedback,
                     'slot' => $match->getSlot(),
                 ]);
             }
-            
+
             $this->addFlash('success', $feedback);
-        
+
             return $this->redirectToRoute('admin_planning');
         }
 

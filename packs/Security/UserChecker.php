@@ -15,8 +15,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * User checker performs checks (disabled, locked...) pre-auth and post-auth
  * to see if user is allowed to login,
  * in addition to the cheks from the Authenticator, which only checks if :
-  * - user exists
-  * - login credentials are good
+ * - user exists
+ * - login credentials are good
  * https://symfony.com/doc/current/security/user_checkers.html.
  */
 class UserChecker implements UserCheckerInterface

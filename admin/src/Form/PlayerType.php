@@ -48,14 +48,14 @@ class PlayerType extends AbstractType
             ->add('gender', EnumType::class, [
                 'label' => 'H/F',
                 'class' => Gender::class,
-                'choice_label' => fn(Gender $gender) => $gender->value,
+                'choice_label' => fn (Gender $gender) => $gender->value,
                 'placeholder' => '',
                 'constraints' => [new NotNull()],
             ])
             ->add('birthyear', EnumType::class, [
                 'label' => 'Année de naissance',
                 'class' => Birthyear::class,
-                'choice_label' => fn(Birthyear $birthyear) => $birthyear->value,
+                'choice_label' => fn (Birthyear $birthyear) => $birthyear->value,
                 'placeholder' => '',
                 'required' => false,
             ])

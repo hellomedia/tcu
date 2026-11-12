@@ -2,9 +2,6 @@
 
 namespace App\Controller;
 
-use App\Repository\CourtRepository;
-use App\Repository\DateRepository;
-use App\Repository\GroupRepository;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -15,7 +12,7 @@ class PracticalInfosController extends BaseController
     {
         $this->addBreadcrumb('Homepage', 'homepage');
         $this->addBreadcrumb('Infos pratiques', 'practical_infos');
-        
+
         return $this->render('practical_infos/practical_infos.html.twig', []);
     }
 

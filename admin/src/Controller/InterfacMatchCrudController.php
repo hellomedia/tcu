@@ -8,7 +8,6 @@ use App\Entity\InterfacMatch;
 use App\Entity\Player;
 use App\Enum\MatchFormat;
 use App\Enum\Side;
-use Closure;
 use Doctrine\ORM\EntityRepository;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
@@ -71,8 +70,8 @@ class InterfacMatchCrudController extends AbstractCrudController
                 'attr' => [
                     'data-action' => 'change->match-format#update',
                 ],
-        ]);
-        
+            ]);
+
         yield AssociationField::new('participants', 'Joueurs')
             ->hideOnForm()
             ->setFormTypeOption('by_reference', false)
@@ -96,7 +95,7 @@ class InterfacMatchCrudController extends AbstractCrudController
                 'autocomplete' => true,
                 'multiple' => false,
             ]);
-        
+
         // visible if doubles
         yield Field::new('playerA2', 'Joueur A #2')
             ->onlyOnForms()
@@ -133,7 +132,7 @@ class InterfacMatchCrudController extends AbstractCrudController
                 'autocomplete' => true,
                 'multiple' => false,
                 'row_attr' => ['data-match-format-target' => 'doublesOnly'],
-        ]);
+            ]);
 
         yield FormField::addFieldset('Programmation')
             ->hideOnForm();
@@ -185,13 +184,12 @@ class InterfacMatchCrudController extends AbstractCrudController
     /**
      * Convert chosen players into MatchParticipant rows
      */
-    private function postSubmitListener(): Closure
+    private function postSubmitListener(): \Closure
     {
         return function (FormEvent $event) {
-
             /** @var InterfacMatch $match */
             $match = $event->getData();
-            $form  = $event->getForm();
+            $form = $event->getForm();
 
             $format = $match->getFormat();
 
@@ -204,13 +202,14 @@ class InterfacMatchCrudController extends AbstractCrudController
             $players = array_filter([$a1, $a2, $b1, $b2]);
             if (count($players) !== count(array_unique($players, \SORT_REGULAR))) {
                 $form->addError(new FormError('Un joueur ne peut pas apparaître 2 fois.'));
+
                 return;
             }
 
             if ($format === MatchFormat::SINGLES) {
-
                 if (!$a1 || !$b1) {
                     $form->addError(new FormError('Un simple doit avoir 2 joueurs.'));
+
                     return;
                 }
                 if ($a2 || $b2) {
@@ -222,9 +221,9 @@ class InterfacMatchCrudController extends AbstractCrudController
             }
 
             if ($format == MatchFormat::DOUBLES) {
-
                 if (!$a1 || !$a2 || !$b1 || !$b2) {
                     $form->addError(new FormError('Un double doit avoir 2 joueurs par équipe.'));
+
                     return;
                 }
                 $match->replaceParticipantsForSide(Side::A, $a1, $a2);

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Translation;
 
 use Symfony\Component\Translation\TranslatableMessage as SymfonyTranslatableMessage;
@@ -19,5 +20,4 @@ use Symfony\Component\Translation\TranslatableMessage as SymfonyTranslatableMess
  */
 class TranslatableMessage extends SymfonyTranslatableMessage
 {
-
 }

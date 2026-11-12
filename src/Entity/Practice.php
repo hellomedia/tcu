@@ -577,7 +577,7 @@ class Practice implements EntityInterface
         $count = 0;
         foreach ($this->participants as $participant) {
             if ($participant->isEmailSent()) {
-                $count++;
+                ++$count;
             }
         }
 

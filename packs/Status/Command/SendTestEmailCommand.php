@@ -26,14 +26,14 @@ class SendTestEmailCommand extends Command
     {
         $io = new SymfonyStyle($input, $output);
 
-        // send a messenger message that sends an email in the queue 
+        // send a messenger message that sends an email in the queue
         $this->bus->dispatch(new TestEmail(
             recipient: 'nicolas.sauveur@gmail.com',
             subject: 'test messenger queue',
         ));
 
         $io->success('message sent to the queue');
-           
+
         return Command::SUCCESS;
     }
 }

@@ -19,8 +19,7 @@ class SlotBulkRemoveFormHandler
         private SlotRepository $slotRepository,
         private EntityManager $entityManager,
         private RequestStack $requestStack,
-    )
-    {
+    ) {
     }
 
     /**

@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace App\Helper;
 
@@ -8,8 +8,7 @@ class BreadcrumbsHelper
 {
     public function __construct(
         private RequestStack $requestStack,
-    )
-    {
+    ) {
     }
 
     private array $breadcrumbs = [];

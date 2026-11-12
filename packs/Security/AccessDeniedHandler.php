@@ -13,9 +13,8 @@ use Twig\Environment;
 class AccessDeniedHandler implements AccessDeniedHandlerInterface
 {
     public function __construct(
-        private Environment $twig
-    )
-    {
+        private Environment $twig,
+    ) {
     }
 
     public function handle(Request $request, AccessDeniedException $accessDeniedException): ?Response
@@ -24,7 +23,7 @@ class AccessDeniedHandler implements AccessDeniedHandlerInterface
             message: 'access_denied.title',
             domain: 'security',
         );
-    
+
         $message = new TranslatableHtmlMessage(
             message: 'access_denied.message',
             domain: 'security',
@@ -33,7 +32,7 @@ class AccessDeniedHandler implements AccessDeniedHandlerInterface
         return new Response(
             content: $this->twig->render('@security/exception/error403.html.twig', [
                 'title' => $title,
-                'message' => $message
+                'message' => $message,
             ]),
             status: 403
         );

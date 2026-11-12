@@ -13,8 +13,7 @@ class AvailableAccountEmailValidator extends ConstraintValidator
 {
     public function __construct(
         private UserRepository $userRepository,
-    )
-    {
+    ) {
     }
 
     public function validate(mixed $value, Constraint $constraint): void

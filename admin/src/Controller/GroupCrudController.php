@@ -24,9 +24,7 @@ class GroupCrudController extends AbstractCrudController
         private UrlGeneratorInterface $urlGenerator,
         private SeasonContext $seasonContext,
         private GroupRepository $groupRepository,
-    )
-    {
-
+    ) {
     }
 
     public static function getEntityFqcn(): string
@@ -85,7 +83,7 @@ class GroupCrudController extends AbstractCrudController
             ->setTemplatePath('@admin/field/players.html.twig')
             ->hideOnDetail()
         ;
-    
+
         yield AssociationField::new('players', 'Joueurs')
             ->onlyOnDetail()
             ->setTemplatePath('@admin/field/detail/players.html.twig')

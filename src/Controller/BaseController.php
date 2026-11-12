@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Line below gives correct return type for this->getUser() and allows autocompletion
+ *
  * @method User getUser()
  */
 abstract class BaseController extends AbstractController
@@ -20,23 +21,24 @@ abstract class BaseController extends AbstractController
      * AbstractController::getSubscribedServices().
      * Additional services must be injected here.
      * NB: We try to keep those to a minimum
-     * 
-     * This parent constructor is called when the child is instantiated 
+     *
+     * This parent constructor is called when the child is instantiated
      * EXCEPT IF the child has its own constructor.
      * If that is the case and we need this constructor to be called,
      * it must be called explicitely with parent::__construct()
      * https://www.php.net/manual/en/language.oop5.decon.php
      * NB: The parent of this class has no constructor
-     * 
+     *
      * ==> If controller needs to access the BaseController properties
      * ie: $this->breadcrumb and $this->siteProvider,
      * call parent::__constuct() from the child constructor -- when defined.
-     * Otherwise, an error is thrown when trying to access a property 
+     * Otherwise, an error is thrown when trying to access a property
      * that should have been initialized in the constructor.
      */
     public function __construct(
         protected BreadcrumbsHelper $breadcrumbsHelper,
-    ) {}
+    ) {
+    }
 
     protected function addBreadcrumb(mixed $item, $route = null, $routeParams = [], ?bool $isAdmin = null)
     {
@@ -72,14 +74,14 @@ abstract class BaseController extends AbstractController
     /**
      * 'Accept' header can be added by turbo in unexepected situations
      * So we add a custom header 'X-Turbo-Stream-Request' and check it here
-     * 
+     *
      * NB: If we return a stream when turbo expects a full page,
      * a redirect after form submission fails silently
      */
     protected function isRequestForStream(Request $request): bool
     {
-        return 
-            str_contains($request->headers->get('Accept', ''), 'text/vnd.turbo-stream.html') &&
-            $request->headers->has('X-Turbo-Stream-Request');
+        return
+            str_contains($request->headers->get('Accept', ''), 'text/vnd.turbo-stream.html')
+            && $request->headers->has('X-Turbo-Stream-Request');
     }
 }

@@ -7,7 +7,6 @@ use App\Entity\Date;
 use App\Entity\Group;
 use App\Entity\Season;
 use App\Entity\Slot;
-use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\QueryBuilder;
@@ -24,10 +23,10 @@ class DateRepository extends ServiceEntityRepository
     }
 
     /**
-    * @param int $daysBefore also the dates of the last days (ex: 1 = yesterday too)
-    *
-    * @return Date[] Returns an array of Date objects
-    */
+     * @param int $daysBefore also the dates of the last days (ex: 1 = yesterday too)
+     *
+     * @return Date[] Returns an array of Date objects
+     */
     public function findFutureDates(int $daysBefore = 0): array
     {
         return $this->withMatchs($this->createQueryBuilder('d'))
@@ -40,11 +39,11 @@ class DateRepository extends ServiceEntityRepository
     }
 
     /**
-    * Les dates ne sont pas liées à une saison (les saisons peuvent se chevaucher) :
-    * on se limite aux dates comprises dans la période de la saison
-    *
-    * @return Date[] Returns an array of Date objects
-    */
+     * Les dates ne sont pas liées à une saison (les saisons peuvent se chevaucher) :
+     * on se limite aux dates comprises dans la période de la saison
+     *
+     * @return Date[] Returns an array of Date objects
+     */
     public function findPastDates(?Season $season = null): array
     {
         $qb = $this->withMatchs($this->createQueryBuilder('d'))
@@ -126,8 +125,8 @@ class DateRepository extends ServiceEntityRepository
     }
 
     /**
-    * @return Date[] Returns an array of Date objects
-    */
+     * @return Date[] Returns an array of Date objects
+     */
     public function findFutureDatesWithAvailableSlots(): array
     {
         return $this->getFutureDatesWithAvailableSlotsQueryBuilder()
@@ -138,7 +137,7 @@ class DateRepository extends ServiceEntityRepository
 
     /**
      * @param Date|null $includeDate date always listed, even without free slot
-     *                                (date of the booking being moved)
+     *                               (date of the booking being moved)
      *
      * Subqueries on purpose, no fetch join: selecting only the free slots would
      * hydrate a partial Date::$slots collection, and a later query on the same dates
@@ -165,10 +164,9 @@ class DateRepository extends ServiceEntityRepository
         return $qb;
     }
 
-
     /**
      * @return Date[] Returns an array of Date objects*
-     * 
+     *
      * UNUSED BECAUSE OF HEAVY LIMITATIONS
      * Using this results in a large number of extra queries (100+)
      * SEE COMMENTS below.
@@ -176,9 +174,9 @@ class DateRepository extends ServiceEntityRepository
      */
     public function findDatesByGroup(Group $group): array
     {
-        // ******** IMPORTANT LIMITATION ********* 
+        // ******** IMPORTANT LIMITATION *********
         // DO NOT SELECT slots, bookings and matches
-        // Or else, only the matches for the first group queried 
+        // Or else, only the matches for the first group queried
         // are hydrated in the date.
         // When the same date entity is seen by doctrine in another query,
         // it reuses the cached entity.
@@ -186,7 +184,7 @@ class DateRepository extends ServiceEntityRepository
         // slots, bookings and matches will be the ones from the first query.
         // If we don't select the slots/bookings/matches in the query
         // date.matches is a proxy object.
-        // date.matchsByGroup(group) triggers a query on matches, which returns **all the matchs**. 
+        // date.matchsByGroup(group) triggers a query on matches, which returns **all the matchs**.
         // Date::matches now contains all the matchs and date.matchsByGroup(group)
         // returns the expected matches for each group.
         return $this->createQueryBuilder('d')
@@ -203,7 +201,7 @@ class DateRepository extends ServiceEntityRepository
 
     /**
      * Fix for limitation above
-     * 
+     *
      * 1) Use FindDatesByGroups(). It hydrates everything with full data.
      * 2) Use Date::hasMatchFromGroup() and Date::getMatchsByGroup() to filter
      *
@@ -262,11 +260,13 @@ class DateRepository extends ServiceEntityRepository
     {
         // Normalize & de-dup to strict Y-m-d
         $dates = array_map(
-            fn(string $s) => (new \DateTimeImmutable($s))->format('Y-m-d'),
+            fn (string $s) => (new \DateTimeImmutable($s))->format('Y-m-d'),
             $ymds
         );
         $dates = array_values(array_unique($dates));
-        if (!$dates) return [];
+        if (!$dates) {
+            return [];
+        }
 
         // Boundaries via lexicographic sort (valid for Y-m-d)
         sort($dates);
@@ -293,7 +293,6 @@ class DateRepository extends ServiceEntityRepository
 
         return $matching;
     }
-
 
     //    public function findOneBySomeField($value): ?Date
     //    {

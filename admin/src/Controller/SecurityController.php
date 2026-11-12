@@ -3,7 +3,6 @@
 namespace Admin\Controller;
 
 use App\Controller\BaseController;
-
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
@@ -31,7 +30,7 @@ class SecurityController extends BaseController
             // rendering the login template in a regular Symfony controller; when
             // rendering it from an EasyAdmin Dashboard this is automatically set to
             // the same domain as the rest of the Dashboard)
-            //'translation_domain' => 'admin',
+            // 'translation_domain' => 'admin',
 
             // by default EasyAdmin displays a black square as its default favicon;
             // use this method to display a custom favicon: the given path is passed
@@ -52,13 +51,13 @@ class SecurityController extends BaseController
             'target_path' => $this->generateUrl('admin'),
 
             // the label displayed for the username form field (the |trans filter is applied to it)
-            //'username_label' => 'Your username',
+            // 'username_label' => 'Your username',
 
             // the label displayed for the password form field (the |trans filter is applied to it)
-            //'password_label' => 'Your password',
+            // 'password_label' => 'Your password',
 
             // the label displayed for the Sign In form button (the |trans filter is applied to it)
-            //'sign_in_label' => 'Log in',
+            // 'sign_in_label' => 'Log in',
 
             // the 'name' HTML attribute of the <input> used for the username field (default: '_username')
             // 'username_parameter' => 'my_custom_username_field',

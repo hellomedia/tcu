@@ -22,7 +22,7 @@ class DateCrudController extends AbstractCrudController
             ->setEntityLabelInSingular('Date')
             ->setEntityLabelInPlural('Dates')
             ->setDefaultSort([
-                'date' => 'ASC'
+                'date' => 'ASC',
             ])
         ;
     }

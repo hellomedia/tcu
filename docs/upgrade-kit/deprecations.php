@@ -14,7 +14,6 @@
  *   grep "User Deprecated" var/log/dev.log
  * Some only appear on a COLD cache (e.g. Doctrine proxy generation): rm -rf var/cache first.
  */
-
 $countOnly = in_array('--count', $argv, true);
 $files = [];
 $it = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(getcwd() . '/var/cache', FilesystemIterator::SKIP_DOTS));

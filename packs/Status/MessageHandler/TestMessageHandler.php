@@ -2,17 +2,16 @@
 
 namespace Pack\Status\MessageHandler;
 
+use Doctrine\ORM\EntityManager;
 use Pack\Status\Entity\TestMessageLog;
 use Pack\Status\Message\TestMessage;
-use DateTimeImmutable;
-use Doctrine\ORM\EntityManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Attribute\Target;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 
 /**
  * Tests if messages in the queue are being consumed,
- * in a way that can be monitored automatically 
+ * in a way that can be monitored automatically
  * ie: we create or update TestMessageLogs - which can then be checked.
  * See MessengerCheckController::checkConsumer()
  */
@@ -23,8 +22,7 @@ final class TestMessageHandler
         private EntityManager $entityManager,
         #[Target('messenger_audit')]
         private LoggerInterface $messengerAuditLogger,
-    )
-    {
+    ) {
     }
 
     public function __invoke(TestMessage $message)
@@ -37,7 +35,6 @@ final class TestMessageHandler
         // if there already are 10 testMessageLogs, update oldest one
         // NB: we keep 10 testMessageLogs for good measure
         if (\count($testMessageLogs) >= 10) {
-
             // update oldest TestMessageLog
             $testMessageLog = $testMessageLogs[0];
 
@@ -45,7 +42,7 @@ final class TestMessageHandler
 
             $testMessageLog->setMessageId($message->getId());
             $testMessageLog->setMessageCreatedAt($message->getCreatedAt());
-            $testMessageLog->setMessageProcessedAt(new DateTimeImmutable());
+            $testMessageLog->setMessageProcessedAt(new \DateTimeImmutable());
 
             $this->entityManager->flush();
 
@@ -58,7 +55,7 @@ final class TestMessageHandler
 
         $testMessageLog->setMessageId($message->getId());
         $testMessageLog->setMessageCreatedAt($message->getCreatedAt());
-        $testMessageLog->setMessageProcessedAt(new DateTimeImmutable());
+        $testMessageLog->setMessageProcessedAt(new \DateTimeImmutable());
 
         $this->entityManager->persist($testMessageLog);
         $this->entityManager->flush();

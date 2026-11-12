@@ -2,10 +2,10 @@
 
 namespace App\Form;
 
-use App\Entity\InterfacMatch;
 use App\Entity\Booking;
 use App\Entity\Date;
 use App\Entity\Group;
+use App\Entity\InterfacMatch;
 use App\Entity\Player;
 use App\Entity\Slot;
 use App\Enum\Side;
@@ -78,7 +78,7 @@ final class SlotBookingForm extends AbstractType
             },
         ]);
 
-        $builder->addDependent('match', 'group', function(DependentField $field, ?Group $selectedGroup) use ($slot) {
+        $builder->addDependent('match', 'group', function (DependentField $field, ?Group $selectedGroup) use ($slot) {
             if ($selectedGroup === null) {
                 return;
             }
@@ -186,8 +186,7 @@ final class SlotBookingForm extends AbstractType
         $rank = [AvailabilityGrid::YES => 0, AvailabilityGrid::UNKNOWN => 1, AvailabilityGrid::NO => 2];
         $children = $view['match']->children;
 
-        uasort($children, fn (FormView $a, FormView $b) =>
-            ($rank[$a->vars['extra']['availability'] ?? 'unknown'] ?? 1) <=> ($rank[$b->vars['extra']['availability'] ?? 'unknown'] ?? 1)
+        uasort($children, fn (FormView $a, FormView $b) => ($rank[$a->vars['extra']['availability'] ?? 'unknown'] ?? 1) <=> ($rank[$b->vars['extra']['availability'] ?? 'unknown'] ?? 1)
         );
 
         $view['match']->children = $children;

@@ -6,8 +6,6 @@ use App\Entity\Interface\EntityInterface;
 use App\Enum\MatchFormat;
 use App\Enum\Side;
 use App\Repository\InterfacMatchRepository;
-use DateTimeImmutable;
-use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -33,7 +31,7 @@ class InterfacMatch implements EntityInterface
     /**
      * @var Collection<int, MatchParticipant>
      */
-    #[ORM\OneToMany(targetEntity: MatchParticipant::class, mappedBy: 'match',  cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: MatchParticipant::class, mappedBy: 'match', cascade: ['persist', 'remove'], orphanRemoval: true)]
     // ordre de création, même quand la collection est chargée par une jointure (planning)
     #[ORM\OrderBy(['id' => 'ASC'])]
     private Collection $participants;
@@ -74,7 +72,7 @@ class InterfacMatch implements EntityInterface
     public function getPlayers(): Collection
     {
         return $this->participants->map(
-            fn(MatchParticipant $participant) => $participant->getPlayer()
+            fn (MatchParticipant $participant) => $participant->getPlayer()
         );
     }
 
@@ -83,8 +81,8 @@ class InterfacMatch implements EntityInterface
         if ($this->participants->isEmpty()) {
             return '';
         }
-    
-        return implode(' - ', $this->participants->map(fn(MatchParticipant $participant) => $participant->getPlayer()->getName())->toArray());
+
+        return implode(' - ', $this->participants->map(fn (MatchParticipant $participant) => $participant->getPlayer()->getName())->toArray());
     }
 
     public function getGroup(): ?Group
@@ -140,7 +138,6 @@ class InterfacMatch implements EntityInterface
         return $this->booking->getDate()->isPast();
     }
 
-
     public function setBooking(?Booking $booking): static
     {
         // unset the owning side of the relation if necessary
@@ -163,7 +160,7 @@ class InterfacMatch implements EntityInterface
         return $this->booking?->getTimeRange();
     }
 
-    public function startsAt(): ?DateTimeImmutable
+    public function startsAt(): ?\DateTimeImmutable
     {
         return $this->booking?->getSlot()?->getStartsAt();
     }
@@ -178,7 +175,7 @@ class InterfacMatch implements EntityInterface
         return $this->getBooking()?->getSlot()?->getDate();
     }
 
-    public function getDateEntityDate(): ?DateTimeInterface
+    public function getDateEntityDate(): ?\DateTimeInterface
     {
         return $this->getDate()?->getDate();
     }
@@ -220,7 +217,7 @@ class InterfacMatch implements EntityInterface
                 $this->participants->removeElement($p); // orphanRemoval
             }
         }
-    
+
         foreach ($players as $player) {
             $this->participants->add(
                 (new MatchParticipant())->setMatch($this)->setSide($side)->setPlayer($player)
@@ -237,7 +234,7 @@ class InterfacMatch implements EntityInterface
             return $participant->getSide() === $side;
         });
 
-        $sidePlayers = $sideParticipants->map(function(MatchParticipant $participant) {
+        $sidePlayers = $sideParticipants->map(function (MatchParticipant $participant) {
             return $participant->getPlayer();
         })->toArray();
 
@@ -327,7 +324,7 @@ class InterfacMatch implements EntityInterface
 
     public function getParticipant(User $user): ?MatchParticipant
     {
-        foreach($this->participants as $participant) {
+        foreach ($this->participants as $participant) {
             if ($participant->getUser() === $user) {
                 $found = $participant;
                 break;
@@ -354,15 +351,15 @@ class InterfacMatch implements EntityInterface
     {
         return $this->participants
             // filter out null values
-            ->filter(fn(MatchParticipant $participant) => $participant->getConfirmationInfo() !== null)
+            ->filter(fn (MatchParticipant $participant) => $participant->getConfirmationInfo() !== null)
             // fill collection with confirmation info
-            ->map(fn(MatchParticipant $participant) => $participant->getConfirmationInfo());
+            ->map(fn (MatchParticipant $participant) => $participant->getConfirmationInfo());
     }
 
     /**
      * NB: When we are in user area, we tend to check the confirmation info
      * from the match (user point of view) with user parameters.
-     * 
+     *
      * When we are in admin are, we tend to check the confirmation info
      * from the participant (admin point of view).
      * ==> participant::isConfirmed()

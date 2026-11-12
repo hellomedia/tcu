@@ -120,6 +120,6 @@ class MatchParticipant
             return $this->confirmationInfo->getStatus();
         }
 
-        return 'default'; 
+        return 'default';
     }
 }

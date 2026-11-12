@@ -98,7 +98,7 @@ class GroupController extends BaseController
         $feedback = 'Regénération des matchs réussie';
 
         return $this->render('@admin/group/regenerate_matchs_success.html.twig', [
-            'group' => $group,  
+            'group' => $group,
             'feedback' => $feedback,
         ]);
     }
@@ -112,9 +112,8 @@ class GroupController extends BaseController
         $feedback = 'Supression réussie';
 
         return $this->render('@admin/group/delete_matchs_success.html.twig', [
-            'group' => $group,  
+            'group' => $group,
             'feedback' => $feedback,
         ]);
     }
-
 }

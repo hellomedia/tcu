@@ -15,17 +15,15 @@ use Doctrine\ORM\EntityManager;
 class MatchFactory
 {
     public function __construct(
-        private EntityManager $entityManager
-    )
-    {
+        private EntityManager $entityManager,
+    ) {
     }
 
     /**
      * Generates all matches for a given group in a round-robin format.
      *
-     * @param Group $group The group for which to generate matches.
-     * @param bool $isDoubleRoundRobin If true, each pair of players will play twice.
-     * @return void
+     * @param Group $group              the group for which to generate matches
+     * @param bool  $isDoubleRoundRobin if true, each pair of players will play twice
      */
     public function generateGroupMatchs(Group $group, bool $isDoubleRoundRobin = false): void
     {
@@ -37,13 +35,13 @@ class MatchFactory
         // A round-robin schedule is typically represented as a complete graph.
         // We use nested loops to generate each unique edge (match) in the graph.
         // The outer loop iterates through each player.
-        for ($i = 0; $i < $numberOfPlayers; $i++) {
+        for ($i = 0; $i < $numberOfPlayers; ++$i) {
             $player1 = $players[$i];
 
             // The inner loop iterates through the remaining players to form unique pairs.
             // We start from $i + 1 to avoid duplicating matches (e.g., A vs B and B vs A)
             // and to prevent a player from playing against themselves.
-            for ($j = $i + 1; $j < $numberOfPlayers; $j++) {
+            for ($j = $i + 1; $j < $numberOfPlayers; ++$j) {
                 $player2 = $players[$j];
 
                 // 1. Create the first match entity.
@@ -52,7 +50,7 @@ class MatchFactory
 
                 $participant1 = $this->_createParticipant($match, $player1, Side::A);
                 $match->addParticipant($participant1);
-                
+
                 $participant2 = $this->_createParticipant($match, $player2, Side::B);
                 $match->addParticipant($participant2);
 
@@ -109,7 +107,7 @@ class MatchFactory
         $created = 0;
 
         foreach ($group->getMissingPairs() as $pair) {
-            for ($i = 0; $i < $pair['missing']; $i++) {
+            for ($i = 0; $i < $pair['missing']; ++$i) {
                 $match = new InterfacMatch();
                 $group->addMatch($match);
 
@@ -118,7 +116,7 @@ class MatchFactory
                 $match->addParticipant($this->_createParticipant($match, $pair['b'], Side::B));
 
                 $this->entityManager->persist($match);
-                $created++;
+                ++$created;
             }
         }
 
@@ -140,12 +138,12 @@ class MatchFactory
 
         foreach ($group->getOrphanMatchs() as $match) {
             if ($match->getResult() !== null) {
-                $kept++;
+                ++$kept;
                 continue;
             }
 
             $this->remove($match);
-            $deleted++;
+            ++$deleted;
         }
 
         return ['deleted' => $deleted, 'kept' => $kept];

@@ -41,13 +41,13 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
     }
 
     /**
-    * Authenticator checks if :
-    * - user exists (normally, retrieved from user provider but we use a callable)
-    * - login credentials are good
-    *
-    * In addition, User checker (Security\UserChecker) is called
-    * to perform additional checks (disabled, locked...) pre-auth and post-auth
-    * to determine if user is allowed to login
+     * Authenticator checks if :
+     * - user exists (normally, retrieved from user provider but we use a callable)
+     * - login credentials are good
+     *
+     * In addition, User checker (Security\UserChecker) is called
+     * to perform additional checks (disabled, locked...) pre-auth and post-auth
+     * to determine if user is allowed to login
      */
     public function authenticate(Request $request): Passport
     {
@@ -80,12 +80,13 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
                 if (!$user) {
                     throw new CustomUserMessageAuthenticationException('Username could not be found.');
                 }
+
                 return $user;
             }),
             new PasswordCredentials($password),
             [
                 new CsrfTokenBadge('authenticate', $request->request->get('_csrf_token')),
-                new RememberMeBadge()
+                new RememberMeBadge(),
             ]
         );
     }
@@ -104,6 +105,7 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
 
         if ($targetPathFromSession = $this->getTargetPath($session, $firewallName)) {
             $this->removeTargetPath($session, $firewallName);
+
             return new RedirectResponse($targetPathFromSession);
         }
 
@@ -113,7 +115,6 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): Response
     {
         if ($exception instanceof EmailNotVerifiedException) {
-
             $session = $request->getSession();
 
             $session->set('unverified_email', $session->get(SecurityRequestAttributes::LAST_USERNAME));

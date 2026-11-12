@@ -7,7 +7,6 @@ use App\Controller\BaseController;
 use App\Entity\Player;
 use App\Service\MatchNotifications;
 use App\Service\SeasonContext;
-use DateTimeImmutable;
 use Doctrine\ORM\EntityManager;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminRoute;
 use Symfony\Component\HttpFoundation\Response;
@@ -41,9 +40,9 @@ class NotificationController extends BaseController
                 continue;
             }
             if ($row['collected']['pending'] > 0) {
-                $toNotify++;
+                ++$toNotify;
             } elseif ($row['collected']['unconfirmed'] !== []) {
-                $toRemind++;
+                ++$toRemind;
             }
         }
 
@@ -107,13 +106,13 @@ class NotificationController extends BaseController
     private function notify(array $players): int
     {
         $season = $this->seasonContext->getSelected();
-        $now = new DateTimeImmutable();
+        $now = new \DateTimeImmutable();
         $sent = 0;
 
         foreach ($players as $player) {
             if ($this->mailer->sendScheduleNotification($player, $season, $this->notifications)) {
                 $this->notifications->markNotified($this->notifications->collect($player, $season), $now);
-                $sent++;
+                ++$sent;
             }
         }
 
@@ -128,13 +127,13 @@ class NotificationController extends BaseController
     private function remindPlayers(array $players): int
     {
         $season = $this->seasonContext->getSelected();
-        $now = new DateTimeImmutable();
+        $now = new \DateTimeImmutable();
         $sent = 0;
 
         foreach ($players as $player) {
             if ($this->mailer->sendReminder($player, $season, $this->notifications)) {
                 $this->notifications->markReminded($this->notifications->collect($player, $season), $now);
-                $sent++;
+                ++$sent;
             }
         }
 

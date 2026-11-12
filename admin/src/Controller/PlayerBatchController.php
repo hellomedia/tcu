@@ -111,6 +111,7 @@ class PlayerBatchController extends BaseController
 
     /**
      * @param Player[] $players
+     *
      * @return Player[]
      */
     private function filter(array $players, array $filters): array
@@ -119,8 +120,7 @@ class PlayerBatchController extends BaseController
             return $players;
         }
 
-        return array_filter($players, fn(Player $player) =>
-            ($filters['tel'] && !$player->getPhone())
+        return array_filter($players, fn (Player $player) => ($filters['tel'] && !$player->getPhone())
             || ($filters['email'] && !$player->hasAccount())
             || ($filters['affiliation'] && !$player->getAffiliationNumber())
         );

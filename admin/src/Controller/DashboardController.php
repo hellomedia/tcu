@@ -17,14 +17,12 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Option\Font;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Option\GrayScale;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Theme;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
-
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 #[AdminDashboard(routePath: '/', routeName: 'admin')]
 class DashboardController extends AbstractDashboardController
 {
-
     public function __construct(
         private UrlGeneratorInterface $urlGenerator,
         private SeasonRepository $seasonRepository,
@@ -33,7 +31,7 @@ class DashboardController extends AbstractDashboardController
     }
 
     public function index(): Response
-    {        
+    {
         return $this->render('@admin/dashboard.html.twig', []);
     }
 
@@ -79,7 +77,7 @@ class DashboardController extends AbstractDashboardController
             ->addAssetMapperEntry('admin')
             // you can also import multiple entries
             // it's equivalent to calling {{ importmap(['app', 'admin']) }}
-            //->addAssetMapperEntry('app', 'admin')
+            // ->addAssetMapperEntry('app', 'admin')
         ;
     }
 
@@ -150,7 +148,7 @@ class DashboardController extends AbstractDashboardController
             ->setPermission('ROLE_MANAGER');
         yield MenuItem::linkTo(AdminCrudController::class, 'Admins', 'fa fa-user')
             ->setPermission('ROLE_MANAGER');
-        
+
         yield MenuItem::section('Dev Admin')
             ->setPermission('ROLE_SUPER_ADMIN');
         yield MenuItem::linkTo(InterfacMatchCrudController::class, 'Matchs', 'fa fa-trophy')

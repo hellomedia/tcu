@@ -27,8 +27,7 @@ class SeasonController extends BaseController
         GroupRepository $groupRepository,
         RegistrationRepository $registrationRepository,
         SeasonContext $seasonContext,
-    ): Response
-    {
+    ): Response {
         $seasons = $seasonRepository->findAll();
 
         $stats = [];

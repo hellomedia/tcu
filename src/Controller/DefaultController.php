@@ -11,7 +11,7 @@ class DefaultController extends BaseController
     public function homepage(): Response
     {
         $this->addBreadcrumb('homepage', 'homepage');
-        
+
         return $this->render('default/homepage.html.twig', []);
     }
 }

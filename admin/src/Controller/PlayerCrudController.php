@@ -12,8 +12,8 @@ use Doctrine\ORM\EntityManagerInterface;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
-use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Filters;
+use EasyCorp\Bundle\EasyAdminBundle\Config\KeyValueStore;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
@@ -32,8 +32,7 @@ class PlayerCrudController extends AbstractCrudController
         private UserRepository $userRepository,
         private UrlGeneratorInterface $urlGenerator,
         private CsrfTokenManagerInterface $csrfTokenManager,
-    )
-    {
+    ) {
     }
 
     public static function getEntityFqcn(): string
@@ -63,8 +62,8 @@ class PlayerCrudController extends AbstractCrudController
 
         // Invitations des comptes créés par un admin : Admin\Controller\InvitationController
         $invite = Action::new('invite', 'Inviter', 'fa fa-envelope')
-            ->linkToUrl(fn(Player $player) => $this->generateInvitationUrl('admin_player_invite', ['id' => $player->getId()]))
-            ->displayIf(fn(Player $player) => $player->getUser()?->mustChoosePassword() ?? false);
+            ->linkToUrl(fn (Player $player) => $this->generateInvitationUrl('admin_player_invite', ['id' => $player->getId()]))
+            ->displayIf(fn (Player $player) => $player->getUser()?->mustChoosePassword() ?? false);
 
         $toInvite = count($this->userRepository->findPlayersToInvite());
         // ouvre la modale de confirmation (@admin/player/_invite_modal.html.twig), qui contient le lien d'envoi
@@ -143,7 +142,6 @@ class PlayerCrudController extends AbstractCrudController
         yield TextField::new('phone', 'Téléphone');
 
         yield TextareaField::new('comment', 'Commentaire');
-
     }
 
     public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
@@ -171,5 +169,4 @@ class PlayerCrudController extends AbstractCrudController
             // ->add(NullFilter::new('user')->setChoiceLabels('Not null', 'Null'))
         ;
     }
-
 }

@@ -8,9 +8,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Usage
- * 
+ *
  * $builder->add('occupation', HoneypotField::class);
- * 
+ *
  * - Use a normal input text, not type hidden
  * - Use a normal sounding field name (occupation)
  * - Hide in CSS, with sth less obvious than display:none

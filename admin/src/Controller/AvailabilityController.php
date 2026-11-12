@@ -44,7 +44,7 @@ class AvailabilityController extends BaseController
 
             foreach ($registrationRepository->findInterfacsBySeason($season) as $registration) {
                 $row = ['registration' => $registration, 'summary' => $grid->summary($registration)];
-                $counts[$row['summary']['status']]++;
+                ++$counts[$row['summary']['status']];
 
                 $groups = $registration->getPlayer()->getGroupsForSeason($season);
                 if ($groups->isEmpty()) {

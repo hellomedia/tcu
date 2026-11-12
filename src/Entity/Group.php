@@ -3,10 +3,10 @@
 namespace App\Entity;
 
 use App\Entity\Interface\EntityInterface;
+use App\Enum\MatchFormat;
 use App\Repository\GroupRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use App\Enum\MatchFormat;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
@@ -236,8 +236,8 @@ class Group implements EntityInterface
         $players = $this->getPlayersByRanking()->toArray();
         $missing = [];
 
-        for ($i = 0; $i < \count($players); $i++) {
-            for ($j = $i + 1; $j < \count($players); $j++) {
+        for ($i = 0; $i < \count($players); ++$i) {
+            for ($j = $i + 1; $j < \count($players); ++$j) {
                 $count = $counts[self::pairKey($players[$i], $players[$j])] ?? 0;
 
                 if ($count < $rounds) {

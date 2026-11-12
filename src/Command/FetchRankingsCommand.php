@@ -70,9 +70,9 @@ class FetchRankingsCommand extends Command
 
         $registrations = array_filter(
             $this->registrationRepository->findBySeasonIndexedByPlayer($season),
-            fn(Registration $registration) => !$registration->isDismissed(),
+            fn (Registration $registration) => !$registration->isDismissed(),
         );
-        usort($registrations, fn(Registration $a, Registration $b) => $a->getPlayer()->getLastname() <=> $b->getPlayer()->getLastname());
+        usort($registrations, fn (Registration $a, Registration $b) => $a->getPlayer()->getLastname() <=> $b->getPlayer()->getLastname());
 
         $rows = [];
         $changes = 0;
@@ -101,9 +101,9 @@ class FetchRankingsCommand extends Command
             };
 
             if ($proposal->status === RankingProposal::PROBLEM) {
-                $problems++;
+                ++$problems;
             } elseif ($proposal->isApplicable()) {
-                $changes++;
+                ++$changes;
 
                 if ($apply) {
                     $this->updater->apply($registration, $proposal->ranking, $previsional, $now);

@@ -7,7 +7,6 @@ use App\Controller\BaseController;
 use App\Entity\MatchParticipant;
 use App\Entity\ParticipantConfirmationInfo;
 use App\Service\MatchNotifications;
-use DateTimeImmutable;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -37,7 +36,7 @@ class ConfirmationController extends BaseController
         $updated = [];
 
         if ($this->mailer->sendScheduleNotification($player, $season, $this->notifications)) {
-            $updated = $this->notifications->markNotified($this->notifications->collect($player, $season), new DateTimeImmutable());
+            $updated = $this->notifications->markNotified($this->notifications->collect($player, $season), new \DateTimeImmutable());
             $this->entityManager->flush();
         }
 
@@ -56,7 +55,7 @@ class ConfirmationController extends BaseController
         $updated = [];
 
         if ($this->mailer->sendReminder($player, $season, $this->notifications)) {
-            $updated = $this->notifications->markReminded($this->notifications->collect($player, $season), new DateTimeImmutable());
+            $updated = $this->notifications->markReminded($this->notifications->collect($player, $season), new \DateTimeImmutable());
             $this->entityManager->flush();
         }
 

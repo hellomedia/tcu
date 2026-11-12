@@ -16,7 +16,7 @@ class ChangeUserPasswordCommand extends Command
 {
     public function __construct(
         private EntityManagerInterface $entityManager,
-        private UserPasswordHasherInterface $passwordHasher
+        private UserPasswordHasherInterface $passwordHasher,
     ) {
         parent::__construct();
     }
@@ -49,6 +49,7 @@ class ChangeUserPasswordCommand extends Command
 
         if (!$newPassword) {
             $io->error('Password is required');
+
             return Command::FAILURE;
         }
 

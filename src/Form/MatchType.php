@@ -2,19 +2,17 @@
 
 namespace App\Form;
 
-use App\Entity\InterfacMatch;
-use App\Entity\Player;
-use App\Entity\Slot;
 use App\Entity\Booking;
 use App\Entity\Court;
 use App\Entity\Date;
 use App\Entity\Group;
+use App\Entity\InterfacMatch;
+use App\Entity\Player;
+use App\Entity\Slot;
 use App\Enum\BookingType;
 use App\Repository\GroupRepository;
 use App\Repository\SlotRepository;
 use App\Service\SeasonContext;
-use DateTimeImmutable;
-use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\QueryBuilder;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
@@ -47,7 +45,7 @@ final class MatchType extends AbstractType
             'multiple' => false,
             'autocomplete' => true,
         ]);
-    
+
         $builder->add('date', EntityType::class, [
             'label' => 'Date',
             'class' => Date::class,
@@ -81,10 +79,11 @@ final class MatchType extends AbstractType
                     $qb->andWhere('s.court = :court')
                         ->setParameter('court', $court);
                 }
+
                 return $qb;
             },
             'multiple' => false,
-            'expanded' => $date ? true: false,
+            'expanded' => $date ? true : false,
             'group_by' => function ($slot, $key, $value) {
                 return $slot->getDate();
             },

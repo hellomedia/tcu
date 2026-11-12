@@ -12,7 +12,7 @@ class CoursController extends BaseController
     {
         $this->addBreadcrumb('Homepage', 'homepage');
         $this->addBreadcrumb('Cours', 'cours');
-        
+
         return $this->render('cours/cours.html.twig', []);
     }
 }

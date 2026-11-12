@@ -10,24 +10,23 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Adds a 'choice_extra' form property
- * 
+ *
  * Useful to pass custom variables to choice templates
- * 
+ *
  * Usage:
-
-    $field->add(EntityType::class, [
-        'label' => 'Match',
-        'class' => InterfacMatch::class,
-        'multiple' => false,
-        'expanded' => true,
-        'placeholder' => 'Choisir un match',
-        'choice_extra' => function (InterfacMatch $m): array {
-            $a = $m->participantForSide(Side::A)?->getPlayer()?->getDispos();
-            $b = $m->participantForSide(Side::B)?->getPlayer()?->getDispos();
-            return ['a' => (string)($a ?? ''), 'b' => (string)($b ?? '')];
-        },
-    ]);
-
+ *
+ * $field->add(EntityType::class, [
+ * 'label' => 'Match',
+ * 'class' => InterfacMatch::class,
+ * 'multiple' => false,
+ * 'expanded' => true,
+ * 'placeholder' => 'Choisir un match',
+ * 'choice_extra' => function (InterfacMatch $m): array {
+ * $a = $m->participantForSide(Side::A)?->getPlayer()?->getDispos();
+ * $b = $m->participantForSide(Side::B)?->getPlayer()?->getDispos();
+ * return ['a' => (string)($a ?? ''), 'b' => (string)($b ?? '')];
+ * },
+ * ]);
  */
 final class ChoiceExtraExtension extends AbstractTypeExtension
 {
@@ -65,7 +64,7 @@ final class ChoiceExtraExtension extends AbstractTypeExtension
                 continue;
             }
             // $c is ChoiceView
-            $valueToEntity[(string)$c->value] = $c->data ?? null;
+            $valueToEntity[(string) $c->value] = $c->data ?? null;
         }
 
         $callable = \is_callable($options['choice_extra']) ? $options['choice_extra'] : null;
@@ -74,7 +73,7 @@ final class ChoiceExtraExtension extends AbstractTypeExtension
             // Always initialize to avoid "key does not exist"
             $child->vars['extra'] = [];
 
-            $value = (string)($child->vars['value'] ?? '');
+            $value = (string) ($child->vars['value'] ?? '');
             $entity = $valueToEntity[$value] ?? null;
 
             if ($entity && $callable) {

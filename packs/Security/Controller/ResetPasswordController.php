@@ -4,12 +4,11 @@ namespace Pack\Security\Controller;
 
 use App\Controller\BaseController;
 use App\Entity\User;
+use Doctrine\ORM\EntityManager;
 use Pack\Security\Form\ChangePasswordForm;
 use Pack\Security\Form\ResetPasswordRequestForm;
 use Pack\Security\LoginFormAuthenticator;
 use Pack\Security\Mailer\SecurityMailer;
-use Doctrine\ORM\EntityManager;
-use LogicException;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,10 +26,9 @@ class ResetPasswordController extends BaseController
     use ResetPasswordControllerTrait;
 
     public function __construct(
-        private ResetPasswordHelperInterface $resetPasswordHelper
-    )
-    {
-        // Calling parent constructor not necessary as long as 
+        private ResetPasswordHelperInterface $resetPasswordHelper,
+    ) {
+        // Calling parent constructor not necessary as long as
         // we don't use its breadcrumb properties
     }
 
@@ -45,7 +43,6 @@ class ResetPasswordController extends BaseController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
             return $this->_processSendingPasswordResetEmail(
                 $form->get('email')->getData(),
                 $mailer,
@@ -106,9 +103,9 @@ class ResetPasswordController extends BaseController
         }
 
         // Valid token => continue
-        
+
         if (!$user instanceof User) {
-            throw new LogicException('user not instance of User');
+            throw new \LogicException('user not instance of User');
         }
 
         $form = $this->createForm(ChangePasswordForm::class, $user);
@@ -116,7 +113,6 @@ class ResetPasswordController extends BaseController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-
             // Password reset token should be used only once
             $this->resetPasswordHelper->removeResetRequest($token);
 
@@ -171,7 +167,6 @@ class ResetPasswordController extends BaseController
         try {
             $resetToken = $this->resetPasswordHelper->generateResetToken($user);
         } catch (ResetPasswordExceptionInterface $e) {
-
             $this->addFlash(
                 type: 'error',
                 message: $e->getReason(),

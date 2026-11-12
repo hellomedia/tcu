@@ -4,7 +4,7 @@ namespace App\Enum;
 
 enum DateIntervalType: string
 {
-    case HOURS = "H";
+    case HOURS = 'H';
     case DAYS = 'D';
     case WEEKS = 'W';
     case MONTHS = 'M';

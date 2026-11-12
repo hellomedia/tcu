@@ -4,8 +4,8 @@ namespace Pack\Security\Controller;
 
 use App\Controller\BaseController;
 use App\Repository\UserRepository;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
@@ -51,7 +51,7 @@ class LoginController extends BaseController
      * Called from security/login.html.twig.
      *
      * Do not show password reset link if account disabled
-     * 
+     *
      * NB: If no last_email is defined, $email = "" ==> show reset password
      */
     public function showPasswordResetLink(string $email, UserRepository $userRepository): Response

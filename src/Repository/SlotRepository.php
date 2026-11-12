@@ -51,6 +51,7 @@ class SlotRepository extends ServiceEntityRepository
      * Slots of these courts, between these dates (included), lying entirely within the time window, with their booking
      *
      * @param Court[] $courts
+     *
      * @return Slot[]
      */
     public function findInWindow(\DateTimeImmutable $startDate, \DateTimeImmutable $endDate, array $courts, \DateTimeImmutable $startTime, \DateTimeImmutable $endTime): array
@@ -131,8 +132,6 @@ class SlotRepository extends ServiceEntityRepository
      * Why the explicit join on Booking::class ?
      * A single-valued association path expression to an inverse side
      * is not supported in DQL queries. Instead of "s.booking" use an explicit join.
-     * 
-     * 
      */
     public function getFutureAvailableSlotsQueryBuilder(Date $date, ?Slot $includeSlot = null): QueryBuilder
     {

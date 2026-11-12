@@ -76,8 +76,7 @@ class RegistrationCrudController extends AbstractCrudController
         private RequestStack $requestStack,
         private PlayerAccountManager $accountManager,
         private RegistrationRepository $registrationRepository,
-    )
-    {
+    ) {
     }
 
     public static function getEntityFqcn(): string
@@ -104,20 +103,20 @@ class RegistrationCrudController extends AbstractCrudController
     public function configureActions(Actions $actions): Actions
     {
         $confirm = Action::new('confirm', 'Confirmer', 'fa fa-check')
-            ->linkToUrl(fn(Registration $registration) => $this->generateStatusUrl($registration, RegistrationStatus::CONFIRMED))
-            ->displayIf(fn(Registration $registration) => $registration->isPending());
+            ->linkToUrl(fn (Registration $registration) => $this->generateStatusUrl($registration, RegistrationStatus::CONFIRMED))
+            ->displayIf(fn (Registration $registration) => $registration->isPending());
 
         $dismiss = Action::new('dismiss', 'Écarter', 'fa fa-xmark')
-            ->linkToUrl(fn(Registration $registration) => $this->generateStatusUrl($registration, RegistrationStatus::DISMISSED))
-            ->displayIf(fn(Registration $registration) => $registration->isPending());
+            ->linkToUrl(fn (Registration $registration) => $this->generateStatusUrl($registration, RegistrationStatus::DISMISSED))
+            ->displayIf(fn (Registration $registration) => $registration->isPending());
 
         $availabilities = Action::new('availabilities', 'Dispos', 'fa fa-calendar-check')
-            ->linkToRoute('admin_registration_availabilities', fn(Registration $registration) => ['id' => $registration->getId()])
-            ->displayIf(fn(Registration $registration) => $registration->isInterfacs() === true);
+            ->linkToRoute('admin_registration_availabilities', fn (Registration $registration) => ['id' => $registration->getId()])
+            ->displayIf(fn (Registration $registration) => $registration->isInterfacs() === true);
 
         $restore = Action::new('restore', 'Rétablir', 'fa fa-rotate-left')
-            ->linkToUrl(fn(Registration $registration) => $this->generateStatusUrl($registration, RegistrationStatus::PENDING))
-            ->displayIf(fn(Registration $registration) => $registration->isDismissed());
+            ->linkToUrl(fn (Registration $registration) => $this->generateStatusUrl($registration, RegistrationStatus::PENDING))
+            ->displayIf(fn (Registration $registration) => $registration->isDismissed());
 
         $confirmBatch = Action::new('confirmBatch', 'Confirmer')
             ->linkToCrudAction('confirmBatch')
@@ -142,7 +141,7 @@ class RegistrationCrudController extends AbstractCrudController
 
         return $actions
             // le formulaire propose de créer le joueur s'il n'existe pas (mode nouveau joueur)
-            ->update(Crud::PAGE_INDEX, Action::NEW, fn(Action $action) => $action->setLabel('Nouvelle inscription')->setIcon('fa fa-plus'))
+            ->update(Crud::PAGE_INDEX, Action::NEW, fn (Action $action) => $action->setLabel('Nouvelle inscription')->setIcon('fa fa-plus'))
             ->add(Crud::PAGE_INDEX, $previsionalRankings)
             ->add(Crud::PAGE_INDEX, $officialRankings)
             ->add(Crud::PAGE_INDEX, $confirm)
@@ -441,7 +440,7 @@ class RegistrationCrudController extends AbstractCrudController
             }
 
             $registration->setStatus($status);
-            $count++;
+            ++$count;
         }
 
         $entityManager->flush();

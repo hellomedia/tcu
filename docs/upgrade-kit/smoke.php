@@ -29,7 +29,6 @@
  * request. The kernel is subclassed to enable framework.test (which exposes private services
  * via test.service_container) and to use its own cache dir, so the app's cache is untouched.
  */
-
 $projectDir = getcwd();
 $host = getenv('SMOKE_HOST') ?: exit("Set SMOKE_HOST (e.g. SMOKE_HOST=example.test)\n");
 $kernelClass = getenv('SMOKE_KERNEL') ?: 'App\\Kernel';

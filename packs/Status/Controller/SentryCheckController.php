@@ -15,7 +15,7 @@ class SentryCheckController extends BaseController
     {
     }
 
-    #[Route(name: "sentry_check", path: "/_check/sentry")]
+    #[Route(name: 'sentry_check', path: '/_check/sentry')]
     public function checkSentryLogging()
     {
         // test if monolog integration logs to sentry

@@ -21,8 +21,7 @@ class PlayerAccountManager
     public function __construct(
         private UserRepository $userRepository,
         private UserPasswordHasherInterface $passwordHasher,
-    )
-    {
+    ) {
     }
 
     /**

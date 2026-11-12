@@ -6,14 +6,14 @@ use App\Controller\BaseController;
 use App\Entity\User;
 use App\Enum\AccountLanguage;
 use App\Event\AccountCreatedEvent;
-use Pack\Security\Exception\EmailAlreadyVerifiedException;
-use Pack\Security\Form\RegistrationForm;
-use Pack\Security\BotDetector;
-use Pack\Security\EmailVerifier;
-use Pack\Security\LoginFormAuthenticator;
-use Pack\Security\Mailer\SecurityMailer;
 use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Doctrine\ORM\EntityManager;
+use Pack\Security\BotDetector;
+use Pack\Security\EmailVerifier;
+use Pack\Security\Exception\EmailAlreadyVerifiedException;
+use Pack\Security\Form\RegistrationForm;
+use Pack\Security\LoginFormAuthenticator;
+use Pack\Security\Mailer\SecurityMailer;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -31,7 +31,7 @@ class RegistrationController extends BaseController
 
     /**
      * NB: custom path ( /_register_, not "/register") to keep away simple bots
-     * 
+     *
      * NB2: when defining i18n routes, they have to be defined in ALL LOCALES
      * set in the locales config, otherwise an error is thrown while trying
      * to create a path for the language in which the route is not defined
@@ -62,7 +62,6 @@ class RegistrationController extends BaseController
 
         // Unconfirmed account: redirect to validation email page
         if ($form->isSubmitted()) {
-            
             $existingUser = $entityManager->getRepository(User::class)->findUserByIdentifier($user->getEmail());
 
             if ($existingUser && $existingUser->isNotVerified()) {
@@ -73,7 +72,6 @@ class RegistrationController extends BaseController
         }
 
         if ($form->isSubmitted() && $form->isValid()) {
-
             if ($botDetector->detectBotOnRegistrationForm($form, $request)) {
                 // Do not process but give same feedback as a regular registration
                 $session->set('unverified_email', $user->getEmail());
@@ -94,7 +92,6 @@ class RegistrationController extends BaseController
             try {
                 $entityManager->flush();
             } catch (UniqueConstraintViolationException $exception) {
-
                 // should not get here if form validation is set correctly
 
                 $form->get('email')->addError(new FormError($translator->trans('registration.email_already_used', domain: 'security')));
@@ -150,6 +147,7 @@ class RegistrationController extends BaseController
             $user = $emailVerifier->getUnverifiedUserByEmail($email);
         } catch (EmailAlreadyVerifiedException $exception) {
             $this->addFlash('success', 'registration.email_already_verified', domain: 'security');
+
             return $this->redirectToRoute('dashboard');
         }
 
@@ -166,7 +164,7 @@ class RegistrationController extends BaseController
     /**
      * After registration form, give same feedback for bots
      * To avoid them detecting the bot detection
-     * 
+     *
      * Here, we do not check if the email belongs to a unverified user
      */
     #[Route(path: '/check-your-email-b', name: 'registration_check_your_email_for_bots')]
@@ -189,6 +187,7 @@ class RegistrationController extends BaseController
             $user = $emailVerifier->getUnverifiedUser($request);
         } catch (EmailAlreadyVerifiedException $exception) {
             $this->addFlash('success', 'registration.email_already_verified', domain: 'security');
+
             return $this->redirectToRoute('dashboard');
         }
 
@@ -198,6 +197,7 @@ class RegistrationController extends BaseController
         } catch (VerifyEmailExceptionInterface $exception) {
             $this->addFlash('error', $exception->getReason());
             $session->set('unverified_email', $user->getEmail());
+
             return $this->redirectToRoute('resend_validation_email');
         }
 
@@ -231,18 +231,18 @@ class RegistrationController extends BaseController
             $user = $emailVerifier->getUnverifiedUserByEmail($email);
         } catch (EmailAlreadyVerifiedException $exception) {
             $this->addFlash('success', 'registration.email_already_verified', domain: 'security');
+
             return $this->redirectToRoute('dashboard');
         }
 
         if (isset($_POST['email']) && $_POST['email'] == $session->get('unverified_email')) {
-
             $mailer->sendRegistrationValidationLink($user);
 
             return $this->redirectToRoute('registration_check_your_email');
         }
 
         return $this->render('@security/registration/resend_validation_email.html.twig', [
-            'email' => $email
+            'email' => $email,
         ]);
     }
 }

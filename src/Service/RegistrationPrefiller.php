@@ -63,7 +63,7 @@ class RegistrationPrefiller
         $existing = $this->registrationRepository->findBySeasonIndexedByPlayer($season);
 
         // un joueur écarté d'une saison précédente n'y était pas inscrit
-        $notDismissed = fn(Registration $registration) => !$registration->isDismissed();
+        $notDismissed = fn (Registration $registration) => !$registration->isDismissed();
         $fromSource = array_filter($this->registrationRepository->findBySeasonIndexedByPlayer($source), $notDismissed);
         $fromPrevious = $source === $previous ? $fromSource : array_filter($this->registrationRepository->findBySeasonIndexedByPlayer($previous), $notDismissed);
 
@@ -89,7 +89,7 @@ class RegistrationPrefiller
             $sourceRegistration->getPlayer()->addRegistration($registration);
 
             $this->entityManager->persist($registration);
-            $created++;
+            ++$created;
         }
 
         $this->entityManager->flush();

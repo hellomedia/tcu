@@ -10,9 +10,8 @@ use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 class Breadcrumbs extends AbstractController
 {
     public function __construct(
-        private BreadcrumbsHelper $breadcrumbsHelper
-    )
-    {
+        private BreadcrumbsHelper $breadcrumbsHelper,
+    ) {
     }
 
     public function getBreadcrumbs(): array

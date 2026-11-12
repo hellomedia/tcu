@@ -13,7 +13,8 @@ final class AccountCreatedEvent extends Event
         private User $user,
         private ?string $ip,
         private string $password,
-    ) {}
+    ) {
+    }
 
     public function getUser(): User
     {

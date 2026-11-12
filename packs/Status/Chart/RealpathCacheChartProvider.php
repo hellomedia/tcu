@@ -28,11 +28,11 @@ class RealpathCacheChartProvider extends BaseChartProvider
         $datasets = [
             'used' => [
                 'color' => $usedColor,
-                'data' => [['x' => $xAxisLabel, 'y' => (int) $used]]
+                'data' => [['x' => $xAxisLabel, 'y' => (int) $used]],
             ],
             'free' => [
                 'color' => ChartColor::GREEN,
-                'data' => [['x' => $xAxisLabel, 'y' => (int) $free]]
+                'data' => [['x' => $xAxisLabel, 'y' => (int) $free]],
             ],
         ];
 

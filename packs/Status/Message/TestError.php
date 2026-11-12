@@ -10,7 +10,6 @@ use App\Message\Interface\LowPriorityMessageInterface;
 final class TestError implements LowPriorityMessageInterface
 {
     public function __construct(
-    )
-    {
+    ) {
     }
 }

@@ -21,11 +21,9 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('ROLE_MANAGER')]
 class UserCrudController extends AbstractCrudController
 {
-
     public function __construct(
         private PlayerAccountManager $accountManager,
-    )
-    {
+    ) {
     }
 
     public static function getEntityFqcn(): string
@@ -83,6 +81,4 @@ class UserCrudController extends AbstractCrudController
     {
         return $this->accountManager->newUser();
     }
-
-
 }

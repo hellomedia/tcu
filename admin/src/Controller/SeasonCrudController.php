@@ -24,9 +24,8 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class SeasonCrudController extends AbstractCrudController
 {
     public function __construct(
-        private UrlGeneratorInterface $urlGenerator
-    )
-    {
+        private UrlGeneratorInterface $urlGenerator,
+    ) {
     }
 
     public static function getEntityFqcn(): string
@@ -80,7 +79,7 @@ class SeasonCrudController extends AbstractCrudController
 
     public function persistEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
-        /** @var Season $entityInstance */
+        /* @var Season $entityInstance */
         $entityInstance->initDefaultDates();
 
         parent::persistEntity($entityManager, $entityInstance);
@@ -88,7 +87,7 @@ class SeasonCrudController extends AbstractCrudController
 
     public function updateEntity(EntityManagerInterface $entityManager, $entityInstance): void
     {
-        /** @var Season $entityInstance */
+        /* @var Season $entityInstance */
         $entityInstance->initDefaultDates();
 
         parent::updateEntity($entityManager, $entityInstance);

@@ -3,21 +3,21 @@
 namespace Pack\Status\Controller;
 
 use App\Controller\BaseController;
+use Doctrine\ORM\EntityManager;
 use Pack\Status\Entity\TestMessageLog;
 use Pack\Status\Exception\MessengerException;
 use Pack\Status\Message\TestEmail;
 use Pack\Status\Message\TestError;
 use Pack\Status\Message\TestMessage;
-use Doctrine\ORM\EntityManager;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
 /**
  * Manual Checks:
- * /_check/messenger/email 
  * /_check/messenger/email
- * 
+ * /_check/messenger/email
+ *
  * Automated check:
  * /_check/messenger/consumer
  * Returns 204 if status seems OK
@@ -30,14 +30,13 @@ class MessengerStatusController extends BaseController
     public function __construct(
         private MessageBusInterface $bus,
         private EntityManager $entityManager,
-    )
-    {
+    ) {
     }
 
-    #[Route(name: "messenger_check_email", path: "/_check/messenger/email")]
+    #[Route(name: 'messenger_check_email', path: '/_check/messenger/email')]
     public function checkMessengerEmail(): Response
     {
-        // send a messenger message that sends an email in the queue 
+        // send a messenger message that sends an email in the queue
         $this->bus->dispatch(new TestEmail(
             recipient: 'nicolas.sauveur@gmail.com',
             subject: 'test messenger queue',
@@ -46,10 +45,10 @@ class MessengerStatusController extends BaseController
         return new Response(null, Response::HTTP_NO_CONTENT);
     }
 
-    #[Route(name: "messenger_check_error", path: "/_check/messenger/error")]
+    #[Route(name: 'messenger_check_error', path: '/_check/messenger/error')]
     public function checkFailedMessage(): Response
     {
-        // send a messenger message that throws an exception in the queue 
+        // send a messenger message that throws an exception in the queue
         $this->bus->dispatch(new TestError());
 
         return new Response(null, Response::HTTP_NO_CONTENT);
@@ -57,10 +56,10 @@ class MessengerStatusController extends BaseController
 
     /**
      * Checks if messages are being consumed
-     * 
+     *
      * Ping this endpoint for monitoring
      */
-    #[Route(name: "messenger_check_consumer", path: "/_check/messenger/consumer")]
+    #[Route(name: 'messenger_check_consumer', path: '/_check/messenger/consumer')]
     public function checkConsumer(): Response
     {
         $testMessage = new TestMessage();
@@ -77,7 +76,7 @@ class MessengerStatusController extends BaseController
 
     private function _waitForMessageProcessing(TestMessage $testMessage): void
     {
-        for ($i = 0; $i < 100; $i++) {
+        for ($i = 0; $i < 100; ++$i) {
             usleep(100000); // Sleep 100ms
 
             if ($this->_isMessageProcessed($testMessage)) {
@@ -86,7 +85,7 @@ class MessengerStatusController extends BaseController
         }
 
         // throw exception if message was not processed after 10 seconds
-        throw new MessengerException("Message in queue not processed after 10 seconds. Is the queue being consumed ?");
+        throw new MessengerException('Message in queue not processed after 10 seconds. Is the queue being consumed ?');
     }
 
     /**
@@ -95,7 +94,7 @@ class MessengerStatusController extends BaseController
     private function _isMessageProcessed(TestMessage $testMessage): bool
     {
         $testMessageLog = $this->entityManager->getRepository(TestMessageLog::class)->findOneBy([
-            'messageId' => $testMessage->getId()
+            'messageId' => $testMessage->getId(),
         ]);
 
         return $testMessageLog != null;

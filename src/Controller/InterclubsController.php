@@ -12,7 +12,7 @@ class InterclubsController extends BaseController
     {
         $this->addBreadcrumb('Homepage', 'homepage');
         $this->addBreadcrumb('Interclubs', 'interclubs');
-        
+
         return $this->render('interclubs/interclubs.html.twig', []);
     }
 }

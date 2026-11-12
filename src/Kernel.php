@@ -50,8 +50,8 @@ class Kernel extends BaseKernel
 
         // FIRST -- for admin routes - ie: /login or / -- first route wins
         // if ($_SERVER['HTTP_HOST'] ?? 'undefined' == $_SERVER['HOST_ADMIN']) {
-            $routes->import($adminConfigDir . '/routes.yaml');
-            $routes->import($adminConfigDir . '/routes/easyadmin.yaml');
+        $routes->import($adminConfigDir . '/routes.yaml');
+        $routes->import($adminConfigDir . '/routes/easyadmin.yaml');
         // }
 
         $routes->import($configDir . '/{routes}/' . $this->environment . '/*.{php,yaml}');
@@ -72,7 +72,7 @@ class Kernel extends BaseKernel
      */
     public function getCacheDir(): string
     {
-        $dir = match($_SERVER['HTTP_HOST'] ?? 'undefined') {
+        $dir = match ($_SERVER['HTTP_HOST'] ?? 'undefined') {
             $_SERVER['HOST_ADMIN'] => 'admin',
             $_SERVER['HOST'] => 'site',
             default => 'site',

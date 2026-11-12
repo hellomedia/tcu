@@ -12,17 +12,17 @@ use Symfony\Component\Routing\Attribute\Route;
  *
  * Returns 204 if config seems OK
  * Throws (return 500) if config is not what we expect
- * 
+ *
  * Usage:
  *  - visit /_check/php
  *  - ping /_check/php in uptime robot to get alerts
  */
 class PhpStatusController extends BaseController
 {
-    private const SHORT_OPEN_TAG = "0";
+    private const SHORT_OPEN_TAG = '0';
     // Uploads
-    private const UPLOAD_MAX_FILESIZE = "50M";
-    private const POST_MAX_SIZE = "100M"; // >= upload_max_filesize
+    private const UPLOAD_MAX_FILESIZE = '50M';
+    private const POST_MAX_SIZE = '100M'; // >= upload_max_filesize
     // Memory (per php process)
     // https://tideways.com/profiler/blog/new-feature-max-memory-monitoring
     //  Useful to configure right for two reasons:
@@ -36,14 +36,14 @@ class PhpStatusController extends BaseController
     // Could be optimized further if we want to run the app on a server with lower specs:
     // - Composer can run with a flag to override the memory limit.
     // - We could avoid running composer on the server during deployment.
-    private const MEMORY_LIMIT = "256M";  // per php-fpm process. > post_max_size. does not include opcache memory.
+    private const MEMORY_LIMIT = '256M';  // per php-fpm process. > post_max_size. does not include opcache memory.
     // Date
-    private const TIMEZONE = "Europe/Brussels";
+    private const TIMEZONE = 'Europe/Brussels';
     // Realpath cache
     // https://symfony.com/doc/current/performance.html
     // https://tideways.com/profiler/blog/how-does-the-php-realpath-cache-work-and-how-to-configure-it
-    private const REALPATH_CACHE_SIZE = "4M";
-    private const REALPATH_CACHE_TTL = "600";
+    private const REALPATH_CACHE_SIZE = '4M';
+    private const REALPATH_CACHE_TTL = '600';
 
     private array $issues = [];
 
@@ -53,7 +53,7 @@ class PhpStatusController extends BaseController
     ) {
     }
 
-    #[Route(name: "php_check", path: "/_check/php")]
+    #[Route(name: 'php_check', path: '/_check/php')]
     public function checkPhpConfig()
     {
         $this->_checkBaseConfig();
@@ -63,7 +63,7 @@ class PhpStatusController extends BaseController
         $this->_checkRealpathCacheStatus();
 
         if (!empty($this->issues)) {
-            throw new UnexpectedConfigException("Unexpected php config: " . implode(', ', $this->issues));
+            throw new UnexpectedConfigException('Unexpected php config: ' . implode(', ', $this->issues));
         }
 
         return new Response(content: 'OK', status: Response::HTTP_OK);

@@ -11,7 +11,6 @@ use Symfony\UX\Chartjs\Model\Chart;
 /**
  * Tick formatting with a callback takes place in stimulus
  * https://symfony.com/bundles/ux-chartjs/current/index.html#extend-the-default-behavior
- * 
  */
 class BaseChartProvider
 {
@@ -34,8 +33,7 @@ class BaseChartProvider
         protected ChartBuilderInterface $chartBuilder,
         private RequestStack $requestStack,
         protected TranslatorInterface $translator,
-    )
-    {
+    ) {
         // if single site
         $this->colors = self::COLORS;
         $this->siteColor = ChartColor::BLUE->value;
@@ -60,7 +58,7 @@ class BaseChartProvider
                 'fill' => false,
                 'data' => $dataset,
             ];
-            $i++;
+            ++$i;
         }
 
         $chart->setData(['datasets' => $formattedDatasets]);
@@ -117,7 +115,7 @@ class BaseChartProvider
                 'data' => $dataset['data'] ?? $dataset,
                 'borderWidth' => 1,
             ];
-            $i++;
+            ++$i;
         }
 
         $chart->setData(['datasets' => $formattedDatasets]);
@@ -183,7 +181,7 @@ class BaseChartProvider
         $tooltipFormat = match ($timeUnit) {
             'day' => 'DDD',
             'month' => 'LLLL y',
-            'year' => 'y'
+            'year' => 'y',
         };
 
         $chart->setOptions([
@@ -210,7 +208,7 @@ class BaseChartProvider
                             // So we need the time values to be displayed as is, *** NOT adjusted to local timezone ***
                             // which visually shifts the data points a few hours off the date chart lines
                             // So we need chartjs display config set to UTC
-                            'zone' => 'UTC' 
+                            'zone' => 'UTC',
                         ],
                     ],
                 ],
@@ -218,7 +216,7 @@ class BaseChartProvider
                     'beginAtZero' => true,
                     'display' => $showAxes,
                     'ticks' => [
-                        'precision' => 0 // only display ticks for numbers with 0 decimals
+                        'precision' => 0, // only display ticks for numbers with 0 decimals
                     ],
                 ],
             ],
@@ -228,8 +226,8 @@ class BaseChartProvider
                 ],
                 'legend' => [
                     'display' => $showLegend,
-                ]
-            ]
+                ],
+            ],
         ]);
     }
 
@@ -238,7 +236,7 @@ class BaseChartProvider
         // bar chart
         // https://www.chartjs.org/docs/latest/charts/bar.html
 
-        // stacked bar chart 
+        // stacked bar chart
         // https://www.chartjs.org/docs/latest/charts/bar.html#stacked-bar-chart
 
         // time scale
@@ -279,7 +277,7 @@ class BaseChartProvider
                     'beginAtZero' => true,
                     'ticks' => [
                         'color' => $color ?? '',
-                        'precision' => 0 // only display ticks for numbers with 0 decimals
+                        'precision' => 0, // only display ticks for numbers with 0 decimals
                     ],
                     'grid' => [
                         'display' => $gridColor ? true : false,
@@ -298,17 +296,16 @@ class BaseChartProvider
                     'display' => $showLegend,
                     'labels' => [
                         'color' => $color ?? '',
-                    ]
-                ]
-            ]
+                    ],
+                ],
+            ],
         ];
 
         if ($timeUnit) {
-
             $tooltipFormat = match ($timeUnit) {
                 'day' => 'DDD',
                 'month' => 'LLLL y',
-                'year' => 'y'
+                'year' => 'y',
             };
 
             $options['scales']['x']['type'] = 'time';
@@ -328,14 +325,13 @@ class BaseChartProvider
         $chart->setOptions($options);
     }
 
-
     protected function beginAtZero(): array
     {
         return [
             'scales' => [
                 'y' => [
-                    'beginAtZero' => true
-                ]
+                    'beginAtZero' => true,
+                ],
             ],
         ];
     }
@@ -345,7 +341,7 @@ class BaseChartProvider
         $tooltipFormat = match ($unit) {
             'day' => 'DDD',
             'month' => 'LLLL y',
-            'year' => 'y'
+            'year' => 'y',
         };
 
         return [
@@ -367,13 +363,13 @@ class BaseChartProvider
                             // So we need the time values to be displayed as is, *** NOT adjusted to local timezone ***
                             // which visually shifts the data points a few hours off the date chart lines
                             // So we need chartjs display config set to UTC
-                            'zone' => 'UTC'
+                            'zone' => 'UTC',
                         ],
                     ],
                 ],
                 'y' => [
-                    'beginAtZero' => true
-                ]
+                    'beginAtZero' => true,
+                ],
             ],
         ];
     }
@@ -401,12 +397,11 @@ class BaseChartProvider
     {
         if ($bytes > 1048576) {
             return sprintf('%d M', $bytes / 1048576);
-        } else {
-            if ($bytes > 1024) {
-                return sprintf('%d K', $bytes / 1024);
-            } else {
-                return sprintf('%d bytes', $bytes);
-            }
         }
+        if ($bytes > 1024) {
+            return sprintf('%d K', $bytes / 1024);
+        }
+
+        return sprintf('%d bytes', $bytes);
     }
-}   
+}

@@ -7,9 +7,7 @@ use App\Entity\Date;
 use App\Entity\Slot;
 use App\Repository\DateRepository;
 use DateInterval;
-use DateTimeImmutable;
 use DateTimeInterface;
-use DateTimeZone;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -23,9 +21,7 @@ class SlotBulkAddFormHandler
         private EntityManager $entityManager,
         private ValidatorInterface $validator,
         private RequestStack $requestStack,
-    )
-    {
-        
+    ) {
     }
 
     public function processForm(FormInterface $form): array
@@ -40,13 +36,13 @@ class SlotBulkAddFormHandler
             $endDate = $form->get('endDate')->getData();     // DateTimeInterface (date-only)
         }
 
-        $courts       = $form->get('courts')->getData();
-        $startTime    = $form->get('startTime')->getData();   // DateTimeInterface (time-only)
-        $endTime      = $form->get('endTime')->getData();     // DateTimeInterface (time-only)
+        $courts = $form->get('courts')->getData();
+        $startTime = $form->get('startTime')->getData();   // DateTimeInterface (time-only)
+        $endTime = $form->get('endTime')->getData();     // DateTimeInterface (time-only)
         $slotDuration = $form->get('duration')->getData();    // SlotDuration enum
 
         $week = new \DateInterval('P1W');
-        $cursor   = \DateTimeImmutable::createFromInterface($startDate)->setTime(0, 0);
+        $cursor = \DateTimeImmutable::createFromInterface($startDate)->setTime(0, 0);
         $lastDate = \DateTimeImmutable::createFromInterface($endDate)->setTime(0, 0);
 
         // 1) Collect all target days (Y-m-d)
@@ -56,7 +52,7 @@ class SlotBulkAddFormHandler
         }
 
         // 2) Preload existing Date rows in one query, keyed by Y-m-d
-        $existing =  $this->dateRepository->findByYmd($ymds); // see repo method below
+        $existing = $this->dateRepository->findByYmd($ymds); // see repo method below
 
         // 3) Create missing Date rows
         foreach ($ymds as $ymd) {
@@ -76,18 +72,13 @@ class SlotBulkAddFormHandler
             $dateEntity = $existing[$ymd];
 
             $timeStart = $this->combineDateAndTime($day, $startTime, $startDate->getTimezone());
-            $timeEnd   = $this->combineDateAndTime($day, $endTime,   $startDate->getTimezone());
+            $timeEnd = $this->combineDateAndTime($day, $endTime, $startDate->getTimezone());
 
             // (same strict divisibility check as before)
             $rangeSeconds = $timeEnd->getTimestamp() - $timeStart->getTimestamp();
-            $durSeconds   = $this->intervalInSeconds($duration);
+            $durSeconds = $this->intervalInSeconds($duration);
             if ($rangeSeconds % $durSeconds !== 0) {
-                throw new InvalidWindowException(sprintf(
-                    'La fenêtre %s–%s n\'est pas un multiple de %d minutes.',
-                    $timeStart->format('H:i'),
-                    $timeEnd->format('H:i'),
-                    $slotDuration->minutes()
-                ));
+                throw new InvalidWindowException(sprintf('La fenêtre %s–%s n\'est pas un multiple de %d minutes.', $timeStart->format('H:i'), $timeEnd->format('H:i'), $slotDuration->minutes()));
             }
 
             for ($slotStart = $timeStart; $slotStart < $timeEnd; $slotStart = $slotStart->add($duration)) {
@@ -99,7 +90,7 @@ class SlotBulkAddFormHandler
                         ->setEndsAt($slotEnd)
                         ->setDate($dateEntity)
                         ->setCourt($court);
-    
+
                     $slots[] = $slot;
                 }
             }
@@ -140,25 +131,26 @@ class SlotBulkAddFormHandler
 
         return $validSlots;
     }
-    
+
     /**
      * Combine a date (Y-m-d) and a time (H:i) as wall clock, in $tz.
      */
-    private function combineDateAndTime(DateTimeInterface $date, DateTimeInterface $time, DateTimeZone $tz): DateTimeImmutable
+    private function combineDateAndTime(\DateTimeInterface $date, \DateTimeInterface $time, \DateTimeZone $tz): \DateTimeImmutable
     {
-        return new DateTimeImmutable(
+        return new \DateTimeImmutable(
             $date->format('Y-m-d') . ' ' . $time->format('H:i'),
             $tz
         );
     }
-    
+
     /**
      * Convert a DateInterval to seconds (safe for H/M/S ranges).
      */
-    private function intervalInSeconds(DateInterval $i): int
+    private function intervalInSeconds(\DateInterval $i): int
     {
-        $start = new DateTimeImmutable('@0');
-        $end   = $start->add($i);
+        $start = new \DateTimeImmutable('@0');
+        $end = $start->add($i);
+
         return $end->getTimestamp() - $start->getTimestamp();
     }
 }

@@ -11,7 +11,8 @@ class BotDetector
     public function __construct(
         private $environment,
         private RequestStack $requestStack,
-    ) {}
+    ) {
+    }
 
     /**
      * Detect bot from a missing Accept-Language header
@@ -31,7 +32,6 @@ class BotDetector
         // search engines don't set Accept-Language
         // https://stackoverflow.com/questions/368570/search-engines-and-browser-accept-language
         if (empty($request->headers->get('Accept-Language'))) {
-
             $session->set('type', 'r');
 
             return true;
@@ -106,7 +106,6 @@ class BotDetector
         }
 
         if ($password === null) {
-
             $this->requestStack->getSession()->set('type', 'r');
 
             return true;

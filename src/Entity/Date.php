@@ -9,7 +9,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use IntlDateFormatter;
 
 /**
  * Could do without, but it seems a bit cleaner..
@@ -29,7 +28,7 @@ class Date implements EntityInterface
 
     /**
      * @var Collection<int, Slot>
-     * 
+     *
      * orphanRemoval: true ensures that if you remove a Slot from $date->getSlots()
      * and keep your add/remove helpers in sync, Doctrine will DELETE that Slot
      * (see removeSlot() )
@@ -53,7 +52,7 @@ class Date implements EntityInterface
      */
     public static function formatDay(\DateTimeInterface $day): string
     {
-        $fmt = new IntlDateFormatter(
+        $fmt = new \IntlDateFormatter(
             locale: 'fr-FR',
             pattern: 'EEEE dd/MM/YY'
         );
@@ -91,7 +90,7 @@ class Date implements EntityInterface
      */
     public function getSlotsByCourt(Court $court): Collection
     {
-        return $this->slots->filter(static fn($slot) => $slot->getCourt() === $court);
+        return $this->slots->filter(static fn ($slot) => $slot->getCourt() === $court);
     }
 
     public function addSlot(Slot $slot): static
@@ -122,40 +121,40 @@ class Date implements EntityInterface
 
     /**
      * @return Collection<int, InterfacMatch>
-     * 
+     *
      * Should be sorted by startsAt ASC since slots are sorted that way
      */
     public function getMatchs(): Collection
     {
         return $this->slots
             ->map(static fn (Slot $slot) => $slot->getBooking()?->getMatch())
-            ->filter(static fn($v) => null !== $v)
+            ->filter(static fn ($v) => null !== $v)
         ;
     }
 
     /**
      * @return Collection<int, InterfacMatch>
-     * 
+     *
      * Should be sorted by startsAt ASC since slots are sorted that way
      */
     public function getMatchsByCourt(Court $court): Collection
     {
         return $this->getSlotsByCourt($court)
             ->map(static fn (Slot $slot) => $slot->getBooking()?->getMatch())
-            ->filter(static fn($v) => null !== $v)
+            ->filter(static fn ($v) => null !== $v)
         ;
     }
 
     /**
      * @return Collection<int, InterfacMatch>
-     * 
+     *
      * Should be sorted by startsAt ASC since slots are sorted that way
      */
     public function getMatchsByGroup(Group $group): Collection
     {
         return $this->slots
             ->map(static fn (Slot $slot) => $slot->getBooking()?->getMatch())
-            ->filter(static fn($match) => $match !== null && $match->getGroup() === $group)
+            ->filter(static fn ($match) => $match !== null && $match->getGroup() === $group)
         ;
     }
 

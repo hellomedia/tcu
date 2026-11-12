@@ -51,9 +51,9 @@ class RankingController extends BaseController
 
         $registrations = array_filter(
             $repository->findBySeasonIndexedByPlayer($season),
-            fn(Registration $registration) => !$registration->isDismissed(),
+            fn (Registration $registration) => !$registration->isDismissed(),
         );
-        usort($registrations, fn(Registration $a, Registration $b) => [$a->getPlayer()->getLastname(), $a->getPlayer()->getFirstname()] <=> [$b->getPlayer()->getLastname(), $b->getPlayer()->getFirstname()]);
+        usort($registrations, fn (Registration $a, Registration $b) => [$a->getPlayer()->getLastname(), $a->getPlayer()->getFirstname()] <=> [$b->getPlayer()->getLastname(), $b->getPlayer()->getFirstname()]);
 
         // nouvelle récupération
         $request->getSession()->set(self::SESSION_KEY, ['season' => $season->getId(), 'mode' => $mode, 'items' => []]);

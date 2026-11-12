@@ -27,7 +27,7 @@ class SlotBulkAddType extends AbstractType
                 'expanded' => false,
                 'autocomplete' => true,
             ]);
-        
+
         if ($date == null) {
             $builder->add('startDate', DateType::class, [
                 'label' => 'Date de début',
@@ -50,7 +50,7 @@ class SlotBulkAddType extends AbstractType
                 'multiple' => false,
                 'expanded' => false,
                 'autocomplete' => true,
-                'data' => SlotDuration::ONE_HOUR
+                'data' => SlotDuration::ONE_HOUR,
             ])
         ;
     }

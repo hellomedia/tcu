@@ -25,6 +25,7 @@ class PlayerRepository extends ServiceEntityRepository
      * Tous les joueurs avec leur compte, par nom
      *
      * @param int[]|null $ids limite aux joueurs donnés
+     *
      * @return Player[] indexés par id
      */
     public function findAllWithAccount(?array $ids = null): array
@@ -145,7 +146,7 @@ class PlayerRepository extends ServiceEntityRepository
                 // total points per player in this group (0 if none)
                 "COALESCE(SUM(CASE WHEN mp.side = 'A' THEN r.pointsA WHEN mp.side = 'B' THEN r.pointsB ELSE 0 END), 0) AS points",
                 // number of matches played = number of matches where a result exists
-                "COALESCE(COUNT(r.id), 0) AS matchsPlayed",
+                'COALESCE(COUNT(r.id), 0) AS matchsPlayed',
                 // classement du joueur pour la saison de la poule (sans classement => à la fin)
                 'COALESCE(MAX(ps.rankingOrder), -1) AS HIDDEN rankingOrder',
             ])

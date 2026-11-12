@@ -11,7 +11,7 @@ use Doctrine\DBAL\Types\TextType;
  */
 final class CiText extends TextType
 {
-    const NAME = 'citext'; // lowercase for postgresql
+    public const NAME = 'citext'; // lowercase for postgresql
 
     public function getName(): string
     {

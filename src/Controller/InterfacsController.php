@@ -61,8 +61,7 @@ class InterfacsController extends BaseController
         SeasonRepository $seasonRepository,
         SeasonContext $seasonContext,
         ?string $slug = null,
-    ): Response
-    {
+    ): Response {
         if ($slug === null) {
             // pas de saison publiée : page d'attente
             if ($comingSoon = $this->comingSoon($seasonContext)) {

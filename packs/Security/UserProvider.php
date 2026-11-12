@@ -62,7 +62,7 @@ class UserProvider implements UserProviderInterface, PasswordUpgraderInterface
         if (!$user instanceof User) {
             throw new UnsupportedUserException('Account is not supported.');
         }
-        
+
         $user->setPassword($newHashedPassword);
 
         $this->entityManager->flush();

@@ -10,7 +10,6 @@ use EasyCorp\Bundle\EasyAdminBundle\Dto\FieldDto;
 use EasyCorp\Bundle\EasyAdminBundle\Dto\FilterDataDto;
 use EasyCorp\Bundle\EasyAdminBundle\Filter\FilterTrait;
 use EasyCorp\Bundle\EasyAdminBundle\Form\Filter\Type\ComparisonFilterType as TypeComparisonFilterType;
-use EasyCorp\Bundle\EasyAdminBundle\Form\Type\ComparisonFilterType;
 use EasyCorp\Bundle\EasyAdminBundle\Form\Type\ComparisonType;
 use Symfony\Component\Form\Extension\Core\Type\EnumType;
 
@@ -48,7 +47,7 @@ final class RankingOrderFilter implements FilterInterface
         QueryBuilder $qb,
         FilterDataDto $filterDataDto,
         ?FieldDto $fieldDto,
-        EntityDto $entityDto
+        EntityDto $entityDto,
     ): void {
         /** @var Ranking|null $ranking */
         $ranking = $filterDataDto->getValue();      // the Enum value
@@ -59,14 +58,14 @@ final class RankingOrderFilter implements FilterInterface
         }
 
         // Same mapping you use in setRanking()
-        $orderMap  = array_flip(array_column(Ranking::cases(), 'name'));
+        $orderMap = array_flip(array_column(Ranking::cases(), 'name'));
         $rankOrder = $orderMap[$ranking->name] ?? null;
 
         if ($rankOrder === null) {
             return;
         }
 
-        $alias    = $filterDataDto->getEntityAlias();  // usually "entity"
+        $alias = $filterDataDto->getEntityAlias();  // usually "entity"
         $property = $filterDataDto->getProperty();     // "rankingOrder"
 
         // Translate comparison + enum → numeric comparison on rankingOrder

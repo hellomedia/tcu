@@ -3,9 +3,9 @@
 namespace Pack\Security\Entity\Trait;
 
 use App\Entity\User;
-use Pack\Security\Doctrine\Types\CiText;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Pack\Security\Doctrine\Types\CiText;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
@@ -17,7 +17,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * - Security flags: demarchage, scam
  * - Monitoring: watchlist, whitelist, adminReviewed
  * - Kotcop: kotcopScore, kotcopUpdatedAt
- * 
+ *
  * ATTN:
  * 1) Don't forget to add unique entity mapping constraint + validation constraint in the User entity
  * 2) Also worth considering adding Pack\Security\Entity to the service exclusion list in services.yaml
@@ -46,6 +46,7 @@ trait UserSecurityTrait
      * ==================================================
      *  IMPLEMENTS PASSWORD AUTHENTICATED USER INTERFACE
      * ==================================================
+     *
      * @var string The hashed password
      */
     #[ORM\Column]
@@ -58,7 +59,6 @@ trait UserSecurityTrait
      */
     #[ORM\Column]
     private bool $verified = false;
-
 
     /**
      * ======================
@@ -213,6 +213,7 @@ trait UserSecurityTrait
      * ==================================================
      *  IMPLEMENTS PASSWORD AUTHENTICATED USER INTERFACE
      * ==================================================
+     *
      * @see PasswordAuthenticatedUserInterface
      */
     public function getPassword(): ?string
@@ -463,16 +464,16 @@ trait UserSecurityTrait
 
         return $this;
     }
-    
+
     public function isSafe(): bool
     {
         return $this->safe;
     }
-    
+
     public function setSafe(bool $safe): static
     {
         $this->safe = $safe;
-        
+
         return $this;
     }
 

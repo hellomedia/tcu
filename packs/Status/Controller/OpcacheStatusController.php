@@ -12,7 +12,7 @@ use Symfony\Component\Routing\Attribute\Route;
  *
  * Returns 204 if status seems OK
  * Throws (return 500) if issue (opcache full)
- * 
+ *
  * Usage:
  *  - visit /_check/opcache
  *  - ping /_check/opcache in uptime robot to get alerts
@@ -31,17 +31,17 @@ class OpcacheStatusController extends BaseController
     // https://externals.io/message/113091
     // https://github.com/php/php-src/pull/6627#issuecomment-775869140
     // private const OPCACHE_PRELOAD = "/config/preload.php";
-    private const OPCACHE_PRELOAD = "";
+    private const OPCACHE_PRELOAD = '';
     // Opcache
     // https://symfony.com/doc/current/performance.html
-    private const OPCACHE_ENABLE = "1";
-    private const OPCACHE_MEMORY_CONSUMPTION = "2048";
-    private const OPCACHE_MAX_ACCELERATED_FILES = "150000"; // max number of keys (files in cache)
-    private const OPCACHE_VALIDATE_TIMESTAMPS = "0"; // 0 => never update cached files (restart required)
+    private const OPCACHE_ENABLE = '1';
+    private const OPCACHE_MEMORY_CONSUMPTION = '2048';
+    private const OPCACHE_MAX_ACCELERATED_FILES = '150000'; // max number of keys (files in cache)
+    private const OPCACHE_VALIDATE_TIMESTAMPS = '0'; // 0 => never update cached files (restart required)
 
     private array $issues = [];
 
-    #[Route(name: "opcache_check", path: "/_check/opcache")]
+    #[Route(name: 'opcache_check', path: '/_check/opcache')]
     public function checkOpcache()
     {
         $this->_checkConfig();
@@ -51,7 +51,7 @@ class OpcacheStatusController extends BaseController
         $this->_checkPreloadingConfig();
 
         if (!empty($this->issues)) {
-            throw new OpcacheIssueException("Opcache issue: " . implode(', ', $this->issues));
+            throw new OpcacheIssueException('Opcache issue: ' . implode(', ', $this->issues));
         }
 
         return new Response(content: 'OK', status: Response::HTTP_OK);
@@ -124,9 +124,9 @@ class OpcacheStatusController extends BaseController
     private function _checkPreloadingConfig(): void
     {
         $opcachePreload = \ini_get('opcache.preload');
-        //$opcachePreloadUser = \ini_get('opcache.preload_user');
+        // $opcachePreloadUser = \ini_get('opcache.preload_user');
 
-        $expectedOpcachePreload = self::OPCACHE_PRELOAD ? \preg_replace('#releases/(\d+)-(\d+)/#', 'current-release/', $this->projectDir) . self::OPCACHE_PRELOAD : "";
+        $expectedOpcachePreload = self::OPCACHE_PRELOAD ? \preg_replace('#releases/(\d+)-(\d+)/#', 'current-release/', $this->projectDir) . self::OPCACHE_PRELOAD : '';
 
         if ($opcachePreload != $expectedOpcachePreload) {
             $this->_addUnexpectedConfig(

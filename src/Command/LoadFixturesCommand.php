@@ -313,7 +313,7 @@ class LoadFixturesCommand extends Command
             ['rankingOrder' => 'DESC'],
         );
 
-        return array_map(fn(Registration $registration) => $registration->getPlayer(), $registrations);
+        return array_map(fn (Registration $registration) => $registration->getPlayer(), $registrations);
     }
 
     /**
@@ -325,7 +325,7 @@ class LoadFixturesCommand extends Command
      */
     private function loadGroups(Season $season, array $players): array
     {
-        $players = array_values(array_filter($players, fn(Player $player) => $player->getRegistration($season)?->isInterfacs()));
+        $players = array_values(array_filter($players, fn (Player $player) => $player->getRegistration($season)?->isInterfacs()));
         $half = (int) ceil(count($players) / 2);
 
         $groups = [];
@@ -349,7 +349,7 @@ class LoadFixturesCommand extends Command
     /**
      * Saison terminée : tous les matchs sont programmés et joués
      *
-     * @param Group[] $groups
+     * @param Group[]              $groups
      * @param \DateTimeImmutable[] $days
      */
     private function loadPlayedMatchs(array $groups, array $days): void
@@ -405,7 +405,7 @@ class LoadFixturesCommand extends Command
      * un pour les deux poules avec un intitulé et une note, un annulé
      *
      * @param Group[] $groups
-     * @param Slot[] $freeSlots créneaux à venir libres, par date puis heure
+     * @param Slot[]  $freeSlots créneaux à venir libres, par date puis heure
      */
     private function loadPractices(array $groups, Season $season, array $freeSlots): void
     {
@@ -528,8 +528,8 @@ class LoadFixturesCommand extends Command
         $players = $group->getPlayersByRanking()->toArray();
         $matchs = [];
 
-        for ($i = 0; $i < count($players); $i++) {
-            for ($j = $i + 1; $j < count($players); $j++) {
+        for ($i = 0; $i < count($players); ++$i) {
+            for ($j = $i + 1; $j < count($players); ++$j) {
                 $match = new InterfacMatch();
                 $group->addMatch($match);
                 $match->addParticipant((new MatchParticipant())->setPlayer($players[$i])->setSide(Side::A));
@@ -597,7 +597,7 @@ class LoadFixturesCommand extends Command
         $favoriteWins = mt_rand(1, 100) <= 75;
         $aWins = $aIsFavorite === $favoriteWins;
 
-        $loserGames = fn() => mt_rand(0, 4);
+        $loserGames = fn () => mt_rand(0, 4);
         $threeSets = mt_rand(1, 100) <= 30;
 
         // sets du point de vue du vainqueur : [jeux vainqueur, jeux perdant]
@@ -633,7 +633,7 @@ class LoadFixturesCommand extends Command
                 $this->entityManager->persist($this->dates[$ymd]);
             }
 
-            for ($hour = 16; $hour < 20; $hour++) {
+            for ($hour = 16; $hour < 20; ++$hour) {
                 foreach ($this->courts as $court) {
                     $slot = (new Slot())
                         ->setStartsAt($day->setTime($hour, 0))

@@ -29,8 +29,7 @@ class SlotBulkRemoveType extends AbstractType
 
     public function __construct(
         private DateRepository $dateRepository,
-    )
-    {
+    ) {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void

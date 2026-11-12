@@ -5,9 +5,9 @@ namespace App\Repository;
 use App\Entity\Season;
 use App\Entity\User;
 use App\Enum\RegistrationStatus;
-use Pack\Security\Repository\Trait\UserSecurityRepositoryTrait;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Pack\Security\Repository\Trait\UserSecurityRepositoryTrait;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 
 /**
@@ -50,7 +50,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
         $users = $qb->getQuery()->getResult();
 
-        return array_values(array_filter($users, fn(User $user) => $user->mustChoosePassword()));
+        return array_values(array_filter($users, fn (User $user) => $user->mustChoosePassword()));
     }
 
     //    /**
