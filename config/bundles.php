@@ -20,4 +20,5 @@ return [
     Sentry\SentryBundle\SentryBundle::class => ['prod' => true, 'dev' => true],
     Symfony\UX\Chartjs\ChartjsBundle::class => ['all' => true],
     Symfony\UX\Autocomplete\AutocompleteBundle::class => ['all' => true],
+    DAMA\DoctrineTestBundle\DAMADoctrineTestBundle::class => ['test' => true],
 ];
