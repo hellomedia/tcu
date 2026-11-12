@@ -135,7 +135,7 @@ class RegistrationController extends BaseController
      * Expects 'unverified_email' session attribute to be set upstream
      */
     #[Route(path: '/check-your-email', name: 'registration_check_your_email')]
-    public function checkYourEmail(Request $request, EmailVerifier $emailVerifier, bool $deliverabilityIssues)
+    public function checkYourEmail(Request $request, EmailVerifier $emailVerifier, bool $deliverabilityIssues = false)
     {
         $email = $request->getSession()->get('unverified_email');
 
@@ -172,7 +172,7 @@ class RegistrationController extends BaseController
     {
         $email = $request->getSession()->get('unverified_email');
 
-        return $this->render('registration/check_your_email.html.twig', [
+        return $this->render('@security/registration/check_your_email.html.twig', [
             'email' => $email,
             'gmail_junk_warning' => false,
         ]);
