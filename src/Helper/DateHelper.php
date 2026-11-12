@@ -48,15 +48,13 @@ class DateHelper
 
     /**
      * Get days since event
-     * 
-     * @var $precision string <'date'|'time'>
-     *      'time'   => 
-     *         - difference between yesterday at 4pm and today ('now') at 3pm is 0.
-     *         - difference between yesterday at 4pm and today ('now') at 5pm is 1.
-     *      'date' => 
-     *         - difference between yesterday at 4pm (or any other time, all forced to 00:00::00)
-     *         and today ('today') (which means today 00:00:00) is 1.
-     *         Thus the difference between any event yesterday and 'today' is 1, when called at any time.
+     *
+     * $precision:
+     * - 'time': difference between yesterday at 4pm and today ('now') at 3pm is 0, at 5pm it is 1.
+     * - 'date': all times are forced to 00:00:00, so the difference between yesterday at 4pm (or any
+     *   other time) and today ('today', i.e. today 00:00:00) is 1, whenever it is called.
+     *
+     * @param 'date'|'time' $precision
      */
     public static function getDaysSince(DateTimeImmutable $event, ?string $precision = 'date'): int
     {

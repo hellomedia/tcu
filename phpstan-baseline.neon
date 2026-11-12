@@ -627,7 +627,7 @@ parameters:
 		-
 			message: '#^Strict comparison using \=\=\= between true and true will always evaluate to true\.$#'
 			identifier: identical.alwaysTrue
-			count: 2
+			count: 1
 			path: packs/Status/Model/OpCacheStatus.php
 
 		-
@@ -1001,21 +1001,6 @@ parameters:
 			identifier: property.onlyWritten
 			count: 1
 			path: src/Helper/BreadcrumbsHelper.php
-
-		-
-			message: '''
-				#^PHPDoc tag @var has invalid value \(\$precision string \<'date'\|'time'\>
-				     'time'   \=\> 
-				        \- difference between yesterday at 4pm and today \('now'\) at 3pm is 0\.
-				        \- difference between yesterday at 4pm and today \('now'\) at 5pm is 1\.
-				     'date' \=\> 
-				        \- difference between yesterday at 4pm \(or any other time, all forced to 00\:00\:\:00\)
-				        and today \('today'\) \(which means today 00\:00\:00\) is 1\.
-				        Thus the difference between any event yesterday and 'today' is 1, when called at any time\.\)\: Unexpected token "\$precision", expected type at offset 52 on line 4$#
-			'''
-			identifier: phpDoc.parseError
-			count: 1
-			path: src/Helper/DateHelper.php
 
 		-
 			message: '#^Method App\\Mailer\\BaseMailer\:\:generateAbsoluteUrl\(\) has parameter \$parameters with no value type specified in iterable type array\.$#'
