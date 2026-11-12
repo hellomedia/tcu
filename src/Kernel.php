@@ -86,12 +86,12 @@ class Kernel extends BaseKernel
     }
 
     /**
-     * Environments this app runs in: dev (local) and prod. Symfony 8 refuses to boot any other APP_ENV.
+     * Environments this app runs in: dev (local), prod, and test (php bin/phpunit). Symfony 8 refuses to boot any other APP_ENV.
      *
      * @return list<string>
      */
     private function getAllowedEnvs(): array
     {
-        return ['prod', 'dev'];
+        return ['prod', 'dev', 'test'];
     }
 }
