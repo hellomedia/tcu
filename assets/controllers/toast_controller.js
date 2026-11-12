@@ -15,9 +15,9 @@ export default class extends Controller {
 
         // https://stimulus-use.github.io/stimulus-use/#/use-transition
         useTransition(this, {
-            leaveActive: 'transition ease-in duration-200',
-            leaveFrom: 'opacity-100',
-            leaveTo: 'opacity-0',
+            leaveActive: 'leave-active',
+            leaveFrom: 'leave-from',
+            leaveTo: 'leave-to',
             transitioned: true,
         });
 

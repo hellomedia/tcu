@@ -60,6 +60,11 @@
         }
     }
 
+    .mobile-menu-section {
+        padding-top: calc(var(--spacing) * 1);
+        padding-bottom: calc(var(--spacing) * 2);
+    }
+
     .mobile-menu-item {
         display: flex;
         border-left-style: solid;

@@ -8,7 +8,7 @@
 
 	{% if is_granted('ROLE_USER') %}
 
-		<div class="pt-1 pb-2">
+		<div class="mobile-menu-section">
 
 			<a href="{{ path('dashboard') }}" class="mobile-menu-item {{ is_current_page('dashboard') ? 'active' }}" data-action="mobile-menu#toggle">
 				<twig:ux:icon name="account" class="mobile-menu-item-icon"/>
@@ -41,7 +41,7 @@
 
 	{% endif %}
 
-	<div class="pt-1 pb-2">
+	<div class="mobile-menu-section">
 	
 		<a
 			href="{{ path('homepage') }}"
