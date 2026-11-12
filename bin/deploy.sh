@@ -50,11 +50,6 @@ BUILD_DIR=/data/www/$(basename $TMP_REPO)
 # https://getcomposer.org/doc/articles/troubleshooting.md#root-package-version-detection
 COMPOSER="COMPOSER_ROOT_VERSION=1.0.0 ./composer.phar" 
 
-# tailwind binary
-# ATTN: line below expects 1 version folder. When we change the binary version, the old folder should be deleted.
-TAILWIND_BINARY_VERSION_DIR=$(basename $(dirname "$(realpath /home/nicolas/projects/tcu/var/tailwind/*/tailwindcss-linux-x64)"))
-TAILWIND_BINARY=/data/www/var/tailwind/$TAILWIND_BINARY_VERSION_DIR/tailwindcss-linux-x64
-
 if [ $1 = "--no-docker" ]; then
     COMMAND_PREFIX='sh -c'
     BUILD_DIR=$TMP_REPO
@@ -131,12 +126,6 @@ local_build () {
 
     $COMMAND_PREFIX "cd $BUILD_DIR && APP_ENV=$BUILD_APP_ENV bin/console importmap:install"
 
-    # copy tailwind binary into local build to avoid heavy download
-    $COMMAND_PREFIX "cd $BUILD_DIR && mkdir -p var/tailwind/$TAILWIND_BINARY_VERSION_DIR"
-    $COMMAND_PREFIX "cd $BUILD_DIR && cp $TAILWIND_BINARY var/tailwind/$TAILWIND_BINARY_VERSION_DIR"
-
-    $COMMAND_PREFIX "cd $BUILD_DIR && APP_ENV=$BUILD_APP_ENV bin/console tailwind:build --minify"
-
     $COMMAND_PREFIX "cd $BUILD_DIR && APP_ENV=$BUILD_APP_ENV bin/console asset-map:compile"
 
     $COMMAND_PREFIX "cd $BUILD_DIR && APP_ENV=$BUILD_APP_ENV bin/console cache:warmup"
@@ -151,7 +140,6 @@ rsync_local () {
         "$@" \
         --exclude /.git \
         --exclude /.hg \
-        --exclude '/var/tailwind/v*' \
         --exclude /docker \
         --exclude /var/cache \
         --exclude /assets \
