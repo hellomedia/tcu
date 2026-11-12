@@ -79,7 +79,7 @@ class ControllerSubscriber implements EventSubscriberInterface
 
         if (!$theme) {
             // theme set from headers
-            $acceptHeader = $request->headers->get('accept');
+            $acceptHeader = $request->headers->get('accept', '');
             $theme = (str_contains($acceptHeader, 'prefers-color-scheme: dark')) ? 'dark' : 'light';
 
             $setTheme = true;
