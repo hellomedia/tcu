@@ -5,13 +5,9 @@
  * which should already be in your base.html.twig.
  */
 
-// Load all CSS directly in this file
-// DO NOT USE 2nd level imports ( like... import './styles/admin.css -- and then import css from there )
-// 2nd level imports are not handled by asset mapper
-// They can be handled by tailwind -- as we do for assets/styles/app.css
-// BUT symfonycast/tailwind binary which builds tailwind assets only supports 1 entry point
-// ( see symfonycasts_tailwind.yaml )
-// So in the end, 2nd level imports are not recognized in a file other than app.css
+// Load all CSS directly in this file: one <link> per file, all loaded in parallel.
+// (@import inside a CSS file works too with AssetMapper, see assets/styles/app.css,
+// but the browser only fetches the imported files once the importing file is loaded.)
 
 // DO NOT import lights.css
 // it only kicks in if body has .light class, which we don't do in easyadmin

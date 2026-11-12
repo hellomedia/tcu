@@ -1,5 +1,4 @@
-/* DO NOT IMPMORT CSS FILES FROM HERE
-unless we fix tailwind build for admin.css */
+/* CSS files are imported from admin.js, not from here */
 
 html {
     --bg-gray: #f8fafc;

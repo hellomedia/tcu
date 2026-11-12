@@ -1498,16 +1498,6 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *     intercept_redirects?: bool|Param, // Default: false
  *     excluded_ajax_paths?: scalar|Param|null, // Default: "^/((index|app(_[\\w]+)?)\\.php/)?_wdt"
  * }
- * @psalm-type SymfonycastsTailwindConfig = array{
- *     input_css?: list<scalar|Param|null>,
- *     config_file?: scalar|Param|null, // Path to the tailwind.config.js file // Default: "%kernel.project_dir%/tailwind.config.js"
- *     binary?: scalar|Param|null, // The tailwind binary to use instead of downloading a new one // Default: null
- *     binary_version?: scalar|Param|null, // Tailwind CLI version to download - required unless "binary" is set (run "tailwind:init" to configure) // Default: null
- *     binary_platform?: "auto"|"linux-arm64"|"linux-arm64-musl"|"linux-x64"|"linux-x64-musl"|"macos-arm64"|"macos-x64"|"windows-x64"|Param, // Tailwind CLI platform to download - "auto" will try to detect the platform automatically // Default: "auto"
- *     postcss_config_file?: scalar|Param|null, // Path to PostCSS config file which is passed to the Tailwind CLI // Default: null
- *     strict_mode?: bool|Param|null, // When enabled, an exception will be thrown if there are no built assets (default: false in `test` env, true otherwise) // Default: null
- *     process_timeout?: int|Param, // Timeout in seconds for the Tailwind build process - use "0" to disable // Default: 60
- * }
  * @psalm-type UxIconsConfig = array{
  *     icon_dir?: scalar|Param|null, // The local directory where icons are stored. // Default: "%kernel.project_dir%/assets/icons"
  *     default_icon_attributes?: array<string, scalar|Param|null>,
@@ -1663,7 +1653,6 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *     symfonycasts_reset_password?: SymfonycastsResetPasswordConfig,
  *     symfonycasts_verify_email?: SymfonycastsVerifyEmailConfig,
  *     twig_extra?: TwigExtraConfig,
- *     symfonycasts_tailwind?: SymfonycastsTailwindConfig,
  *     ux_icons?: UxIconsConfig,
  *     "when@dev"?: array{
  *         imports?: ImportsConfig,
@@ -1683,7 +1672,6 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         debug?: DebugConfig,
  *         maker?: MakerConfig,
  *         web_profiler?: WebProfilerConfig,
- *         symfonycasts_tailwind?: SymfonycastsTailwindConfig,
  *         ux_icons?: UxIconsConfig,
  *         sentry?: SentryConfig,
  *     },
@@ -1702,7 +1690,6 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         symfonycasts_reset_password?: SymfonycastsResetPasswordConfig,
  *         symfonycasts_verify_email?: SymfonycastsVerifyEmailConfig,
  *         twig_extra?: TwigExtraConfig,
- *         symfonycasts_tailwind?: SymfonycastsTailwindConfig,
  *         ux_icons?: UxIconsConfig,
  *         sentry?: SentryConfig,
  *     },
@@ -1722,7 +1709,6 @@ use Symfony\Component\Config\Loader\ParamConfigurator as Param;
  *         symfonycasts_verify_email?: SymfonycastsVerifyEmailConfig,
  *         twig_extra?: TwigExtraConfig,
  *         web_profiler?: WebProfilerConfig,
- *         symfonycasts_tailwind?: SymfonycastsTailwindConfig,
  *         ux_icons?: UxIconsConfig,
  *     },
  *     ...<string, ExtensionType|array{ // extra keys must follow the when@%env% pattern or match an extension alias

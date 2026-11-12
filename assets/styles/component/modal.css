@@ -45,18 +45,18 @@
     max-height: 80%;
     overflow-y: auto;
 
-    /* breakpoint-md without tailwind theme -- for portability */
+    /* breakpoint-md */
     @media (width >=48rem) {
         min-width: 50%;
         max-width: 70%;
     }
 
-    /* breakpoint-lg without tailwind theme -- for portability */
+    /* breakpoint-lg */
     @media (width >=64rem) {
         max-width: 60%;
     }
 
-    /* breakpoint-xl without tailwind theme -- for portability */
+    /* breakpoint-xl */
     @media (width >=80rem) {
         max-width: 50%;
     }

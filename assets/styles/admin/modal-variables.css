@@ -1,5 +1,4 @@
-/* tailwind variables replacement for modal css imported from admin.js */
-/* since admin does not have tailwind compilation */
+/* variables used by the modal css imported from admin.js: theme.css (app) is not loaded in the admin */
 :root {
     --spacing: 0.25em;
     --color-primary-text: #444;

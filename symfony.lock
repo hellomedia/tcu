@@ -396,9 +396,6 @@
             "config/packages/reset_password.yaml"
         ]
     },
-    "symfonycasts/tailwind-bundle": {
-        "version": "v0.6.0"
-    },
     "symfonycasts/verify-email-bundle": {
         "version": "v1.17.1"
     },
