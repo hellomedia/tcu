@@ -26,7 +26,7 @@
 
         transition-property: all;
         transition-duration: 300ms;
-        transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
+        transition-timing-function: var(--default-transition-timing-function);
 
         &.open {
             translate: 0 0;

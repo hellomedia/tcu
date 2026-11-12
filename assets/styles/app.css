@@ -1,13 +1,6 @@
-@layer reset, base, components;
+@layer reset, theme, base, components, utilities;
 
-@import "tailwindcss";
-@source "../../templates";
-@source "../../src/Twig/**/*.twig";
-@source "../../assets";
-
-@variant light (&:where(.light, .light *));
-@variant dark (&:where(.dark, .dark *));
-
+@import "./base/reset.css";
 @import "./theme.css";
 
 @import "./theme/light.css";

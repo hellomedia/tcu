@@ -1,5 +1,5 @@
 @layer base {
-    @media (max-width: theme(--breakpoint-mobile-end)) {
+    @media (max-width: 48rem) {
         .mobile-focus-layout {
             #main-wrapper {
                 padding-top: 0;

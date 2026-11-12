@@ -2,7 +2,7 @@
 
     body:not(.no-bottom-menu).with-bottom-menu {
         padding-bottom: 75px; /* set to bottom menu height */
-        @media (min-width: theme(--breakpoint-bottom-menu)) {
+        @media (min-width: 48rem) {
             padding-bottom: 0;
         }
     }
@@ -17,7 +17,7 @@
         bottom: 0;
         left: 0;
         width: 100vw;
-        @media (min-width: theme(--breakpoint-bottom-menu)) {
+        @media (min-width: 48rem) {
             display: none;
         }
         background-color: var(--color-bottom-menu-background);

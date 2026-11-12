@@ -5,7 +5,7 @@
         background-color: var(--color-menu-background);
         color: var(--color-menu-text);
         box-shadow: var(--shadow-xs);
-        @media (max-width: theme(--breakpoint-md)) {
+        @media (max-width: 48rem) {
             background-color: var(--color-menu-background-mobile);
             color: var(--color-menu-text-mobile);
         }
@@ -45,7 +45,7 @@
         color: white;
         font-weight: 600;
         white-space: nowrap;
-        @media (min-width: theme(--breakpoint-lg)) {
+        @media (min-width: 64rem) {
             display: none;
         }
     }
@@ -56,7 +56,7 @@
 
     #main-menu-items {
         display: none;
-        @media (min-width: theme(--breakpoint-lg)) {
+        @media (min-width: 64rem) {
             display: flex;
             overflow: hidden;
             margin-block: -1px;
@@ -66,7 +66,7 @@
                 margin-inline-end: calc(var(--spacing) * 3);
             }
         }
-        @media (min-width: theme(--breakpoint-xl)) {
+        @media (min-width: 80rem) {
             padding-inline: calc(var(--spacing) * 5);
             :where(& > :not(:last-child)) {
                 margin-inline-start: 0;

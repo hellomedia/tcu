@@ -31,7 +31,7 @@
 
     /* only use translation view transition on mobile where it feels native */
     /* "back" type: set on history back navigations by the pagereveal script in layout/base.html.twig */
-    @media (max-width: theme(--breakpoint-mobile-end)) {
+    @media (max-width: 48rem) {
         html:active-view-transition-type(back)::view-transition-old(root) {
             /* on mobile, screen width is small so animation needs to be fast to feel snappy */
             animation: 0.2s ease-in both move-out;

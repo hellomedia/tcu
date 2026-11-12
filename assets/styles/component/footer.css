@@ -7,7 +7,7 @@
         padding-bottom: 60px;
         
         display: none;
-        @media (min-width: theme(--breakpoint-bottom-menu)) {
+        @media (min-width: 48rem) {
             display: block;
         }
         

@@ -16,7 +16,7 @@
             background-color: var(--color-theme);
             color: var(--color-gray-200);
         }
-        @media (min-width: theme(--breakpoint-mobile-end)) {
+        @media (min-width: 48rem) {
             background-color: var(--color-tag-background);
             color: var(--color-primary-text);
             &.selected {

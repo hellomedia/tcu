@@ -18,7 +18,7 @@
     /* the band replaces the breadcrumbs: less space above the content */
     .band + #main-wrapper {
         padding-top: calc(var(--spacing) * 6);
-        @media (min-width: theme(--breakpoint-md)) {
+        @media (min-width: 48rem) {
             padding-top: calc(var(--spacing) * 8);
         }
     }
@@ -35,7 +35,7 @@
         gap: 8px;
         min-width: 0;
         color: var(--color-theme-darker);
-        @media (min-width: theme(--breakpoint-lg)) {
+        @media (min-width: 64rem) {
             display: flex;
         }
 
@@ -62,7 +62,7 @@
         /* many tabs on a narrow screen: scroll instead of wrapping */
         overflow-x: auto;
         scrollbar-width: none;
-        @media (min-width: theme(--breakpoint-md)) {
+        @media (min-width: 48rem) {
             gap: 12px;
         }
     }
@@ -98,7 +98,7 @@
         .band-tab-long {
             display: none;
         }
-        @media (min-width: theme(--breakpoint-sm)) {
+        @media (min-width: 40rem) {
             .band-tab-long {
                 display: inline;
             }

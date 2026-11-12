@@ -1,71 +1,125 @@
-@theme {
+/*
+ * Breakpoints (media queries can't use var(), the values are written in the media queries):
+ *   40rem = 640px   phones (phone-end)
+ *   48rem = 768px   mobile (mobile-end, bottom-menu)
+ *   64rem = 1024px  tablets (contextual-menu)
+ *   80rem = 1280px
+ *   600px           horizontal cards
+ */
+@layer theme {
+    :root {
 
-    --container-7xl: 80rem; /* default: 80rem */
-    
-    --color-blue-1: #226b80;
-    --color-blue-2: #2d8da8;
-    --color-blue-3: #174958;
+        /* defaults that came with Tailwind (v4.0.2 values), only the ones in use */
+        --color-red-50: oklch(0.971 0.013 17.38);
+        --color-red-600: oklch(0.577 0.245 27.325);
+        --color-red-700: oklch(0.505 0.213 27.518);
+        --color-red-800: oklch(0.444 0.177 26.899);
+        --color-amber-600: oklch(0.666 0.179 58.318);
+        --color-yellow-50: oklch(0.987 0.026 102.212);
+        --color-yellow-200: oklch(0.945 0.129 101.54);
+        --color-yellow-400: oklch(0.852 0.199 91.936);
+        --color-yellow-500: oklch(0.795 0.184 86.047);
+        --color-yellow-900: oklch(0.421 0.095 57.708);
+        --color-green-50: oklch(0.982 0.018 155.826);
+        --color-green-100: oklch(0.962 0.044 156.743);
+        --color-green-200: oklch(0.925 0.084 155.995);
+        --color-green-500: oklch(0.723 0.219 149.579);
+        --color-green-600: oklch(0.627 0.194 149.214);
+        --color-green-700: oklch(0.527 0.154 150.069);
+        --color-green-800: oklch(0.448 0.119 151.328);
+        --color-cyan-600: oklch(0.609 0.126 221.723);
+        --color-cyan-950: oklch(0.302 0.056 229.695);
+        --color-blue-50: oklch(0.97 0.014 254.604);
+        --color-gray-50: oklch(0.985 0.002 247.839);
+        --color-gray-100: oklch(0.967 0.003 264.542);
+        --color-gray-200: oklch(0.928 0.006 264.531);
+        --color-gray-300: oklch(0.872 0.01 258.338);
+        --color-gray-400: oklch(0.707 0.022 261.325);
+        --color-gray-500: oklch(0.551 0.027 264.364);
+        --color-gray-600: oklch(0.446 0.03 256.802);
+        --color-gray-700: oklch(0.373 0.034 259.733);
+        --color-gray-800: oklch(0.278 0.033 256.848);
+        --color-gray-900: oklch(0.21 0.034 264.665);
+        --color-white: #fff;
+        --spacing: 0.25rem;
+        --container-sm: 24rem;
+        --text-sm: 0.875rem;
+        --text-sm--line-height: calc(1.25 / 0.875);
+        --text-base: 1rem;
+        --text-base--line-height: calc(1.5 / 1);
+        --text-lg: 1.125rem;
+        --text-lg--line-height: calc(1.75 / 1.125);
+        --text-xl: 1.25rem;
+        --text-xl--line-height: calc(1.75 / 1.25);
+        --text-2xl: 1.5rem;
+        --text-2xl--line-height: calc(2 / 1.5);
+        --font-weight-normal: 400;
+        --font-weight-medium: 500;
+        --font-weight-semibold: 600;
+        --radius-sm: 0.25rem;
+        --radius-md: 0.375rem;
+        --radius-lg: 0.5rem;
+        --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+        --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        --ease-in: cubic-bezier(0.4, 0, 1, 1);
+        --default-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 
-    --color-green-1: #c5f0a4;
-    --color-green-2: #e1f7d0;
-    --color-green-3: #a9e978;
+        /* app values */
 
-    --color-beige: #F7F0E6;
+        --container-7xl: 80rem; /* default: 80rem */
+        
+        --color-blue-1: #226b80;
+        --color-blue-2: #2d8da8;
+        --color-blue-3: #174958;
 
-    --color-brown-theme: #5E3B2C;
-    --color-green-dark-theme: #537D0A;
-    --color-green-light-theme: #D3D930;
-    --color-gray-theme: #D3D930;
+        --color-green-1: #c5f0a4;
+        --color-green-2: #e1f7d0;
+        --color-green-3: #a9e978;
 
-    --color-annie-turquoise: #7fd2e7;
-    --color-annie-yellow-light: #ffe77f;
-    --color-annie-yellow-dark: #ffd13f;
-    --color-annie-blue-light: #80b6ea;
-    --color-annie-blue-dark: #006cd4;
-    --color-annie-brown-light: #ba9680;
-    --color-annie-brown-dark: #86573f;
-    --color-annie-pink-light: #ffc2e8;
-    --color-annie-pink-dark: #ff94d4;
-    --color-annie-purple-light: #e7c1ff;
-    --color-annie-purple-dark: #d193ff;
-    --color-annie-orange-light: #ffbe8c;
-    --color-annie-orange-dark: #ff8d4b;
-    --color-annie-grey-light: #9b9b9b;
-    --color-annie-grey-dark: #5d5d5d;
-    --color-annie-red-light: #d07f7f;
-    --color-annie-red-dark: #aa3f3f;
+        --color-beige: #F7F0E6;
 
-    --color-published: var(--color-green-600);
-    --color-unpublished: var(--color-yellow-500);
-    --color-archived: var(--color-gray-400);
+        --color-brown-theme: #5E3B2C;
+        --color-green-dark-theme: #537D0A;
+        --color-green-light-theme: #D3D930;
+        --color-gray-theme: #D3D930;
 
-    --color-better-help-beige-light: #FFFCF6;
-    --color-better-help-beige-light-2: #F7F0E6;
-    --color-better-help-gray-light: #F5F7F5;
-    --color-better-help-green-dark: #325343;
-    --color-better-help-green-pop: #6EC34B;
-    --color-better-green-mid: #397A4A;
-    --color-better-green-light: #9BD58B;
-    --color-better-help-blue-mid: #457777;
-    --color-better-help-blue-light: #94D1D0;
-    --color-better-help-orange-mid: #A25A00;
-    --color-better-help-orange-light: #F8E16C;
+        --color-annie-turquoise: #7fd2e7;
+        --color-annie-yellow-light: #ffe77f;
+        --color-annie-yellow-dark: #ffd13f;
+        --color-annie-blue-light: #80b6ea;
+        --color-annie-blue-dark: #006cd4;
+        --color-annie-brown-light: #ba9680;
+        --color-annie-brown-dark: #86573f;
+        --color-annie-pink-light: #ffc2e8;
+        --color-annie-pink-dark: #ff94d4;
+        --color-annie-purple-light: #e7c1ff;
+        --color-annie-purple-dark: #d193ff;
+        --color-annie-orange-light: #ffbe8c;
+        --color-annie-orange-dark: #ff8d4b;
+        --color-annie-grey-light: #9b9b9b;
+        --color-annie-grey-dark: #5d5d5d;
+        --color-annie-red-light: #d07f7f;
+        --color-annie-red-dark: #aa3f3f;
 
-    --color-gray-350: oklch(0.7895 0.016 259.8315);
+        --color-published: var(--color-green-600);
+        --color-unpublished: var(--color-yellow-500);
+        --color-archived: var(--color-gray-400);
 
-    --bezier-easing: cubic-bezier(0.2, 0.6, 0.4, 1);
+        --color-better-help-beige-light: #FFFCF6;
+        --color-better-help-beige-light-2: #F7F0E6;
+        --color-better-help-gray-light: #F5F7F5;
+        --color-better-help-green-dark: #325343;
+        --color-better-help-green-pop: #6EC34B;
+        --color-better-green-mid: #397A4A;
+        --color-better-green-light: #9BD58B;
+        --color-better-help-blue-mid: #457777;
+        --color-better-help-blue-light: #94D1D0;
+        --color-better-help-orange-mid: #A25A00;
+        --color-better-help-orange-light: #F8E16C;
 
-    /* breakpoint-sm = 40rem = 640px = breakpoint for most phones */
-    /* NB: var() here does not work */
-    --breakpoint-phone-end: theme(--breakpoint-sm);
-    /* breakpoint-md = 48rem = 768px = breakpoint for mobile */
-    --breakpoint-bottom-menu: theme(--breakpoint-md);
-    --breakpoint-mobile-end: theme(--breakpoint-md);
-    /* breakpoint-lg =  64rem = 1024px = breakpoint for tablets */
-    --breakpoint-contextual-menu: theme(--breakpoint-lg);
+        --color-gray-350: oklch(0.7895 0.016 259.8315);
 
-    /* below 600px (phones) ==> regular cards (image on top, content below) */
-    /* above 600px (tablets) ==> horizontal cards (image on the left, content on the right) */
-    /* see listing-grid.css and listing-card-admin.css */
-    --breakpoint-horizontal-cards: 600px;
+        --bezier-easing: cubic-bezier(0.2, 0.6, 0.4, 1);
+    }
 }

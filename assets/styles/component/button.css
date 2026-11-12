@@ -157,7 +157,7 @@
             padding-inline: calc(var(--spacing) * 5);
         }
 
-        @media (min-width: theme(--breakpoint-md)) {
+        @media (min-width: 48rem) {
             display: none;
         }
 
