@@ -7,7 +7,7 @@
 
     {{ form_start(form, {
         'attr': {
-            'action': path('admin_match_add_result', {'id': match.id}),
+            'action': path('admin_match_add_result', {'id': match.id, 'modal': 1}),
             'data-controller': 'score-entry',
         }
     }) }}

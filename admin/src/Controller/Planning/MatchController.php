@@ -294,6 +294,7 @@ class MatchController extends BaseController
         ]);
     }
 
+    /** Modal only (opened from the planning): it hosts the "send email" forms next to the main form */
     #[AdminRoute('/match/{id:match}/confirmation-info', name: 'match_confirmation_info')]
     public function confirmationInfo(InterfacMatch $match, Request $request, EntityManager $entityManager, ParticipantConfirmationInfoRepository $repository): Response
     {
@@ -369,28 +370,13 @@ class MatchController extends BaseController
 
             $this->entityManager->flush();
 
-            $feedback = '';
-
-            if ($request->query->get('modal')) {
-                return $this->render('@admin/match/modal/confirmation_info_success.html.twig', [
-                    'feedback' => $feedback,
-                    'slot' => $match->getSlot(),
-                ]);
-            }
-
-            $this->addFlash('success', $feedback);
-
-            return $this->redirectToRoute('admin_planning');
-        }
-
-        if ($request->query->get('modal')) {
-            return $this->render('@admin/match/modal/_confirmation_info.html.twig', [
-                'match' => $match,
-                'form' => $form,
+            return $this->render('@admin/match/modal/confirmation_info_success.html.twig', [
+                'feedback' => '',
+                'slot' => $match->getSlot(),
             ]);
         }
 
-        return $this->render('@admin/match/confirmation_info.html.twig', [
+        return $this->render('@admin/match/modal/_confirmation_info.html.twig', [
             'match' => $match,
             'form' => $form,
         ]);
