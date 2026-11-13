@@ -25,17 +25,17 @@ class Kernel extends BaseKernel
 
         $container->import($configDir . '/packages/*.yaml');
         // SECOND -- for session name -- last value overrides previous ones
-        if (($_SERVER['HTTP_HOST'] ?? 'undefined') == $_SERVER['HOST_ADMIN']) {
+        if (self::isAdminHost()) {
             $container->import($adminConfigDir . '/packages/*.yaml');
         }
 
         $container->import($configDir . '/parameters.yaml');
-        if (($_SERVER['HTTP_HOST'] ?? 'undefined') == $_SERVER['HOST_ADMIN']) {
+        if (self::isAdminHost()) {
             $container->import($adminConfigDir . '/parameters.yaml');
         }
 
         $container->import($configDir . '/services.yaml');
-        if (($_SERVER['HTTP_HOST'] ?? 'undefined') == $_SERVER['HOST_ADMIN']) {
+        if (self::isAdminHost()) {
             $container->import($adminConfigDir . '/services.yaml');
         }
     }
@@ -72,17 +72,24 @@ class Kernel extends BaseKernel
      */
     public function getCacheDir(): string
     {
-        $dir = match ($_SERVER['HTTP_HOST'] ?? 'undefined') {
-            $_SERVER['HOST_ADMIN'] => 'admin',
-            $_SERVER['HOST'] => 'site',
-            default => 'site',
-        };
+        $dir = self::isAdminHost() ? 'admin' : 'site';
 
         if (isset($_SERVER['APP_CACHE_DIR'])) {
             return $_SERVER['APP_CACHE_DIR'] . '/' . $dir . '/' . $this->environment;
         }
 
         return $this->getProjectDir() . '/var/cache/' . $dir . '/' . $this->environment;
+    }
+
+    /**
+     * Compares host names only: HTTP_HOST carries the port when it is not the default one
+     * (admin.tcu.kimchi:8447 with the local docker setup)
+     */
+    private static function isAdminHost(): bool
+    {
+        $host = strtolower(parse_url('http://' . ($_SERVER['HTTP_HOST'] ?? ''), \PHP_URL_HOST) ?: '');
+
+        return $host === strtolower($_SERVER['HOST_ADMIN']);
     }
 
     /**
