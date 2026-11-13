@@ -29,9 +29,10 @@ class ParticipantAdminConfirmationType extends AbstractType
                 'mapped' => true,
                 'required' => false,
                 // 'data' => $options['was_confirmed_by_admin'], // set to current value, since mapped=false
-                'label' => ' ',
-                'row_attr' => ['class' => 'form-switch'], // for switch
-                'attr' => ['class' => 'form-check-input'], // for switch
+                'label' => false,
+                // EasyAdmin's form theme renders a checkbox-switch as its <twig:ea:Switch>, like the CRUD switches
+                'label_attr' => ['class' => 'checkbox-switch'],
+                'attr' => ['aria-label' => 'Confirmé par admin'],
             ])
         ;
     }
