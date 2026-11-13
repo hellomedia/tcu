@@ -179,9 +179,6 @@
             margin: 0;
             font-weight: 500;
             cursor: pointer;
-            input {
-                margin: 0;
-            }
         }
         .group-legend {
             display: inline-flex;
@@ -461,7 +458,8 @@
         {% block toolbar %}
             <div class="planning-toolbar">
                 <label class="free-toggle">
-                    <input type="checkbox" data-planning-filter-target="freeOnly" data-action="planning-filter#toggleFreeOnly">
+                    {# EasyAdmin's switch: the attributes land on its checkbox input #}
+                    <twig:ea:Switch data-planning-filter-target="freeOnly" data-action="planning-filter#toggleFreeOnly"/>
                     Créneaux libres uniquement
                 </label>
 
