@@ -108,6 +108,7 @@ services:
     volumes:
       - "./:/data/www"                       # your code (Claude reads, edits, commits here)
       - "claude-config:/home/node/.claude"   # persists your Claude login. Named volume, /home/node is **inside** container, not on host
+      - "../claude-shared:/home/node/shared" # Claude folder shared with sibling projects (user-level CLAUDE.md, README.md)
       # host-executed scripts mounted read-only over themselves: Nicolas
       # runs them outside this container with his own privileges, so they
       # must not be modifiable from inside. Read-only rather than hidden
@@ -122,7 +123,8 @@ services:
       - "./bin/webhook.sh:/data/www/bin/webhook.sh:ro"
 
 # NAMED VOLUMES
-
+# important to add claude-config here, so the volume name is scoped to the project (tcu_claude-config)
+# which is key to having per-project memory in claude
 volumes:
   db-data:
   db-pgadmin:
