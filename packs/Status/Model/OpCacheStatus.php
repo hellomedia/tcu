@@ -109,6 +109,7 @@ class OpCacheStatus
 
     public function getScriptStatusRows(): string
     {
+        $dirs = [];
         foreach ($this->status['scripts'] as $key => $data) {
             $dirs[dirname($key)][basename($key)] = $data;
             $this->_arrayPset($this->d3Scripts, $key, [

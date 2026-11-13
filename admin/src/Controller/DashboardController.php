@@ -2,7 +2,6 @@
 
 namespace Admin\Controller;
 
-use App\Entity\Interface\EntityInterface;
 use App\Repository\SeasonRepository;
 use App\Service\SeasonContext;
 use EasyCorp\Bundle\EasyAdminBundle\Attribute\AdminDashboard;
@@ -59,10 +58,10 @@ class DashboardController extends AbstractDashboardController
             ->setAutofocusSearch()
             ->showEntityActionsInlined()
             ->setFormThemes(['@admin/form/form_theme.html.twig'])
-            ->setPageTitle(Crud::PAGE_DETAIL, static function (EntityInterface $entity) {
+            ->setPageTitle(Crud::PAGE_DETAIL, static function (\Stringable $entity) {
                 return $entity;
             })
-            ->setPageTitle(Crud::PAGE_EDIT, static function (EntityInterface $entity) {
+            ->setPageTitle(Crud::PAGE_EDIT, static function (\Stringable $entity) {
                 return 'Modifier ' . $entity;
             })
         ;

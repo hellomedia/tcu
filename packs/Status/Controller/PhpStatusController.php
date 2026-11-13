@@ -169,7 +169,7 @@ class PhpStatusController extends BaseController
     private function _convertToBytes(string $size): int
     {
         if (\is_numeric($size)) {
-            return $size;
+            return (int) $size;
         }
 
         $unit = strtoupper(substr($size, -1));

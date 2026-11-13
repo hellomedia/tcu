@@ -24,7 +24,7 @@ class Date implements EntityInterface
     private ?int $id = null;
 
     #[ORM\Column(type: Types::DATE_IMMUTABLE)]
-    private ?\DateTimeInterface $date = null;
+    private ?\DateTimeImmutable $date = null;
 
     /**
      * @var Collection<int, Slot>
@@ -65,12 +65,12 @@ class Date implements EntityInterface
         return $this->id;
     }
 
-    public function getDate(): ?\DateTimeInterface
+    public function getDate(): ?\DateTimeImmutable
     {
         return $this->date;
     }
 
-    public function setDate(\DateTimeInterface $date): static
+    public function setDate(\DateTimeImmutable $date): static
     {
         $this->date = $date;
 
@@ -160,12 +160,12 @@ class Date implements EntityInterface
 
     public function isPast(): bool
     {
-        return DateHelper::isPast($this->date);
+        return $this->date !== null && DateHelper::isPast($this->date);
     }
 
     public function isFuture(): bool
     {
-        return DateHelper::isFuture($this->date);
+        return $this->date !== null && DateHelper::isFuture($this->date);
     }
 
     public function hasMatchFromGroup(Group $group): bool

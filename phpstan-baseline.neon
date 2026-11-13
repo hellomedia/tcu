@@ -19,12 +19,6 @@ parameters:
 			path: admin/src/Controller/CourtCrudController.php
 
 		-
-			message: '#^Binary operation "\." between ''Modifier '' and App\\Entity\\Interface\\EntityInterface results in an error\.$#'
-			identifier: binaryOp.invalid
-			count: 1
-			path: admin/src/Controller/DashboardController.php
-
-		-
 			message: '#^Class Admin\\Controller\\DateCrudController extends generic class EasyCorp\\Bundle\\EasyAdminBundle\\Controller\\AbstractCrudController but does not specify its types\: TEntity$#'
 			identifier: missingType.generics
 			count: 1
@@ -207,12 +201,6 @@ parameters:
 		-
 			message: '#^Match expression does not handle remaining values\: string\|null$#'
 			identifier: match.unhandled
-			count: 1
-			path: packs/Chart/BaseChartProvider.php
-
-		-
-			message: '#^Method Pack\\Chart\\BaseChartProvider\:\:_convertToBytes\(\) should return int but returns string\.$#'
-			identifier: return.type
 			count: 1
 			path: packs/Chart/BaseChartProvider.php
 
@@ -433,12 +421,6 @@ parameters:
 			path: packs/Status/Controller/PhpStatusController.php
 
 		-
-			message: '#^Method Pack\\Status\\Controller\\PhpStatusController\:\:_convertToBytes\(\) should return int but returns string\.$#'
-			identifier: return.type
-			count: 1
-			path: packs/Status/Controller/PhpStatusController.php
-
-		-
 			message: '#^Method Pack\\Status\\Controller\\PhpStatusController\:\:checkPhpConfig\(\) has no return type specified\.$#'
 			identifier: missingType.return
 			count: 1
@@ -631,12 +613,6 @@ parameters:
 			path: packs/Status/Model/OpCacheStatus.php
 
 		-
-			message: '#^Variable \$dirs might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: packs/Status/Model/OpCacheStatus.php
-
-		-
 			message: '#^Using nullsafe property access "\?\-\>value" on left side of \?\? is unnecessary\. Use \-\> instead\.$#'
 			identifier: nullsafe.neverNull
 			count: 2
@@ -707,24 +683,6 @@ parameters:
 			identifier: missingType.return
 			count: 1
 			path: src/Doctrine/Listener/UserUpdatedListener.php
-
-		-
-			message: '#^Parameter \#1 \$date of static method App\\Helper\\DateHelper\:\:isFuture\(\) expects DateTimeImmutable, DateTimeInterface\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Entity/Date.php
-
-		-
-			message: '#^Parameter \#1 \$date of static method App\\Helper\\DateHelper\:\:isPast\(\) expects DateTimeImmutable, DateTimeInterface\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Entity/Date.php
-
-		-
-			message: '#^Property App\\Entity\\Date\:\:\$date type mapping mismatch\: property can contain DateTimeInterface\|null but database expects DateTimeImmutable\.$#'
-			identifier: doctrine.columnType
-			count: 1
-			path: src/Entity/Date.php
 
 		-
 			message: '#^Method App\\Entity\\Player\:\:getMatchs\(\) should return Doctrine\\Common\\Collections\\Collection\<int, App\\Entity\\InterfacMatch\> but returns Doctrine\\Common\\Collections\\ArrayCollection\<int, App\\Entity\\InterfacMatch\|null\>\.$#'
