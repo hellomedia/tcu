@@ -452,8 +452,7 @@
 
 {% block main %}
 
-    {# ea-not-prose: EasyAdmin 5.9+ "prose" typography (table padding, margins) would blow up the 60px slot rows #}
-    <div class="ea-not-prose" data-controller="planning-filter" data-planning-filter-storage-key-value="{{ block('storage_key') }}">
+    <div data-controller="planning-filter" data-planning-filter-storage-key-value="{{ block('storage_key') }}">
 
         {% block toolbar %}
             <div class="planning-toolbar">
