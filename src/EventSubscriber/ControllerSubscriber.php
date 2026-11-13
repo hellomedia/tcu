@@ -31,7 +31,6 @@ class ControllerSubscriber implements EventSubscriberInterface
     /**
      *  - Update user activity
      *  - Fire pre-execute method if it exists
-     *  - Fire denyAccessIfAccountClosed method if it exists
      */
     public function onKernelController(ControllerEvent $event)
     {
@@ -48,13 +47,6 @@ class ControllerSubscriber implements EventSubscriberInterface
 
                 if (method_exists($controller, 'preExecute')) {
                     $controller->preExecute();
-                }
-
-                if (method_exists($controller, 'denyAccessIfAccountClosed')) {
-                    // AGAINST EXISTING SESSION and other unintended cases
-                    // But actually... this should be handled by User::isEqualTo() in UserSecurityTrait
-                    // TODO: test and remove
-                    $controller->denyAccessIfAccountClosed();
                 }
             }
         }
