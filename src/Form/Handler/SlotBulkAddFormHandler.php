@@ -6,6 +6,7 @@ use Admin\Exception\InvalidWindowException;
 use App\Entity\Date;
 use App\Entity\Slot;
 use App\Repository\DateRepository;
+use App\Service\NewSlotAvailability;
 use DateInterval;
 use DateTimeInterface;
 use Doctrine\ORM\EntityManager;
@@ -21,6 +22,7 @@ class SlotBulkAddFormHandler
         private EntityManager $entityManager,
         private ValidatorInterface $validator,
         private RequestStack $requestStack,
+        private NewSlotAvailability $newSlotAvailability,
     ) {
     }
 
@@ -97,6 +99,17 @@ class SlotBulkAddFormHandler
         }
 
         $slots = $this->checkSlotUniqueness($slots);
+
+        $inferred = $this->newSlotAvailability->inferUnavailability($slots);
+        if ($inferred > 0) {
+            $session = $this->requestStack->getSession();
+            \assert($session instanceof FlashBagAwareSessionInterface);
+            $session->getFlashBag()->add('info', sprintf(
+                '%d réponse%s "pas dispo" ajoutée%2$s : joueurs pas dispo aux créneaux voisins.',
+                $inferred,
+                $inferred > 1 ? 's' : '',
+            ));
+        }
 
         return $slots; // caller can flush()
     }
