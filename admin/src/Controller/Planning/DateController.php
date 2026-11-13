@@ -57,10 +57,11 @@ class DateController extends BaseController
             } catch (InvalidWindowException $exception) {
                 $this->addFlash('danger', $exception->getMessage());
 
-                return $this->redirectToRoute('@admin/date/add_slots.html.twig', [
+                // the form again, with the message (the slots and dates it prepared are not flushed)
+                return $this->render('@admin/date/add_slots.html.twig', [
                     'form' => $form,
                     'date' => $date,
-                ]);
+                ], new Response(status: Response::HTTP_UNPROCESSABLE_ENTITY));
             }
 
             if (\sizeof($slots) > 0) {

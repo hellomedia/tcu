@@ -64,9 +64,10 @@ class SlotController extends BaseController
             } catch (InvalidWindowException $exception) {
                 $this->addFlash('danger', $exception->getMessage());
 
-                return $this->redirectToRoute('admin_planning_slot_bulk_add', [
+                // the form again, with the message (the slots and dates it prepared are not flushed)
+                return $this->render('@admin/slot/bulk_add.html.twig', [
                     'form' => $form,
-                ]);
+                ], new Response(status: Response::HTTP_UNPROCESSABLE_ENTITY));
             }
 
             if (\sizeof($slots) > 0) {
