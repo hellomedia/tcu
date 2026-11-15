@@ -54,12 +54,14 @@
         /* leads to Ma poule in the account area: account icon, as the "Mes interfacs" tab of the interfacs band */
         .group-mine-link {
             display: inline-flex;
-            align-items: center;
+            /* baseline: the link takes the baseline of its text (not of the icon), aligned with the planning link */
+            align-items: baseline;
             gap: 4px;
             color: var(--color-theme-darker);
             font-weight: 600;
             white-space: nowrap;
             svg {
+                align-self: center;
                 width: 15px;
                 height: 15px;
             }
