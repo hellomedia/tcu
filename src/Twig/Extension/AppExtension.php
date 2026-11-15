@@ -52,11 +52,14 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
     }
 
     /**
-     * Points of a result or a standing, French style: 3, 1,5
+     * Points of a result or a standing, French style: 3, 1,5 (with the unit: 3 pts, 1,5 pt)
      */
-    public function formatPoints(float|int|null $points): string
+    public function formatPoints(float|int|null $points, bool $unit = false): string
     {
-        return str_replace('.', ',', (string) (float) $points);
+        $formatted = str_replace('.', ',', (string) (float) $points);
+
+        // French: plural from 2
+        return $unit ? $formatted . ' ' . ($points >= 2 ? 'pts' : 'pt') : $formatted;
     }
 
     public function getTests(): array

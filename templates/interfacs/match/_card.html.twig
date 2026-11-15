@@ -53,6 +53,7 @@
                     {% set theirs = side.value == 'B' ? set[0] : set[1] %}
                     <span class="match-card-set {{ mine > theirs ? 'won' }}">{{ mine }}-{{ theirs }}</span>
                 {% endfor %}
+                <span class="match-card-points">{{ (side.value == 'B' ? result.pointsB : result.pointsA)|points(unit: true) }}</span>
             </span>
         </div>
     {% elseif confirmable|default(false) and match.upcoming %}
