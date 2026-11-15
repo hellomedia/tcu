@@ -201,14 +201,22 @@
             color: var(--color-gray-900);
         }
         /* points of each side, after the sets */
-        td.match-points {
-            padding-left: 10px;
-            border-left: 1px solid var(--color-gray-200);
+        td.match-points,
+        td.match-points-unit {
             font-size: 13px;
-            text-align: right;
             white-space: nowrap;
         }
-        td:nth-last-child(2) {
+        td.match-points {
+            padding-left: 10px;
+            padding-right: 0;
+            border-left: 1px solid var(--color-gray-200);
+            text-align: right;
+        }
+        td.match-points-unit {
+            padding-left: 3px;
+        }
+        /* last set */
+        td:has(+ .match-points) {
             padding-right: 10px;
         }
     }

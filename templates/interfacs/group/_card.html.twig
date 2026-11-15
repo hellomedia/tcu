@@ -79,13 +79,17 @@
                                         {% for set in result.sets %}
                                             <td class="{{ set[0] > set[1] ? 'won' }}">{{ set[0] }}</td>
                                         {% endfor %}
-                                        <td class="match-points">{{ result.pointsA|points(unit: true) }}</td>
+                                        {# number and unit in two cells: the numbers line up on the right, the units on the left #}
+                                        <td class="match-points">{{ result.pointsA|points }}</td>
+                                        <td class="match-points-unit">{{ result.pointsA >= 2 ? 'pts' : 'pt' }}</td>
                                     </tr>
                                     <tr>
                                         {% for set in result.sets %}
                                             <td class="{{ set[1] > set[0] ? 'won' }}">{{ set[1] }}</td>
                                         {% endfor %}
-                                        <td class="match-points">{{ result.pointsB|points(unit: true) }}</td>
+                                        {# number and unit in two cells: the numbers line up on the right, the units on the left #}
+                                        <td class="match-points">{{ result.pointsB|points }}</td>
+                                        <td class="match-points-unit">{{ result.pointsB >= 2 ? 'pts' : 'pt' }}</td>
                                     </tr>
                                 </table>
                             </div>
