@@ -185,6 +185,7 @@
         display: flex;
         flex-direction: row;
         align-items: center;
+        justify-content: flex-end; /* points at the right edge, whatever the number of sets */
         font-variant-numeric: tabular-nums;
         color: var(--color-gray-500);
         td {
@@ -206,13 +207,16 @@
             font-size: 13px;
             white-space: nowrap;
         }
+        /* fixed widths (border-box: padding and border included), so the block is the same on every match: "4,5" and "pts" fit */
         td.match-points {
+            width: calc(10px + 1px + 3ch);
             padding-left: 10px;
             padding-right: 0;
             border-left: 1px solid var(--color-gray-200);
             text-align: right;
         }
         td.match-points-unit {
+            width: calc(3px + 3ch);
             padding-left: 3px;
         }
         /* last set */
