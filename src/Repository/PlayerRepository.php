@@ -129,7 +129,7 @@ class PlayerRepository extends ServiceEntityRepository
      *
      * @param Group[] $groups
      *
-     * @return array<int, list<array{player: Player, points: int, matchsPlayed: int}>> lignes de groupStandings(), par id de poule
+     * @return array<int, list<array{player: Player, points: float, matchsPlayed: int}>> lignes de groupStandings(), par id de poule
      */
     public function groupsStandings(array $groups): array
     {
@@ -188,7 +188,7 @@ class PlayerRepository extends ServiceEntityRepository
         foreach ($rows as $row) {
             $standings[$row['groupId']][] = [
                 'player' => $players[$row['playerId']],
-                'points' => (int) $row['points'],
+                'points' => (float) $row['points'],
                 'matchsPlayed' => (int) $row['matchsPlayed'],
             ];
         }

@@ -8,6 +8,7 @@ use App\Twig\Runtime\GroupColorRuntime;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Twig\Extension\AbstractExtension;
 use Twig\Extension\GlobalsInterface;
+use Twig\TwigFilter;
 use Twig\TwigFunction;
 use Twig\TwigTest;
 
@@ -41,6 +42,21 @@ class AppExtension extends AbstractExtension implements GlobalsInterface
             new TwigFunction('group_color', [GroupColorRuntime::class, 'groupColor']),
             new TwigFunction('availability_summary', [AvailabilityRuntime::class, 'availabilitySummary']),
         ];
+    }
+
+    public function getFilters(): array
+    {
+        return [
+            new TwigFilter('points', [$this, 'formatPoints']),
+        ];
+    }
+
+    /**
+     * Points of a result or a standing, French style: 3, 1,5
+     */
+    public function formatPoints(float|int|null $points): string
+    {
+        return str_replace('.', ',', (string) (float) $points);
     }
 
     public function getTests(): array

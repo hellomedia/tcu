@@ -59,7 +59,7 @@ export default class extends Controller {
         });
 
         this.pointsTargets.forEach((target) => {
-            target.textContent = played ? (target.dataset.side === "A" ? pointsA : pointsB) : "–";
+            target.textContent = played ? String(target.dataset.side === "A" ? pointsA : pointsB).replace(".", ",") : "–";
         });
     }
 
@@ -75,7 +75,7 @@ export default class extends Controller {
         }
 
         // unfinished set: led by 2 games or more, otherwise tied or led by 1 game only
-        return a - b >= 2 ? [1, 0] : [1, 1];
+        return a - b >= 2 ? [1, 0] : [0.5, 0.5];
     }
 
     _orderedGames() {

@@ -272,7 +272,7 @@
 					<span class="dash-link-title">Ma poule</span>
 					{% for item in groups %}
 						<span class="dash-link-status">
-							{{ item.group }} · {{ item.position }}{{ item.position == 1 ? 'er' : 'e' }} sur {{ item.players }} · {{ item.points }} pt{{ item.points > 1 ? 's' }}
+							{{ item.group }} · {{ item.position }}{{ item.position == 1 ? 'er' : 'e' }} sur {{ item.players }} · {{ item.points|points }} pt{{ item.points >= 2 ? 's' }}
 						</span>
 					{% endfor %}
 				</span>

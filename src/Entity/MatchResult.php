@@ -37,11 +37,12 @@ class MatchResult
     #[ORM\Column(type: Types::SMALLINT, nullable: true)]
     private ?int $set3B = null;
 
-    #[ORM\Column(type: Types::SMALLINT, nullable: true)]
-    private ?int $pointsA = null;
+    /** float: an unfinished set without a clear lead gives half a point to each side */
+    #[ORM\Column(nullable: true)]
+    private ?float $pointsA = null;
 
-    #[ORM\Column(type: Types::SMALLINT, nullable: true)]
-    private ?int $pointsB = null;
+    #[ORM\Column(nullable: true)]
+    private ?float $pointsB = null;
 
     public function getId(): ?int
     {
@@ -144,12 +145,12 @@ class MatchResult
         return $this;
     }
 
-    public function getPointsA(): ?int
+    public function getPointsA(): ?float
     {
         return $this->pointsA;
     }
 
-    public function getPointsB(): ?int
+    public function getPointsB(): ?float
     {
         return $this->pointsB;
     }
@@ -196,11 +197,11 @@ class MatchResult
      * - set won 7/6: 2 points for the winner, 1 for the loser
      * - set won with any other score: 2 points for the winner
      * - unfinished set, led by 2 games or more: 1 point for the leader
-     * - unfinished set, tied or led by 1 game only (players should not stop there, but it happens): 1 point each
+     * - unfinished set, tied or led by 1 game only (players should not stop there, but it happens): 0.5 point each
      */
     private function updatePoints(): void
     {
-        $this->pointsA = $this->pointsB = 0;
+        $this->pointsA = $this->pointsB = 0.0;
 
         foreach ($this->getSets() as [$a, $b]) {
             [$pointsA, $pointsB] = self::setPoints($a, $b);
@@ -210,7 +211,7 @@ class MatchResult
     }
 
     /**
-     * @return array{int, int} points of A and B for a set
+     * @return array{float, float} points of A and B for a set
      */
     private static function setPoints(int $a, int $b): array
     {
@@ -221,12 +222,12 @@ class MatchResult
         // A leads or tied: a set is won at 6 games with 2 games ahead, or at 7 games (7/5, 7/6)
         // (also covers a super tie-break, 10/8)
         if ($a >= 6 && ($a - $b >= 2 || $a === 7)) {
-            return [2, $a === 7 && $b === 6 ? 1 : 0];
+            return [2.0, $a === 7 && $b === 6 ? 1.0 : 0.0];
         }
 
         return match (true) {
-            $a - $b >= 2 => [1, 0],
-            default => [1, 1],
+            $a - $b >= 2 => [1.0, 0.0],
+            default => [0.5, 0.5],
         };
     }
 }

@@ -46,7 +46,7 @@
                 </td>
                 <td class="ranking">{{ row.player.ranking(group.season).value ?? '' }}</td>
                 <td class="matchs-played">{{ row.matchsPlayed }}</td>
-                <td class="points">{{ row.points }}</td>
+                <td class="points">{{ row.points|points }}</td>
             </tr>
         {% endfor %}
     </table>
