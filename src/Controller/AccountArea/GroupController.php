@@ -30,7 +30,7 @@ class GroupController extends BaseController
         }
 
         $season = $seasonContext->getInterfacsSeason();
-        $groups = $this->getUser()->getPlayer()?->getGroupsForSeason($season) ?? new ArrayCollection();
+        $groups = $this->getUser()->getPlayer()?->getVisibleGroupsForSeason($season) ?? new ArrayCollection();
         $groupRepository->loadPlayers($groups->toArray());
         $dates = $dateRepository->findDatesByGroups($groups->toArray());
 

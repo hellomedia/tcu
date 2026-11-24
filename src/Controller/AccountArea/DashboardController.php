@@ -32,7 +32,7 @@ class DashboardController extends BaseController
         // poules et place au classement, pas affichées tant que la saison n'est pas publiée (comme Ma poule)
         $groups = [];
         if ($player !== null && $seasonContext->getUnpublishedInterfacsSeason() === null) {
-            foreach ($player->getGroupsForSeason($seasonContext->getInterfacsSeason()) as $group) {
+            foreach ($player->getVisibleGroupsForSeason($seasonContext->getInterfacsSeason()) as $group) {
                 $standings = $playerRepository->groupStandings($group);
                 foreach ($standings as $index => $row) {
                     if ($row['player'] === $player) {

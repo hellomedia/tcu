@@ -52,16 +52,22 @@ class GroupRepository extends ServiceEntityRepository
      * Poules d'une saison, avec les joueurs, leur compte et leurs inscriptions (classement par saison)
      * pour éviter les requêtes supplémentaires (Player::$user, côté inverse d'un OneToOne,
      * coûte une requête par joueur s'il n'est pas joint)
+     * $visibleOnly : sans les poules masquées (brouillons, Group::$hidden), pour les pages publiques
      *
      * @return Group[]
      */
-    public function findBySeason(?Season $season): array
+    public function findBySeason(?Season $season, bool $visibleOnly = false): array
     {
         if ($season === null) {
             return [];
         }
 
-        return $this->createQueryBuilder('g')
+        $qb = $this->createQueryBuilder('g');
+        if ($visibleOnly) {
+            $qb->andWhere('g.hidden = false');
+        }
+
+        return $qb
             ->leftJoin('g.players', 'p')->addSelect('p')
             ->leftJoin('p.user', 'u')->addSelect('u')
             // pas de condition sur la saison dans la jointure :

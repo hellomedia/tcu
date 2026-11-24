@@ -38,6 +38,13 @@ class Group implements EntityInterface
     private int $displayOrder = 0;
 
     /**
+     * Poule en préparation (brouillon) : visible seulement dans l'admin,
+     * ni sur les pages publiques ni dans Mon TCU (sans match ni entraînement tant qu'elle est masquée)
+     */
+    #[ORM\Column(options: ['default' => false])]
+    private bool $hidden = false;
+
+    /**
      * Une poule appartient à une saison.
      * Les matchs de la poule appartiennent donc à cette saison,
      * qu'ils soient programmés ou non.
@@ -96,6 +103,18 @@ class Group implements EntityInterface
         });
 
         return new ArrayCollection($players);
+    }
+
+    public function isHidden(): bool
+    {
+        return $this->hidden;
+    }
+
+    public function setHidden(bool $hidden): static
+    {
+        $this->hidden = $hidden;
+
+        return $this;
     }
 
     public function getSeason(): ?Season

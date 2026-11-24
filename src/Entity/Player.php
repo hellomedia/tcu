@@ -261,6 +261,16 @@ class Player implements EntityInterface
         });
     }
 
+    /**
+     * Poules de la saison montrées au joueur : sans les poules masquées (brouillons, Group::$hidden)
+     *
+     * @return Collection<int, Group>
+     */
+    public function getVisibleGroupsForSeason(?Season $season): Collection
+    {
+        return $this->getGroupsForSeason($season)->filter(fn (Group $group) => !$group->isHidden());
+    }
+
     public function addGroup(Group $group): static
     {
         if (!$this->groups->contains($group)) {

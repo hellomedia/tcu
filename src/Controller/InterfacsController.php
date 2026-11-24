@@ -81,7 +81,7 @@ class InterfacsController extends BaseController
             }
         }
 
-        $groups = $repository->findBySeason($season);
+        $groups = $repository->findBySeason($season, visibleOnly: true);
         $dates = $dateRepository->findDatesByGroups($groups);
         $standings = $playerRepository->groupsStandings($groups);
 

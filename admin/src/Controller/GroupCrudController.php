@@ -12,6 +12,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
 use EasyCorp\Bundle\EasyAdminBundle\Context\AdminContext;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -53,6 +54,10 @@ class GroupCrudController extends AbstractCrudController
         yield IntegerField::new('displayOrder', 'Ordre')
             ->setHelp('Ordre d\'affichage des poules de la saison (puis par nom)')
             ->setFormTypeOption('attr', ['min' => 0]);
+
+        yield BooleanField::new('hidden', 'Brouillon')
+            ->onlyOnForms()
+            ->setHelp('Visible seulement dans l\'admin : ni sur les pages publiques, ni dans Mon TCU. Pour une poule en préparation, sans match ni entraînement.');
 
         // la saison d'une poule est définie à la création (saison sélectionnée) et ne change pas
         yield AssociationField::new('season', 'Saison')
