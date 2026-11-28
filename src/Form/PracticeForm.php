@@ -301,11 +301,12 @@ final class PracticeForm extends AbstractType
             'data_class' => Practice::class,
             'slot' => null,
             // un changement de date réaffiche le formulaire : pas de validation avant le bouton Programmer
-            'validation_groups' => function (FormInterface $form): array|false {
+            'validation_groups' => function (FormInterface $form): array {
                 $submit = $form->get('save');
                 \assert($submit instanceof ClickableInterface);
 
-                return $submit->isClicked() ? ['Default'] : false;
+                // [] et non false : le retour d'un callable est casté en tableau, et [false] est refusé
+                return $submit->isClicked() ? ['Default'] : [];
             },
         ]);
 
